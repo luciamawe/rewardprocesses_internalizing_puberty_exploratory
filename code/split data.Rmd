@@ -1,0 +1,62 @@
+---
+title: "ABCD depression puberty reward - Code to split sample in exploratory and confirmatory samples"
+output: html_notebook
+date: "date started 01/july/20"
+output:
+  html_document: default
+  pdf_document: default
+authors: Lucia Magis Weinberg 
+---
+
+```{r, include=FALSE}
+# Load packages
+#install.packages("devtools")
+#devtools::install_github("easystats/report")
+#devtools::install_github("goodekat/ggResidpanel")
+#library(ggResidpanel)
+#library(report)
+
+packages <- c("tidyverse",   #data wrangling
+              "summarytools",  #data exploration and simple reporting
+              "psych",       #correlations and Cronbach alpha for internal consistency  
+              "readr",       #read csv
+              "tidyr",       #create tidy data, where every column is a variable, every row is an                               observation 
+              "Hmisc",          #correlations
+              "RColorBrewer",   #choose nice colors for graphs
+              "psychotools",    #psychometric modeling
+              "knitr",          #Produce Rmarkdowns from Rnotebooks
+              "lme4",           #run mixed effects regressions
+              "lmerTest",       #compare different mixed effects models  
+              "car",            #Companion to Applied Regression
+              "haven",          #Import foreign statistical formats into R   
+              "jtools",         #plot interactions 
+              "apaTables",      #produce tables, might be redundant
+              "DataExplorer",   #data exploration
+              "interactions",   #interactions
+              "ggstatsplot",    #pretty plots
+              "here")           #file navigation within a project
+#library("conflicted") #only run when there are issues with functions. Will illuminate which functions come from different packages
+#invisible(lapply(packages, install.packages, character.only = TRUE)) #Only run once to install packages
+library(tidyverse)
+invisible(lapply(packages, library, character.only = TRUE))
+```
+
+
+```{r, include=FALSE}
+# Load data
+## This script assumes that data has already been names (with Natalie's code) and split into two halves
+## This script is based on the variable names on VariableDefinitions.csv
+
+data_dir = (dirname(dirname(here()))) #figure out how to navigate to data source
+
+phase_folder = "all_baseline"  #select the appropiate folder
+phase_folder = "exploratory"  #select the appropiate folder
+phase_folder = "confirmatory"  #select the appropiate folder
+
+data_folder <- file.path(data_dir,"Phases",phase_folder,"data")  
+
+file_name <- "ABCD_allpartipants_baseline.csv" #specify file name here 
+
+ABCD_Data <- read.csv(file.path(data_folder,file_name))
+as_tibble(ABCD_Data)
+```
