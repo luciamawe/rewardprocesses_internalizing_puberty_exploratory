@@ -1,0 +1,127 @@
+---
+title: "ABCD depression puberty reward - Exploratory - Demographics and behavioral data description and cleaning"
+date: "date started 01/july/20"
+output:
+  html_document: default
+  pdf_document: default
+authors: Lucia Magis Weinberg 
+---
+
+```{r, include=FALSE}
+# Load packages
+#install.packages("devtools")
+#devtools::install_github("easystats/report")
+#devtools::install_github("goodekat/ggResidpanel")
+#library(ggResidpanel)
+#library(report)
+
+packages <- c("tidyverse",   #data wrangling
+              "summarytools",  #data exploration and simple reporting
+              "psych",       #correlations and Cronbach alpha for internal consistency  
+              "readr",       #read csv
+              "tidyr",       #create tidy data, where every column is a variable, every row is an                               observation 
+              "Hmisc",          #correlations
+              "RColorBrewer",   #choose nice colors for graphs
+              "psychotools",    #psychometric modeling
+              "knitr",          #Produce Rmarkdowns from Rnotebooks
+              "lme4",           #run mixed effects regressions
+              "lmerTest",       #compare different mixed effects models  
+              "car",            #Companion to Applied Regression
+              "haven",          #Import foreign statistical formats into R   
+              "jtools",         #plot interactions 
+              "apaTables",      #produce tables, might be redundant
+              "DataExplorer",   #data exploration
+              "interactions",   #interactions
+              "ggstatsplot",    #pretty plots
+              "here")           #file navigation within a project
+#library("conflicted") #only run when there are issues with functions. Will illuminate which functions come from different packages
+#invisible(lapply(packages, install.packages, character.only = TRUE)) #Only run once to install packages
+library(tidyverse)
+invisible(lapply(packages, library, character.only = TRUE))
+```
+
+```{r, include=FALSE}
+# Load data
+## This script assumes that data has already been names (with Natalie's code) and split into two halves
+## This script is based on the variable names on VariableDefinitions.csv
+
+data_dir = (dirname(dirname(here()))) #figure out how to navigate to data source
+
+phase_folder = "exploratory"  #select the appropiate folder
+phase_folder = "confirmatory"  #select the appropiate folder
+
+data_folder <- file.path(data_dir,"Phases",phase_folder,"data")  
+
+file_name <- "ABCD_allpartipants_baseline.csv" #specify file name here 
+
+ABCD_Data <- read.csv(file.path(data_folder,file_name))
+as_tibble(ABCD_Data)
+```
+
+```{r}
+# 
+ABCD_Data$src_subject_id<- as.factor(ABCD_Data$src_subject_id) # check that this is the correct column for participant IDs.
+ABCD_Data$ERT_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_ert_mean) # I used the floor function to round down testosterone levels to a whole number. This creates a new variable (and so a new column), Testosterone_Rounded, in my dataframe (ABCD_Data).
+ABCD_Data$DHEA_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_dhea_mean) # DHEA
+ABCD_Data$HSE_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_hse_mean) # Estrogen, only for women
+```
+
+```{r}
+# Example distribution: Plot testosterone levels (rounded down) in the sample.
+max_level <- max(ABCD_Data$ERT_Hormone_Rounded,na.rm = TRUE)
+min_level <- min(ABCD_Data$ERT_Hormone_Rounded,na.rm = TRUE)
+total_plot <- ggplot(ABCD_Data, aes(x=ERT_Hormone_Rounded)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+              geom_histogram(binwidth=0.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
+              scale_x_continuous(breaks=c(seq(min_level, max_level, by=5))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
+              labs(title = "Testosterone Levels in Sample",x = "Testosterone") # Set the title of the graph and label the x axis.
+total_plot
+```
+
+#Data exploration and outlier removal
+```{r}
+#Show data set structure and type of variable
+#plot_str(ABCD_Data)
+```
+
+```{r}
+#Inspect for missing values
+#plot_missing(ABCD_Data)
+```
+
+```{r}
+#Visualize density plots of continuous variables
+plot_density(ABCD_Data)
+```
+
+```{r}
+#Visualize pairwise correlations of continuous variables
+plot_correlation(ABCD_Data, type = 'c',cor_args = list("use" = "pairwise.complete.obs"))
+```
+
+```{r}
+plot_boxplot(ABCD_Data,by = "pds_p_ss_male_category" )
+```
+
+```{r}
+plot_boxplot(ABCD_Data,by = "pds_p_ss_female_category" )
+```
+
+```{r}
+plot_qq(ABCD_Data, by = "pds_p_ss_male_category")
+```
+
+```{r}
+plot_qq(ABCD_Data,by = "pds_p_ss_female_category" )
+```
+
+```{r}
+# Example distribution: Plot DHEA levels (rounded down) in the sample.
+max_level <- max(ABCD_Data$DHEA_Hormone_Rounded,na.rm = TRUE)
+min_level <- min(ABCD_Data$DHEA_Hormone_Rounded,na.rm = TRUE)
+total_plot <- ggplot(ABCD_Data, aes(x=DHEA_Hormone_Rounded)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+              geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
+              scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
+              labs(title = "DHEA Levels in Sample",x = "DHEA") # Set the title of the graph and label the x axis.
+total_plot
+```
+
