@@ -14,7 +14,7 @@ authors: Lucia Magis Weinberg
 #devtools::install_github("goodekat/ggResidpanel")
 #library(ggResidpanel)
 #library(report)
-
+# Natalie adding comment.
 packages <- c("tidyverse",   #data wrangling
               "summarytools",  #data exploration and simple reporting
               "psych",       #correlations and Cronbach alpha for internal consistency  
