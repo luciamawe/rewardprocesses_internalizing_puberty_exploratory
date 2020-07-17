@@ -15,31 +15,21 @@ library(plyr)
 library(readr)
 
 getwd()
+# Set your data directory here.
+data_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/test"
+
+output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
 
 #Convert .txt files to .csv format. 
-setwd("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/test")
+setwd(data_directory)
 filelist = list.files(pattern = ".txt")
 for (i in 1:length(filelist)){
     input<-filelist[i]
     output <- paste0(gsub("\\.txt$", "", input), ".csv")
     print(paste("Processing the file:", input))
     data = read.delim(input, header = TRUE)   
-    #setwd("/Users/elizabethmcneilly/Desktop/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/test/")
     write.table(data, file=output, sep=",", col.names=TRUE, row.names=FALSE)
-    #setwd("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/test/")
 }
-
-
-#Set Input List to the converted .csv files
-setwd("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/test")
-input_list = list.files(pattern = ".csv")
-tables = list()
-
-setwd("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/test")
-dat_abcd_complete <- ldply(input_list, read_csv) #PUTS ALL .CSV FILES INTO ONE DATA FRAME, BUT IT DOESN'T APPEAR TO LINE UP PROPERLY ACROSS ROWS.
-
-setwd("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output/")
-write.csv(dat_abcd_complete, "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output/dat_abcd_complete.csv")
 ```
 
 
@@ -48,37 +38,31 @@ write.csv(dat_abcd_complete, "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/AB
 ```{r}
 #THIS STEP COULD BE MORE EFFICIENT BY READING THEM ALL IN AT THE SAME TIME
 #Read in data in separate data frames:
+setwd(data_directory)
 
-bisbas01 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/abcd_bisbas01.csv")
+bisbas01 <- read.csv(paste(data_directory,"abcd_bisbas01.csv",sep="/"))
 
-cbcls01 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/abcd_cbcls01.csv")
+cbcls01 <- read.csv(paste(data_directory,"abcd_cbcls01.csv",sep="/"))
 
-hsss01 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/abcd_hsss01.csv")
+hsss01 <- read.csv(paste(data_directory,"abcd_hsss01.csv",sep="/"))
 
+lpds01 <- read_csv(paste(data_directory,"abcd_lpds01.csv",sep="/"))
 
-lpds01 <- read_csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/abcd_lpds01.csv")
+lt01 <- read.csv(paste(data_directory,"abcd_lt01.csv",sep="/"))
 
+mid02 <- read.csv(paste(data_directory,"abcd_mid02.csv",sep="/"))
 
-lt01 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/abcd_lt01.csv")
+ppdms01 <- read.csv(paste(data_directory,"abcd_ppdms01.csv",sep="/"))
 
+ypdms01 <- read.csv(paste(data_directory,"abcd_ypdms01.csv",sep="/"))
 
-mid02 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/abcd_mid02.csv")
+fhxp102 <- read.csv(paste(data_directory,"fhxp102.csv",sep="/"))
 
-ppdms01 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/abcd_ppdms01.csv")
+midaparc03 <- read.csv(paste(data_directory,"midaparc03.csv",sep="/"))
 
-ypdms01 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/abcd_ypdms01.csv")
+midaparcp203 <- read.csv(paste(data_directory,"midaparcp203.csv",sep="/"))
 
-fhxp102 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/fhxp102.csv")
-
-midaparc03 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/midaparc03.csv")
-
-midaparcp203 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/midaparcp203.csv")
-
-
-
-##NOTE: This file cannot be read in for some reason. It produces an error about the final line being incomplete. It freezes my R and I have to force quit each time.
-
-#pdem02 <- read.csv("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/DATA_RELEASE_3.0/BehaviorClinicalandMRI_csv/pdem02.csv")
+pdem02 <- read_csv(paste(data_directory,"pdem02.csv",sep="/"))
 ```
 
 
@@ -99,10 +83,7 @@ ypdms01 = ypdms01[-1,]
 fhxp102 = fhxp102[-1,]
 midaparc03 = midaparc03[-1,]
 midaparcp203 = midaparcp203[-1,]
-
-#Once error is resolved, do the same to pdem02.
-#pdem02
-
+pdem02 = pdem02[-1,]
 
 ```
 
@@ -111,32 +92,27 @@ midaparcp203 = midaparcp203[-1,]
 # Drop columns introduced by NDA, and duplicated columns across data frames. Keep the Longitudinal Tracking data (lt01) as the anchor (Do not remove the columns from lt01.)
 
 
-bisbas01 = bisbas01[,!(names(bisbas01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+bisbas01 = bisbas01[,!(names(bisbas01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-cbcls01 = cbcls01[,!(names(cbcls01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+cbcls01 = cbcls01[,!(names(cbcls01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-hsss01 = hsss01[,!(names(hsss01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+hsss01 = hsss01[,!(names(hsss01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-lpds01 = lpds01[,!(names(lpds01) %in% c("collection_id", "collection_title", "subjectkey","interview_age","interview_date","gender"))]
+lpds01 = lpds01[,!(names(lpds01) %in% c("collection_id", "collection_title", "subjectkey","interview_age","interview_date","sex"))]
 
+mid02 = mid02[,!(names(mid02) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-mid02 = mid02[,!(names(mid02) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+ppdms01 = ppdms01[,!(names(ppdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-ppdms01 = ppdms01[,!(names(ppdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+ypdms01 = ypdms01[,!(names(ypdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-ypdms01 = ypdms01[,!(names(ypdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+fhxp102 = fhxp102[,!(names(fhxp102) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-fhxp102 = fhxp102[,!(names(fhxp102) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+midaparc03 = midaparc03[,!(names(midaparc03) %in% c("collection_id", "collection_title", "subjectkey","interview_age","interview_date","sex"))]
 
-midaparc03 = midaparc03[,!(names(midaparc03) %in% c("collection_id", "collection_title", "subjectkey","interview_age","interview_date","gender"))]
+midaparcp203 = midaparcp203[,!(names(midaparcp203) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-midaparcp203 = midaparcp203[,!(names(midaparcp203) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
-
-
-
-#Once error is resolved, do the same to pdem02
-#pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "subjectkey"))]
-
+pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "subjectkey"))]
 
 ```
 
@@ -146,7 +122,7 @@ midaparcp203 = midaparcp203[,!(names(midaparcp203) %in% c("collection_id", "coll
 #Merge the individual tables into a single spreadsheet. The following loop performs repeated merging operations between pairs of spreadsheets.
 
 
-t2 = list(bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203)
+t2 = list(bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02)
 
 
 while (length(t2) > 1 ) {
@@ -170,7 +146,7 @@ nda20=nda20[,-which(grepl("dataset_id",colnames(nda20)))]
 
 
 
-# As a nicety we can sort the levels of eventname by timepoint.
+# Per the original merge script: we can sort the levels of eventname by timepoint.
 
 nda20$eventname = factor(nda20$eventname, levels(nda20$eventname)[c(2,4,1,3)])
 
@@ -180,7 +156,7 @@ nda20$eventname = factor(nda20$eventname, levels(nda20$eventname)[c(2,4,1,3)])
 
 #As a last step we can save the data in R's native file format
 
-saveRDS(nda20, "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output/nda20.rds")
+saveRDS(nda20, paste(output_directory,"nda20.rds",sep="/"))
 
 names.nda20=colnames(nda20)
 
@@ -188,13 +164,13 @@ save(file="names.nda20.RData",names.nda20)
 
 # Optional -- save as .csv file as well
 
-write.csv(nda20, "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output/nda20.csv", row.names = FALSE)
+write.csv(nda20, paste(output_directory,"nda20.csv",sep="/"), row.names = FALSE)
 ```
 
 #Read data back in
 ```{r}
 # In order to read the data back into memory use:
-nda20 = readRDS("~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output/nda20.rds")
+nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
 
 ```
 
