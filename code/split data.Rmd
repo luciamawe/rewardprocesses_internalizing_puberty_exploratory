@@ -16,6 +16,9 @@ authors: Lucia Magis Weinberg
 #library(ggResidpanel)
 #library(report)
 
+
+#NEW COMMENT
+
 packages <- c("tidyverse",   #data wrangling
               "summarytools",  #data exploration and simple reporting
               "psych",       #correlations and Cronbach alpha for internal consistency  
