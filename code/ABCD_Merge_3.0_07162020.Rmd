@@ -5,7 +5,8 @@ date: "7/16/2020"
 output: html_document
 ---
 
-
+#NOTE: 
+- Change working directory to the location where the raw data is saved. 
 #SETUP
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
