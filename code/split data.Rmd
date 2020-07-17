@@ -60,3 +60,113 @@ file_name <- "ABCD_allpartipants_baseline.csv" #specify file name here
 ABCD_Data <- read.csv(file.path(data_folder,file_name))
 as_tibble(ABCD_Data)
 ```
+
+```{r}
+
+setwd("C:/Users/lucia/Dropbox/Projects_Postdoc/ABCD puberty reward processing mental health/data/raw")
+ABCD_Data <- read.table("C:/Users/lucia/Dropbox/Projects_Postdoc/ABCD puberty reward processing mental health/data/raw/ABCD_puberty_reward_mentalhealth_release21_withfix.csv", header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
+```
+
+```{r}
+#Select only baseline
+library(janitor)
+ABCD_Data_baseline <- ABCD_Data %>% filter(eventname=="baseline_year_1_arm_1")
+nrow(ABCD_Data_baseline)
+
+ABCD_Data_baseline <- ABCD_Data_baseline %>% filter(gender!="") #remove 6 participants with no gender
+nrow(ABCD_Data_baseline)
+```
+
+```{r}
+#Baseline comparison between genders
+library(compareGroups)
+
+reduced.ABCD.table<- ABCD_Data_baseline %>% 
+  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
+
+table <- compareGroups(gender ~ ., data = reduced.ABCD.table,na.omit(TRUE))
+pvals <- getResults(table, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table <- createTable(table)
+export_table
+
+export2word(export_table, file = (here("output","fullsample_means_gender.doc")))  
+```
+
+```{r}
+#By block
+library(randomizr)
+set.seed(343)
+
+ABCD_Data_baseline$Z <- block_ra(blocks = c(ABCD_Data_baseline$gender))
+table(ABCD_Data_baseline$Z, ABCD_Data_baseline$gender)
+
+reduced.ABCD.table<- ABCD_Data_baseline %>% 
+  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean,Z)
+
+table <- compareGroups(Z ~ ., data = reduced.ABCD.table,na.omit(TRUE))
+pvals <- getResults(table, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table <- createTable(table)
+export_table
+```
+
+
+
+
+
+```{r}
+ABCD_Data_exploratory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==0),]
+ABCD_Data_confirmatory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==1),]
+```
+
+```{r}
+reduced.ABCDexp.table<- ABCD_Data_exploratory %>% 
+  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
+
+table <- compareGroups(gender ~ ., data =reduced.ABCDexp.table,na.omit(TRUE))
+pvals <- getResults(table, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table <- createTable(table)
+export_table
+
+#export2word(export_table, file = (here("output","fullsample_means_gender.doc")))  
+```
+
+
+
+```{r}
+reduced.ABCDexp.table<- ABCD_Data_exploratory %>% 
+  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
+
+table <- compareGroups(gender ~ ., data =reduced.ABCDexp.table,na.omit(TRUE))
+pvals <- getResults(table, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table <- createTable(table)
+export_table
+
+#export2word(export_table, file = (here("output","fullsample_means_gender.doc")))  
+```
+
+```{r}
+reduced.ABCDconf.table<- ABCD_Data_confirmatory %>% 
+  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
+
+table <- compareGroups(gender ~ ., data =reduced.ABCDconf.table,na.omit(TRUE))
+pvals <- getResults(table, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table <- createTable(table)
+export_table
+
+#export2word(export_table, file = (here("output","fullsample_means_gender.doc")))  
+```
+
+```{r}
+#By cluster
+clusters <- with(ABCD_Data, paste(gender,mri_info_manufacturer,sep = "_"))
+ABCD_Data$clusters <- clusters
+
+Z_clust <- cluster_ra(clusters = clusters)
+
+table(Z_clust,clusters)
+```
