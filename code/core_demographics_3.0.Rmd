@@ -63,20 +63,6 @@ nda20$subjectid = nda20$src_subject_id
 nda20$age = nda20$interview_age
 
 
-exists("nda20$gender")
-#COMMENTING OUT THIS PART SINCE THE VARIABLE IS NOW SEX - there is no gender variable - however the variable "sex" was duplicated in the merging process as it was in each of the separate data frames.  Should we remove the duplicates?
-### Sex
-# On NDA the "gender" variable is listed as containing "Sex at birth". Lets create a copy called "sex" and reset empty to NA.
-
-#nda20$sex = nda20$gender
-#nda20$sex[which(nda20$sex=="")]=NA
-
-nda20$sex = nda20$sex.x.x.x
-nda20$sex=factor( nda20$sex, levels= c("F","M") )
-
-
-
-
 
 ### Household income
 
