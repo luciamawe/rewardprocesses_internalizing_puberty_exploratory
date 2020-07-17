@@ -92,25 +92,25 @@ pdem02 = pdem02[-1,]
 # Drop columns introduced by NDA, and duplicated columns across data frames. Keep the Longitudinal Tracking data (lt01) as the anchor (Do not remove the columns from lt01.)
 
 
-bisbas01 = bisbas01[,!(names(bisbas01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+bisbas01 = bisbas01[,!(names(bisbas01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-cbcls01 = cbcls01[,!(names(cbcls01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+cbcls01 = cbcls01[,!(names(cbcls01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-hsss01 = hsss01[,!(names(hsss01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+hsss01 = hsss01[,!(names(hsss01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-lpds01 = lpds01[,!(names(lpds01) %in% c("collection_id", "collection_title", "subjectkey","interview_age","interview_date","gender"))]
+lpds01 = lpds01[,!(names(lpds01) %in% c("collection_id", "collection_title", "subjectkey","interview_age","interview_date","sex"))]
 
-mid02 = mid02[,!(names(mid02) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+mid02 = mid02[,!(names(mid02) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-ppdms01 = ppdms01[,!(names(ppdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+ppdms01 = ppdms01[,!(names(ppdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-ypdms01 = ypdms01[,!(names(ypdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+ypdms01 = ypdms01[,!(names(ypdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-fhxp102 = fhxp102[,!(names(fhxp102) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+fhxp102 = fhxp102[,!(names(fhxp102) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-midaparc03 = midaparc03[,!(names(midaparc03) %in% c("collection_id", "collection_title", "subjectkey","interview_age","interview_date","gender"))]
+midaparc03 = midaparc03[,!(names(midaparc03) %in% c("collection_id", "collection_title", "subjectkey","interview_age","interview_date","sex"))]
 
-midaparcp203 = midaparcp203[,!(names(midaparcp203) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","gender"))]
+midaparcp203 = midaparcp203[,!(names(midaparcp203) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
 pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "subjectkey"))]
 
