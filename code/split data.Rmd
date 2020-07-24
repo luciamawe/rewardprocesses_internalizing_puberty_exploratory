@@ -50,24 +50,26 @@ invisible(lapply(packages, library, character.only = TRUE))
 ## This script assumes that data has already been names (with Natalie's code) and split into two halves
 ## This script is based on the variable names on VariableDefinitions.csv
 
-data_dir = (dirname(dirname(here()))) #figure out how to navigate to data source
+data_dir = ((dirname(here()))) #figure out how to navigate to data source
 
-phase_folder = "all_baseline"  #select the appropiate folder
-phase_folder = "exploratory"  #select the appropiate folder
-phase_folder = "confirmatory"  #select the appropiate folder
+#phase_folder = "all_baseline"  #select the appropiate folder
+#phase_folder = "exploratory"  #select the appropiate folder
+#phase_folder = "confirmatory"  #select the appropiate folder
 
-data_folder <- file.path(data_dir,"Phases",phase_folder,"data")  
+data_folder <- file.path(data_dir,"ABCD","derivatives")  
 
-file_name <- "ABCD_allpartipants_baseline.csv" #specify file name here 
+file_name <- "nda20.csv" #specify file name here 
 
 ABCD_Data <- read.csv(file.path(data_folder,file_name))
 as_tibble(ABCD_Data)
+
+levels(ABCD_Data$sex.x)
+colnames(ABCD_Data)
 ```
 
 ```{r}
-
-setwd("C:/Users/lucia/Dropbox/Projects_Postdoc/ABCD puberty reward processing mental health/data/raw")
-ABCD_Data <- read.table("C:/Users/lucia/Dropbox/Projects_Postdoc/ABCD puberty reward processing mental health/data/raw/ABCD_puberty_reward_mentalhealth_release21_withfix.csv", header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
+#setwd("C:/Users/lucia/Dropbox/Projects_Postdoc/ABCD puberty reward processing mental health/data/raw")
+#ABCD_Data <- read.table("C:/Users/lucia/Dropbox/Projects_Postdoc/ABCD puberty reward processing mental health/data/raw/ABCD_puberty_reward_mentalhealth_release21_withfix.csv", header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
 ```
 
 ```{r}
@@ -76,7 +78,7 @@ library(janitor)
 ABCD_Data_baseline <- ABCD_Data %>% filter(eventname=="baseline_year_1_arm_1")
 nrow(ABCD_Data_baseline)
 
-ABCD_Data_baseline <- ABCD_Data_baseline %>% filter(gender!="") #remove 6 participants with no gender
+ABCD_Data_baseline <- ABCD_Data_baseline %>% filter(sex.x!="") #remove 6 participants with no gender
 nrow(ABCD_Data_baseline)
 ```
 
@@ -85,9 +87,9 @@ nrow(ABCD_Data_baseline)
 library(compareGroups)
 
 reduced.ABCD.table<- ABCD_Data_baseline %>% 
-  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
+  select(interview_age.x,sex.x,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
 
-table <- compareGroups(gender ~ ., data = reduced.ABCD.table,na.omit(TRUE))
+table <- compareGroups(sex.x ~ ., data = reduced.ABCD.table,na.omit(TRUE))
 pvals <- getResults(table, "p.overall")
 p.adjust(pvals, method = "BH")
 export_table <- createTable(table)
@@ -99,13 +101,13 @@ export2word(export_table, file = (here("output","fullsample_means_gender.doc")))
 ```{r}
 #By block
 library(randomizr)
-set.seed(343)
+set.seed(10956)
 
-ABCD_Data_baseline$Z <- block_ra(blocks = c(ABCD_Data_baseline$gender))
-table(ABCD_Data_baseline$Z, ABCD_Data_baseline$gender)
+ABCD_Data_baseline$Z <- block_ra(blocks = c(ABCD_Data_baseline$sex.x))
+table(ABCD_Data_baseline$Z, ABCD_Data_baseline$sex.x)
 
 reduced.ABCD.table<- ABCD_Data_baseline %>% 
-  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean,Z)
+  select(interview_age.x,sex.x,cbcl_scr_syn_internal_t,hormone_scr_ert_mean,Z)
 
 table <- compareGroups(Z ~ ., data = reduced.ABCD.table,na.omit(TRUE))
 pvals <- getResults(table, "p.overall")
@@ -114,10 +116,6 @@ export_table <- createTable(table)
 export_table
 ```
 
-
-
-
-
 ```{r}
 ABCD_Data_exploratory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==0),]
 ABCD_Data_confirmatory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==1),]
@@ -125,9 +123,9 @@ ABCD_Data_confirmatory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==1),]
 
 ```{r}
 reduced.ABCDexp.table<- ABCD_Data_exploratory %>% 
-  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
+  select(interview_age.x,sex.x,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
 
-table <- compareGroups(gender ~ ., data =reduced.ABCDexp.table,na.omit(TRUE))
+table <- compareGroups(sex.x ~ ., data =reduced.ABCDexp.table,na.omit(TRUE))
 pvals <- getResults(table, "p.overall")
 p.adjust(pvals, method = "BH")
 export_table <- createTable(table)

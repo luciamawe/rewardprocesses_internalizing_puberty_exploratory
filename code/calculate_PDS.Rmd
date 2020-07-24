@@ -1,0 +1,131 @@
+---
+title: "PDS and saliva measures "
+output: html_notebook
+---
+
+```{r}
+#Libraries
+
+require("tidyverse")
+library(lme4)
+library(lmerTest)
+library(car)
+require(lsmeans)
+require(lattice)
+library(ggplot2)
+require(ggpubr)
+```
+
+#Descriptives for pubertal developmental scale
+
+```{r}
+#Load data
+#PDS = read.table( "D:\\Lucia\\ABCD\\pubertymeasures\\abcd_ppdms01.txt","\t",na.strings=c("", 999,"NA"),header=T)  #pad empty cells with NAs
+PDS = read.table( "C:\\Users\\Lucia\\Dropbox\\ABCD study\\ABCD shared LNKW\\data\\abcd_ppdms01.txt","\t",na.strings=c("", 999,"NA"),header=T)  #pad empty cells with NAs
+PDS=as_tibble(PDS)
+PDS$interview_age=as.numeric(levels(PDS$interview_age))[PDS$interview_age]
+head(PDS$interview_age)
+```
+
+```{r}
+#Calculate PDS average score for women and men separately.
+PDS_f <- PDS %>%
+  subset(gender=="F") %>%
+  rowwise() %>%
+  mutate(PDS_score_f=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))%>%
+  mutate(PDS_sum_f=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))
+summary(PDS_f$PDS_sum_f,na.rm=T)
+```
+
+```{r}
+#Calculate PDS average score for women and men separately.
+PDS_m <- PDS %>%
+  subset(gender=="M") %>%
+  rowwise() %>%
+  mutate(PDS_score_m=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)))%>%
+  mutate(PDS_sum_m=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)))
+summary(PDS_m$PDS_sum_m,na.rm=T)
+```
+
+```{r}
+plot(PDS_m$interview_age,PDS_m$PDS_score_m)
+ggscatter(PDS_m, x = "interview_age", y = "PDS_score_m", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Age (months)", ylab = "PDS score")
+```
+
+```{r}
+hist(PDS_m$PDS_score_m)
+```
+
+```{r}
+hist(PDS_f$PDS_score_f)
+```
+
+```{r}
+hist(PDS_f$PDS_sum_f)
+```
+
+```{r}
+boxplot(PDS_f$PDS_score_f,PDS_m$PDS_score_m,main="PDS score",xlab="Sex",ylab="PDS (mean)",names=c("Female","Male"))
+```
+
+```{r}
+boxplot(PDS_f$PDS_score_f,PDS_m$PDS_score_m,main="PDS score",xlab="Sex",ylab="PDS (mean)",names=c("Female","Male"))
+boxplot(PDS_f$interview_age,PDS_m$interview_age,main="Age",xlab="Sex",ylab="Age (months)",names=c("Female","Male"))
+```
+
+```{r}
+# Women descriptives
+
+menarque_age <-PDS %>%
+  filter(gender=="F") %>%
+  count(pds_f6_p)
+menarque_age
+```
+```{r}
+#Load data
+hormones = read.table( "C:\\Users\\Lucia\\Dropbox\\ABCD study\\ABCD shared LNKW\\data\\saliva\\abcd_hsss01_LMW.txt","\t",na.strings=c("", 999,"NA"),header=T)  #pad empty cells with NAs
+hormones =as_tibble(hormones)
+head(hormones$interview_age)
+hormones
+```
+
+```{r}
+hormones$hormone_scr_dhea_mean<-as.numeric(as.character(hormones$hormone_scr_dhea_mean))
+hormones_short <- select(hormones,subjectkey,hormone_scr_dhea_mean,hormone_scr_hse_mean,hormone_scr_ert_mean)
+```
+
+
+```{r}
+Hor_PDS_m<- merge(hormones_short,PDS_m, by="subjectkey")
+```
+
+```{r}
+plot(Hor_PDS_m$hormone_scr_dhea_mean~Hor_PDS_m$PDS_sum_m)
+```
+```{r}
+plot(Hor_PDS_m$PDS_score_m~Hor_PDS_m$hormone_scr_dhea_mean)
+```
+
+```{r}
+plot(Hor_PDS_m$PDS_score_m~Hor_PDS_m$hormone_scr_ert_mean)
+```
+
+```{r}
+Hor_PDS_f<- merge(hormones_short,PDS_f, by="subjectkey")
+```
+
+```{r}
+plot(Hor_PDS_f$PDS_score_f~Hor_PDS_f$hormone_scr_ert_mean,xlim=c(0,200),ylim=c(1.0,3.5))
+```
+
+```{r}
+plot(Hor_PDS_f$PDS_score_f~Hor_PDS_f$hormone_scr_hse_mean,ylim=c(1.0,3.5))
+```
+```
+
+```{r}
+plot(Hor_PDS_f$PDS_score_f~Hor_PDS_f$hormone_scr_dhea_mean,xlim=c(0,350),ylim=c(1.0,3.5))
+```
