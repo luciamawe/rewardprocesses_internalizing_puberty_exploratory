@@ -21,16 +21,27 @@ require(ggpubr)
 ```{r}
 #Load data
 #PDS = read.table( "D:\\Lucia\\ABCD\\pubertymeasures\\abcd_ppdms01.txt","\t",na.strings=c("", 999,"NA"),header=T)  #pad empty cells with NAs
-PDS = read.table( "C:\\Users\\Lucia\\Dropbox\\ABCD study\\ABCD shared LNKW\\data\\abcd_ppdms01.txt","\t",na.strings=c("", 999,"NA"),header=T)  #pad empty cells with NAs
-PDS=as_tibble(PDS)
-PDS$interview_age=as.numeric(levels(PDS$interview_age))[PDS$interview_age]
-head(PDS$interview_age)
+
+data_dir = ((dirname(here()))) #figure out how to navigate to data source
+
+#phase_folder = "all_baseline"  #select the appropiate folder
+#phase_folder = "exploratory"  #select the appropiate folder
+#phase_folder = "confirmatory"  #select the appropiate folder
+
+data_folder <- file.path(data_dir,"ABCD","derivatives")  
+
+file_name <- "nda20.csv" #specify file name here 
+
+ABCD_Data <- read.csv(file.path(data_folder,file_name))
+as_tibble(ABCD_Data)
+
+ABCD_Data$interview_age.x=as.numeric(levels(ABCD_Data$interview_age.x))[ABCD_Data$interview_age.x]
 ```
 
 ```{r}
 #Calculate PDS average score for women and men separately.
-PDS_f <- PDS %>%
-  subset(gender=="F") %>%
+PDS_f <- ABCD_Data %>%
+  subset(sex.x=="F") %>%
   rowwise() %>%
   mutate(PDS_score_f=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))%>%
   mutate(PDS_sum_f=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))
