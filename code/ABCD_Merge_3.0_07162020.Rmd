@@ -124,7 +124,7 @@ midaparc03 = midaparc03[,!(names(midaparc03) %in% c("collection_id", "collection
 
 midaparcp203 = midaparcp203[,!(names(midaparcp203) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "subjectkey"))]
+pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "subjectkey", "sex", "interview_age"))]
 
 ```
 
