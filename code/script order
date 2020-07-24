@@ -1,0 +1,16 @@
+Order in which scripts should be run
+
+1. ABCD_Merge_3.0
+2. core_demographics_3.0
+3. renaming 
+4. calculate_composites (PDS, BISBAS)
+5. data cleaning and descriptives
+5. split data
+
+Exploratory sample
+
+
+
+Confirmatory sample 
+
+
