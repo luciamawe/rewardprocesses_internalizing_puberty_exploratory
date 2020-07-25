@@ -32,7 +32,7 @@ data_folder <- file.path(data_dir,"ABCD","derivatives")
 
 file_name <- "nda20.csv" #specify file name here 
 
-ABCD_Data <- read.csv(file.path(data_folder,file_name))
+ABCD_Data <- read.csv(file.path(data_folder,file_name),header =T, na.strings=c("","999","NA"))
 as_tibble(ABCD_Data)
 
 ABCD_Data$interview_age.x=as.numeric(levels(ABCD_Data$interview_age.x))[ABCD_Data$interview_age.x]
@@ -40,6 +40,9 @@ ABCD_Data$interview_age.x=as.numeric(levels(ABCD_Data$interview_age.x))[ABCD_Dat
 
 ```{r}
 #Calculate PDS average score for women and men separately.
+
+#Be sure that 999 as treated as NAs
+
 PDS_f <- ABCD_Data %>%
   subset(sex.x=="F") %>%
   rowwise() %>%
