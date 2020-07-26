@@ -5,11 +5,11 @@
 library(plyr)
 # Replace with your directories here.
 variabledirectory <- "/Users/nataliesaragosa-harris/Desktop/ABCD"
-datadirectory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
+outputdirectory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
 
 setwd(variabledirectory)
 variablenames <- read.csv("VariableDefinitions.csv")
-setwd(datadirectory)
+setwd(outputdirectory)
 datafile <- readRDS('nda20.rds')
 
 variables <- as.data.frame(variablenames$Variable.Name)
@@ -37,7 +37,7 @@ missingvariables <- merge(missingvariables,aliases, by = "Variable.Name")
 
 no_aliases <- subset(missingvariables, Aliases== "")
 print("No alias provided for the following variables: ")
-print(no_aliases$Variable.Name)
+print(no_aliases$Variable.Name) # looks like imgincl_mid_include is not in the dataset. it might not exist for abcd 3.0 dataset.
 
 
 # Keep only the ones that have an alias.
@@ -51,7 +51,11 @@ print(aliases_in_data)
 aliases_not_in_data <- setdiff(missingvariables$Aliases,colnames(datafile))
 print("Neither the original variable name nor its alias exist in the dataframe for the following variables: ")
 print(aliases_not_in_data)
-
+# These variables need to be calculated so they are not in the dataframe currently.
+# bis_y_ss_basm_rr.
+# bis_y_ss_basm_rr_nm.
+# pubertdev_ss_female_category_p.
+# pubertdev_ss_male_category_p.
 
 # Go through the variables that do have aliases in the data.
 for (i in 1:length(aliases_in_data)){
@@ -77,26 +81,16 @@ print(setdiff(variables,colnames(datafile)))
 # bisbas_ss_basm_rr.
 # bisbas_ss_basm_rr_nm.
 
-# The hormone ones are not included.
-hormone_sal_wake_y
-hormone_sal_caff_y
-imgincl_mid_include
-
 # Save the dataframe with the new variable names.
-setwd(datadirectory)
-# save RDS file.
-# save csv.
+setwd(outputdirectory)
 
-############## Delete this section later. ##############
+# As a last step we can save the data in R's native file format.
 
-# The interview_age variable is duplicated.
-(setdiff(datafile$interview_age.x,datafile$interview_age.y))
-differences <- subset(datafile, interview_age.x != interview_age.y)
-differences <- datafile[,c("src_subject_id","interview_age.x","interview_age.y")]
-differences <- subset(differences, !is.na(interview_age.y))
-(setdiff(differences$interview_age.x,differences$interview_age.y)) # Now there are no differences.
+saveRDS(datafile, paste(output_directory,"nda20.rds",sep="/"))
 
-# The sex variable is duplicated.
-(setdiff(datafile$sex.x,datafile$sex.y)) # No differences so they are the same.
+names.nda20=colnames(datafile)
 
-########################################################
+save(file="names.nda20.RData",names.nda20)
+
+# Save as .csv file as well.
+write.csv(datafile, paste(output_directory,"nda20.csv",sep="/"), row.names = FALSE)

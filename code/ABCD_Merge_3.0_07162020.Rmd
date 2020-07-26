@@ -173,7 +173,7 @@ nda20=nda20[,-which(grepl("dataset_id",colnames(nda20)))]
 #NOTE: Per the original merge script: The nda data frame should contain 27,368 rows (baseline: 11,875; 6 month: 8,623; 1 year: 4,951; and 18 month: 1,919).
 
 
-#As a last step we can save the data in R's native file format
+# As a last step we can save the data in R's native file format.
 
 saveRDS(nda20, paste(output_directory,"nda20.rds",sep="/"))
 
