@@ -75,6 +75,8 @@ for (i in 1:length(csv_filelist)){
 # midaparcp203 <- read.csv(paste(data_directory,"midaparcp203.csv",sep="/"))
 # 
 # pdem02 <- read_csv(paste(data_directory,"pdem02.csv",sep="/"))
+
+# sph01 <- read.csv(paste(data_directory,"sph01.csv",sep="/"))
 ```
 
 
@@ -96,13 +98,13 @@ fhxp102 = fhxp102[-1,]
 midaparc03 = midaparc03[-1,]
 midaparcp203 = midaparcp203[-1,]
 pdem02 = pdem02[-1,]
+sph01 = sph01[-1,]
 
 ```
 
 
 ```{r}
 # Drop columns introduced by NDA, and duplicated columns across data frames. Keep the Longitudinal Tracking data (lt01) as the anchor (Do not remove the columns from lt01.)
-
 
 bisbas01 = bisbas01[,!(names(bisbas01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
@@ -126,6 +128,8 @@ midaparcp203 = midaparcp203[,!(names(midaparcp203) %in% c("collection_id", "coll
 
 pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "subjectkey", "sex", "interview_age"))]
 
+sph01 = sph01[,!(names(sph01) %in% c("collection_id", "collection_title", "subjectkey", "sex", "interview_age", "interview_date"))]
+
 ```
 
 
@@ -133,8 +137,12 @@ pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "su
 ```{r}
 #Merge the individual tables into a single spreadsheet. The following loop performs repeated merging operations between pairs of spreadsheets.
 
+# For whatever reason, "eventname" column is called "visit" in the sph01 text file so will change that here.
+sph01 <- rename(sph01, c("visit"="eventname"))
 
-t2 = list(bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02)
+
+t2 = list(bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02, sph01)
+
 
 
 while (length(t2) > 1 ) {
@@ -158,9 +166,8 @@ nda20=nda20[,-which(grepl("dataset_id",colnames(nda20)))]
 
 
 
-# Per the original merge script: we can sort the levels of eventname by timepoint.
-
-nda20$eventname = factor(nda20$eventname, levels(nda20$eventname)[c(2,4,1,3)])
+# This is from the original merge script but seems to be causing issues.
+# nda20$eventname = factor(nda20$eventname, levels(nda20$eventname)[c(2,4,1,3)])
 
 
 #NOTE: Per the original merge script: The nda data frame should contain 27,368 rows (baseline: 11,875; 6 month: 8,623; 1 year: 4,951; and 18 month: 1,919).
