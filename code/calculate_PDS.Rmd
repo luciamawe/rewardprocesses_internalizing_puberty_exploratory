@@ -51,15 +51,7 @@ nda20 <- nda20 %>%
   PDS_sum_f = sum(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)),
   ifelse((sex=="M"), PDS_score_m=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)) & PDS_sum_m=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)), "NA")))
   
-  
 
-
-
-nda20 <- nda20 %>%
-  filter(sex=="F") %>%
-  rowwise() %>%
-  mutate(PDS_score_f=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))%>%
-  mutate(PDS_sum_f=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))
 
 PDS_f <- nda20 %>%
   subset(sex=="F") %>%
@@ -72,14 +64,6 @@ summary(PDS_f$PDS_sum_f,na.rm=T)
 
 ```{r}
 #Calculate PDS average score for women and men separately.
-
-
-
-nda20 <- nda20 %>% 
-  subset(sex=="M") %>%
-  rowwise() %>%
-  mutate(PDS_score_m=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)))%>%
-  mutate(PDS_sum_m=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)))
 
 
 PDS_m <- nda20 %>%
