@@ -3,6 +3,7 @@ title: "PDS and saliva measures "
 output: html_notebook
 ---
 
+#SETUP
 ```{r}
 #Libraries
 
@@ -14,53 +15,78 @@ require(lsmeans)
 require(lattice)
 library(ggplot2)
 require(ggpubr)
+
+
+output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
 ```
 
-#Descriptives for pubertal developmental scale
 
 ```{r}
 #Load data
-#PDS = read.table( "D:\\Lucia\\ABCD\\pubertymeasures\\abcd_ppdms01.txt","\t",na.strings=c("", 999,"NA"),header=T)  #pad empty cells with NAs
 
-data_dir = ((dirname(here()))) #figure out how to navigate to data source
+output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
 
-#phase_folder = "all_baseline"  #select the appropiate folder
-#phase_folder = "exploratory"  #select the appropiate folder
-#phase_folder = "confirmatory"  #select the appropiate folder
+nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
 
-data_folder <- file.path(data_dir,"ABCD","derivatives")  
 
-file_name <- "nda20.csv" #specify file name here 
-
-ABCD_Data <- read.csv(file.path(data_folder,file_name))
-as_tibble(ABCD_Data)
-
-ABCD_Data$interview_age.x=as.numeric(levels(ABCD_Data$interview_age.x))[ABCD_Data$interview_age.x]
+#ABCD_Data$interview_age.x=as.numeric(levels(ABCD_Data$interview_age.x))[ABCD_Data$interview_age.x]
 ```
 
+#PDS CALCULATION
 ```{r}
 #Calculate PDS average score for women and men separately.
-PDS_f <- ABCD_Data %>%
-  subset(sex.x=="F") %>%
+
+nda20$pds_1_p = as.numeric(nda20$pds_1_p)
+nda20$pds_2_p = as.numeric(nda20$pds_2_p)
+nda20$pds_3_p = as.numeric(nda20$pds_3_p)
+nda20$pds_f4_p = as.numeric(nda20$pds_f4_p)
+nda20$pds_f5b_p = as.numeric(nda20$pds_f5b_p)
+
+
+nda20 <- nda20 %>%
+  subset(sex=="F") %>%
   rowwise() %>%
   mutate(PDS_score_f=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))%>%
   mutate(PDS_sum_f=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))
+
+PDS_f <- nda20 %>%
+  subset(sex=="F") %>%
+  rowwise() %>%
+  mutate(PDS_score_f=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))%>%
+  mutate(PDS_sum_f=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))
+
 summary(PDS_f$PDS_sum_f,na.rm=T)
 ```
 
 ```{r}
 #Calculate PDS average score for women and men separately.
-PDS_m <- PDS %>%
-  subset(gender=="M") %>%
+
+nda20$pds_m4_p = as.numeric(nda20$pds_m4_p)
+nda20$pds_m5_p = as.numeric(nda20$pds_m5_p)
+
+nda20 <- nda20 %>% 
+  subset(sex=="M") %>%
   rowwise() %>%
   mutate(PDS_score_m=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)))%>%
   mutate(PDS_sum_m=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)))
+
+
+PDS_m <- nda20 %>%
+  subset(sex=="M") %>%
+  rowwise() %>%
+  mutate(PDS_score_m=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)))%>%
+  mutate(PDS_sum_m=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)))
+
+
+
 summary(PDS_m$PDS_sum_m,na.rm=T)
 ```
 
+
+#DATA VISUALIZATION
 ```{r}
-plot(PDS_m$interview_age,PDS_m$PDS_score_m)
-ggscatter(PDS_m, x = "interview_age", y = "PDS_score_m", 
+plot(PDS_m$age,PDS_m$PDS_score_m)
+ggscatter(PDS_m, x = "age", y = "PDS_score_m", 
           add = "reg.line", conf.int = TRUE, 
           cor.coef = TRUE, cor.method = "pearson",
           xlab = "Age (months)", ylab = "PDS score")
@@ -84,59 +110,80 @@ boxplot(PDS_f$PDS_score_f,PDS_m$PDS_score_m,main="PDS score",xlab="Sex",ylab="PD
 
 ```{r}
 boxplot(PDS_f$PDS_score_f,PDS_m$PDS_score_m,main="PDS score",xlab="Sex",ylab="PDS (mean)",names=c("Female","Male"))
-boxplot(PDS_f$interview_age,PDS_m$interview_age,main="Age",xlab="Sex",ylab="Age (months)",names=c("Female","Male"))
+boxplot(PDS_f$age,PDS_m$age,main="Age",xlab="Sex",ylab="Age (months)",names=c("Female","Male"))
 ```
 
+#DESCRIPTIVES
 ```{r}
 # Women descriptives
 
-menarque_age <-PDS %>%
-  filter(gender=="F") %>%
+nda20$pds_f6_p = as.numeric(nda20$pds_f6_p)
+
+menarque_age <-nda20 %>%
+  filter(sex=="F") %>%
   count(pds_f6_p)
 menarque_age
 ```
 ```{r}
 #Load data
-hormones = read.table( "C:\\Users\\Lucia\\Dropbox\\ABCD study\\ABCD shared LNKW\\data\\saliva\\abcd_hsss01_LMW.txt","\t",na.strings=c("", 999,"NA"),header=T)  #pad empty cells with NAs
-hormones =as_tibble(hormones)
-head(hormones$interview_age)
-hormones
+#hormones = read.table( "C:\\Users\\Lucia\\Dropbox\\ABCD study\\ABCD shared LNKW\\data\\saliva\\abcd_hsss01_LMW.txt","\t",na.strings=c("", 999,"NA"),header=T)  #pad empty cells with NAs
+#hormones =as_tibble(hormones)
+#head(hormones$interview_age)
+#hormones
 ```
 
 ```{r}
-hormones$hormone_scr_dhea_mean<-as.numeric(as.character(hormones$hormone_scr_dhea_mean))
-hormones_short <- select(hormones,subjectkey,hormone_scr_dhea_mean,hormone_scr_hse_mean,hormone_scr_ert_mean)
+nda20$hormone_scr_dhea_mean <- as.numeric(as.character(nda20$hormone_scr_dhea_mean))
+
+hormones_short <- select(nda20,src_subject_id,hormone_scr_dhea_mean,hormone_scr_hse_mean,hormone_scr_ert_mean)
 ```
 
 
 ```{r}
-Hor_PDS_m<- merge(hormones_short,PDS_m, by="subjectkey")
+Hor_PDS_m<- merge(hormones_short,PDS_m, by="src_subject_id")
 ```
 
+
 ```{r}
-plot(Hor_PDS_m$hormone_scr_dhea_mean~Hor_PDS_m$PDS_sum_m)
+plot(hormones_short$hormone_scr_dhea_mean~PDS_m$PDS_sum_m)
 ```
+
+
 ```{r}
 plot(Hor_PDS_m$PDS_score_m~Hor_PDS_m$hormone_scr_dhea_mean)
 ```
+
 
 ```{r}
 plot(Hor_PDS_m$PDS_score_m~Hor_PDS_m$hormone_scr_ert_mean)
 ```
 
+
 ```{r}
 Hor_PDS_f<- merge(hormones_short,PDS_f, by="subjectkey")
 ```
+
 
 ```{r}
 plot(Hor_PDS_f$PDS_score_f~Hor_PDS_f$hormone_scr_ert_mean,xlim=c(0,200),ylim=c(1.0,3.5))
 ```
 
+
 ```{r}
 plot(Hor_PDS_f$PDS_score_f~Hor_PDS_f$hormone_scr_hse_mean,ylim=c(1.0,3.5))
 ```
-```
+
 
 ```{r}
 plot(Hor_PDS_f$PDS_score_f~Hor_PDS_f$hormone_scr_dhea_mean,xlim=c(0,350),ylim=c(1.0,3.5))
+```
+
+
+
+#SAVE DATA
+```{r}
+saveRDS(nda20, paste(output_directory,"nda20.rds",sep="/"))
+
+write.csv(nda20, paste(output_directory,"nda20.csv",sep="/"), row.names = FALSE)
+
 ```
