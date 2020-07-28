@@ -18,13 +18,8 @@ require(ggpubr)
 
 
 output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
-```
 
-
-```{r}
 #Load data
-
-output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
 
 nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
 
@@ -34,6 +29,8 @@ nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
 
 #PDS CALCULATION
 ```{r}
+#NOTE: PDS Composite variables are added to the nda20 data set.
+
 #Calculate PDS average score for women and men separately.
 
 nda20$pds_1_p = as.numeric(nda20$pds_1_p)
@@ -43,8 +40,23 @@ nda20$pds_f4_p = as.numeric(nda20$pds_f4_p)
 nda20$pds_f5b_p = as.numeric(nda20$pds_f5b_p)
 
 
+nda20$pds_m4_p = as.numeric(nda20$pds_m4_p)
+nda20$pds_m5_p = as.numeric(nda20$pds_m5_p)
+
+
+
 nda20 <- nda20 %>%
-  subset(sex=="F") %>%
+  mutate(
+    ifelse((sex=="F"), PDS_score_f = mean(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)) &
+  PDS_sum_f = sum(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)),
+  ifelse((sex=="M"), PDS_score_m=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)) & PDS_sum_m=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_m4_p,pds_m5_p)), "NA")))
+  
+  
+
+
+
+nda20 <- nda20 %>%
+  filter(sex=="F") %>%
   rowwise() %>%
   mutate(PDS_score_f=mean(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))%>%
   mutate(PDS_sum_f=sum(c(pds_1_p,pds_2_p,pds_3_p,pds_f4_p,pds_f5b_p)))
@@ -61,8 +73,7 @@ summary(PDS_f$PDS_sum_f,na.rm=T)
 ```{r}
 #Calculate PDS average score for women and men separately.
 
-nda20$pds_m4_p = as.numeric(nda20$pds_m4_p)
-nda20$pds_m5_p = as.numeric(nda20$pds_m5_p)
+
 
 nda20 <- nda20 %>% 
   subset(sex=="M") %>%
