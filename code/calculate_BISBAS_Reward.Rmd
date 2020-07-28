@@ -39,7 +39,6 @@ nda20$bisbas11_y = as.numeric(nda20$bisbas11_y)
 nda20$bisbas12_y = as.numeric(nda20$bisbas12_y)
 
 nda20 <- nda20 %>%
-  mutate(bisbas_ss_basm_rr = sum(bisbas8_y, bisbas9_y, bisbas11_y, bisbas12_y))
-
+  mutate(bisbas_ss_basm_rr = bisbas8_y + bisbas9_y + bisbas11_y + bisbas12_y)
 
 ```
