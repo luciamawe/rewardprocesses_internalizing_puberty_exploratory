@@ -42,6 +42,7 @@ output_directory <- "C:\\Users\\lucia\\GitHub\\ABCD\\derivatives"   #LMW
 ```{r}
 # Start by reading in the merged data from disk.
 
+#nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
 nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
 
 
