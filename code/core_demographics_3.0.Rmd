@@ -13,7 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #Set your directory with merged data set (nda20) here:
 
-output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
+#output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"   #EM
+
+output_directory <- "C:\\Users\\lucia\\GitHub\\ABCD\\derivatives"   #LMW
+
 ```
 
 ```{r}
@@ -163,7 +166,7 @@ high.educ[which(high.educ == "777")]=NA
 nda20$high.educ = factor( high.educ, levels= 1:5, labels = c("< HS Diploma","HS Diploma/GED","Some College","Bachelor","Post Graduate Degree") )
 
 
-### Marrital status
+### Marital status.
 
 # The demo_prnt_marital_v2 variable has also been renamed in NDA_DEAP_names_2.0.csv to demo_prnt_marital_v2b.
 
@@ -246,7 +249,7 @@ nda20$race.ethnicity.5level[!(nda20$race.eth.8level=="White" | nda20$race.eth.8l
 nda20$race.ethnicity.5level = droplevels(nda20$race.ethnicity.5level)
 
 
-# It is worthwhile to point out here that the above category for hispanic is calculated in ABCD differently from the other race categories. In particular any ethnicity selection of hispanic will map the participant into the hispanic category regardless of the selection of one or more race categories.
+# It is worthwhile to point out here that the above category for Hispanic is calculated in ABCD differently from the other race categories. In particular any ethnicity selection of hispanic will map the participant into the hispanic category regardless of the selection of one or more race categories.
 
 ```
 
