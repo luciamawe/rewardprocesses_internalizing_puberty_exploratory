@@ -75,10 +75,11 @@ colnames(ABCD_Data)
 ```{r}
 #Select only baseline
 library(janitor)
+ABCD_Data<- readRDS(paste(output_directory,"nda20.rds",sep="/"))
 ABCD_Data_baseline <- ABCD_Data %>% filter(eventname=="baseline_year_1_arm_1")
 nrow(ABCD_Data_baseline)
 
-ABCD_Data_baseline <- ABCD_Data_baseline %>% filter(sex.x!="") #remove 6 participants with no gender
+ABCD_Data_baseline <- ABCD_Data_baseline %>% filter(sex!="") #remove 6 participants with no gender
 nrow(ABCD_Data_baseline)
 ```
 
@@ -87,9 +88,9 @@ nrow(ABCD_Data_baseline)
 library(compareGroups)
 
 reduced.ABCD.table<- ABCD_Data_baseline %>% 
-  select(interview_age.x,sex.x,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
+  select(interview_age,sex,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
 
-table <- compareGroups(sex.x ~ ., data = reduced.ABCD.table,na.omit(TRUE))
+table <- compareGroups(sex ~ ., data = reduced.ABCD.table,na.omit(TRUE))
 pvals <- getResults(table, "p.overall")
 p.adjust(pvals, method = "BH")
 export_table <- createTable(table)
@@ -101,19 +102,22 @@ export2word(export_table, file = (here("output","fullsample_means_gender.doc")))
 ```{r}
 #By block
 library(randomizr)
-set.seed(10956)
+set.seed(22773)
 
-ABCD_Data_baseline$Z <- block_ra(blocks = c(ABCD_Data_baseline$sex.x))
-table(ABCD_Data_baseline$Z, ABCD_Data_baseline$sex.x)
+
+ABCD_Data_baseline$Z <- block_ra(blocks = c(ABCD_Data_baseline$sex))
+table(ABCD_Data_baseline$Z, ABCD_Data_baseline$sex)
 
 reduced.ABCD.table<- ABCD_Data_baseline %>% 
-  select(interview_age.x,sex.x,cbcl_scr_syn_internal_t,hormone_scr_ert_mean,Z)
+  select(interview_age,sex,cbcl_scr_syn_internal_t,hormone_scr_ert_mean,PDS_score,bisbas_ss_basm_rr,race.ethnicity.5level,fam_history_q6d_depression,Z)
 
 table <- compareGroups(Z ~ ., data = reduced.ABCD.table,na.omit(TRUE))
 pvals <- getResults(table, "p.overall")
 p.adjust(pvals, method = "BH")
 export_table <- createTable(table)
 export_table
+
+export2word(export_table, file = "split_data_exploratory_confirmatory_comparisons.doc")
 ```
 
 ```{r}
@@ -121,53 +125,13 @@ ABCD_Data_exploratory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==0),]
 ABCD_Data_confirmatory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==1),]
 ```
 
+#SAVE DATA
 ```{r}
-reduced.ABCDexp.table<- ABCD_Data_exploratory %>% 
-  select(interview_age.x,sex.x,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
-
-table <- compareGroups(sex.x ~ ., data =reduced.ABCDexp.table,na.omit(TRUE))
-pvals <- getResults(table, "p.overall")
-p.adjust(pvals, method = "BH")
-export_table <- createTable(table)
-export_table
-
-#export2word(export_table, file = (here("output","fullsample_means_gender.doc")))  
-```
-
-
-
-```{r}
-reduced.ABCDexp.table<- ABCD_Data_exploratory %>% 
-  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
-
-table <- compareGroups(gender ~ ., data =reduced.ABCDexp.table,na.omit(TRUE))
-pvals <- getResults(table, "p.overall")
-p.adjust(pvals, method = "BH")
-export_table <- createTable(table)
-export_table
-
-#export2word(export_table, file = (here("output","fullsample_means_gender.doc")))  
+saveRDS(ABCD_Data_exploratory, paste(output_directory,"nda20_exploratory.rds",sep="/"))
+write.csv(nda20, paste(output_directory,"nda20_exploratory.csv",sep="/"), row.names = FALSE)
 ```
 
 ```{r}
-reduced.ABCDconf.table<- ABCD_Data_confirmatory %>% 
-  select(interview_age,gender,cbcl_scr_syn_internal_t,hormone_scr_ert_mean)
-
-table <- compareGroups(gender ~ ., data =reduced.ABCDconf.table,na.omit(TRUE))
-pvals <- getResults(table, "p.overall")
-p.adjust(pvals, method = "BH")
-export_table <- createTable(table)
-export_table
-
-#export2word(export_table, file = (here("output","fullsample_means_gender.doc")))  
-```
-
-```{r}
-#By cluster
-clusters <- with(ABCD_Data, paste(gender,mri_info_manufacturer,sep = "_"))
-ABCD_Data$clusters <- clusters
-
-Z_clust <- cluster_ra(clusters = clusters)
-
-table(Z_clust,clusters)
+saveRDS(ABCD_Data_confirmatory, paste(output_directory,"nda20_confirmatory.rds",sep="/"))
+write.csv(nda20, paste(output_directory,"nda20_confirmatory.csv",sep="/"), row.names = FALSE)
 ```
