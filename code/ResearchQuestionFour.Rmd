@@ -1,0 +1,212 @@
+---
+title: "Research Question 4: Do neural and self-reported responses to reward moderate the relationship between pubertal development and internalizing symptoms?"
+date: "August 2020"
+output:
+  html_document: default
+  pdf_document: default
+authors: Natalie Saragosa-Harris 
+---
+``` {r loadPackages, echo = FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gamm4)
+library(dplyr)
+library(sjPlot)
+```
+
+```{r setdirectories, echo = FALSE}
+# Change this to your directory and the name of your data file.
+datapath <- "/Users/nataliesaragosa-harris/Desktop/ABCD/data"
+datafile <- "nda20_exploratory.csv"
+setwd(datapath)
+
+# Covariates.
+#      A. Random effects.
+#           1. Family. # Need to figure out what variable this is.
+#           2. Site. (site_id_l)
+#           3. Subject. (src_subject_id)
+#           4. Device. (on DEAP: mri_info_device.serial.number; not sure if we have this in the data).
+# 
+#      B. Fixed effects.
+#           1. Race parent. (race.eth.8level); check that this is the one we want to use. Does not seem to have
+#              Hispanic level?
+#           2. Education parent. (high.educ); check that this is the one we want to use (five levels).
+#           3. Income parent. (household.income)
+#           4. Marital status parent. (married.or.livingtogether)
+#           5. Age. (interview_age)
+#           6. Hispanic. # We need to figure out what variable to use here?
+#           7. Maternal Depression (Yes/No). (fam_history_q6d_depression). This is specific to the mother; do we want
+#              to use the one about the family history in general?
+
+```
+
+```{r GetData, echo = FALSE}
+fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
+
+# Because this is such a big data file, let's only keep the columns that we need for this analysis.
+data <- fulldata[,c("src_subject_id",
+                "interview_age",
+                "eventname",
+                "sex",
+                "site_id_l",
+                "race.eth.8level",
+                "high.educ",
+                "household.income",
+                "married.or.livingtogether",
+                "cbcl_scr_syn_internal_t",
+                "cbcl_scr_syn_anxdep_t",
+                "cbcl_scr_syn_withdep_t",
+                "cbcl_scr_dsm5_depress_t",
+                "PDS_score_f",
+                "PDS_score_m",
+                "PDS_sum_f",
+                "PDS_sum_m",
+                "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
+                "tfmri_ma_acdn_b_scs_aalh",
+                "tfmri_ma_acdn_b_scs_cdrh", # Caudate reward vs. neutral anticipation.
+                "tfmri_ma_acdn_b_scs_cdlh",
+                "tfmri_ma_acdn_b_scs_ptrh", # Putamen reward vs. neutral anticipation.
+                "tfmri_ma_acdn_b_scs_ptlh",
+                "tfmri_ma_arvn_b_cds_mobofrrh", # Medial OFC reward vs. neutral anticipation.
+                "tfmri_ma_arvn_b_cds_mobofrlh",
+                "tfmri_ma_arvn_b_cds_lobofrrh", # Lateral OFC reward vs. neutral anticipation.
+                "tfmri_ma_arvn_b_cds_lobofrlh",
+                "fam_history_q6d_depression"
+                )]
+
+
+data$src_subject_id <- as.factor(data$src_subject_id)
+data$eventname <- as.factor(data$eventname)
+data$sex <- as.factor(data$sex)
+data$site_id_l <- as.factor(data$site_id_l)
+data$race.eth.8level <- as.factor(data$race.eth.8level)
+data$high.educ <- as.factor(data$high.educ)
+data$household.income <- as.factor(data$household.income)
+data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
+               
+
+# Check: We only want to use baseline, right?
+data <- subset(data, eventname =="baseline_year_1_arm_1")
+length(data$src_subject_id) # 11,875.
+
+# Create new variables.
+# We should double check this but this should combine PDS across genders into one column (assumes the person only has a value in either female or male column).
+# Many of the PDS values seem to be mistakes?
+data$PDS_score_both <- dplyr::coalesce(data$PDS_score_f, data$PDS_score_m)
+data$PDS_sum_both <- dplyr::coalesce(data$PDS_sum_f, data$PDS_sum_m)
+# PDS <- data[,c("src_subject_id","interview_age","eventname","sex",
+#         "PDS_score_f","PDS_score_m","PDS_score_both", 
+#         "PDS_sum_f","PDS_sum_m", "PDS_sum_both")]
+
+
+# Average right and left hemispheres.
+# Note: If either is "NA", then the whole thing will be "NA".
+data$accumbens_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_aarh + data$tfmri_ma_acdn_b_scs_aalh)/2
+data$caudate_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_cdrh+data$tfmri_ma_acdn_b_scs_cdlh)/2
+data$putamen_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_ptrh+data$tfmri_ma_acdn_b_scs_ptlh)/2
+data$mOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_mobofrrh+data$tfmri_ma_arvn_b_cds_mobofrlh)/2
+data$lOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_lobofrrh+data$tfmri_ma_arvn_b_cds_lobofrlh)/2
+# mri <- data[,c("src_subject_id","interview_age","eventname","sex",
+#                 "tfmri_ma_acdn_b_scs_aarh",
+#                 "tfmri_ma_acdn_b_scs_aalh",
+#                 "accumbens_rvsn_ant",
+#                 "tfmri_ma_acdn_b_scs_cdrh",
+#                 "tfmri_ma_acdn_b_scs_cdlh",
+#                 "caudate_rvsn_ant",
+#                 "tfmri_ma_acdn_b_scs_ptrh",
+#                 "tfmri_ma_acdn_b_scs_ptlh",
+#                 "putamen_rvsn_ant",
+#                 "tfmri_ma_arvn_b_cds_mobofrrh",
+#                 "tfmri_ma_arvn_b_cds_mobofrlh",
+#                 "mOFC_rvsn_ant",
+#                 "tfmri_ma_arvn_b_cds_lobofrrh",
+#                 "tfmri_ma_arvn_b_cds_lobofrlh",
+#                 "lOFC_rvsn_ant")]
+
+
+# Create a striatum variable by averaging the caudate, putamen, and accumbens.
+cor.test(data$accumbens_rvsn_ant,data$caudate_rvsn_ant) # 0.62.
+cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.581.
+cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.829. 
+data$striatum_rvsn_ant <- (data$accumbens_rvsn_ant + 
+                           data$caudate_rvsn_ant+
+                           data$putamen_rvsn_ant)/2
+
+
+```
+
+# Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
+##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
+```{r Confirmatory4, echo = FALSE}
+
+confirmatory4 <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*accumbens_rvsn_ant, data = data) 
+summary(confirmatory4)
+# Need to add in fixed and random effects.
+
+# Use combined score for accumbens, caudate, and putamen?
+# Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses
+
+striatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*striatum_rvsn_ant, data = data) 
+summary(striatum)
+
+striatum_covariates <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*striatum_rvsn_ant + 
+                            race.eth.8level +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data = data)
+summary(striatum_covariates)
+plot_model(striatum_covariates,type = "int", pred.type = "re", terms = c("RE_Z[-4,4]","Participant_ID"), show.data = FALSE) 
+
+# Note: Most of these fixed effects should be nested within family, correct?
+```
+
+# Exploratory Hypothesis 4A: We will investigate whether striatal responses to reward during reward feedback moderates the effect of pubertal stage on internalizing symptoms. 
+## Model: CBCL internalizing factor ~ PDS*Striatal activity (feedback stage)
+
+```{r Exploratory4A, echo = FALSE}
+
+
+```
+# Exploratory Hypothesis 4B: We will investigate whether OFC activation during reward anticipation and feedback moderates the relationship between pubertal stage and internalizing symptoms.
+## Model A: CBCL internalizing factor ~ PDS*OFC activity (anticipation stage)
+## Model B: CBCL internalizing factor ~ PDS*OFC activity (feedback stage)
+
+```{r Exploratory4B, echo = FALSE}
+
+
+```
+
+# Exploratory Hypothesis 4C: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by self-reported reward responsiveness. We predict that advanced puberty will be associated with higher internalizing in individuals who report lower reward responsiveness on the BIS-BAS questionnaire.
+## Model: CBCL internalizing factor ~ PDS*BIS-BAS
+```{r Exploratory4C, echo = FALSE}
+
+
+```
+
+# Exploratory Hypothesis 4D: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by behavioral reward responsiveness (i.e., MID reaction time). We predict that advanced puberty will be associated with higher internalizing in individuals who demonstrate lower behavioral reward responsiveness.
+
+## Model: CBCL internalizing factor ~ PDS*MID reaction time
+```{r Exploratory4D, echo = FALSE}
+
+
+```
+
+# Exploratory Hypothesis 4E: We will investigate whether testosterone, and its relationship with reward, relates to internalizing symptoms, while controlling for PDS.
+
+## Model A: CBCL internalizing factor ~ Testosterone*Striatal activity (anticipation stage) + PDS
+
+## Model B: CBCL internalizing factor ~ Testosterone*Striatal activity (feedback stage) + PDS
+
+## Model C: CBCL internalizing factor ~ Testosterone*OFC activity (anticipation stage) + PDS
+
+## Model D: CBCL internalizing factor ~ Testosterone*OFC activity (feedback stage) + PDS
+
+## Model E: CBCL internalizing factor ~ Testosterone*BIS-BAS RR
+
+## Model F: CBCL internalizing factor ~ Testosterone*MID Reaction Time
+```{r Exploratory4E, echo = FALSE}
+
+
+```
+
