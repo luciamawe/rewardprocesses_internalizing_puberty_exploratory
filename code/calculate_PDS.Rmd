@@ -16,8 +16,10 @@ library(ggplot2)
 require(ggpubr)
 library(psych)
 output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
+# output_directory <- "Users/nataliesaragosa-harris/Desktop/ABCD/output"
 #Load data
-nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
+#nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
+nda20 <- read.table("nda20.csv", header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
 #ABCD_Data$interview_age.x=as.numeric(levels(ABCD_Data$interview_age.x))[ABCD_Data$interview_age.x]
 ```
 #PDS CALCULATION
@@ -43,15 +45,18 @@ nda20 <- nda20 %>%
   
 nda20 <- nda20 %>%
   mutate(
-    PDS_score = ifelse((sex=="F"), PDS_score_f, PDS_score_m))
+    PDS_score = ifelse((sex=="F"), PDS_score_f, PDS_score_m),
+    PDS_sum = ifelse((sex=="F"), PDS_sum_f, PDS_sum_m))
       
 nda20$PDS_score_f = as.numeric(nda20$PDS_score_f)
 nda20$PDS_sum_f = as.numeric(nda20$PDS_sum_f)
 nda20$PDS_score_m = as.numeric(nda20$PDS_score_m)
 nda20$PDS_sum_m = as.numeric(nda20$PDS_sum_m)
 nda20$PDS_score = as.numeric(nda20$PDS_score)
+nda20$PDS_sum = as.numeric(nda20$PDS_sum)
+
 PDS_subset <- nda20 %>%
-  select(sex, age, PDS_score_f, PDS_sum_f, PDS_score_m, PDS_sum_m, PDS_score)
+  select(sex, age, PDS_score_f, PDS_score_m, PDS_score, PDS_sum_f,  PDS_sum_m, PDS_sum)
 ```
 #SAVE DATA
 ```{r}
@@ -60,6 +65,7 @@ write.csv(nda20, paste(output_directory,"nda20.csv",sep="/"), row.names = FALSE)
 ```
 #DATA VISUALIZATION
 ```{r}
+PDS_subset <- subset(PDS_subset, PDS_score < 5) # I think the highest possible is 4?
 plot(PDS_subset$age,PDS_subset$PDS_score_m)
 ggscatter(PDS_subset, x = "age", y = "PDS_score_m", 
           add = "reg.line", conf.int = TRUE, 

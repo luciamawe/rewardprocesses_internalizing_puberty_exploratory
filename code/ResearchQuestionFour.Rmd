@@ -21,11 +21,10 @@ setwd(datapath)
 
 # Covariates.
 #      A. Random effects.
-#           1. Family. # Need to figure out what variable this is. rel_family_id?
+#           1. Family. (rel_family_id) # Make sure this is nested correctly and looks about right.
 #           2. Site. (site_id_l)
 #           3. Subject. (src_subject_id) # There is only one timepoint so we cannot do a random effect for each participant.
-#           4. Device. # Need to figure out what variable this is. On DEAP: mri_info_device.serial.number; not sure if we have this in the data or if this                is important.
-# 
+#           4. Device. # mri_info_deviceserialnumber
 
           #  Random effects are nested: (1|abcd_site/device/rel_family_id) [unless kids went in different scanners?]
 
@@ -50,8 +49,10 @@ data <- fulldata[,c("src_subject_id",
                 "eventname",
                 "sex",
                 "site_id_l",
+                "mri_info_deviceserialnumber",
+                "rel_family_id",
                 "race.ethnicity.5level",
-                "race.eth.8level",
+                "race.eth.7level",
                 "demo_ethn_v2", # Do you consider the child Hispanic/Latino/Latina?
                 "high.educ",
                 "household.income",
@@ -62,8 +63,10 @@ data <- fulldata[,c("src_subject_id",
                 "cbcl_scr_dsm5_depress_t",
                 "PDS_score_f",
                 "PDS_score_m",
+                "PDS_score",
                 "PDS_sum_f",
                 "PDS_sum_m",
+                "PDS_sum",
                 "fam_history_q6d_depression",
                 "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
                 "tfmri_ma_acdn_b_scs_aalh",
@@ -103,15 +106,12 @@ data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 data <- subset(data, eventname =="baseline_year_1_arm_1")
 length(data$src_subject_id) # 11,875.
 
-# Create new variables.
-# We should double check this but this should combine PDS across genders into one column (assumes the person only has a value in either female or male column).
+
 # Many of the PDS values seem to be mistakes?
-data$PDS_score_both <- dplyr::coalesce(data$PDS_score_f, data$PDS_score_m)
-data$PDS_sum_both <- dplyr::coalesce(data$PDS_sum_f, data$PDS_sum_m)
 # PDS <- data[,c("src_subject_id","interview_age","eventname","sex",
-#         "PDS_score_f","PDS_score_m","PDS_score_both", 
-#         "PDS_sum_f","PDS_sum_m", "PDS_sum_both")]
-# PDS_correct <- subset(PDS, PDS_sum_both < 20)
+#         "PDS_score_f","PDS_score_m","PDS_score", 
+#         "PDS_sum_f","PDS_sum_m", "PDS_sum")]
+# PDS_correct <- subset(PDS, PDS_sum< 20)
 
 
 # Check the PDS scores.
