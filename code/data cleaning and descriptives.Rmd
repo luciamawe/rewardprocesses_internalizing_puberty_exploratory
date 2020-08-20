@@ -185,7 +185,7 @@ min_level <- min(ABCD_Data$ERT_Hormone_Rounded,na.rm = TRUE)
 total_plot <- ggplot(ABCD_Data, aes(x=ERT_Hormone_Rounded)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=0.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=5))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "Testosterone Levels in Sample",x = "Testosterone") + # Set the title of the graph and label the x axis.
+              labs(title = "Testosterone Levels by sex (Exploratory sample)",x = "Testosterone") + # Set the title of the graph and label the x axis.
 facet_grid(. ~ sex)
 total_plot
 ```
@@ -203,7 +203,7 @@ min_level <- min(ABCD_Data$bisbas_ss_basm_rr,na.rm = TRUE)
 total_plot <- ggplot(ABCD_Data, aes(x=bisbas_ss_basm_rr)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "Reward responsiveness",x = "BIS/BAS RR")+ # Set the title of the graph and label the x axis.
+              labs(title = "Reward responsiveness by sex (Exploratory sample)",x = "BIS/BAS RR")+ # Set the title of the graph and label the x axis.
 facet_grid(. ~ sex)
 total_plot
 ```
@@ -249,7 +249,7 @@ min_level <- min(ABCD_Data$cbcl_scr_syn_internal_t,na.rm = TRUE)
 total_plot <- ggplot(ABCD_Data, aes(x=cbcl_scr_syn_internal_t)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "CBCL Internalizing symptoms",x = "cbcl_scr_syn_internal_t") + # Set the title of the graph and label the x axis. 
+              labs(title = "CBCL Internalizing symptoms by sex (Exploratory sample)",x = "cbcl_scr_syn_internal_t") + # Set the title of the graph and label the x axis. 
 facet_grid(. ~ sex)
 total_plot
 ```
@@ -267,7 +267,7 @@ min_level <- min(ABCD_Data$cbcl_scr_syn_withdep_t,na.rm = TRUE)
 total_plot <- ggplot(ABCD_Data, aes(x=cbcl_scr_syn_withdep_t)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "CBCL Depression symptoms",x = "CBCL_scr_syn_withdep_t") +# Set the title of the graph and label the x axis.
+              labs(title = "CBCL withdrawn depression symptoms by sex (Exploratory sample)",x = "CBCL_scr_syn_withdep_t") +# Set the title of the graph and label the x axis.
 facet_grid(. ~ sex)
 total_plot
 ```
@@ -278,14 +278,14 @@ p
 ```
 
 ```{r}
-#Depression by gender
+#Withdrawn depression by gender
 p <- ggbetweenstats(
   data = ABCD_Data,
   x = sex, # > 2 groups
   y = cbcl_scr_syn_withdep_t,
   xlab = "Sex",
   ylab = "CBCL depression score",
-  title = "Depressive symptoms by sex",
+  title = "Withdrawn depressive symptoms by sex (Exploratory sample)",
   bf.message  = FALSE,
   pairwise.display = "significant", # display only significant pairwise comparisons
   pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
@@ -313,7 +313,7 @@ p <- ggbetweenstats(
   y = cbcl_scr_syn_internal_t,
   xlab = "Sex",
   ylab = "CBCL internalizing score",
-  title = "Internalizing symptoms by sex",
+  title = "Internalizing symptoms by sex in the Exploratory sample",
   bf.message  = FALSE,
   pairwise.display = "significant", # display only significant pairwise comparisons
   pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
@@ -343,7 +343,7 @@ p <- ggbetweenstats(
   y = cbcl_scr_syn_withdep_t,
   xlab = "Sex",
   ylab = "CBCL depression score",
-  title = "Depressive symptoms by sex",
+  title = "Depressive symptoms by sex (Exploratory sample)",
   bf.message  = FALSE,
   pairwise.display = "significant", # display only significant pairwise comparisons
   pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
@@ -371,7 +371,7 @@ min_level <- min(ABCD_Data$PDS_score_both,na.rm = TRUE)
 total_plot <- ggplot(ABCD_Data, aes(x=PDS_score_both)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=1))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "Self-reported pubertal development",x = "PDS score") +# Set the title of the graph and label the x axis.
+              labs(title = "Self-reported pubertal development by sex (Exploratory sample)",x = "PDS score") +# Set the title of the graph and label the x axis.
 facet_grid(. ~ sex)
 total_plot
 ```
@@ -381,10 +381,10 @@ total_plot
 p <- ggbetweenstats(
   data = ABCD_Data,
   x = sex, # > 2 groups
-  y = PDS_score,
+  y = PDS_score_both,
   xlab = "Sex",
   ylab = "PDS",
-  title = "PDS by sex",
+  title = "PDS by sex (Exploratory sample)",
   bf.message  = FALSE,
   pairwise.display = "significant", # display only significant pairwise comparisons
   pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
@@ -406,5 +406,50 @@ p
 #ggsave(file.name,plot = last_plot(), dpi = 100, device = "tiff")
 ```
 
+```{r}
+#PDS score by gender
+p <- ggbetweenstats(
+  data = ABCD_Data,
+  x = race.eth.8level, # > 2 groups
+  y = PDS_score_both,
+  xlab = "Race/ethnicity",
+  ylab = "PDS",
+  grouping.var = sex,
+  title = "PDS by race/ethnicity (Exploratory sample)",
+  bf.message  = FALSE,
+  pairwise.display = "significant", # display only significant pairwise comparisons
+  pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
+  p.adjust.method = "fdr", # adjust p-values for multiple tests using this method
+  messages = FALSE,
+  palette = "Set2",
+  package = "RColorBrewer",
+  ggstatsplot.layer = FALSE,
+  ggplot.component = list(theme(axis.text.y= element_text(size = 14,face="bold"),
+                                axis.text.x = element_text(size = 14,face="bold"),
+                                axis.title.x = element_text(size = 16,face="bold"),
+                                axis.title.y = element_text(size = 16,face="bold"),
+                                plot.subtitle = element_text(size = 12),
+                                title =element_text(size=18, face='bold')))
+)
 
+p 
 
+```
+
+#Brain
+```{r}
+# Example distribution: Plot CBCL (rounded down) in the sample.
+max_level <- max(ABCD_Data$striatum_rvsn_ant,na.rm = TRUE)
+min_level <- min(ABCD_Data$striatum_rvsn_ant,na.rm = TRUE)
+total_plot <- ggplot(ABCD_Data, aes(x=striatum_rvsn_ant)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+              geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
+              scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
+              labs(title = "Striatal activity during reward anticipation by sex (Exploratory sample)",x = "striatum_rvsn_ant") +# Set the title of the graph and label the x axis.
+facet_grid(. ~ sex)
+total_plot
+```
+```{r}
+p <- ggplot(ABCD_Data, aes(x=sex, y=striatum_rvsn_ant)) + 
+  geom_boxplot() + labs(title = "Striatal activity during reward anticipation by sex (Exploratory sample)",x = "striatum_rvsn_ant")# Set the title of the graph and label the x axis.
+p
+```
