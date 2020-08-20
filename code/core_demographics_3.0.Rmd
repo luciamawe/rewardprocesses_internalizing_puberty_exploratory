@@ -222,36 +222,49 @@ nda20$demo_race_mixed = nda20$demo_race_white + nda20$demo_race_black + nda20$de
 nda20$demo_race_mixed[ nda20$demo_race_mixed <= 1] =  0
 nda20$demo_race_mixed[ nda20$demo_race_mixed > 1] =  1
 
-nda20$race.eth.8level = NA
-nda20$race.eth.8level[ nda20$demo_race_white == 1] = 2
-nda20$race.eth.8level[ nda20$demo_race_black == 1] = 3
-nda20$race.eth.8level[ nda20$demo_race_asian == 1] = 4
-nda20$race.eth.8level[ nda20$demo_race_aian == 1]  = 5
-nda20$race.eth.8level[ nda20$demo_race_nhpi == 1]  = 6
-nda20$race.eth.8level[ nda20$demo_race_other == 1] = 7
-nda20$race.eth.8level[ nda20$demo_race_mixed == 1] = 8
 
-nda20$race.eth.8level[nda20$demo_ethn_p == 1] = 1 # Do you consider the child Hispanic?  Replace with demo_ethn_v2?
+# Let's keep the race and ethnicity (Hispanic/Latinx) separate.
+# Do seven levels for race and then keep the Hispanic/Latinx variable.
+# nda20$race.eth.8level = NA
+# nda20$race.eth.8level[ nda20$demo_race_white == 1] = 2
+# nda20$race.eth.8level[ nda20$demo_race_black == 1] = 3
+# nda20$race.eth.8level[ nda20$demo_race_asian == 1] = 4
+# nda20$race.eth.8level[ nda20$demo_race_aian == 1]  = 5
+# nda20$race.eth.8level[ nda20$demo_race_nhpi == 1]  = 6
+# nda20$race.eth.8level[ nda20$demo_race_other == 1] = 7
+# nda20$race.eth.8level[ nda20$demo_race_mixed == 1] = 8
+# nda20$race.eth.8level[nda20$demo_ethn_p == 1] = 1 # Do you consider the child Hispanic?  Replace with demo_ethn_v2?
+nda20$race.eth.7level = NA
+nda20$race.eth.7level[ nda20$demo_race_white == 1] = 1
+nda20$race.eth.7level[ nda20$demo_race_black == 1] = 2
+nda20$race.eth.7level[ nda20$demo_race_asian == 1] = 3
+nda20$race.eth.7level[ nda20$demo_race_aian == 1]  = 4
+nda20$race.eth.7level[ nda20$demo_race_nhpi == 1]  = 5
+nda20$race.eth.7level[ nda20$demo_race_other == 1] = 6
+nda20$race.eth.7level[ nda20$demo_race_mixed == 1] = 7
 
+# demo_ethn_v2 : do you consider the child Hispanic/Latino/Latina?
+# 1 = Yes; 2 = No.
+nda20$demo_race_hispanic=NA; 
+nda20$demo_race_hispanic[nda20$demo_ethn_v2 == 1] = 1 
+nda20$demo_race_hispanic[nda20$demo_ethn_v2 == 2] = 0
 
-nda20$demo_race_hispanic=NA;
-nda20$demo_race_hispanic[nda20$demo_ethn_p == 1] =1
-nda20$demo_race_hispanic[nda20$demo_ethn_p == 2] =0
-
-nda20$race.eth.8level <- factor(nda20$race.eth.8level,
-                       levels = c(2,1,3,4,5,6,7,8),
-                       labels = c("White", "Hispanic", "Black", "Asian", "AIAN", "NHPI", "Other", "Mixed") )
+nda20$race.eth.7level <- factor(nda20$race.eth.7level,
+                       levels = c(1,2,3,4,5,6,7),
+                       labels = c("White", "Black", "Asian", "AIAN", "NHPI", "Other", "Mixed") )
 
 
 # The above race.eth value has more categories compared to what has been used recently in ABCD. Here is the reduced definition of race/ethnicity used most frequently
 
-nda20$race.ethnicity.5level = nda20$race.eth.8level
-nda20$race.ethnicity.5level[!(nda20$race.eth.8level=="White" | nda20$race.eth.8level=="Black" |
-					nda20$race.eth.8level=="Asian" | nda20$race.eth.8level=="Hispanic")] = "Other"
+nda20$race.ethnicity.5level = nda20$race.eth.7level
+nda20$race.ethnicity.5level[!(nda20$race.eth.7level=="White" | nda20$race.eth.7level=="Black" |
+					nda20$race.eth.7level=="Asian")] = "Other"
 nda20$race.ethnicity.5level = droplevels(nda20$race.ethnicity.5level)
 
 
 # It is worthwhile to point out here that the above category for Hispanic is calculated in ABCD differently from the other race categories. In particular any ethnicity selection of hispanic will map the participant into the hispanic category regardless of the selection of one or more race categories.
+
+# So we are going to use the seven levels for race ("White" "Black" "Asian" "AIAN"  "NHPI"  "Other" "Mixed") and also use the variable demo_race_hispanic.
 
 ```
 

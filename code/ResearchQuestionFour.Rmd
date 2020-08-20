@@ -30,12 +30,12 @@ setwd(datapath)
           #  Random effects are nested: (1|abcd_site/device/rel_family_id) [unless kids went in different scanners?]
 
 #      B. Fixed effects.
-#           1. Race parent. (race.eth.8level); check that this is the one we want to use.
+#           1. Race parent. (race.eth.7level).
 #           2. Education parent. (high.educ); check that this is the one we want to use (five levels).
 #           3. Income parent. (household.income)
 #           4. Marital status parent. (married.or.livingtogether)
 #           5. Age. (interview_age)
-#           6. Hispanic. (demo_ethn_v2)
+#           6. Hispanic. (demo_race_hispanic).
 #           7. Maternal Depression (Yes/No). (fam_history_q6d_depression). This is specific to the mother; do we want
 #              to use the one about the family history in general?
 
