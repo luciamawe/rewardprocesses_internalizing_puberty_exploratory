@@ -45,25 +45,137 @@ invisible(lapply(packages, library, character.only = TRUE))
 ## This script assumes that data has already been names (with Natalie's code) and split into two halves
 ## This script is based on the variable names on VariableDefinitions.csv
 
-data_dir = (dirname(dirname(here()))) #figure out how to navigate to data source
+data_dir = ((dirname(here()))) #figure out how to navigate to data source
 
 phase_folder = "exploratory"  #select the appropiate folder
-phase_folder = "confirmatory"  #select the appropiate folder
+#phase_folder = "confirmatory"  #select the appropiate folder
 
-data_folder <- file.path(data_dir,"Phases",phase_folder,"data")  
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)  
 
-file_name <- "ABCD_allpartipants_baseline.csv" #specify file name here 
+file_name <- "nda20_exploratory.csv" #specify file name here 
 
-ABCD_Data <- read.csv(file.path(data_folder,file_name))
-as_tibble(ABCD_Data)
+full_ABCD_Data <- read.csv(file.path(data_folder,file_name))
+as_tibble(full_ABCD_Data)
+```
+
+```{r GetData, echo = FALSE}
+fulldata <- full_ABCD_Data
+
+# Because this is such a big data file, let's only keep the columns that we need for this analysis.
+data <- fulldata[,c("src_subject_id",
+                "interview_age",
+                "eventname",
+                "sex",
+                "site_id_l",
+                "race.eth.8level",
+                "high.educ",
+                "household.income",
+                "married.or.livingtogether",
+                "cbcl_scr_syn_internal_t",
+                "cbcl_scr_syn_anxdep_t",
+                "cbcl_scr_syn_withdep_t",
+                "cbcl_scr_dsm5_depress_t",
+                "PDS_score_f",
+                "PDS_score_m",
+                "PDS_sum_f",
+                "PDS_sum_m",
+                "hormone_scr_ert_mean",
+                "hormone_scr_dhea_mean",
+                "bisbas_ss_basm_rr",
+                "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
+                "tfmri_ma_acdn_b_scs_aalh",
+                "tfmri_ma_acdn_b_scs_cdrh", # Caudate reward vs. neutral anticipation.
+                "tfmri_ma_acdn_b_scs_cdlh",
+                "tfmri_ma_acdn_b_scs_ptrh", # Putamen reward vs. neutral anticipation.
+                "tfmri_ma_acdn_b_scs_ptlh",
+                "tfmri_ma_arvn_b_cds_mobofrrh", # Medial OFC reward vs. neutral anticipation.
+                "tfmri_ma_arvn_b_cds_mobofrlh",
+                "tfmri_ma_arvn_b_cds_lobofrrh", # Lateral OFC reward vs. neutral anticipation.
+                "tfmri_ma_arvn_b_cds_lobofrlh",
+                "fam_history_q6d_depression"
+                )]
+
+
+data$src_subject_id <- as.factor(data$src_subject_id)
+data$eventname <- as.factor(data$eventname)
+data$sex <- as.factor(data$sex)
+data$site_id_l <- as.factor(data$site_id_l)
+data$race.eth.8level <- as.factor(data$race.eth.8level)
+data$high.educ <- as.factor(data$high.educ)
+data$household.income <- as.factor(data$household.income)
+data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
+               
+
+# Check: We only want to use baseline, right?
+data <- subset(data, eventname =="baseline_year_1_arm_1")
+length(data$src_subject_id) # 11,875.
+
+# Create new variables.
+# We should double check this but this should combine PDS across genders into one column (assumes the person only has a value in either female or male column).
+# Many of the PDS values seem to be mistakes?
+data$PDS_score_both <- dplyr::coalesce(data$PDS_score_f, data$PDS_score_m)
+data$PDS_sum_both <- dplyr::coalesce(data$PDS_sum_f, data$PDS_sum_m)
+# PDS <- data[,c("src_subject_id","interview_age","eventname","sex",
+#         "PDS_score_f","PDS_score_m","PDS_score_both", 
+#         "PDS_sum_f","PDS_sum_m", "PDS_sum_both")]
+
+
+# Average right and left hemispheres.
+# Note: If either is "NA", then the whole thing will be "NA".
+data$accumbens_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_aarh + data$tfmri_ma_acdn_b_scs_aalh)/2
+data$caudate_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_cdrh+data$tfmri_ma_acdn_b_scs_cdlh)/2
+data$putamen_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_ptrh+data$tfmri_ma_acdn_b_scs_ptlh)/2
+data$mOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_mobofrrh+data$tfmri_ma_arvn_b_cds_mobofrlh)/2
+data$lOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_lobofrrh+data$tfmri_ma_arvn_b_cds_lobofrlh)/2
+# mri <- data[,c("src_subject_id","interview_age","eventname","sex",
+#                 "tfmri_ma_acdn_b_scs_aarh",
+#                 "tfmri_ma_acdn_b_scs_aalh",
+#                 "accumbens_rvsn_ant",
+#                 "tfmri_ma_acdn_b_scs_cdrh",
+#                 "tfmri_ma_acdn_b_scs_cdlh",
+#                 "caudate_rvsn_ant",
+#                 "tfmri_ma_acdn_b_scs_ptrh",
+#                 "tfmri_ma_acdn_b_scs_ptlh",
+#                 "putamen_rvsn_ant",
+#                 "tfmri_ma_arvn_b_cds_mobofrrh",
+#                 "tfmri_ma_arvn_b_cds_mobofrlh",
+#                 "mOFC_rvsn_ant",
+#                 "tfmri_ma_arvn_b_cds_lobofrrh",
+#                 "tfmri_ma_arvn_b_cds_lobofrlh",
+#                 "lOFC_rvsn_ant")]
+
+
+# Create a striatum variable by averaging the caudate, putamen, and accumbens.
+cor.test(data$accumbens_rvsn_ant,data$caudate_rvsn_ant) # 0.62.
+cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.581.
+cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.829. 
+data$striatum_rvsn_ant <- (data$accumbens_rvsn_ant + 
+                           data$caudate_rvsn_ant+
+                           data$putamen_rvsn_ant)/2
+
+
+```
+
+```{r}
+ABCD_Data <- data %>% filter(sex!="") #remove 6 participants with no gender
+nrow(ABCD_Data)
+```
+```{r}
+ABCD_Data$PDS_score_both
+ABCD_Data <- ABCD_Data %>% filter(PDS_score_both<5) 
+nrow(ABCD_Data)
+```
+```{r}
+ABCD_Data <- ABCD_Data %>% filter(PDS_sum_both<30) #remove 6
+nrow(ABCD_Data)
 ```
 
 ```{r}
 # 
 ABCD_Data$src_subject_id<- as.factor(ABCD_Data$src_subject_id) # check that this is the correct column for participant IDs.
 ABCD_Data$ERT_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_ert_mean) # I used the floor function to round down testosterone levels to a whole number. This creates a new variable (and so a new column), Testosterone_Rounded, in my dataframe (ABCD_Data).
-ABCD_Data$DHEA_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_dhea_mean) # DHEA
-ABCD_Data$HSE_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_hse_mean) # Estrogen, only for women
+#ABCD_Data$DHEA_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_dhea_mean) # DHEA
+#ABCD_Data$HSE_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_hse_mean) # Estrogen, only for women
 ```
 
 ```{r}
@@ -73,55 +185,226 @@ min_level <- min(ABCD_Data$ERT_Hormone_Rounded,na.rm = TRUE)
 total_plot <- ggplot(ABCD_Data, aes(x=ERT_Hormone_Rounded)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=0.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=5))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "Testosterone Levels in Sample",x = "Testosterone") # Set the title of the graph and label the x axis.
+              labs(title = "Testosterone Levels in Sample",x = "Testosterone") + # Set the title of the graph and label the x axis.
+facet_grid(. ~ sex)
 total_plot
 ```
 
-#Data exploration and outlier removal
 ```{r}
-#Show data set structure and type of variable
-#plot_str(ABCD_Data)
+p <- ggplot(ABCD_Data, aes(x=sex, y=ERT_Hormone_Rounded)) + 
+  geom_boxplot()
+p
 ```
 
 ```{r}
-#Inspect for missing values
-#plot_missing(ABCD_Data)
-```
-
-```{r}
-#Visualize density plots of continuous variables
-plot_density(ABCD_Data)
-```
-
-```{r}
-#Visualize pairwise correlations of continuous variables
-plot_correlation(ABCD_Data, type = 'c',cor_args = list("use" = "pairwise.complete.obs"))
-```
-
-```{r}
-plot_boxplot(ABCD_Data,by = "pds_p_ss_male_category" )
-```
-
-```{r}
-plot_boxplot(ABCD_Data,by = "pds_p_ss_female_category" )
-```
-
-```{r}
-plot_qq(ABCD_Data, by = "pds_p_ss_male_category")
-```
-
-```{r}
-plot_qq(ABCD_Data,by = "pds_p_ss_female_category" )
-```
-
-```{r}
-# Example distribution: Plot DHEA levels (rounded down) in the sample.
-max_level <- max(ABCD_Data$DHEA_Hormone_Rounded,na.rm = TRUE)
-min_level <- min(ABCD_Data$DHEA_Hormone_Rounded,na.rm = TRUE)
-total_plot <- ggplot(ABCD_Data, aes(x=DHEA_Hormone_Rounded)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+# Example distribution: Plot BIS/BAS RR in the sample.
+max_level <- max(ABCD_Data$bisbas_ss_basm_rr,na.rm = TRUE)
+min_level <- min(ABCD_Data$bisbas_ss_basm_rr,na.rm = TRUE)
+total_plot <- ggplot(ABCD_Data, aes(x=bisbas_ss_basm_rr)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "DHEA Levels in Sample",x = "DHEA") # Set the title of the graph and label the x axis.
+              labs(title = "Reward responsiveness",x = "BIS/BAS RR")+ # Set the title of the graph and label the x axis.
+facet_grid(. ~ sex)
 total_plot
 ```
+```{r}
+p <- ggplot(ABCD_Data, aes(x=sex, y=bisbas_ss_basm_rr)) + 
+  geom_boxplot()
+p
+```
+```{r}
+#RR by gender
+p <- ggbetweenstats(
+  data = ABCD_Data,
+  x = sex, # > 2 groups
+  y = bisbas_ss_basm_rr,
+  xlab = "Sex",
+  ylab = "BIS/BAS RR score",
+  title = "Reward responsiveness by sex",
+  bf.message  = FALSE,
+  pairwise.display = "significant", # display only significant pairwise comparisons
+  pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
+  p.adjust.method = "fdr", # adjust p-values for multiple tests using this method
+  messages = FALSE,
+  palette = "Set2",
+  package = "RColorBrewer",
+  ggstatsplot.layer = FALSE,
+  ggplot.component = list(theme(axis.text.y= element_text(size = 14,face="bold"),
+                                axis.text.x = element_text(size = 14,face="bold"),
+                                axis.title.x = element_text(size = 16,face="bold"),
+                                axis.title.y = element_text(size = 16,face="bold"),
+                                plot.subtitle = element_text(size = 12),
+                                title =element_text(size=18, face='bold')))
+)
+
+p
+```
+
+
+
+```{r}
+# Example distribution: Plot CBCL (rounded down) in the sample.
+max_level <- max(ABCD_Data$cbcl_scr_syn_internal_t,na.rm = TRUE)
+min_level <- min(ABCD_Data$cbcl_scr_syn_internal_t,na.rm = TRUE)
+total_plot <- ggplot(ABCD_Data, aes(x=cbcl_scr_syn_internal_t)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+              geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
+              scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
+              labs(title = "CBCL Internalizing symptoms",x = "cbcl_scr_syn_internal_t") + # Set the title of the graph and label the x axis. 
+facet_grid(. ~ sex)
+total_plot
+```
+```{r}
+p <- ggplot(ABCD_Data, aes(x=sex, y=cbcl_scr_syn_internal_t)) + 
+  geom_boxplot()
+p
+```
+
+
+```{r}
+# Example distribution: Plot CBCL (rounded down) in the sample.
+max_level <- max(ABCD_Data$cbcl_scr_syn_withdep_t,na.rm = TRUE)
+min_level <- min(ABCD_Data$cbcl_scr_syn_withdep_t,na.rm = TRUE)
+total_plot <- ggplot(ABCD_Data, aes(x=cbcl_scr_syn_withdep_t)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+              geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
+              scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
+              labs(title = "CBCL Depression symptoms",x = "CBCL_scr_syn_withdep_t") +# Set the title of the graph and label the x axis.
+facet_grid(. ~ sex)
+total_plot
+```
+```{r}
+p <- ggplot(ABCD_Data, aes(x=sex, y=cbcl_scr_syn_withdep_t)) + 
+  geom_boxplot()
+p
+```
+
+```{r}
+#Depression by gender
+p <- ggbetweenstats(
+  data = ABCD_Data,
+  x = sex, # > 2 groups
+  y = cbcl_scr_syn_withdep_t,
+  xlab = "Sex",
+  ylab = "CBCL depression score",
+  title = "Depressive symptoms by sex",
+  bf.message  = FALSE,
+  pairwise.display = "significant", # display only significant pairwise comparisons
+  pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
+  p.adjust.method = "fdr", # adjust p-values for multiple tests using this method
+  messages = FALSE,
+  palette = "Set2",
+  package = "RColorBrewer",
+  ggstatsplot.layer = FALSE,
+  ggplot.component = list(theme(axis.text.y= element_text(size = 14,face="bold"),
+                                axis.text.x = element_text(size = 14,face="bold"),
+                                axis.title.x = element_text(size = 16,face="bold"),
+                                axis.title.y = element_text(size = 16,face="bold"),
+                                plot.subtitle = element_text(size = 12),
+                                title =element_text(size=18, face='bold')))
+)
+
+p
+```
+
+```{r}
+#Depression by gender
+p <- ggbetweenstats(
+  data = ABCD_Data,
+  x = sex, # > 2 groups
+  y = cbcl_scr_syn_internal_t,
+  xlab = "Sex",
+  ylab = "CBCL internalizing score",
+  title = "Internalizing symptoms by sex",
+  bf.message  = FALSE,
+  pairwise.display = "significant", # display only significant pairwise comparisons
+  pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
+  p.adjust.method = "fdr", # adjust p-values for multiple tests using this method
+  messages = FALSE,
+  palette = "Set2",
+  package = "RColorBrewer",
+  ggstatsplot.layer = FALSE,
+  ggplot.component = list(theme(axis.text.y= element_text(size = 14,face="bold"),
+                                axis.text.x = element_text(size = 14,face="bold"),
+                                axis.title.x = element_text(size = 16,face="bold"),
+                                axis.title.y = element_text(size = 16,face="bold"),
+                                plot.subtitle = element_text(size = 12),
+                                title =element_text(size=18, face='bold')))
+)
+
+p
+#file.name = (here("output","peru2_depression_gender.tiff"))
+#ggsave(file.name,plot = last_plot(), dpi = 100, device = "tiff")
+```
+
+```{r}
+#Depression by gender
+p <- ggbetweenstats(
+  data = ABCD_Data,
+  x = sex, # > 2 groups
+  y = cbcl_scr_syn_withdep_t,
+  xlab = "Sex",
+  ylab = "CBCL depression score",
+  title = "Depressive symptoms by sex",
+  bf.message  = FALSE,
+  pairwise.display = "significant", # display only significant pairwise comparisons
+  pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
+  p.adjust.method = "fdr", # adjust p-values for multiple tests using this method
+  messages = FALSE,
+  palette = "Set2",
+  package = "RColorBrewer",
+  ggstatsplot.layer = FALSE,
+  ggplot.component = list(theme(axis.text.y= element_text(size = 14,face="bold"),
+                                axis.text.x = element_text(size = 14,face="bold"),
+                                axis.title.x = element_text(size = 16,face="bold"),
+                                axis.title.y = element_text(size = 16,face="bold"),
+                                plot.subtitle = element_text(size = 12),
+                                title =element_text(size=18, face='bold')))
+)
+
+p
+```
+
+
+```{r}
+# Example distribution: Plot PDS_score in the sample.
+max_level <- max(ABCD_Data$PDS_score_both,na.rm = TRUE)
+min_level <- min(ABCD_Data$PDS_score_both,na.rm = TRUE)
+total_plot <- ggplot(ABCD_Data, aes(x=PDS_score_both)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+              geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
+              scale_x_continuous(breaks=c(seq(min_level, max_level, by=1))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
+              labs(title = "Self-reported pubertal development",x = "PDS score") +# Set the title of the graph and label the x axis.
+facet_grid(. ~ sex)
+total_plot
+```
+
+```{r}
+#PDS score by gender
+p <- ggbetweenstats(
+  data = ABCD_Data,
+  x = sex, # > 2 groups
+  y = PDS_score,
+  xlab = "Sex",
+  ylab = "PDS",
+  title = "PDS by sex",
+  bf.message  = FALSE,
+  pairwise.display = "significant", # display only significant pairwise comparisons
+  pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
+  p.adjust.method = "fdr", # adjust p-values for multiple tests using this method
+  messages = FALSE,
+  palette = "Set2",
+  package = "RColorBrewer",
+  ggstatsplot.layer = FALSE,
+  ggplot.component = list(theme(axis.text.y= element_text(size = 14,face="bold"),
+                                axis.text.x = element_text(size = 14,face="bold"),
+                                axis.title.x = element_text(size = 16,face="bold"),
+                                axis.title.y = element_text(size = 16,face="bold"),
+                                plot.subtitle = element_text(size = 12),
+                                title =element_text(size=18, face='bold')))
+)
+
+p
+#file.name = (here("output","peru2_depression_gender.tiff"))
+#ggsave(file.name,plot = last_plot(), dpi = 100, device = "tiff")
+```
+
+
 
