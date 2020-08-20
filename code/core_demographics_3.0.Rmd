@@ -230,7 +230,7 @@ nda20$race.eth.8level[ nda20$demo_race_nhpi == 1]  = 6
 nda20$race.eth.8level[ nda20$demo_race_other == 1] = 7
 nda20$race.eth.8level[ nda20$demo_race_mixed == 1] = 8
 
-nda20$race.eth.8level[nda20$demo_ethn_p == 1] = 1
+nda20$race.eth.8level[nda20$demo_ethn_p == 1] = 1 # Do you consider the child Hispanic?  Replace with demo_ethn_v2?
 
 
 nda20$demo_race_hispanic=NA;

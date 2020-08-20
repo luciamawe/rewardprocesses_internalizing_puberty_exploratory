@@ -21,19 +21,18 @@ setwd(datapath)
 
 # Covariates.
 #      A. Random effects.
-#           1. Family. # Need to figure out what variable this is.
+#           1. Family. # Need to figure out what variable this is. rel_family_id?
 #           2. Site. (site_id_l)
-#           3. Subject. (src_subject_id)
-#           4. Device. (on DEAP: mri_info_device.serial.number; not sure if we have this in the data).
+#           3. Subject. (src_subject_id) # There is only one timepoint so we cannot do a random effect for each participant.
+#           4. Device. # Need to figure out what variable this is. On DEAP: mri_info_device.serial.number; not sure if we have this in the data or if this                is important.
 # 
 #      B. Fixed effects.
-#           1. Race parent. (race.eth.8level); check that this is the one we want to use. Does not seem to have
-#              Hispanic level?
+#           1. Race parent. (race.eth.8level); check that this is the one we want to use.
 #           2. Education parent. (high.educ); check that this is the one we want to use (five levels).
 #           3. Income parent. (household.income)
 #           4. Marital status parent. (married.or.livingtogether)
 #           5. Age. (interview_age)
-#           6. Hispanic. # We need to figure out what variable to use here?
+#           6. Hispanic. (demo_ethn_v2)
 #           7. Maternal Depression (Yes/No). (fam_history_q6d_depression). This is specific to the mother; do we want
 #              to use the one about the family history in general?
 
@@ -48,7 +47,9 @@ data <- fulldata[,c("src_subject_id",
                 "eventname",
                 "sex",
                 "site_id_l",
+                "race.ethnicity.5level",
                 "race.eth.8level",
+                "demo_ethn_v2", # Do you consider the child Hispanic/Latino/Latina?
                 "high.educ",
                 "household.income",
                 "married.or.livingtogether",
@@ -60,6 +61,7 @@ data <- fulldata[,c("src_subject_id",
                 "PDS_score_m",
                 "PDS_sum_f",
                 "PDS_sum_m",
+                "fam_history_q6d_depression",
                 "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
                 "tfmri_ma_acdn_b_scs_aalh",
                 "tfmri_ma_acdn_b_scs_cdrh", # Caudate reward vs. neutral anticipation.
@@ -70,13 +72,23 @@ data <- fulldata[,c("src_subject_id",
                 "tfmri_ma_arvn_b_cds_mobofrlh",
                 "tfmri_ma_arvn_b_cds_lobofrrh", # Lateral OFC reward vs. neutral anticipation.
                 "tfmri_ma_arvn_b_cds_lobofrlh",
-                "fam_history_q6d_depression"
+                "tfmri_ma_rpvnfb_b_scs_aarh", # Accumbens reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_scs_aalh",
+                "tfmri_ma_rpvnfb_b_scs_cdrh", # Caudate reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_scs_cdlh",
+                "tfmri_ma_rpvnfb_b_scs_ptrh", # Putamen reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_scs_ptlh",
+                "tfmri_ma_rpvnfb_b_cds_mobofrrh", # Medial OFC reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_cds_mobofrlh",
+                "tfmri_ma_rpvnfb_b_cds_lobofrrh", # Lateral OFC reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_cds_lobofrlh"
                 )]
 
 
 data$src_subject_id <- as.factor(data$src_subject_id)
 data$eventname <- as.factor(data$eventname)
 data$sex <- as.factor(data$sex)
+data$demo_ethn_v2 <- as.factor(data$demo_ethn_v2)
 data$site_id_l <- as.factor(data$site_id_l)
 data$race.eth.8level <- as.factor(data$race.eth.8level)
 data$high.educ <- as.factor(data$high.educ)
@@ -96,15 +108,26 @@ data$PDS_sum_both <- dplyr::coalesce(data$PDS_sum_f, data$PDS_sum_m)
 # PDS <- data[,c("src_subject_id","interview_age","eventname","sex",
 #         "PDS_score_f","PDS_score_m","PDS_score_both", 
 #         "PDS_sum_f","PDS_sum_m", "PDS_sum_both")]
+# PDS_correct <- subset(PDS, PDS_sum_both < 20)
 
+
+# Check the PDS scores.
 
 # Average right and left hemispheres.
 # Note: If either is "NA", then the whole thing will be "NA".
 data$accumbens_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_aarh + data$tfmri_ma_acdn_b_scs_aalh)/2
-data$caudate_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_cdrh+data$tfmri_ma_acdn_b_scs_cdlh)/2
-data$putamen_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_ptrh+data$tfmri_ma_acdn_b_scs_ptlh)/2
-data$mOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_mobofrrh+data$tfmri_ma_arvn_b_cds_mobofrlh)/2
-data$lOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_lobofrrh+data$tfmri_ma_arvn_b_cds_lobofrlh)/2
+data$caudate_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_cdrh + data$tfmri_ma_acdn_b_scs_cdlh)/2
+data$putamen_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_ptrh + data$tfmri_ma_acdn_b_scs_ptlh)/2
+data$mOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_mobofrrh + data$tfmri_ma_arvn_b_cds_mobofrlh)/2
+data$lOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_lobofrrh + data$tfmri_ma_arvn_b_cds_lobofrlh)/2
+
+# Do the same for feedback stage as well.
+data$accumbens_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_scs_aarh + data$tfmri_ma_rpvnfb_b_scs_aalh)/2
+data$caudate_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_scs_cdrh + data$tfmri_ma_rpvnfb_b_scs_cdlh)/2
+data$putamen_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_scs_ptrh + data$tfmri_ma_rpvnfb_b_scs_ptlh)/2
+data$mOFC_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_cds_mobofrrh + data$tfmri_ma_rpvnfb_b_cds_mobofrlh)/2
+data$lOFC_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_cds_lobofrrh + data$tfmri_ma_rpvnfb_b_cds_lobofrlh)/2
+
 # mri <- data[,c("src_subject_id","interview_age","eventname","sex",
 #                 "tfmri_ma_acdn_b_scs_aarh",
 #                 "tfmri_ma_acdn_b_scs_aalh",
@@ -129,36 +152,72 @@ cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.581.
 cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.829. 
 data$striatum_rvsn_ant <- (data$accumbens_rvsn_ant + 
                            data$caudate_rvsn_ant+
-                           data$putamen_rvsn_ant)/2
+                           data$putamen_rvsn_ant)/3
+# striatum_rvsn_ant = reward vs. neutral anticipation.
 
-
+data$striatum_posvsneg_feedback <- (data$accumbens_posvsneg_feedback +
+                                   data$caudate_posvsneg_feedback +
+                                   data$putamen_posvsneg_feedback)/3
+# striatum_posvsneg_feedback = reward positive vs. negative feedback.
 ```
 
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
 ##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
 ```{r Confirmatory4, echo = FALSE}
 
-confirmatory4 <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*accumbens_rvsn_ant, data = data) 
-summary(confirmatory4)
-# Need to add in fixed and random effects.
-
 # Use combined score for accumbens, caudate, and putamen?
-# Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses
+# Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses.
 
-striatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*striatum_rvsn_ant, data = data) 
-summary(striatum)
+# Use data with only correct PDS scores.
+PDS_correct <- subset(data, PDS_sum_both < 20)
 
-striatum_covariates <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*striatum_rvsn_ant + 
+# Separate analyses first.
+confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*accumbens_rvsn_ant + 
                             race.eth.8level +
+                            demo_ethn_v2 +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, 
+                            data = PDS_correct) 
+summary(confirmatory4_accumbens)
+
+
+confirmatory4_caudate <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*caudate_rvsn_ant + 
+                            race.eth.8level +
+                            demo_ethn_v2 +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, 
+                            data = PDS_correct) 
+summary(confirmatory4_caudate)
+
+
+confirmatory4_putamen <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*putamen_rvsn_ant + 
+                            race.eth.8level +
+                            demo_ethn_v2 +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, 
+                            data = PDS_correct) 
+summary(confirmatory4_putamen)
+
+# Composite striatum score.
+confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*striatum_rvsn_ant + 
+                            race.eth.8level +
+                            demo_ethn_v2 +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
                             interview_age,
-                            data = data)
-summary(striatum_covariates)
-plot_model(striatum_covariates,type = "int", pred.type = "re", terms = c("RE_Z[-4,4]","Participant_ID"), show.data = FALSE) 
+                            data = PDS_correct)
+summary(confirmatory4_compositestriatum)
+plot_model(confirmatory4_compositestriatum,type = "int", pred.type = "re", terms = c("RE_Z[-4,4]","Participant_ID"), show.data = FALSE) 
 
 # Note: Most of these fixed effects should be nested within family, correct?
+# And I haven't included any random effects yet because we don't have the family variable.
 ```
 
 # Exploratory Hypothesis 4A: We will investigate whether striatal responses to reward during reward feedback moderates the effect of pubertal stage on internalizing symptoms. 
@@ -166,6 +225,47 @@ plot_model(striatum_covariates,type = "int", pred.type = "re", terms = c("RE_Z[-
 
 ```{r Exploratory4A, echo = FALSE}
 
+# Separate analyses first.
+exploratory4A_accumbens<- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*accumbens_posvsneg_feedback + 
+                            race.eth.8level +
+                            demo_ethn_v2 +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data = PDS_correct)
+summary(exploratory4A_accumbens)
+
+exploratory4A_caudate<- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*caudate_posvsneg_feedback + 
+                            race.eth.8level +
+                            demo_ethn_v2 +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data = PDS_correct)
+summary(exploratory4A_caudate)
+
+exploratory4A_putamen<- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*putamen_posvsneg_feedback + 
+                            race.eth.8level +
+                            demo_ethn_v2 +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data = PDS_correct)
+summary(exploratory4A_putamen)
+
+# Composite striatum score.
+exploratory4A_compositestriatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score_both*striatum_posvsneg_feedback + 
+                            race.eth.8level +
+                            demo_ethn_v2 +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data = PDS_correct)
+summary(exploratory4A_compositestriatum)
 
 ```
 # Exploratory Hypothesis 4B: We will investigate whether OFC activation during reward anticipation and feedback moderates the relationship between pubertal stage and internalizing symptoms.
