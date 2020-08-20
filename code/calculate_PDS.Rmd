@@ -16,8 +16,10 @@ library(ggplot2)
 require(ggpubr)
 library(psych)
 output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
+# output_directory <- "Users/nataliesaragosa-harris/Desktop/ABCD/output"
 #Load data
-nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
+#nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
+nda20 <- read.table("nda20.csv", header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
 #ABCD_Data$interview_age.x=as.numeric(levels(ABCD_Data$interview_age.x))[ABCD_Data$interview_age.x]
 ```
 #PDS CALCULATION
