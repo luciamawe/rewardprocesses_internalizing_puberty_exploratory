@@ -26,6 +26,9 @@ setwd(datapath)
 #           3. Subject. (src_subject_id) # There is only one timepoint so we cannot do a random effect for each participant.
 #           4. Device. # Need to figure out what variable this is. On DEAP: mri_info_device.serial.number; not sure if we have this in the data or if this                is important.
 # 
+
+          #  Random effects are nested: (1|abcd_site/device/rel_family_id) [unless kids went in different scanners?]
+
 #      B. Fixed effects.
 #           1. Race parent. (race.eth.8level); check that this is the one we want to use.
 #           2. Education parent. (high.educ); check that this is the one we want to use (five levels).

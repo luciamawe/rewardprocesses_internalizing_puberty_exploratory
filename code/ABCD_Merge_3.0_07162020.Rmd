@@ -17,12 +17,14 @@ library(readr)
 getwd()
 # Set your data directory here.
 data_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/test"
-
+# data_directory <-  "/Users/nataliesaragosa-harris/Desktop/ABCD/data"
 output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
+# output_directory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
 
-#Convert .txt files to .csv format. 
+#Convert .txt files to .csv format. This assumes all of the text files you want to use (and no other random files) are in the current directory.
 setwd(data_directory)
 filelist = list.files(pattern = ".txt")
+length(filelist) # Should be fifteen files.
 for (i in 1:length(filelist)){
     input<-filelist[i]
     output <- paste0(gsub("\\.txt$", "", input), ".csv")
@@ -39,70 +41,80 @@ for (i in 1:length(filelist)){
 
 #Read in data in separate data frames.
 setwd(data_directory)
-csv_filelist = list.files(pattern = ".csv")
+# csv_filelist = list.files(pattern = ".csv")
+# 
+# # This loop should work instead of the code below (commented out), but if not then use that instead.
+# # The function read_csv has a lot of output messages but it's the one that worked for all of them.
+# for (i in 1:length(csv_filelist)){
+#     filename <- csv_filelist[i]
+#     dataframe_name <- sub("abcd_", "", filename) # There's a prettier way to do this, but not all of them have "abcd" in the title, so will just do this for now.
+#     dataframe_name <- sub(".csv", "", dataframe_name)
+#     temporary_df <- read_csv(paste(data_directory,filename,sep="/")) # Create a temporary dataframe and then rename it based on the name of the file.
+#     assign(dataframe_name, temporary_df)
+#     print(paste("Created dataframe: ", dataframe_name))
+# }
+# 
 
-# This loop should work instead of the code below (commented out), but if not then use that instead.
-# The function read_csv has a lot of output messages but it's the one that worked for all of them.
-for (i in 1:length(csv_filelist)){
-    filename <- csv_filelist[i]
-    dataframe_name <- sub("abcd_", "", filename) # There's a prettier way to do this, but not all of them have "abcd" in the title, so will just do this for now.
-    dataframe_name <- sub(".csv", "", dataframe_name)
-    temporary_df <- read_csv(paste(data_directory,filename,sep="/")) # Create a temporary dataframe and then rename it based on the name of the file.
-    assign(dataframe_name, temporary_df)
-    print(paste("Created dataframe: ", dataframe_name))
-}
+ acspsw03 <- read.csv(paste(data_directory,"abcd_acspsw03.csv",sep="/"))
 
-# bisbas01 <- read.csv(paste(data_directory,"abcd_bisbas01.csv",sep="/"))
-# 
-# cbcls01 <- read.csv(paste(data_directory,"abcd_cbcls01.csv",sep="/"))
-# 
-# hsss01 <- read.csv(paste(data_directory,"abcd_hsss01.csv",sep="/"))
-# 
-# lpds01 <- read_csv(paste(data_directory,"abcd_lpds01.csv",sep="/"))
-# 
-# lt01 <- read.csv(paste(data_directory,"abcd_lt01.csv",sep="/"))
-# 
-# mid02 <- read.csv(paste(data_directory,"abcd_mid02.csv",sep="/"))
-# 
-# ppdms01 <- read.csv(paste(data_directory,"abcd_ppdms01.csv",sep="/"))
-# 
-# ypdms01 <- read.csv(paste(data_directory,"abcd_ypdms01.csv",sep="/"))
-# 
-# fhxp102 <- read.csv(paste(data_directory,"fhxp102.csv",sep="/"))
-# 
-# midaparc03 <- read.csv(paste(data_directory,"midaparc03.csv",sep="/"))
-# 
-# midaparcp203 <- read.csv(paste(data_directory,"midaparcp203.csv",sep="/"))
-# 
-# pdem02 <- read_csv(paste(data_directory,"pdem02.csv",sep="/"))
+ bisbas01 <- read.csv(paste(data_directory,"abcd_bisbas01.csv",sep="/"))
+
+ cbcls01 <- read.csv(paste(data_directory,"abcd_cbcls01.csv",sep="/"))
+
+ hsss01 <- read.csv(paste(data_directory,"abcd_hsss01.csv",sep="/"))
+
+ lpds01 <- read_csv(paste(data_directory,"abcd_lpds01.csv",sep="/"))
+
+ lt01 <- read.csv(paste(data_directory,"abcd_lt01.csv",sep="/"))
+
+ mid02 <- read.csv(paste(data_directory,"abcd_mid02.csv",sep="/"))
+
+ mri01 <- read.csv(paste(data_directory,"abcd_mri01.csv",sep="/"))
+
+ ppdms01 <- read.csv(paste(data_directory,"abcd_ppdms01.csv",sep="/"))
+
+ ypdms01 <- read.csv(paste(data_directory,"abcd_ypdms01.csv",sep="/"))
+
+ fhxp102 <- read.csv(paste(data_directory,"fhxp102.csv",sep="/"))
+
+ midaparc03 <- read.csv(paste(data_directory,"midaparc03.csv",sep="/"))
+
+ midaparcp203 <- read.csv(paste(data_directory,"midaparcp203.csv",sep="/"))
+
+ pdem02 <- read_csv(paste(data_directory,"pdem02.csv",sep="/"))
+
+ sph01 <- read_csv(paste(data_directory,"sph01.csv",sep="/"))
 ```
 
 
 #Cleaning
 ```{r}
 #THIS STEP WOULD BE MADE MORE EFFICIENT WITH A LOOP.
-# The first row in each spreadsheet is the element description. Lets remove those for our data tables. This information is already present in the [ABCD Data Dictionaries](https://ndar.nih.gov/data_dictionary.html?source=ABCD%2BRelease%2B2.0&submission=ALL).
+# The first row in each spreadsheet is the element description. Let's remove those for our data tables. This information is already present in the [ABCD Data Dictionaries](https://ndar.nih.gov/data_dictionary.html?source=ABCD%2BRelease%2B2.0&submission=ALL).
 
-
+acspsw03 = acspsw03[-1,]
 bisbas01 = bisbas01[-1,]
 cbcls01 = cbcls01[-1,]
 hsss01 = hsss01[-1,]
 lpds01 = lpds01[-1,]
 lt01 = lt01[-1,]
 mid02 = mid02[-1,]
+mri01 = mri01[-1,]
 ppdms01 = ppdms01[-1,]
 ypdms01 = ypdms01[-1,]
 fhxp102 = fhxp102[-1,]
 midaparc03 = midaparc03[-1,]
 midaparcp203 = midaparcp203[-1,]
 pdem02 = pdem02[-1,]
-
+sph01 = sph01[-1,]
 ```
 
 
 ```{r}
 # Drop columns introduced by NDA, and duplicated columns across data frames. Keep the Longitudinal Tracking data (lt01) as the anchor (Do not remove the columns from lt01.)
 
+
+acspsw03 = acspsw03[,!(names(acspsw03) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
 bisbas01 = bisbas01[,!(names(bisbas01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
@@ -114,6 +126,8 @@ lpds01 = lpds01[,!(names(lpds01) %in% c("collection_id", "collection_title", "su
 
 mid02 = mid02[,!(names(mid02) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
+mri01 = mri01[,!(names(mri01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
+
 ppdms01 = ppdms01[,!(names(ppdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
 ypdms01 = ypdms01[,!(names(ypdms01) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
@@ -124,7 +138,9 @@ midaparc03 = midaparc03[,!(names(midaparc03) %in% c("collection_id", "collection
 
 midaparcp203 = midaparcp203[,!(names(midaparcp203) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
 
-pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "subjectkey"))]
+pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex"))]
+
+sph01 = sph01[,!(names(sph01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
 
 ```
 
@@ -133,9 +149,15 @@ pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "su
 ```{r}
 #Merge the individual tables into a single spreadsheet. The following loop performs repeated merging operations between pairs of spreadsheets.
 
+acspsw03 
+mri01
+sph01
 
-t2 = list(bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02)
-
+t2 = list(acspsw03, bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, mri01, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02, sph01)
+# sph01 does not have event name.
+# In sph01, 'eventname' is called 'visit', so need to change that first.
+sph01$eventname <- sph01$visit
+sph01$visit <- NULL
 
 while (length(t2) > 1 ) {
   print("iteration")
@@ -160,11 +182,12 @@ nda20=nda20[,-which(grepl("dataset_id",colnames(nda20)))]
 
 # Per the original merge script: we can sort the levels of eventname by timepoint.
 
-nda20$eventname = factor(nda20$eventname, levels(nda20$eventname)[c(2,4,1,3)])
-
+nda20$eventname <- as.factor(nda20$eventname)
+baseline <- subset(nda20, eventname =="baseline_year_1_arm_1")
 
 #NOTE: Per the original merge script: The nda data frame should contain 27,368 rows (baseline: 11,875; 6 month: 8,623; 1 year: 4,951; and 18 month: 1,919).
-
+# length(nda20$src_subject_id)
+# length(baseline$src_subject_id)
 
 #As a last step we can save the data in R's native file format
 
