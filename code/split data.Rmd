@@ -60,11 +60,12 @@ data_folder <- file.path(data_dir,"ABCD","derivatives")
 
 file_name <- "nda20.csv" #specify file name here 
 
-ABCD_Data <- read.csv(file.path(data_folder,file_name))
-as_tibble(ABCD_Data)
+output_directory <- data_folder
 
-levels(ABCD_Data$sex.x)
-colnames(ABCD_Data)
+#ABCD_Data <- read.csv(file.path(data_folder,file_name))
+#as_tibble(ABCD_Data)
+
+#colnames(ABCD_Data)
 ```
 
 ```{r}
@@ -127,11 +128,14 @@ ABCD_Data_confirmatory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==1),]
 
 #SAVE DATA
 ```{r}
-saveRDS(ABCD_Data_exploratory, paste(output_directory,"nda20_exploratory.rds",sep="/"))
-write.csv(nda20, paste(output_directory,"nda20_exploratory.csv",sep="/"), row.names = FALSE)
+save_folder <- file.path(data_dir,"ABCD","derivatives","exploratory")  
+saveRDS(ABCD_Data_exploratory,paste(save_folder,"nda20_exploratory.rds",sep="/"))
+
+write.csv(ABCD_Data_exploratory, paste(save_folder,"nda20_exploratory.csv",sep="/"), row.names = FALSE)
 ```
 
 ```{r}
-saveRDS(ABCD_Data_confirmatory, paste(output_directory,"nda20_confirmatory.rds",sep="/"))
-write.csv(nda20, paste(output_directory,"nda20_confirmatory.csv",sep="/"), row.names = FALSE)
+save_folder <- file.path(data_dir,"ABCD","derivatives","confirmatory") 
+saveRDS(ABCD_Data_confirmatory, paste(save_folder,"nda20_confirmatory.rds",sep="/"))
+write.csv(ABCD_Data_confirmatory, paste(save_folder,"nda20_confirmatory.csv",sep="/"), row.names = FALSE)
 ```
