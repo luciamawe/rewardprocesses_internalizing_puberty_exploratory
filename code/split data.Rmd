@@ -62,7 +62,7 @@ file_name <- "nda20.csv" #specify file name here
 
 output_directory <- data_folder
 
-#ABCD_Data <- read.csv(file.path(data_folder,file_name))
+ABCD_Data <- read.csv(file.path(data_folder,file_name))
 #as_tibble(ABCD_Data)
 
 #colnames(ABCD_Data)
@@ -76,7 +76,7 @@ output_directory <- data_folder
 ```{r}
 #Select only baseline
 library(janitor)
-ABCD_Data<- readRDS(paste(output_directory,"nda20.rds",sep="/"))
+#ABCD_Data<- readRDS(paste(output_directory,"nda20.rds",sep="/"))
 ABCD_Data_baseline <- ABCD_Data %>% filter(eventname=="baseline_year_1_arm_1")
 nrow(ABCD_Data_baseline)
 
@@ -105,12 +105,11 @@ export2word(export_table, file = (here("output","fullsample_means_gender.doc")))
 library(randomizr)
 set.seed(22773)
 
-
 ABCD_Data_baseline$Z <- block_ra(blocks = c(ABCD_Data_baseline$sex))
 table(ABCD_Data_baseline$Z, ABCD_Data_baseline$sex)
 
 reduced.ABCD.table<- ABCD_Data_baseline %>% 
-  select(interview_age,sex,cbcl_scr_syn_internal_t,hormone_scr_ert_mean,PDS_score,bisbas_ss_basm_rr,race.ethnicity.5level,fam_history_q6d_depression,Z)
+  select(interview_age,sex,rel_family_id,cbcl_scr_syn_internal_t,hormone_scr_ert_mean,PDS_score,bisbas_ss_basm_rr,race.ethnicity.5level,fam_history_q6d_depression,Z)
 
 table <- compareGroups(Z ~ ., data = reduced.ABCD.table,na.omit(TRUE))
 pvals <- getResults(table, "p.overall")
