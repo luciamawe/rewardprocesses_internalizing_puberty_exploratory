@@ -53,7 +53,7 @@ data <- fulldata[,c("src_subject_id",
                 "rel_family_id",
                 "race.ethnicity.5level",
                 "race.eth.7level",
-                "demo_ethn_v2", # Do you consider the child Hispanic/Latino/Latina?
+                "demo_race_hispanic", # Do you consider the child Hispanic/Latino/Latina?
                 "high.educ",
                 "household.income",
                 "married.or.livingtogether",
@@ -94,15 +94,15 @@ data <- fulldata[,c("src_subject_id",
 data$src_subject_id <- as.factor(data$src_subject_id)
 data$eventname <- as.factor(data$eventname)
 data$sex <- as.factor(data$sex)
-data$demo_ethn_v2 <- as.factor(data$demo_ethn_v2)
+data$demo_race_hispanic<- as.factor(data$demo_race_hispanic)
 data$site_id_l <- as.factor(data$site_id_l)
-data$race.eth.8level <- as.factor(data$race.eth.8level)
+data$race.eth.7level <- as.factor(data$race.eth.7level)
 data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
                
 
-# Check: We only want to use baseline, right?
+# Now, only keep baseline data.
 data <- subset(data, eventname =="baseline_year_1_arm_1")
 length(data$src_subject_id) # 11,875.
 
@@ -112,9 +112,6 @@ length(data$src_subject_id) # 11,875.
 #         "PDS_score_f","PDS_score_m","PDS_score", 
 #         "PDS_sum_f","PDS_sum_m", "PDS_sum")]
 # PDS_correct <- subset(PDS, PDS_sum< 20)
-
-
-# Check the PDS scores.
 
 # Average right and left hemispheres.
 # Note: If either is "NA", then the whole thing will be "NA".
