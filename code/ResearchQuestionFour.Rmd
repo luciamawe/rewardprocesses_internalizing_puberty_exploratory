@@ -102,58 +102,6 @@ data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 
-# Many of the PDS values seem to be mistakes?
-# PDS <- data[,c("src_subject_id","interview_age","eventname","sex",
-#         "PDS_score_f","PDS_score_m","PDS_score", 
-#         "PDS_sum_f","PDS_sum_m", "PDS_sum")]
-# PDS_correct <- subset(PDS, PDS_sum < 20)
-
-# Average right and left hemispheres.
-# Note: If either is "NA", then the whole thing will be "NA".
-data$accumbens_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_aarh + data$tfmri_ma_acdn_b_scs_aalh)/2
-data$caudate_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_cdrh + data$tfmri_ma_acdn_b_scs_cdlh)/2
-data$putamen_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_ptrh + data$tfmri_ma_acdn_b_scs_ptlh)/2
-data$mOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_mobofrrh + data$tfmri_ma_arvn_b_cds_mobofrlh)/2
-data$lOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_lobofrrh + data$tfmri_ma_arvn_b_cds_lobofrlh)/2
-
-# Do the same for feedback stage as well.
-data$accumbens_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_scs_aarh + data$tfmri_ma_rpvnfb_b_scs_aalh)/2
-data$caudate_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_scs_cdrh + data$tfmri_ma_rpvnfb_b_scs_cdlh)/2
-data$putamen_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_scs_ptrh + data$tfmri_ma_rpvnfb_b_scs_ptlh)/2
-data$mOFC_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_cds_mobofrrh + data$tfmri_ma_rpvnfb_b_cds_mobofrlh)/2
-data$lOFC_posvsneg_feedback <- (data$tfmri_ma_rpvnfb_b_cds_lobofrrh + data$tfmri_ma_rpvnfb_b_cds_lobofrlh)/2
-
-# mri <- data[,c("src_subject_id","interview_age","eventname","sex",
-#                 "tfmri_ma_acdn_b_scs_aarh",
-#                 "tfmri_ma_acdn_b_scs_aalh",
-#                 "accumbens_rvsn_ant",
-#                 "tfmri_ma_acdn_b_scs_cdrh",
-#                 "tfmri_ma_acdn_b_scs_cdlh",
-#                 "caudate_rvsn_ant",
-#                 "tfmri_ma_acdn_b_scs_ptrh",
-#                 "tfmri_ma_acdn_b_scs_ptlh",
-#                 "putamen_rvsn_ant",
-#                 "tfmri_ma_arvn_b_cds_mobofrrh",
-#                 "tfmri_ma_arvn_b_cds_mobofrlh",
-#                 "mOFC_rvsn_ant",
-#                 "tfmri_ma_arvn_b_cds_lobofrrh",
-#                 "tfmri_ma_arvn_b_cds_lobofrlh",
-#                 "lOFC_rvsn_ant")]
-
-
-# Create a striatum variable by averaging the caudate, putamen, and accumbens.
-cor.test(data$accumbens_rvsn_ant,data$caudate_rvsn_ant) # 0.64.
-cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.63.
-cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.851. 
-data$striatum_rvsn_ant <- (data$accumbens_rvsn_ant + 
-                           data$caudate_rvsn_ant+
-                           data$putamen_rvsn_ant)/3
-# striatum_rvsn_ant = reward vs. neutral anticipation.
-
-data$striatum_posvsneg_feedback <- (data$accumbens_posvsneg_feedback +
-                                   data$caudate_posvsneg_feedback +
-                                   data$putamen_posvsneg_feedback)/3
-# striatum_posvsneg_feedback = reward positive vs. negative feedback.
 ```
 
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
@@ -162,6 +110,9 @@ data$striatum_posvsneg_feedback <- (data$accumbens_posvsneg_feedback +
 
 # Use combined score for accumbens, caudate, and putamen?
 # Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses.
+cor.test(data$accumbens_rvsn_ant,data$caudate_rvsn_ant) # 0.64.
+cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.63.
+cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.851. 
 
 # Use data with only correct PDS scores.
 PDS_correct <- subset(data, PDS_sum < 20)
