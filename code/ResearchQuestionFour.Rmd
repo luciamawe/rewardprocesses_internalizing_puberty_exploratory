@@ -127,7 +127,7 @@ cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.63.
 cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.851. 
 
 # Use data with only correct PDS scores.
-PDS_correct <- subset(data, PDS_sum < 20)
+PDS_correct <- subset(data, PDS_score < 5)
 
 # Separate analyses first.
 confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant + 
@@ -172,7 +172,7 @@ confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score*striat
                             interview_age,
                             data = PDS_correct)
 summary(confirmatory4_compositestriatum)
-plot_model(confirmatory4_compositestriatum,type = "int", pred.type = "re", terms = c("RE_Z[-4,4]","Participant_ID"), show.data = FALSE) 
+plot_model(confirmatory4_compositestriatum,type = "int", show.data = FALSE) 
 
 # Note: Most of these fixed effects should be nested within family, correct?
 # And I haven't included any random effects yet because we don't have the family variable.
@@ -180,7 +180,6 @@ plot_model(confirmatory4_compositestriatum,type = "int", pred.type = "re", terms
 
 # Exploratory Hypothesis 4A: We will investigate whether striatal responses to reward during reward feedback moderates the effect of pubertal stage on internalizing symptoms. 
 ## Model: CBCL internalizing factor ~ PDS*Striatal activity (feedback stage)
-
 ```{r Exploratory4A, echo = FALSE}
 
 # Separate analyses first.
@@ -243,7 +242,6 @@ summary(exploratory4A_compositestriatum)
 ```
 
 # Exploratory Hypothesis 4D: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by behavioral reward responsiveness (i.e., MID reaction time). We predict that advanced puberty will be associated with higher internalizing in individuals who demonstrate lower behavioral reward responsiveness.
-
 ## Model: CBCL internalizing factor ~ PDS*MID reaction time
 ```{r Exploratory4D, echo = FALSE}
 
@@ -251,20 +249,13 @@ summary(exploratory4A_compositestriatum)
 ```
 
 # Exploratory Hypothesis 4E: We will investigate whether testosterone, and its relationship with reward, relates to internalizing symptoms, while controlling for PDS.
-
 ## Model A: CBCL internalizing factor ~ Testosterone*Striatal activity (anticipation stage) + PDS
-
 ## Model B: CBCL internalizing factor ~ Testosterone*Striatal activity (feedback stage) + PDS
-
 ## Model C: CBCL internalizing factor ~ Testosterone*OFC activity (anticipation stage) + PDS
-
 ## Model D: CBCL internalizing factor ~ Testosterone*OFC activity (feedback stage) + PDS
-
 ## Model E: CBCL internalizing factor ~ Testosterone*BIS-BAS RR
-
 ## Model F: CBCL internalizing factor ~ Testosterone*MID Reaction Time
 ```{r Exploratory4E, echo = FALSE}
 
 
 ```
-
