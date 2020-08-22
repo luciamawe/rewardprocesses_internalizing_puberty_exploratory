@@ -87,7 +87,19 @@ data <- fulldata[,c("src_subject_id",
                 "tfmri_ma_rpvnfb_b_cds_mobofrrh", # Medial OFC reward positive versus negative feedback.
                 "tfmri_ma_rpvnfb_b_cds_mobofrlh",
                 "tfmri_ma_rpvnfb_b_cds_lobofrrh", # Lateral OFC reward positive versus negative feedback.
-                "tfmri_ma_rpvnfb_b_cds_lobofrlh"
+                "tfmri_ma_rpvnfb_b_cds_lobofrlh",
+                "accumbens_rvsn_ant", # Reward vs. neutral during anticipation stage.
+                "caudate_rvsn_ant",
+                "putamen_rvsn_ant",
+                "mOFC_rvsn_ant",
+                "lOFC_rvsn_ant",
+                "accumbens_posvsneg_feedback", # All positive vs. negative feedback.
+                "caudate_posvsneg_feedback",
+                "putamen_posvsneg_feedback",
+                "mOFC_posvsneg_feedback",
+                "lOFC_posvsneg_feedback",
+                "striatum_rvsn_ant", # reward vs. neutral anticipation.
+                "striatum_posvsneg_feedback"
                 )]
 
 data$src_subject_id <- as.factor(data$src_subject_id)
