@@ -1,4 +1,4 @@
-Order in which scripts should be run
+Order in which scripts should be run.
 
 1. ABCD_Merge_3.0.
 2. core_demographics_3.0.
@@ -6,6 +6,8 @@ Order in which scripts should be run
 4. calculate_PDS.
 5. calculate_BISBAS_Reward.
 6. split data.
+
+7. calculate_MRI_averages.
 
 Exploratory sample
 1. data cleaning and descriptives.
