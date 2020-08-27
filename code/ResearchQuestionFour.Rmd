@@ -11,11 +11,14 @@ library(ggplot2)
 library(gamm4)
 library(dplyr)
 library(sjPlot)
+library(here)
 ```
 
 ```{r setdirectories, echo = FALSE}
 # Change this to your directory and the name of your data file.
 datapath <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
+datapath <- "/Users/lucia/Github/ABCD/derivatives/exploratory"
+
 datafile <- "nda20_exploratory.csv"
 setwd(datapath)
 
@@ -39,9 +42,24 @@ setwd(datapath)
 #              to use the one about the family history in general?
 
 ```
+```{r}
+#LMW alternative to read in the data
+
+data_dir = ((dirname(here()))) #figure out how to navigate to data source
+
+phase_folder = "exploratory"  #select the appropiate folder
+#phase_folder = "confirmatory"  #select the appropiate folder
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)  
+
+file_name <- "nda20_exploratory.csv" #specify file name here 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+
+```
 
 ```{r GetData, echo = FALSE}
-fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
+#fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
 length(fulldata$src_subject_id) # 5934.
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
 data <- fulldata[,c("src_subject_id",
