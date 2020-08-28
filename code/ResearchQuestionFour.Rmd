@@ -137,16 +137,32 @@ data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
 ##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
 ```{r Confirmatory4, echo = FALSE}
-
 # Use combined score for accumbens, caudate, and putamen?
 # Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses.
 cor.test(data$accumbens_rvsn_ant,data$caudate_rvsn_ant) # 0.64.
 cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.63.
 cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.851. 
 
+#Explore outliers
+boxplot(data$accumbens_rvsn_ant)
+boxplot(data$caudate_rvsn_ant)
+boxplot(data$putamen_rvsn_ant)
+
+#Remove outliers (you need to type "YES" into the console)
+source("https://goo.gl/4mthoF")
+outlierKD(data, accumbens_rvsn_ant)
+outlierKD(data, caudate_rvsn_ant)
+outlierKD(data, putamen_rvsn_ant)
+outlierKD(data, striatum_rvsn_ant)
+boxplot(data$striatum_rvsn_ant)
+
+
 # Use data with only correct PDS scores.
 PDS_correct <- subset(data, PDS_score < 5)
+```
 
+
+```{r Confirmatory4, echo = FALSE}
 # Separate analyses first.
 confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant + 
                             race.eth.7level +
@@ -181,7 +197,7 @@ confirmatory4_putamen <- lm(cbcl_scr_syn_internal_t ~ PDS_score*putamen_rvsn_ant
 summary(confirmatory4_putamen)
 
 # Composite striatum score.
-confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score*striatum_rvsn_ant + 
+confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_r ~ PDS_score*striatum_rvsn_ant + 
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
