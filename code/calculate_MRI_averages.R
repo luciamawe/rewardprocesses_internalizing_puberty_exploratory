@@ -64,6 +64,25 @@ data$striatum_rvsn_ant <- (data$accumbens_rvsn_ant +
 data$striatum_posvsneg_feedback <- (data$accumbens_posvsneg_feedback +
                                       data$caudate_posvsneg_feedback +
                                       data$putamen_posvsneg_feedback)/3
+
+
+# Calculate z scores for all of these values.
+data$accumbens_rvsn_ant_z <- scale(data$accumbens_rvsn_ant)
+data$caudate_rvsn_ant_z <- scale(data$caudate_rvsn_ant)
+data$putamen_rvsn_ant_z <- scale(data$putamen_rvsn_ant)
+data$mOFC_rvsn_ant_z <- scale(data$mOFC_rvsn_ant)
+data$lOFC_rvsn_ant_z <- scale(data$lOFC_rvsn_ant)
+
+data$accumbens_posvsneg_feedback_z <- scale(data$accumbens_posvsneg_feedback)
+data$caudate_posvsneg_feedback_z <- scale(data$caudate_posvsneg_feedback)
+data$putamen_posvsneg_feedback_z <- scale(data$putamen_posvsneg_feedback)
+data$mOFC_posvsneg_feedback_z <- scale(data$mOFC_posvsneg_feedback)
+data$lOFC_posvsneg_feedback_z <- scale(data$lOFC_posvsneg_feedback)
+
+data$striatum_rvsn_ant_z <- scale(data$striatum_rvsn_ant)
+data$striatum_posvsneg_feedback_z <- scale(data$striatum_posvsneg_feedback)
+
+
 # striatum_posvsneg_feedback = reward positive vs. negative feedback.
 setwd(datapath)
 write.csv(data,"nda20_exploratory.csv", row.names = FALSE)
