@@ -44,7 +44,7 @@ setwd(datapath)
 fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
 length(fulldata$src_subject_id) # 5934.
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
-data <- fulldata[,c("src_subject_id",
+ddata <- fulldata[,c("src_subject_id",
                 "interview_age",
                 "eventname",
                 "sex",
@@ -57,6 +57,10 @@ data <- fulldata[,c("src_subject_id",
                 "high.educ",
                 "household.income",
                 "married.or.livingtogether",
+                "cbcl_scr_syn_internal_r",
+                "cbcl_scr_syn_anxdep_r",
+                "cbcl_scr_syn_withdep_r",
+                "cbcl_scr_dsm5_depress_r",
                 "cbcl_scr_syn_internal_t",
                 "cbcl_scr_syn_anxdep_t",
                 "cbcl_scr_syn_withdep_t",

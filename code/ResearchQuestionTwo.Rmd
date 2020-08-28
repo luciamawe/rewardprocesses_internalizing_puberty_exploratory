@@ -121,12 +121,34 @@ data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 
 ```
 
+# Are there general gender differences in CBCL scores?
+```{r CBCLDescriptives, echo = FALSE}
+# Use data with only correct PDS scores.
+PDS_correct <- subset(data, PDS_score < 6)
+females <- subset(PDS_correct, sex == "F")
+males <- subset(PDS_correct, sex == "M")
+
+# Get an idea of the sample.
+mean(PDS_correct$cbcl_scr_syn_internal_t,na.rm= TRUE) # 48.43263
+mean(females$cbcl_scr_syn_internal_t,na.rm= TRUE) # 47.4723.
+mean(males$cbcl_scr_syn_internal_t,na.rm= TRUE) # 49.3455.
+min(females$cbcl_scr_syn_internal_t,na.rm= TRUE) # 33.
+min(males$cbcl_scr_syn_internal_t,na.rm= TRUE) # 34.
+t.test(males$cbcl_scr_syn_internal_t,females$cbcl_scr_syn_internal_t) # Significant.
+
+mean(PDS_correct$cbcl_scr_syn_internal_r,na.rm= TRUE) # 5.00.
+mean(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.97
+mean(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 5.03.
+min(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 0.
+min(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 30.
+t.test(males$cbcl_scr_syn_internal_r,females$cbcl_scr_syn_internal_r) # Not significant.
+
+
+```
 
 # Confirmatory Hypothesis 2: We hypothesize that advanced pubertal stage will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL) internalizing factor (Ullsperger & Nikolas, 2017).
 ## Model: CBCL internalizing factor ~ Pubertal stage
 ```{r Confirmatory2, echo = FALSE}
-# Use data with only correct PDS scores.
-PDS_correct <- subset(data, PDS_score < 5)
 
 confirmatory2 <- lmer(cbcl_scr_syn_internal_t ~ PDS_score +
                       race.eth.7level +
@@ -138,14 +160,14 @@ confirmatory2 <- lmer(cbcl_scr_syn_internal_t ~ PDS_score +
                       (1 | site_id_l/rel_family_id),
                       data = PDS_correct)
 summary(confirmatory2)
-#  (1|site_id_l/mri_info_deviceserialnumber/rel_family_id)
+# (1 | site_id_l/mri_info_deviceserialnumber/rel_family_id)
 # (1 | mri_info_deviceserialnumber/rel_family_id)
 
 
-predicteddata <- get_model_data(confirmatory2,type = "pred", terms = "PDS_score")
+# predicteddata <- get_model_data(confirmatory2,type = "pred", terms = "PDS_score")
 
-geom_segment(aes(x = -4, xend = 4, 
-                     y = fixedeffect_intercept + fixedeffect_slope*-4, yend = fixedeffect_intercept + fixedeffect_slope*4), size = 2,  color = "black") +
+#geom_segment(aes(x = -4, xend = 4, 
+#                     y = fixedeffect_intercept + fixedeffect_slope*-4, yend = fixedeffect_intercept + fixedeffect_slope*4), # size = 2,  color = "black") +
 
 
 plot_model(confirmatory2,type = "pred", terms = "PDS_score", 
@@ -221,6 +243,39 @@ plot_model(confirmatory2_gender_CBCLrawscore,type = "int", terms = "PDS_score",
          strip.text = element_text(size=24, face="bold"),
          panel.background = element_blank(),
          axis.line = element_line(colour = "black"))
+
+# Male Category pds_p_m_cat_sum (sum_p_m):
+# 1: prepuberty; sum_p_m = 3.
+# 2: early puberty; sum_p_m >= 4 and <= 5.
+# 3: mid puberty; sum_p_m >= 6 and <= 8.
+# 4: late puberty; sum_p_m >= 9 and <= 11.
+# 5: post puberty; sum_p_m = 12.
+
+
+# Female Category:
+# 1: prepuberty; sum_p_f = 2 and pds_f5_p = 1.
+# 2: early puberty; sum_p_f = 3 and pds_f5_p = 1.
+# 3: mid puberty; sum_p_f >= 3 and pds_f5_p = 1.
+# 4: late puberty; sum_p_f <= 7 and pds_f5_p = 4.
+# 5: post puberty; sum_p_f = 8 and pds_f5_p = 4.
+
+# To compute Puberty Category Scores for boys use body hair growth, voice change, and facial hair growth as follows:
+# Prepubertal = 3.
+# Early Pubertal = 4 or 5 (no 3-point responses).
+# Midpubertal = 6, 7, or 8 (no 4-points).
+# Late pubertal = 9-11.
+# Postpubertal = 12.
+# 
+# 
+# To compute Puberty Category Scores for girls use body hair growth, breast development, and menarche as follows:
+# Prepubertal = 2 and no menarche.
+# Early Puberty = 3 and no menarche.
+# Midpubertal = > 3 and no menarche.
+# Late Puberty = <= 7 and menarche.
+# Postpubertal = 8 and menarche.
+
+
+pubescent <- subset(PDS_correct, PDS_score > 1) # This isn't right because PDS_score is continuous (not these exact numbers).
 ```
 
 # Exploratory Hypothesis 2: We will investigate whether testosterone relates to internalizing symptoms and whether this relationship is present after controlling for PDS.
