@@ -10,6 +10,9 @@ library(sjPlot)
 
 # Change this to your directory and the name of your data file.
 datapath <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
+datapath <- "C:/Users/lucia/GitHub/ABCD/derivatives/exploratory/"
+
+
 datafile <- "nda20_exploratory.csv"
 setwd(datapath)
 
