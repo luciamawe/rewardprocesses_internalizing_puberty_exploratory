@@ -79,6 +79,10 @@ data <- fulldata[,c("src_subject_id",
                 "cbcl_scr_syn_anxdep_t",
                 "cbcl_scr_syn_withdep_t",
                 "cbcl_scr_dsm5_depress_t",
+                "cbcl_scr_syn_internal_r",
+                "cbcl_scr_syn_anxdep_r",
+                "cbcl_scr_syn_withdep_r",
+                "cbcl_scr_dsm5_depress_r",
                 "PDS_score_f",
                 "PDS_score_m",
                 "PDS_score",
@@ -131,7 +135,6 @@ data$race.eth.7level <- as.factor(data$race.eth.7level)
 data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
-
 ```
 
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
@@ -144,9 +147,9 @@ cor.test(data$accumbens_rvsn_ant_z,data$putamen_rvsn_ant_z) # 0.63.
 cor.test(data$caudate_rvsn_ant_z,data$putamen_rvsn_ant_z) # 0.851. 
 
 #Explore outliers
-boxplot(data$accumbens_rvsn_ant)
-boxplot(data$caudate_rvsn_ant)
-boxplot(data$putamen_rvsn_ant)
+boxplot(data$accumbens_rvsn_ant_z)
+boxplot(data$caudate_rvsn_ant_z)
+boxplot(data$putamen_rvsn_ant_z)
 
 #Remove outliers (you need to type "YES" into the console)
 source("https://goo.gl/4mthoF")
@@ -157,19 +160,15 @@ outlierKD(data, striatum_rvsn_ant)
 boxplot(data$striatum_rvsn_ant)
 
 
+
+
 # Use data with only correct PDS scores.
 PDS_correct <- subset(data, PDS_score < 5)
 ```
 
-
-<<<<<<< HEAD
-# Separate analyses first. Exclude outliers.
-confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant_z + 
-=======
 ```{r Confirmatory4, echo = FALSE}
 # Separate analyses first.
 confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant + 
->>>>>>> 94068d7f6454c1ed17c87cfab2f1a8ba911493c1
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
@@ -203,13 +202,13 @@ confirmatory4_putamen <- lm(cbcl_scr_syn_internal_t ~ PDS_score*putamen_rvsn_ant
                             data = subset(PDS_correct, 
                                           putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3))
 summary(confirmatory4_putamen)
+```
 
+
+```{r Confirmatory4, echo = FALSE}
 # Composite striatum score.
-<<<<<<< HEAD
-confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score*striatum_rvsn_ant_z + 
-=======
-confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_r ~ PDS_score*striatum_rvsn_ant + 
->>>>>>> 94068d7f6454c1ed17c87cfab2f1a8ba911493c1
+
+confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_r ~ PDS_score*striatum_rvsn_ant_z +
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
@@ -219,10 +218,37 @@ confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_r ~ PDS_score*striat
                             data = subset(PDS_correct, 
                                           striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3))
 summary(confirmatory4_compositestriatum)
+
 plot_model(confirmatory4_compositestriatum,type = "int", show.data = FALSE) 
 
-# Note: Most of these fixed effects should be nested within family, correct?
+
+p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score", 
+           show.data = TRUE, jitter = 0.1, line.size = 2) +
+   ylab("Internalizing Score") +
+   xlab("Average PDS score") +
+   #scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(30,100)) +
+   theme(title= element_text(size=20, vjust=2, face="bold"),
+         plot.title = element_blank(),
+         axis.title.x= element_text(size=18, vjust=-0.3),
+         axis.title.y= element_text(size=18, vjust=1.5),
+         axis.text.x= element_text(size=18, colour="black"),
+         axis.text.y= element_text(size=18, colour="black"),
+         legend.title=element_text(size=12, colour = "black",title="Striatal activity \n (reward anticipation vs neutral z-score")),
+        # legend.position="none",
+         strip.text = element_text(size=18, face="bold"),
+         panel.background = element_blank(),
+         axis.line = element_line(colour = "black"))
+p + labs(fill = "Striatal activity \n (reward anticipation vs neutral z-score")")
+
++ guides(fill=guide_legend(title="Striatal activity \n (reward anticipation vs neutral z-score"))
+
+ # Note: Most of these fixed effects should be nested within family, correct?
 # And I haven't included any random effects yet because we don't have the family variable.
+
+p <- ggplot( data = subset(PDS_correct,                                       striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3), aes(x=sex, y=striatum_rvsn_ant_z)) + 
+  geom_boxplot()
+p
+
 ```
 
 # Exploratory Hypothesis 4A: We will investigate whether striatal responses to reward during reward feedback moderates the effect of pubertal stage on internalizing symptoms. 
