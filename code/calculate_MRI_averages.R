@@ -67,7 +67,7 @@ data$striatum_posvsneg_feedback <- (data$accumbens_posvsneg_feedback +
 
 
 # Calculate z scores for all of these values.
-data$accumbens_rvsn_ant_z <- scale(data$accumbens_rvsn_ant)
+data$accumbens_rvsn_ant_z <- as.numeric(scale(data$accumbens_rvsn_ant))
 data$caudate_rvsn_ant_z <- scale(data$caudate_rvsn_ant)
 data$putamen_rvsn_ant_z <- scale(data$putamen_rvsn_ant)
 data$mOFC_rvsn_ant_z <- scale(data$mOFC_rvsn_ant)

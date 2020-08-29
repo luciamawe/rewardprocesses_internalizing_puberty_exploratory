@@ -106,18 +106,18 @@ data <- fulldata[,c("src_subject_id",
                 "tfmri_ma_rpvnfb_b_cds_mobofrlh",
                 "tfmri_ma_rpvnfb_b_cds_lobofrrh", # Lateral OFC reward positive versus negative feedback.
                 "tfmri_ma_rpvnfb_b_cds_lobofrlh",
-                "accumbens_rvsn_ant", # Reward vs. neutral during anticipation stage.
-                "caudate_rvsn_ant",
-                "putamen_rvsn_ant",
-                "mOFC_rvsn_ant",
-                "lOFC_rvsn_ant",
-                "accumbens_posvsneg_feedback", # All positive vs. negative feedback.
-                "caudate_posvsneg_feedback",
-                "putamen_posvsneg_feedback",
-                "mOFC_posvsneg_feedback",
-                "lOFC_posvsneg_feedback",
-                "striatum_rvsn_ant", # reward vs. neutral anticipation.
-                "striatum_posvsneg_feedback"
+                "accumbens_rvsn_ant_z", # Reward vs. neutral during anticipation stage (z scores).
+                "caudate_rvsn_ant_z",
+                "putamen_rvsn_ant_z",
+                "mOFC_rvsn_ant_z",
+                "lOFC_rvsn_ant_z",
+                "striatum_rvsn_ant_z", # reward vs. neutral anticipation.
+                "accumbens_posvsneg_feedback_z", # All positive vs. negative feedback.
+                "caudate_posvsneg_feedback_z",
+                "putamen_posvsneg_feedback_z",
+                "mOFC_posvsneg_feedback_z",
+                "lOFC_posvsneg_feedback_z",
+                "striatum_posvsneg_feedback_z"
                 )]
 
 data$src_subject_id <- as.factor(data$src_subject_id)
@@ -140,55 +140,59 @@ data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 
 # Use combined score for accumbens, caudate, and putamen?
 # Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses.
-cor.test(data$accumbens_rvsn_ant,data$caudate_rvsn_ant) # 0.64.
-cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.63.
-cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.851. 
+cor.test(data$accumbens_rvsn_ant_z,data$caudate_rvsn_ant_z) # 0.64.
+cor.test(data$accumbens_rvsn_ant_z,data$putamen_rvsn_ant_z) # 0.63.
+cor.test(data$caudate_rvsn_ant_z,data$putamen_rvsn_ant_z) # 0.851. 
 
 # Use data with only correct PDS scores.
 PDS_correct <- subset(data, PDS_score < 5)
 
-# Separate analyses first.
-confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant + 
+# Separate analyses first. Exclude outliers.
+confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant_z + 
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
                             interview_age, 
-                            data = PDS_correct) 
+                            data = subset(PDS_correct, 
+                                          accumbens_rvsn_ant_z > -3 & accumbens_rvsn_ant_z < 3))
 summary(confirmatory4_accumbens)
 
 
-confirmatory4_caudate <- lm(cbcl_scr_syn_internal_t ~ PDS_score*caudate_rvsn_ant + 
+confirmatory4_caudate <- lm(cbcl_scr_syn_internal_t ~ PDS_score*caudate_rvsn_ant_z + 
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
                             interview_age, 
-                            data = PDS_correct) 
+                           data = subset(PDS_correct, 
+                                          caudate_rvsn_ant_z > -3 & caudate_rvsn_ant_z < 3))
 summary(confirmatory4_caudate)
 
 
-confirmatory4_putamen <- lm(cbcl_scr_syn_internal_t ~ PDS_score*putamen_rvsn_ant + 
+confirmatory4_putamen <- lm(cbcl_scr_syn_internal_t ~ PDS_score*putamen_rvsn_ant_z + 
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
                             interview_age, 
-                            data = PDS_correct) 
+                            data = subset(PDS_correct, 
+                                          putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3))
 summary(confirmatory4_putamen)
 
 # Composite striatum score.
-confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score*striatum_rvsn_ant + 
+confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score*striatum_rvsn_ant_z + 
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
                             interview_age,
-                            data = PDS_correct)
+                            data = subset(PDS_correct, 
+                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3))
 summary(confirmatory4_compositestriatum)
 plot_model(confirmatory4_compositestriatum,type = "int", show.data = FALSE) 
 
