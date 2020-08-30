@@ -41,8 +41,29 @@ setwd(datapath)
 
 ```
 
+```{r}
+#Read in data. Choose your the adequate data_folder line and comment out the other
+
+here() #this function will set the directory to .../rewardprocesses_internalizing_puberty_exploratory and should work in everyone's computer
+
+data_dir = ((dirname(here()))) #move one folder up from /rewardprocesses_internalizing_puberty_exploratory, function here should work regardless of path
+
+phase_folder = "exploratory"  #select the appropiate folder
+#phase_folder = "confirmatory"  #select the appropiate folder
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)  #LMW
+#data_folder <- file.path(data_dir,"ABCD","output")  #NSH, #EM
+
+file_name <- "nda20_exploratory.csv" #specify file name here 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+
+```
+
+
+
 ```{r GetData, echo = FALSE}
-fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
+#fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
 length(fulldata$src_subject_id) # 5934.
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
 data <- fulldata[,c("src_subject_id",
@@ -149,7 +170,6 @@ t.test(males$cbcl_scr_syn_internal_r,females$cbcl_scr_syn_internal_r) # Not sign
 # Confirmatory Hypothesis 2: We hypothesize that advanced pubertal stage will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL) internalizing factor (Ullsperger & Nikolas, 2017).
 ## Model: CBCL internalizing factor ~ Pubertal stage
 ```{r Confirmatory2, echo = FALSE}
-
 confirmatory2 <- lmer(cbcl_scr_syn_internal_t ~ PDS_score +
                       race.eth.7level +
                       high.educ +
@@ -215,8 +235,13 @@ plot_model(confirmatory2_gender,type = "int", terms = "PDS_score",
          strip.text = element_text(size=24, face="bold"),
          panel.background = element_blank(),
          axis.line = element_line(colour = "black"))
+```
 
+
+```{r Confirmatory2, echo = FALSE}
 # Plot with raw scores to get an idea.
+# Flux poster
+
 confirmatory2_gender_CBCLrawscore <- lmer(cbcl_scr_syn_internal_r ~ PDS_score*sex +
                       race.eth.7level +
                       high.educ +
@@ -224,9 +249,12 @@ confirmatory2_gender_CBCLrawscore <- lmer(cbcl_scr_syn_internal_r ~ PDS_score*se
                       married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic +
+                      fam_history_q6d_depression + #added mother's depression
                       (1 | site_id_l/rel_family_id),
                       data = PDS_correct)
 summary(confirmatory2_gender_CBCLrawscore)
+
+plot_model(confirmatory2_gender_CBCLrawscore,type = "est", show.data = FALSE) #Forest plot
 
 plot_model(confirmatory2_gender_CBCLrawscore,type = "int", terms = "PDS_score", 
            show.data = TRUE, jitter = 0.1, line.size = 2) +
@@ -243,6 +271,10 @@ plot_model(confirmatory2_gender_CBCLrawscore,type = "int", terms = "PDS_score",
          strip.text = element_text(size=24, face="bold"),
          panel.background = element_blank(),
          axis.line = element_line(colour = "black"))
+
+file.name = (here("output","question2_exploratorysample.tiff"))
+ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+
 
 # Male Category pds_p_m_cat_sum (sum_p_m):
 # 1: prepuberty; sum_p_m = 3.

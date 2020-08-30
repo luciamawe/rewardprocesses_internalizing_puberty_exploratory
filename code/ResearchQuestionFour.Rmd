@@ -150,6 +150,7 @@ cor.test(data$caudate_rvsn_ant_z,data$putamen_rvsn_ant_z) # 0.851.
 boxplot(data$accumbens_rvsn_ant_z)
 boxplot(data$caudate_rvsn_ant_z)
 boxplot(data$putamen_rvsn_ant_z)
+boxplot(data$cbcl_scr_syn_internal_r)
 
 #Remove outliers (you need to type "YES" into the console)
 source("https://goo.gl/4mthoF")
@@ -159,7 +160,7 @@ outlierKD(data, putamen_rvsn_ant)
 outlierKD(data, striatum_rvsn_ant)
 boxplot(data$striatum_rvsn_ant)
 
-
+outlierKD(data, cbcl_scr_syn_internal_r)
 
 
 # Use data with only correct PDS scores.
@@ -207,25 +208,33 @@ summary(confirmatory4_putamen)
 
 ```{r Confirmatory4, echo = FALSE}
 # Composite striatum score.
+# Flux poster
 
-confirmatory4_compositestriatum <- lm(cbcl_scr_syn_internal_r ~ PDS_score*striatum_rvsn_ant_z +
+confirmatory4_compositestriatum <- lmer(cbcl_scr_syn_internal_r ~ 
+                                           PDS_score*striatum_rvsn_ant_z +
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
-                            interview_age,
+                            interview_age+
+                            fam_history_q6d_depression + #added mother's depression
+                            (1 | site_id_l/rel_family_id),
                             data = subset(PDS_correct, 
                                           striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3))
 summary(confirmatory4_compositestriatum)
 
-plot_model(confirmatory4_compositestriatum,type = "int", show.data = FALSE) 
+plot_model(confirmatory4_compositestriatum,type = "int", show.data = FALSE) #Interaction plot
 
+plot_model(confirmatory4_compositestriatum,type = "est", show.data = FALSE) #Forest plot
 
-p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score", 
-           show.data = TRUE, jitter = 0.1, line.size = 2) +
+# Note: Most of these fixed effects should be nested within family, correct?
+# I have added random effects for family nested in site
+
+p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score",            show.data = TRUE, jitter = 0.1, line.size = 2) +
    ylab("Internalizing Score") +
    xlab("Average PDS score") +
+   labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
    #scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(30,100)) +
    theme(title= element_text(size=20, vjust=2, face="bold"),
          plot.title = element_blank(),
@@ -233,17 +242,16 @@ p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score
          axis.title.y= element_text(size=18, vjust=1.5),
          axis.text.x= element_text(size=18, colour="black"),
          axis.text.y= element_text(size=18, colour="black"),
-         legend.title=element_text(size=12, colour = "black",title="Striatal activity \n (reward anticipation vs neutral z-score")),
-        # legend.position="none",
+         legend.title=element_text(size=12, colour = "black"),
+         legend.position = c(.80, .80),
+         # legend.position="none",
          strip.text = element_text(size=18, face="bold"),
          panel.background = element_blank(),
          axis.line = element_line(colour = "black"))
-p + labs(fill = "Striatal activity \n (reward anticipation vs neutral z-score")")
+p 
 
-+ guides(fill=guide_legend(title="Striatal activity \n (reward anticipation vs neutral z-score"))
-
- # Note: Most of these fixed effects should be nested within family, correct?
-# And I haven't included any random effects yet because we don't have the family variable.
+file.name = (here("output","question4_exploratory.tiff"))
+ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
 p <- ggplot( data = subset(PDS_correct,                                       striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3), aes(x=sex, y=striatum_rvsn_ant_z)) + 
   geom_boxplot()
