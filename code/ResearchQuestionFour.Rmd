@@ -237,23 +237,27 @@ plot_model(confirmatory4_compositestriatum,type = "est", show.data = FALSE) #For
 # Note: Most of these fixed effects should be nested within family, correct?
 # I have added random effects for family nested in site
 
-p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score",            show.data = TRUE, jitter = 0.1, line.size = 2) +
-   ylab("Internalizing Score") +
-   xlab("Average PDS score") +
-   labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
-   #scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(30,100)) +
-   theme(title= element_text(size=20, vjust=2, face="bold"),
-         plot.title = element_blank(),
-         axis.title.x= element_text(size=18, vjust=-0.3),
-         axis.title.y= element_text(size=18, vjust=1.5),
-         axis.text.x= element_text(size=18, colour="black"),
-         axis.text.y= element_text(size=18, colour="black"),
-         legend.title=element_text(size=12, colour = "black"),
-         legend.position = c(.80, .80),
-         # legend.position="none",
-         strip.text = element_text(size=18, face="bold"),
-         panel.background = element_blank(),
-         axis.line = element_line(colour = "black"))
+#p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score",            show.data = TRUE, jitter = 0.1, line.size = 2) +
+p <- plot_model(confirmatory4_compositestriatum,
+                type = "pred", # To specify values for striatal response, have to use "pred" instead.
+                terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
+                show.data = TRUE, jitter = 0.1, line.size = 2) +
+                ylab("Internalizing Score") +
+                xlab("Average PDS score") +
+                labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
+                #scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(30,100)) +
+                theme(title= element_text(size=20, vjust=2, face="bold"),
+                plot.title = element_blank(),
+                axis.title.x= element_text(size=18, vjust=-0.3),
+                axis.title.y= element_text(size=18, vjust=1.5),
+                axis.text.x= element_text(size=18, colour="black"),
+                axis.text.y= element_text(size=18, colour="black"),
+                legend.title=element_text(size=12, colour = "black"),
+                legend.position = c(.80, .80),
+                # legend.position="none",
+                strip.text = element_text(size=18, face="bold"),
+                panel.background = element_blank(),
+                axis.line = element_line(colour = "black"))
 p 
 
 file.name = (here("output","question4_exploratory.tiff"))
