@@ -12,6 +12,8 @@ library(gamm4)
 library(dplyr)
 library(sjPlot)
 library(here)
+library(jtools)
+library(interactions)
 ```
 
 ```{r setdirectories, echo = FALSE}
@@ -261,6 +263,18 @@ p <- ggplot( data = subset(PDS_correct,                                       st
   geom_boxplot()
 p
 
+interact_plot(confirmatory4_compositestriatum,
+              pred = PDS_score, 
+              modx=striatum_rvsn_ant_z, 
+              plot.points = TRUE,
+              x.label = "PDS score",
+              y.label = "Internalizing symptoms",
+              main.title = "",
+              #modx.labels = c("Female","Male"),
+              color.class = "Set2",
+              rug=TRUE,
+              interval = TRUE ) 
+
 ```
 
 
@@ -286,6 +300,40 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", show.
 
 plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "est", show.data = FALSE) #Forest plot
 
+p <- plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", terms = "PDS_score",            show.data = TRUE, jitter = 0.1, line.size = 2) +
+   ylab("Internalizing Score") +
+   xlab("Average PDS score") +
+   labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
+   #scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(30,100)) +
+   theme(title= element_text(size=20, vjust=2, face="bold"),
+         plot.title = element_blank(),
+         axis.title.x= element_text(size=18, vjust=-0.3),
+         axis.title.y= element_text(size=18, vjust=1.5),
+         axis.text.x= element_text(size=18, colour="black"),
+         axis.text.y= element_text(size=18, colour="black"),
+         legend.title=element_text(size=12, colour = "black"),
+         legend.position = c(.80, .80),
+         # legend.position="none",
+         strip.text = element_text(size=18, face="bold"),
+         panel.background = element_blank(),
+         axis.line = element_line(colour = "black"))
+p 
+
+file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
+ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+
+
+interact_plot(confirmatory4_compositestriatum_excludingoutliers,
+              pred = PDS_score, 
+              modx=striatum_rvsn_ant_z, 
+              plot.points = TRUE,
+              x.label = "PDS score",
+              y.label = "Internalizing symptoms",
+              main.title = "",
+              #modx.labels = c("Female","Male"),
+              color.class = "Set2",
+              rug=TRUE,
+              interval = TRUE) 
 ```
 
 
