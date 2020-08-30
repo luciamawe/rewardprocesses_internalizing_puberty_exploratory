@@ -160,7 +160,11 @@ outlierKD(data, putamen_rvsn_ant)
 outlierKD(data, striatum_rvsn_ant)
 boxplot(data$striatum_rvsn_ant)
 
-outlierKD(data, cbcl_scr_syn_internal_r)
+boxplot(data$cbcl_scr_syn_internal_r)
+
+data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
+
+#outlierKD(data, cbcl_scr_syn_internal_r) #should we remove CBCL outliers?
 
 
 # Use data with only correct PDS scores.
@@ -258,6 +262,37 @@ p <- ggplot( data = subset(PDS_correct,                                       st
 p
 
 ```
+
+
+
+```{r}
+#Excluding outliers in CBCL 
+#Reveals main effect of striatum as well as interaction, but in the opposite way?
+confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_r ~ 
+                                           PDS_score*striatum_rvsn_ant_z +
+                            race.eth.7level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age+
+                            fam_history_q6d_depression + #added mother's depression
+                            (1 | site_id_l/rel_family_id),
+                            data = subset(PDS_correct, 
+                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+summary(confirmatory4_compositestriatum_excludingoutliers)
+
+plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", show.data = FALSE) #Interaction plot
+
+plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "est", show.data = FALSE) #Forest plot
+
+```
+
+
+```{r}
+
+```
+
 
 # Exploratory Hypothesis 4A: We will investigate whether striatal responses to reward during reward feedback moderates the effect of pubertal stage on internalizing symptoms. 
 ## Model: CBCL internalizing factor ~ PDS*Striatal activity (feedback stage)
