@@ -309,6 +309,45 @@ ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
 pubescent <- subset(PDS_correct, PDS_score > 1) # This isn't right because PDS_score is continuous (not these exact numbers).
 ```
+```{r}
+#Excluding CBCL outliers
+data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
+
+confirmatory2_gender_CBCLrawscore_excludingoutliers  <- lmer(cbcl_scr_syn_internal_r ~ PDS_score*sex +
+                      race.eth.7level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic +
+                      fam_history_q6d_depression + #added mother's depression
+                      (1 | site_id_l/rel_family_id),
+                      data =  subset(PDS_correct, 
+                                          cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+summary(confirmatory2_gender_CBCLrawscore_excludingoutliers)
+
+plot_model(confirmatory2_gender_CBCLrawscore_excludingoutliers,type = "est", show.data = FALSE) #Forest plot
+
+plot_model(confirmatory2_gender_CBCLrawscore_excludingoutliers,type = "int", terms = "PDS_score", 
+           show.data = TRUE, jitter = 0.1, line.size = 2) +
+   ylab("Internalizing Score") +
+   xlab("PDS Stage") +
+   scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) + 
+   theme(title= element_text(size=26, vjust=2, face="bold"),
+         plot.title = element_blank(),
+         axis.title.x= element_text(size=18, vjust=-0.3),
+         axis.title.y= element_text(size=18, vjust=1.5),
+         axis.text.x= element_text(size=18, colour="black"),
+         axis.text.y= element_text(size=18, colour="black"),
+         #legend.position="none",
+         strip.text = element_text(size=24, face="bold"),
+         panel.background = element_blank(),
+         axis.line = element_line(colour = "black"))
+
+
+file.name = (here("output","question2_exploratorysample_excludingCBLCoutliers.tiff"))
+ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+```
 
 # Exploratory Hypothesis 2: We will investigate whether testosterone relates to internalizing symptoms and whether this relationship is present after controlling for PDS.
 ## Model A: CBCL internalizing factor ~ Testosterone

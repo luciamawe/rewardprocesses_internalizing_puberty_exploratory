@@ -37,7 +37,19 @@ packages <- c("tidyverse",   #data wrangling
 #library("conflicted") #only run when there are issues with functions. Will illuminate which functions come from different packages
 #invisible(lapply(packages, install.packages, character.only = TRUE)) #Only run once to install packages
 library(tidyverse)
+library(ggstatsplot)
 invisible(lapply(packages, library, character.only = TRUE))
+
+
+# needed package to download from GitHub repo
+install.packages("remotes")
+
+# downloading the package from GitHub (needs `remotes` package to be installed)
+remotes::install_github(
+  repo = "IndrajeetPatil/ggstatsplot", # package path on GitHub
+  dependencies = FALSE, # assumes you have already installed needed packages
+  quick = TRUE # skips docs, demos, and vignettes
+)
 ```
 
 ```{r, include=FALSE}
@@ -161,12 +173,12 @@ ABCD_Data <- data %>% filter(sex!="") #remove 6 participants with no gender
 nrow(ABCD_Data)
 ```
 ```{r}
-ABCD_Data$PDS_score_both
-ABCD_Data <- ABCD_Data %>% filter(PDS_score_both<5) 
+ABCD_Data$PDS_score
+ABCD_Data <- ABCD_Data %>% filter(PDS_score<5) 
 nrow(ABCD_Data)
 ```
 ```{r}
-ABCD_Data <- ABCD_Data %>% filter(PDS_sum_both<30) #remove 6
+ABCD_Data <- ABCD_Data %>% filter(PDS_sum<30) #remove 6
 nrow(ABCD_Data)
 ```
 
@@ -244,9 +256,9 @@ p
 
 ```{r}
 # Example distribution: Plot CBCL (rounded down) in the sample.
-max_level <- max(ABCD_Data$cbcl_scr_syn_internal_t,na.rm = TRUE)
-min_level <- min(ABCD_Data$cbcl_scr_syn_internal_t,na.rm = TRUE)
-total_plot <- ggplot(ABCD_Data, aes(x=cbcl_scr_syn_internal_t)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+max_level <- max(ABCD_Data$cbcl_scr_syn_internal_r,na.rm = TRUE)
+min_level <- min(ABCD_Data$cbcl_scr_syn_internal_r,na.rm = TRUE)
+total_plot <- ggplot(ABCD_Data, aes(x=cbcl_scr_syn_internal_r)) +
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
               labs(title = "CBCL Internalizing symptoms by sex (Exploratory sample)",x = "cbcl_scr_syn_internal_t") + # Set the title of the graph and label the x axis. 
@@ -282,9 +294,9 @@ p
 p <- ggbetweenstats(
   data = ABCD_Data,
   x = sex, # > 2 groups
-  y = cbcl_scr_syn_withdep_t,
+  y = cbcl_scr_syn_internal_r,
   xlab = "Sex",
-  ylab = "CBCL depression score",
+  ylab = "CBCL internalizing symptoms",
   title = "Withdrawn depressive symptoms by sex (Exploratory sample)",
   bf.message  = FALSE,
   pairwise.display = "significant", # display only significant pairwise comparisons
@@ -310,10 +322,10 @@ p
 p <- ggbetweenstats(
   data = ABCD_Data,
   x = sex, # > 2 groups
-  y = cbcl_scr_syn_internal_t,
+  y = cbcl_scr_syn_internal_r,
   xlab = "Sex",
   ylab = "CBCL internalizing score",
-  title = "Internalizing symptoms by sex in the Exploratory sample",
+  title = "Internalizing symptoms by sex",
   bf.message  = FALSE,
   pairwise.display = "significant", # display only significant pairwise comparisons
   pairwise.annotation = "p.value", # annotate the pairwise comparisons using p-values
