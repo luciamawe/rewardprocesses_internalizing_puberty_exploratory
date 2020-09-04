@@ -8,6 +8,7 @@ Order in which scripts should be run.
 6. split data.
 
 7. calculate_MRI_averages.
+8. add_PDS_categories. (this should be in calculate_PDS for the future, but for now, will have it here because we already have the two separate data files).
 
 Exploratory sample
 1. data cleaning and descriptives.
