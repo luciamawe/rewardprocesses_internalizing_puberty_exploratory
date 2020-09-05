@@ -71,15 +71,19 @@ as_tibble(full_ABCD_Data)
 ```
 
 ```{r GetData, echo = FALSE}
-fulldata <- full_ABCD_Data
-
+#fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
+length(fulldata$src_subject_id) # 5934.
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
 data <- fulldata[,c("src_subject_id",
                 "interview_age",
                 "eventname",
                 "sex",
                 "site_id_l",
-                "race.eth.8level",
+                "mri_info_deviceserialnumber",
+                "rel_family_id",
+                "race.ethnicity.5level",
+                "race.eth.7level",
+                "demo_race_hispanic", # Do you consider the child Hispanic/Latino/Latina?
                 "high.educ",
                 "household.income",
                 "married.or.livingtogether",
@@ -87,13 +91,18 @@ data <- fulldata[,c("src_subject_id",
                 "cbcl_scr_syn_anxdep_t",
                 "cbcl_scr_syn_withdep_t",
                 "cbcl_scr_dsm5_depress_t",
+                "cbcl_scr_syn_internal_r",
+                "cbcl_scr_syn_anxdep_r",
+                "cbcl_scr_syn_withdep_r",
+                "cbcl_scr_dsm5_depress_r",
                 "PDS_score_f",
                 "PDS_score_m",
+                "PDS_score",
                 "PDS_sum_f",
                 "PDS_sum_m",
-                "hormone_scr_ert_mean",
-                "hormone_scr_dhea_mean",
-                "bisbas_ss_basm_rr",
+                "PDS_sum",
+                "pds_p_ss_category",
+                "fam_history_q6d_depression",
                 "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
                 "tfmri_ma_acdn_b_scs_aalh",
                 "tfmri_ma_acdn_b_scs_cdrh", # Caudate reward vs. neutral anticipation.
@@ -104,67 +113,42 @@ data <- fulldata[,c("src_subject_id",
                 "tfmri_ma_arvn_b_cds_mobofrlh",
                 "tfmri_ma_arvn_b_cds_lobofrrh", # Lateral OFC reward vs. neutral anticipation.
                 "tfmri_ma_arvn_b_cds_lobofrlh",
-                "fam_history_q6d_depression"
+                "tfmri_ma_rpvnfb_b_scs_aarh", # Accumbens reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_scs_aalh",
+                "tfmri_ma_rpvnfb_b_scs_cdrh", # Caudate reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_scs_cdlh",
+                "tfmri_ma_rpvnfb_b_scs_ptrh", # Putamen reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_scs_ptlh",
+                "tfmri_ma_rpvnfb_b_cds_mobofrrh", # Medial OFC reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_cds_mobofrlh",
+                "tfmri_ma_rpvnfb_b_cds_lobofrrh", # Lateral OFC reward positive versus negative feedback.
+                "tfmri_ma_rpvnfb_b_cds_lobofrlh",
+                "accumbens_rvsn_ant_z", # Reward vs. neutral during anticipation stage (z scores).
+                "caudate_rvsn_ant_z",
+                "putamen_rvsn_ant_z",
+                "mOFC_rvsn_ant_z",
+                "lOFC_rvsn_ant_z",
+                "striatum_rvsn_ant_z", # reward vs. neutral anticipation.
+                "accumbens_posvsneg_feedback_z", # All positive vs. negative feedback.
+                "caudate_posvsneg_feedback_z",
+                "putamen_posvsneg_feedback_z",
+                "mOFC_posvsneg_feedback_z",
+                "lOFC_posvsneg_feedback_z",
+                "striatum_posvsneg_feedback_z"
                 )]
 
-
 data$src_subject_id <- as.factor(data$src_subject_id)
+data$rel_family_id <- as.factor(data$rel_family_id)
 data$eventname <- as.factor(data$eventname)
 data$sex <- as.factor(data$sex)
+data$demo_race_hispanic <- as.factor(data$demo_race_hispanic)
 data$site_id_l <- as.factor(data$site_id_l)
-data$race.eth.8level <- as.factor(data$race.eth.8level)
+data$mri_info_deviceserialnumber <- as.factor(data$mri_info_deviceserialnumber)
+data$race.eth.7level <- as.factor(data$race.eth.7level)
 data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
-               
-
-# Check: We only want to use baseline, right?
-data <- subset(data, eventname =="baseline_year_1_arm_1")
-length(data$src_subject_id) # 11,875.
-
-# Create new variables.
-# We should double check this but this should combine PDS across genders into one column (assumes the person only has a value in either female or male column).
-# Many of the PDS values seem to be mistakes?
-data$PDS_score_both <- dplyr::coalesce(data$PDS_score_f, data$PDS_score_m)
-data$PDS_sum_both <- dplyr::coalesce(data$PDS_sum_f, data$PDS_sum_m)
-# PDS <- data[,c("src_subject_id","interview_age","eventname","sex",
-#         "PDS_score_f","PDS_score_m","PDS_score_both", 
-#         "PDS_sum_f","PDS_sum_m", "PDS_sum_both")]
-
-
-# Average right and left hemispheres.
-# Note: If either is "NA", then the whole thing will be "NA".
-data$accumbens_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_aarh + data$tfmri_ma_acdn_b_scs_aalh)/2
-data$caudate_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_cdrh+data$tfmri_ma_acdn_b_scs_cdlh)/2
-data$putamen_rvsn_ant <- (data$tfmri_ma_acdn_b_scs_ptrh+data$tfmri_ma_acdn_b_scs_ptlh)/2
-data$mOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_mobofrrh+data$tfmri_ma_arvn_b_cds_mobofrlh)/2
-data$lOFC_rvsn_ant <- (data$tfmri_ma_arvn_b_cds_lobofrrh+data$tfmri_ma_arvn_b_cds_lobofrlh)/2
-# mri <- data[,c("src_subject_id","interview_age","eventname","sex",
-#                 "tfmri_ma_acdn_b_scs_aarh",
-#                 "tfmri_ma_acdn_b_scs_aalh",
-#                 "accumbens_rvsn_ant",
-#                 "tfmri_ma_acdn_b_scs_cdrh",
-#                 "tfmri_ma_acdn_b_scs_cdlh",
-#                 "caudate_rvsn_ant",
-#                 "tfmri_ma_acdn_b_scs_ptrh",
-#                 "tfmri_ma_acdn_b_scs_ptlh",
-#                 "putamen_rvsn_ant",
-#                 "tfmri_ma_arvn_b_cds_mobofrrh",
-#                 "tfmri_ma_arvn_b_cds_mobofrlh",
-#                 "mOFC_rvsn_ant",
-#                 "tfmri_ma_arvn_b_cds_lobofrrh",
-#                 "tfmri_ma_arvn_b_cds_lobofrlh",
-#                 "lOFC_rvsn_ant")]
-
-
-# Create a striatum variable by averaging the caudate, putamen, and accumbens.
-cor.test(data$accumbens_rvsn_ant,data$caudate_rvsn_ant) # 0.62.
-cor.test(data$accumbens_rvsn_ant,data$putamen_rvsn_ant) # 0.581.
-cor.test(data$caudate_rvsn_ant,data$putamen_rvsn_ant) # 0.829. 
-data$striatum_rvsn_ant <- (data$accumbens_rvsn_ant + 
-                           data$caudate_rvsn_ant+
-                           data$putamen_rvsn_ant)/2
-
+as.factor(data$pds_p_ss_category)
 
 ```
 
