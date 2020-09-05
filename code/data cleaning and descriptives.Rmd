@@ -16,7 +16,7 @@ authors: Lucia Magis Weinberg
 #library(report)
 # Natalie adding comment.
 packages <- c("tidyverse",   #data wrangling
-              "summarytools",  #data exploration and simple reporting
+             # "summarytools",  #data exploration and simple reporting
               "psych",       #correlations and Cronbach alpha for internal consistency  
               "readr",       #read csv
               "tidyr",       #create tidy data, where every column is a variable, every row is an                               observation 
@@ -460,8 +460,14 @@ total_plot <- ggplot(ABCD_Data, aes(x=striatum_rvsn_ant)) + # this line is sayin
 facet_grid(. ~ sex)
 total_plot
 ```
+
 ```{r}
 p <- ggplot(ABCD_Data, aes(x=sex, y=striatum_rvsn_ant)) + 
   geom_boxplot() + labs(title = "Striatal activity during reward anticipation by sex (Exploratory sample)",x = "striatum_rvsn_ant")# Set the title of the graph and label the x axis.
 p
 ```
+
+```{r, Pubertal category}
+p <-  ggplot(data, aes(pds_p_ss_category, ..count..)) + geom_bar(aes(fill = sex), position = "dodge")
+```
+
