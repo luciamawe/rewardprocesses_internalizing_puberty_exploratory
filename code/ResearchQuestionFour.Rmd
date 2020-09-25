@@ -159,8 +159,12 @@ boxplot(data$cbcl_scr_syn_internal_r)
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
 # Use data with only correct PDS scores.
-PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continues)
+PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous)
 
+
+#Separate by sex
+PDS_correct_females <- subset(data, sex == "F")
+PDS_correct_males <- subset(data, sex == "M")
 ```
 
 ```{r Confirmatory4, echo = FALSE}
@@ -204,7 +208,7 @@ summary(confirmatory4_putamen)
 
 ```{r Confirmatory4, echo = FALSE}
 # Composite striatum score.
-# Flux poster
+# No CBCL exclusions
 
 confirmatory4_compositestriatum <- lmer(cbcl_scr_syn_internal_r ~ 
                                            PDS_score*striatum_rvsn_ant_z +
@@ -354,7 +358,7 @@ p
 #Excluding outliers in CBCL 
 #Reveals main effect of striatum as well as interaction, but in the opposite way?
 confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_r ~ 
-                                           PDS_score*striatum_rvsn_ant_z +
+                                           PDS_score*striatum_rvsn_ant_z*sex +
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
@@ -362,15 +366,27 @@ confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_
                             married.or.livingtogether +
                             interview_age+
                             fam_history_q6d_depression + #added mother's depression
-                            (1 | site_id_l/rel_family_id),
-                            data = subset(PDS_correct, 
-                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+                            (1 | site_id_l/rel_family_id),  #same thing as site is the same thing as (1|site) + (1|family:site), this is what done in paper by Paulus et al. (2019), 22 sites 
+data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+
 summary(confirmatory4_compositestriatum_excludingoutliers)
 
+data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+sum(is.na(data$site_id_l))
+levels((data$site_id_l))
+
+```
+
+```{r}
+#Quick plots
 plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", show.data = FALSE) #Interaction plot
 
 plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+```
 
+```{r}
+#Publication plot
 p <- plot_model(confirmatory4_compositestriatum_excludingoutliers,
                 type = "pred", # To specify values for striatal response, have to use "pred" instead.
                 terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
@@ -392,12 +408,64 @@ p <- plot_model(confirmatory4_compositestriatum_excludingoutliers,
                 panel.background = element_blank(),
                 axis.line = element_line(colour = "black"))
 p 
+                 
                    
-                   
-                   
+                
 
 file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+```
+
+```{r}
+# Excluding outliers in CBCL 
+# Splitting by sex
+# FEMALES
+
+confirmatory4_compositestriatum_excludingoutliers_femalesonly <- lmer(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*striatum_rvsn_ant_z +
+                            race.eth.7level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age+
+                            fam_history_q6d_depression + #added mother's depression
+                            (1 | site_id_l/rel_family_id),
+                            data = subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+
+summary(confirmatory4_compositestriatum_excludingoutliers)
+```
+```{r}
+#Quick plots
+plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly,type = "pred", terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),show.data = FALSE) #Interaction plot
+
+plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly,type = "std", show.data = FALSE) #Forest plot with standardized coefficients
+```
+
+```{r}
+# Excluding outliers in CBCL 
+# Splitting by sex
+# MALES
+
+confirmatory4_compositestriatum_excludingoutliers_malesonly <- lmer(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*striatum_rvsn_ant_z +
+                            race.eth.7level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age+
+                            fam_history_q6d_depression + #added mother's depression
+                            (1 | site_id_l/rel_family_id),
+                            data = subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+
+summary(confirmatory4_compositestriatum_excludingoutliers_malesonly)
+```
+```{r}
+#Quick plots
+plot_model(confirmatory4_compositestriatum_excludingoutliers_malesonly,type = "pred", terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),show.data = FALSE) #Interaction plot
+
+plot_model(confirmatory4_compositestriatum_excludingoutliers_malesonly,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 
