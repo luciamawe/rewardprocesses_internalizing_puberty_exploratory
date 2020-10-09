@@ -167,6 +167,28 @@ PDS_correct_females <- subset(data, sex == "F")
 PDS_correct_males <- subset(data, sex == "M")
 ```
 
+```{r}
+#Count NAs per variable 
+# We are missing many cases of maternal depression - consider dropping
+data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+nrow(data) 
+
+data
+
+sum(is.na(data$src_subject_id))
+sum(is.na(data$sex))
+sum(is.na(data$mri_info_deviceserialnumber))
+sum(is.na(data$rel_family_id))
+sum(is.na(data$race.ethnicity.5level)) #41
+sum(is.na(data$demo_race_hispanic))  #50
+sum(is.na(data$high.educ))  #3
+sum(is.na(data$household.income)) #293
+sum(is.na(data$married.or.livingtogether))  #22
+
+
+summary(data)
+```
+
 ```{r Confirmatory4, echo = FALSE}
 # Separate analyses first.
 confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant + 
@@ -254,13 +276,14 @@ p <- plot_model(confirmatory4_compositestriatum,
                 axis.line = element_line(colour = "black"))
 p 
 
-file.name = (here("output","question4_exploratory.tiff"))
-ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+#file.name = (here("output","question4_exploratory.tiff"))
+#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
-p <- ggplot( data = subset(PDS_correct,                                       striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3), aes(x=sex, y=striatum_rvsn_ant_z)) + 
+p <- ggplot( data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3), aes(x=sex, y=striatum_rvsn_ant_z)) + 
   geom_boxplot()
 p
 ```
+
 
 
 
@@ -275,7 +298,7 @@ confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_
                             household.income +
                             married.or.livingtogether +
                             interview_age+
-                            fam_history_q6d_depression + #added mother's depression
+                           # fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
                             data = subset(PDS_correct, 
                                           striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category < 2))
@@ -317,13 +340,28 @@ ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 ```
 ```{r}
 #Model stripped down to basics
+
+data = subset(PDS_correct,  striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+#Select only cases that have complete data for all covariates of intest. It seems that we are missing many cases of maternal depression. We might drop it going forwards. 
+tempdata <- data[which(complete.cases(data[,c("race.eth.7level",
+                            "demo_race_hispanic",
+                            "high.educ",
+                            "household.income",
+                            "married.or.livingtogether",
+                            "interview_age"
+                            )])),]
+nrow(data)
+nrow(tempdata)
+
 confirmatory4_compositestriatum_excludingoutliers_core <- lmer(cbcl_scr_syn_internal_r ~
-                                           PDS_score *striatum_rvsn_ant_z+                             sex +
+                                           PDS_score *striatum_rvsn_ant_z+ sex +
                             (1 | site_id_l/rel_family_id),
-                            data = subset(PDS_correct, 
-                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+                            data = tempdata)
 
 summary(confirmatory4_compositestriatum_excludingoutliers_core)
+
+
 
 plot_model(confirmatory4_compositestriatum_excludingoutliers_core,type = "int", show.data = FALSE, show.p = TRUE) #Interaction plot
 
@@ -365,9 +403,10 @@ confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_
                             household.income +
                             married.or.livingtogether +
                             interview_age+
-                            fam_history_q6d_depression + #added mother's depression
+                           # fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),  #same thing as site is the same thing as (1|site) + (1|family:site), this is what done in paper by Paulus et al. (2019), 22 sites 
-data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+#data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+data = tempdata)
 
 summary(confirmatory4_compositestriatum_excludingoutliers)
 
@@ -383,6 +422,11 @@ levels((data$site_id_l))
 plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", show.data = FALSE) #Interaction plot
 
 plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+```
+
+```{r}
+#Compare model with and without covariates - adding covariates makes the model significantly improve
+anova(confirmatory4_compositestriatum_excludingoutliers_core,confirmatory4_compositestriatum_excludingoutliers)
 ```
 
 ```{r}
