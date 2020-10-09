@@ -138,7 +138,7 @@ data$race.eth.7level <- as.factor(data$race.eth.7level)
 data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
-as.factor(data$pds_p_ss_category)
+data$pds_p_ss_category <-as.factor(data$pds_p_ss_category)
 ```
 
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
@@ -317,19 +317,19 @@ ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 ```
 ```{r}
 #Model stripped down to basics
-confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_r ~
+confirmatory4_compositestriatum_excludingoutliers_core <- lmer(cbcl_scr_syn_internal_r ~
                                            PDS_score *striatum_rvsn_ant_z+                             sex +
                             (1 | site_id_l/rel_family_id),
                             data = subset(PDS_correct, 
                                           striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
 
-summary(confirmatory4_compositestriatum_excludingoutliers)
+summary(confirmatory4_compositestriatum_excludingoutliers_core)
 
-plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", show.data = FALSE, show.p = TRUE) #Interaction plot
+plot_model(confirmatory4_compositestriatum_excludingoutliers_core,type = "int", show.data = FALSE, show.p = TRUE) #Interaction plot
 
-plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "std", show.data = FALSE) #Forest plot
+plot_model(confirmatory4_compositestriatum_excludingoutliers_core,type = "std", show.data = FALSE) #Forest plot
 
-p <- plot_model(confirmatory4_compositestriatum_excludingoutliers,
+p <- plot_model(confirmatory4_compositestriatum_excludingoutliers_core,
                 type = "pred", # To specify values for striatal response, have to use "pred" instead.
                 terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
                 show.data = TRUE, jitter = 0.1, line.size = 2) +
@@ -414,6 +414,17 @@ p
 
 file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+```
+
+
+```{r}
+#model comparison, core model has n = 4097, and model with covariates has n = 2003. best way to extrac the same dataset to allow for comparisons?
+
+data_for_models<-subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+data_complete <- data_for_models[complete.cases(project_specific_s1s6$osem_negative_score), ] ## I've uses this in the past, not sure here_
+
+anova(confirmatory4_compositestriatum_excludingoutliers_core,confirmatory4_compositestriatum_excludingoutliers)
 ```
 
 ```{r}
