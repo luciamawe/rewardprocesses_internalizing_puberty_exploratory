@@ -80,6 +80,7 @@ data <- fulldata[,c("src_subject_id",
                 "high.educ",
                 "household.income",
                 "married.or.livingtogether",
+                "bisbas_ss_basm_rr",
                 "cbcl_scr_syn_internal_t",
                 "cbcl_scr_syn_anxdep_t",
                 "cbcl_scr_syn_withdep_t",
@@ -198,17 +199,21 @@ length(data_no_CBCL_striatal_ant_outliers_males$src_subject_id) # 2095.
 # Confirmatory Hypothesis 1: We hypothesize that pubertal stage will be associated with neural response to reward during a monetary incentive delay task (Braams et al., 2015). In particular, we expect heightened striatal activation during reward anticipation for more advanced pubertal stages.
 ## Model: Striatal activation (anticipation stage) ~ Pubertal stage
 ```{r Confirmatory1, echo = FALSE}
-confirmatory1 <- lm(striatum_rvsn_ant ~ PDS_score +
+confirmatory1_females <- lmer(striatum_rvsn_ant_z ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
+                      demo_race_hispanic, +
                       (1 | site_id_l/rel_family_id),
-                      data = PDS_correct)
-summary(confirmatory1)
-plot_model(confirmatory1,type = "pred", terms = "PDS_score", show.data = FALSE)
+                      data = data_no_striatal_ant_outliers_females)
+summary(confirmatory1_females) # Singularity problem?
+plot_model(confirmatory1_females,type = "pred", terms = "PDS_score", show.data = FALSE)
+
+plot_model(confirmatory1_females,type = "est", show.data = FALSE) # forest plot.
+
+
 ```
 # Exploratory Hypothesis 1A: We will explore whether striatal activation during reward feedback is related to pubertal stage.
 ## Model: Striatal activation (feedback stage) ~ Pubertal stage 
