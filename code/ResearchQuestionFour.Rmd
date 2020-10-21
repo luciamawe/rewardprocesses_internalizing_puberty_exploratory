@@ -40,8 +40,7 @@ setwd(datapath)
 #           4. Marital status parent. (married.or.livingtogether)
 #           5. Age. (interview_age).
 #           6. Hispanic. (demo_race_hispanic).
-#           7. Maternal Depression (Yes/No). (fam_history_q6d_depression). This is specific to the mother; do we want
-#              to use the one about the family history in general?
+#           7. Maternal Depression (Yes/No). (fam_history_q6d_depression). This is specific to the mother; do we want to use the one about the family history in general? Many cases are missing, we will not include in main model
 
 ```
 ```{r}
@@ -163,8 +162,8 @@ PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes fr
 
 
 #Separate by sex
-PDS_correct_females <- subset(data, sex == "F")
-PDS_correct_males <- subset(data, sex == "M")
+PDS_correct_females <- subset(PDS_correct , sex == "F")
+PDS_correct_males <- subset(PDS_correct , sex == "M")
 ```
 
 ```{r}
@@ -175,62 +174,28 @@ nrow(data)
 
 data
 
-sum(is.na(data$src_subject_id))
-sum(is.na(data$sex))
-sum(is.na(data$mri_info_deviceserialnumber))
-sum(is.na(data$rel_family_id))
+sum(is.na(data$src_subject_id)) #0 missing  
+sum(is.na(data$sex))  #0 missing   
+sum(is.na(data$mri_info_deviceserialnumber)) #0 missing 
+sum(is.na(data$rel_family_id)) #0 missing 
 sum(is.na(data$race.ethnicity.5level)) #41
 sum(is.na(data$demo_race_hispanic))  #50
 sum(is.na(data$high.educ))  #3
 sum(is.na(data$household.income)) #293
 sum(is.na(data$married.or.livingtogether))  #22
-
+sum(is.na(data$fam_history_q6d_depression)) #1937 missing!
 
 summary(data)
+
+#Also, some brain variables seem to have large outliers. Check before including in the models 
 ```
 
-```{r Confirmatory4, echo = FALSE}
-# Separate analyses first.
-confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant + 
-                            race.eth.7level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
-                            interview_age, 
-                            data = subset(PDS_correct, 
-                                          accumbens_rvsn_ant_z > -3 & accumbens_rvsn_ant_z < 3))
-summary(confirmatory4_accumbens)
-
-
-confirmatory4_caudate <- lm(cbcl_scr_syn_internal_t ~ PDS_score*caudate_rvsn_ant_z + 
-                            race.eth.7level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
-                            interview_age, 
-                           data = subset(PDS_correct, 
-                                          caudate_rvsn_ant_z > -3 & caudate_rvsn_ant_z < 3))
-summary(confirmatory4_caudate)
-
-
-confirmatory4_putamen <- lm(cbcl_scr_syn_internal_t ~ PDS_score*putamen_rvsn_ant_z + 
-                            race.eth.7level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
-                            interview_age, 
-                            data = subset(PDS_correct, 
-                                          putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3))
-summary(confirmatory4_putamen)
-```
 
 
 ```{r Confirmatory4, echo = FALSE}
 # Composite striatum score.
 # No CBCL exclusions
+# With covariates
 
 confirmatory4_compositestriatum <- lmer(cbcl_scr_syn_internal_r ~ 
                                            PDS_score*striatum_rvsn_ant_z +
@@ -240,7 +205,7 @@ confirmatory4_compositestriatum <- lmer(cbcl_scr_syn_internal_r ~
                             household.income +
                             married.or.livingtogether +
                             interview_age+
-                            fam_history_q6d_depression + #added mother's depression
+                            #fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
                             data = subset(PDS_correct, 
                                           striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3))
@@ -254,6 +219,7 @@ plot_model(confirmatory4_compositestriatum,type = "est", show.data = FALSE) #For
 # I have added random effects for family nested in site
 
 #p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score",            show.data = TRUE, jitter = 0.1, line.size = 2) +
+
 p <- plot_model(confirmatory4_compositestriatum,
                 type = "pred", # To specify values for striatal response, have to use "pred" instead.
                 terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
@@ -274,14 +240,14 @@ p <- plot_model(confirmatory4_compositestriatum,
                 strip.text = element_text(size=18, face="bold"),
                 panel.background = element_blank(),
                 axis.line = element_line(colour = "black"))
-p 
+#p 
 
 #file.name = (here("output","question4_exploratory.tiff"))
 #ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
-p <- ggplot( data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3), aes(x=sex, y=striatum_rvsn_ant_z)) + 
-  geom_boxplot()
-p
+#p <- ggplot( data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3), aes(x=sex, y=striatum_rvsn_ant_z)) + 
+#  geom_boxplot()
+#p
 ```
 
 
@@ -291,7 +257,8 @@ p
 #Excluding outliers in CBCL 
 #Reveals main effect of striatum as well as interaction, but in the opposite way?
 confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_r ~
-                                           PDS_score *striatum_rvsn_ant_z+                             sex +
+                                           PDS_score *striatum_rvsn_ant_z+ 
+                            sex +
                             race.eth.7level +
                             demo_race_hispanic +
                             high.educ +
@@ -339,7 +306,10 @@ ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
 ```
 ```{r}
-#Model stripped down to basics
+# Core model (no covariates)
+# Composite striatum score.
+# Excluding CBCL outliers 
+# Without covariates
 
 data = subset(PDS_correct,  striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 
@@ -403,7 +373,7 @@ confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_
                             household.income +
                             married.or.livingtogether +
                             interview_age+
-                           # fam_history_q6d_depression + #added mother's depression
+                            fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),  #same thing as site is the same thing as (1|site) + (1|family:site), this is what done in paper by Paulus et al. (2019), 22 sites 
 #data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
 data = tempdata)
@@ -431,6 +401,8 @@ anova(confirmatory4_compositestriatum_excludingoutliers_core,confirmatory4_compo
 
 ```{r}
 #Publication plot
+#Both sexes
+
 p <- plot_model(confirmatory4_compositestriatum_excludingoutliers,
                 type = "pred", # To specify values for striatal response, have to use "pred" instead.
                 terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
@@ -460,17 +432,9 @@ file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 ```
 
-
-```{r}
-#model comparison, core model has n = 4097, and model with covariates has n = 2003. best way to extrac the same dataset to allow for comparisons?
-
-data_for_models<-subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-
-data_complete <- data_for_models[complete.cases(project_specific_s1s6$osem_negative_score), ] ## I've uses this in the past, not sure here_
-
-anova(confirmatory4_compositestriatum_excludingoutliers_core,confirmatory4_compositestriatum_excludingoutliers)
-```
-
+# Excluding outliers in CBCL 
+## Splitting by sex
+## FEMALES
 ```{r}
 # Excluding outliers in CBCL 
 # Splitting by sex
@@ -478,17 +442,18 @@ anova(confirmatory4_compositestriatum_excludingoutliers_core,confirmatory4_compo
 
 confirmatory4_compositestriatum_excludingoutliers_femalesonly <- lmer(cbcl_scr_syn_internal_r ~ 
                             PDS_score*striatum_rvsn_ant_z +
-                            race.eth.7level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                           # race.eth.7level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age+
-                            fam_history_q6d_depression + #added mother's depression
+                            #fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
                             data = subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
 
-summary(confirmatory4_compositestriatum_excludingoutliers)
+summary(PDS_correct_females$interview_age)
+summary(confirmatory4_compositestriatum_excludingoutliers_femalesonly)
 ```
 ```{r}
 #Quick plots
@@ -504,13 +469,13 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly,type = 
 
 confirmatory4_compositestriatum_excludingoutliers_malesonly <- lmer(cbcl_scr_syn_internal_r ~ 
                             PDS_score*striatum_rvsn_ant_z +
-                            race.eth.7level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #race.eth.7level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age+
-                            fam_history_q6d_depression + #added mother's depression
+                            #fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
                             data = subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
 
@@ -731,6 +696,56 @@ ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 boxplot(PDS_correct$PDS_score)
 
 ```
+
+
+
+
+```{r Confirmatory4, echo = FALSE}
+# Separate analyses first.
+confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant + 
+                            race.eth.7level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, 
+                            data = subset(PDS_correct, 
+                                          accumbens_rvsn_ant_z > -3 & accumbens_rvsn_ant_z < 3))
+summary(confirmatory4_accumbens)
+
+
+confirmatory4_caudate <- lm(cbcl_scr_syn_internal_t ~ PDS_score*caudate_rvsn_ant_z + 
+                            race.eth.7level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, 
+                           data = subset(PDS_correct, 
+                                          caudate_rvsn_ant_z > -3 & caudate_rvsn_ant_z < 3))
+summary(confirmatory4_caudate)
+
+
+confirmatory4_putamen <- lm(cbcl_scr_syn_internal_t ~ PDS_score*putamen_rvsn_ant_z + 
+                            race.eth.7level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, 
+                            data = subset(PDS_correct, 
+                                          putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3))
+summary(confirmatory4_putamen)
+```
+
+
+
+
+
+
+
+
+
 
 # Exploratory Hypothesis 4B: We will investigate whether OFC activation during reward anticipation and feedback moderates the relationship between pubertal stage and internalizing symptoms.
 ## Model A: CBCL internalizing factor ~ PDS*OFC activity (anticipation stage)
