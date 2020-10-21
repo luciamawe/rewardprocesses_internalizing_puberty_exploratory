@@ -5,3 +5,5 @@
 .DS_Store
 names.nda20.RData
 *.html
+*.tiff
+*.tiff.icloud
