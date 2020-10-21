@@ -138,10 +138,25 @@ data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 data$pds_p_ss_category <-as.factor(data$pds_p_ss_category)
+data$race.ethnicity.5level = data$race.eth.7level
+data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
+data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
+data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
+
+
+PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous)  #4224
+
+#Separate by sex
+PDS_correct_females <- subset(PDS_correct, sex == "F")  #2059
+PDS_correct_males <- subset(PDS_correct, sex == "M")    #2165
+
+#Data excluding outliers in striatal activity and cbcl 
+data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)  #4097
 ```
 
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
-##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
+
+#Basic data checks and transformations
 ```{r Confirmatory4, echo = FALSE}
 # Use combined score for accumbens, caudate, and putamen?
 # Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses.
@@ -165,7 +180,7 @@ PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes fr
 PDS_correct_females <- subset(PDS_correct , sex == "F")
 PDS_correct_males <- subset(PDS_correct , sex == "M")
 ```
-
+#Count NAs per variable 
 ```{r}
 #Count NAs per variable 
 # We are missing many cases of maternal depression - consider dropping
@@ -190,8 +205,14 @@ summary(data)
 #Also, some brain variables seem to have large outliers. Check before including in the models 
 ```
 
+#Explore ethnicity variables
+```{r}
+fulldata$race.eth.7level
+table(fulldata$race.eth.7level)
+#Low prevalence of NHPI n=6, AIAN=22
+```
 
-
+##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
 ```{r Confirmatory4, echo = FALSE}
 # Composite striatum score.
 # No CBCL exclusions
@@ -302,7 +323,7 @@ p
                    
 
 file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
-ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
 ```
 ```{r}
@@ -429,7 +450,7 @@ p
                 
 
 file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
-ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 ```
 
 # Excluding outliers in CBCL 
@@ -587,7 +608,7 @@ p
                    
 
 file.name = (here("output","striatum_puberty.tiff"))
-ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
 ```
 
@@ -690,11 +711,9 @@ p
                    
 
 file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
-ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
-
+#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
 boxplot(PDS_correct$PDS_score)
-
 ```
 
 
