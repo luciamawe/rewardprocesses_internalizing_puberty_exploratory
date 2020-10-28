@@ -17,13 +17,6 @@ library(interactions)
 ```
 
 ```{r setdirectories, echo = FALSE}
-# Change this to your directory and the name of your data file.
-datapath <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
-datapath <- "/Users/lucia/Github/ABCD/derivatives/exploratory"
-
-datafile <- "nda20_exploratory.csv"
-setwd(datapath)
-
 # Covariates.
 #      Random effects.
 #           1. Family. (rel_family_id) # Make sure this is nested correctly and looks about right.
@@ -34,14 +27,13 @@ setwd(datapath)
           #  Random effects are nested: (1|abcd_site/device/rel_family_id) [unless some siblings went in different scanners?]
 
 #      Fixed effects.
-#           1. Race parent. (race.eth.7level).
+#           1. Race parent. (race.eth.5level).
 #           2. Education parent. (high.educ).
 #           3. Income parent. (household.income)
 #           4. Marital status parent. (married.or.livingtogether)
 #           5. Age. (interview_age).
 #           6. Hispanic. (demo_race_hispanic).
 #           7. Maternal Depression (Yes/No). (fam_history_q6d_depression). This is specific to the mother; do we want to use the one about the family history in general? Many cases are missing, we will not include in main model
-
 ```
 ```{r}
 #LMW alternative to read in the data
@@ -56,13 +48,11 @@ data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 file_name <- "nda20_exploratory.csv" #specify file name here 
 
 fulldata <- read.csv(file.path(data_folder,file_name))
-
 ```
 
 ```{r GetData, echo = FALSE}
-#fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
+#LMW alternative to read in the data
 length(fulldata$src_subject_id) # 5934.
-# Because this is such a big data file, let's only keep the columns that we need for this analysis.
 data <- fulldata[,c("src_subject_id",
                 "interview_age",
                 "eventname",
@@ -71,7 +61,7 @@ data <- fulldata[,c("src_subject_id",
                 "mri_info_deviceserialnumber",
                 "rel_family_id",
                 "race.ethnicity.5level",
-                "race.eth.7level",
+                "race.eth.5level",
                 "demo_race_hispanic", # Do you consider the child Hispanic/Latino/Latina?
                 "high.educ",
                 "household.income",
@@ -125,7 +115,6 @@ data <- fulldata[,c("src_subject_id",
                 "lOFC_posvsneg_feedback_z",
                 "striatum_posvsneg_feedback_z"
                 )]
-
 data$src_subject_id <- as.factor(data$src_subject_id)
 data$rel_family_id <- as.factor(data$rel_family_id)
 data$eventname <- as.factor(data$eventname)
@@ -133,25 +122,53 @@ data$sex <- as.factor(data$sex)
 data$demo_race_hispanic <- as.factor(data$demo_race_hispanic)
 data$site_id_l <- as.factor(data$site_id_l)
 data$mri_info_deviceserialnumber <- as.factor(data$mri_info_deviceserialnumber)
-data$race.eth.7level <- as.factor(data$race.eth.7level)
+data$race.eth.5level <- as.factor(data$race.eth.5level)
 data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 data$pds_p_ss_category <-as.factor(data$pds_p_ss_category)
-data$race.ethnicity.5level = data$race.eth.7level
-data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
+data$race.ethnicity.5level = data$race.eth.5level
+data$race.ethnicity.5level[(data$race.eth.5level == "AIAN" | data$race.eth.5level == "NHPI")] = "Other"
 data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
+data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
+length(data$src_subject_id) # 5934.
 
+# Use data with only correct PDS scores.
+PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous).
+length(PDS_correct$src_subject_id) # 4224.
 
-PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous)  #4224
+# Separate by sex.
+PDS_correct_females <- subset(PDS_correct, sex == "F") # 2059.
+PDS_correct_males <- subset(PDS_correct, sex == "M") # 2165.
+length(PDS_correct_females$src_subject_id)
+length(PDS_correct_males$src_subject_id)
 
-#Separate by sex
-PDS_correct_females <- subset(PDS_correct, sex == "F")  #2059
-PDS_correct_males <- subset(PDS_correct, sex == "M")    #2165
+# Create different subsets of the data based on removing outliers for specific variables of interest.
 
-#Data excluding outliers in striatal activity and cbcl 
-data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)  #4097
+# No CBCL outliers.
+data_no_CBCL_outliers <- subset(PDS_correct, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+length(data_no_CBCL_outliers$src_subject_id) # 4152.
+data_no_CBCL_outliers_females<- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+length(data_no_CBCL_outliers_females$src_subject_id) # 2026.
+data_no_CBCL_outliers_males<- subset(PDS_correct_males, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+length(data_no_CBCL_outliers_males$src_subject_id) # 2126.
+
+# No striatal anticipation outliers.
+data_no_striatal_ant_outliers <- subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
+length(data_no_striatal_ant_outliers$src_subject_id) # 4169.
+data_no_striatal_ant_outliers_females <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
+length(data_no_striatal_ant_outliers_females$src_subject_id) # 2035.
+data_no_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
+length(data_no_striatal_ant_outliers_males$src_subject_id) # 2134.
+
+# No CBCL or striatal anticipation outliers.
+data_no_CBCL_striatal_ant_outliers <- subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+length(data_no_CBCL_striatal_ant_outliers$src_subject_id) # 4097.
+data_no_CBCL_striatal_ant_outliers_females <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+length(data_no_CBCL_striatal_ant_outliers_females$src_subject_id) # 2002.
+data_no_CBCL_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+length(data_no_CBCL_striatal_ant_outliers_males$src_subject_id) # 2095.
 ```
 
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
@@ -169,16 +186,6 @@ boxplot(data$accumbens_rvsn_ant_z)
 boxplot(data$caudate_rvsn_ant_z)
 boxplot(data$putamen_rvsn_ant_z)
 boxplot(data$cbcl_scr_syn_internal_r)
-
-data$PDS_score_z<- scale(data$PDS_score)
-data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
-# Use data with only correct PDS scores.
-PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous)
-
-
-#Separate by sex
-PDS_correct_females <- subset(PDS_correct , sex == "F")
-PDS_correct_males <- subset(PDS_correct , sex == "M")
 ```
 #Count NAs per variable 
 ```{r}
@@ -186,8 +193,6 @@ PDS_correct_males <- subset(PDS_correct , sex == "M")
 # We are missing many cases of maternal depression - consider dropping
 data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 nrow(data) 
-
-data
 
 sum(is.na(data$src_subject_id)) #0 missing  
 sum(is.na(data$sex))  #0 missing   
@@ -205,14 +210,8 @@ summary(data)
 #Also, some brain variables seem to have large outliers. Check before including in the models 
 ```
 
-#Explore ethnicity variables
-```{r}
-fulldata$race.eth.7level
-table(fulldata$race.eth.7level)
-#Low prevalence of NHPI n=6, AIAN=22
-```
-
 ##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
+##  N o
 ```{r Confirmatory4, echo = FALSE}
 # Composite striatum score.
 # No CBCL exclusions
@@ -220,7 +219,7 @@ table(fulldata$race.eth.7level)
 
 confirmatory4_compositestriatum <- lmer(cbcl_scr_syn_internal_r ~ 
                                            PDS_score*striatum_rvsn_ant_z +
-                            race.eth.7level +
+                            race.ethnicity.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -241,28 +240,6 @@ plot_model(confirmatory4_compositestriatum,type = "est", show.data = FALSE) #For
 
 #p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score",            show.data = TRUE, jitter = 0.1, line.size = 2) +
 
-p <- plot_model(confirmatory4_compositestriatum,
-                type = "pred", # To specify values for striatal response, have to use "pred" instead.
-                terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
-                show.data = TRUE, jitter = 0.1, line.size = 2) +
-                ylab("Internalizing Score") +
-                xlab("Average PDS score") +
-                labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
-                #scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(30,100)) +
-                theme(title= element_text(size=20, vjust=2, face="bold"),
-                plot.title = element_blank(),
-                axis.title.x= element_text(size=18, vjust=-0.3),
-                axis.title.y= element_text(size=18, vjust=1.5),
-                axis.text.x= element_text(size=18, colour="black"),
-                axis.text.y= element_text(size=18, colour="black"),
-                legend.title=element_text(size=12, colour = "black"),
-                legend.position = c(.80, .80),
-                # legend.position="none",
-                strip.text = element_text(size=18, face="bold"),
-                panel.background = element_blank(),
-                axis.line = element_line(colour = "black"))
-#p 
-
 #file.name = (here("output","question4_exploratory.tiff"))
 #ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 
@@ -271,61 +248,7 @@ p <- plot_model(confirmatory4_compositestriatum,
 #p
 ```
 
-
-
-
-```{r}
-#Excluding outliers in CBCL 
-#Reveals main effect of striatum as well as interaction, but in the opposite way?
-confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_r ~
-                                           PDS_score *striatum_rvsn_ant_z+ 
-                            sex +
-                            race.eth.7level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
-                            interview_age+
-                           # fam_history_q6d_depression + #added mother's depression
-                            (1 | site_id_l/rel_family_id),
-                            data = subset(PDS_correct, 
-                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category < 2))
-
-summary(confirmatory4_compositestriatum_excludingoutliers)
-
-plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", show.data = FALSE, show.p = TRUE) #Interaction plot
-
-plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "est", show.data = FALSE) #Forest plot
-
-p <- plot_model(confirmatory4_compositestriatum_excludingoutliers,
-                type = "pred", # To specify values for striatal response, have to use "pred" instead.
-                terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
-                show.data = TRUE, jitter = 0.1, line.size = 2) +
-                ylab("Internalizing Score") +
-                xlab("Average PDS score") +
-                labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
-                scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
-                theme(title= element_text(size=20, vjust=2, face="bold"),
-                plot.title = element_blank(),
-                axis.title.x= element_text(size=18, vjust=-0.3),
-                axis.title.y= element_text(size=18, vjust=1.5),
-                axis.text.x= element_text(size=18, colour="black"),
-                axis.text.y= element_text(size=18, colour="black"),
-                legend.title=element_text(size=12, colour = "black"),
-                legend.position = c(.80, .80),
-                # legend.position="none",
-                strip.text = element_text(size=18, face="bold"),
-                panel.background = element_blank(),
-                axis.line = element_line(colour = "black"))
-p 
-                   
-                   
-                   
-
-file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
-#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
-
-```
+# Core model (no covariates)
 ```{r}
 # Core model (no covariates)
 # Composite striatum score.
@@ -335,7 +258,7 @@ file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 data = subset(PDS_correct,  striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 
 #Select only cases that have complete data for all covariates of intest. It seems that we are missing many cases of maternal depression. We might drop it going forwards. 
-tempdata <- data[which(complete.cases(data[,c("race.eth.7level",
+tempdata <- data[which(complete.cases(data[,c("race.ethnicity.5level",
                             "demo_race_hispanic",
                             "high.educ",
                             "household.income",
@@ -388,7 +311,7 @@ p
 #Reveals main effect of striatum as well as interaction, but in the opposite way?
 confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_r ~ 
                                            PDS_score*striatum_rvsn_ant_z*sex +
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -463,7 +386,7 @@ file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 
 confirmatory4_compositestriatum_excludingoutliers_femalesonly <- lmer(cbcl_scr_syn_internal_r ~ 
                             PDS_score*striatum_rvsn_ant_z +
-                           # race.eth.7level +
+                           # race.eth.5level +
                             #demo_race_hispanic +
                             #high.educ +
                             #household.income +
@@ -490,7 +413,7 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly,type = 
 
 confirmatory4_compositestriatum_excludingoutliers_malesonly <- lmer(cbcl_scr_syn_internal_r ~ 
                             PDS_score*striatum_rvsn_ant_z +
-                            #race.eth.7level +
+                            #race.eth.5level +
                             #demo_race_hispanic +
                             #high.educ +
                             #household.income +
@@ -515,7 +438,7 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_malesonly,type = "s
 #PDS category 
 
 confirmatory4_compositestriatum_excludingoutliers_cat <- lmer(cbcl_scr_syn_internal_r ~                                       pds_p_ss_category*striatum_rvsn_ant_z +
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -566,7 +489,7 @@ ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 #This needs to be moved to the another script
 exploratory_compositestriatum_puberty <- lmer(striatum_rvsn_ant_z ~ 
                                            PDS_score +
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -619,7 +542,7 @@ file.name = (here("output","striatum_puberty.tiff"))
 
 # Separate analyses first.
 exploratory4A_accumbens<- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_posvsneg_feedback + 
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -629,7 +552,7 @@ exploratory4A_accumbens<- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_posvs
 summary(exploratory4A_accumbens)
 
 exploratory4A_caudate<- lm(cbcl_scr_syn_internal_t ~ PDS_score*caudate_posvsneg_feedback + 
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -639,7 +562,7 @@ exploratory4A_caudate<- lm(cbcl_scr_syn_internal_t ~ PDS_score*caudate_posvsneg_
 summary(exploratory4A_caudate)
 
 exploratory4A_putamen<- lm(cbcl_scr_syn_internal_t ~ PDS_score*putamen_posvsneg_feedback + 
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -650,7 +573,7 @@ summary(exploratory4A_putamen)
 
 # Composite striatum score.
 exploratory4A_compositestriatum <- lm(cbcl_scr_syn_internal_t ~ PDS_score*striatum_posvsneg_feedback + 
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -669,7 +592,7 @@ summary(exploratory4A_compositestriatum)
 #Excluding outliers in CBCL 
 #Reveals main effect of striatum as well as interaction, but in the opposite way?
 exploratory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_r ~                                        PDS_score*striatum_posvsneg_feedback_z +
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -722,7 +645,7 @@ boxplot(PDS_correct$PDS_score)
 ```{r Confirmatory4, echo = FALSE}
 # Separate analyses first.
 confirmatory4_accumbens <- lm(cbcl_scr_syn_internal_t ~ PDS_score*accumbens_rvsn_ant + 
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -734,7 +657,7 @@ summary(confirmatory4_accumbens)
 
 
 confirmatory4_caudate <- lm(cbcl_scr_syn_internal_t ~ PDS_score*caudate_rvsn_ant_z + 
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
@@ -746,7 +669,7 @@ summary(confirmatory4_caudate)
 
 
 confirmatory4_putamen <- lm(cbcl_scr_syn_internal_t ~ PDS_score*putamen_rvsn_ant_z + 
-                            race.eth.7level +
+                            race.eth.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
