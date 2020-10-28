@@ -33,6 +33,7 @@ packages <- c("tidyverse",   #data wrangling
               "DataExplorer",   #data exploration
               "interactions",   #interactions
               "ggstatsplot",    #pretty plots
+              "ggplot2",        #other pretty plots
               "here")           #file navigation within a project
 #library("conflicted") #only run when there are issues with functions. Will illuminate which functions come from different packages
 #invisible(lapply(packages, install.packages, character.only = TRUE)) #Only run once to install packages
@@ -66,15 +67,15 @@ data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
 file_name <- "nda20_exploratory.csv" #specify file name here 
 
-full_ABCD_Data <- read.csv(file.path(data_folder,file_name))
-as_tibble(full_ABCD_Data)
+fulldata <- read.csv(file.path(data_folder,file_name))
+#as_tibble(fulldata)
 ```
 
 ```{r GetData, echo = FALSE}
 #fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
-length(full_ABCD_Data$src_subject_id) # 5934.
+nrow(fulldata) # 5934.
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
-data <- full_ABCD_Data[,c("src_subject_id",
+data <- fulldata[,c("src_subject_id",
                 "interview_age",
                 "eventname",
                 "sex",
@@ -157,48 +158,53 @@ data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
 
-length(data$src_subject_id) # 5934.
+nrow(data) # 5934.
 
 # Use data with only correct PDS scores.
 PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous).
-length(PDS_correct$src_subject_id) # 4224.
+nrow(PDS_correct) # 4224.
+
+PDS_correct <- subset(PDS_correct, PDS_sum<30) # This shouldn't change anything but just in case there is somehow a participant with a PDS score less than 5 but a sum that is incorrect.
+nrow(PDS_correct) # 4224.
+PDS_correct <- PDS_correct %>% filter(sex!="") #remove 6 participants with no gender.
+nrow(PDS_correct) # 4224. Were these participants already removed from the dataframe?
 
 # Separate by sex.
-PDS_correct_females <- subset(PDS_correct, sex == "F") # 2059.
-PDS_correct_males <- subset(PDS_correct, sex == "M") # 2165.
-length(PDS_correct_females$src_subject_id)
-length(PDS_correct_males$src_subject_id)
+PDS_correct_females <- subset(PDS_correct, sex == "F")
+PDS_correct_males <- subset(PDS_correct, sex == "M")
+nrow(PDS_correct_females)  # 2059.
+nrow(PDS_correct_males) # 2165.
 
 # Create different subsets of the data based on removing outliers for specific variables of interest.
 # No CBCL outliers.
 data_no_CBCL_outliers <- subset(PDS_correct, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-length(data_no_CBCL_outliers$src_subject_id) # 4152.
+nrow(data_no_CBCL_outliers) # 4152.
 
 data_no_CBCL_outliers_females<- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-length(data_no_CBCL_outliers_females$src_subject_id) # 2026.
+nrow(data_no_CBCL_outliers_females) # 2026.
 
 data_no_CBCL_outliers_males<- subset(PDS_correct_males, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-length(data_no_CBCL_outliers_males$src_subject_id) # 2126.
+nrow(data_no_CBCL_outliers_males) # 2126.
 
 # No striatal anticipation outliers.
 data_no_striatal_ant_outliers <- subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
-length(data_no_striatal_ant_outliers$src_subject_id) # 4169.
+nrow(data_no_striatal_ant_outliers) # 4169.
 
 data_no_striatal_ant_outliers_females <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
-length(data_no_striatal_ant_outliers_females$src_subject_id) # 2035.
+nrow(data_no_striatal_ant_outliers_females) # 2035.
 
 data_no_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
-length(data_no_striatal_ant_outliers_males$src_subject_id) # 2134.
+nrow(data_no_striatal_ant_outliers_males) # 2134.
 
 # No CBCL or striatal anticipation outliers.
 data_no_CBCL_striatal_ant_outliers <- subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-length(data_no_CBCL_striatal_ant_outliers$src_subject_id) # 4097.
+nrow(data_no_CBCL_striatal_ant_outliers) # 4097.
 
 data_no_CBCL_striatal_ant_outliers_females <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-length(data_no_CBCL_striatal_ant_outliers_females$src_subject_id) # 2002.
+nrow(data_no_CBCL_striatal_ant_outliers_females) # 2002.
 
 data_no_CBCL_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-length(data_no_CBCL_striatal_ant_outliers_males$src_subject_id) # 2095.
+nrow(data_no_CBCL_striatal_ant_outliers_males) # 2095.
 
 ```
 
@@ -215,19 +221,6 @@ nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
 
 ```
 
-```{r}
-ABCD_Data <- data %>% filter(sex!="") #remove 6 participants with no gender
-nrow(ABCD_Data)
-```
-```{r}
-ABCD_Data$PDS_score
-ABCD_Data <- ABCD_Data %>% filter(PDS_score<5) 
-nrow(ABCD_Data)
-```
-```{r}
-ABCD_Data <- ABCD_Data %>% filter(PDS_sum<30) #remove 6
-nrow(ABCD_Data)
-```
 
 ```{r}
 # 
