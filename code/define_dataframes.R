@@ -1,4 +1,7 @@
 # Call this function after you have loaded "nda20_exploratory.csv" into data frame named "fulldata".
+# Instead of writing this long code for every single script, we are going to call one script to do it.
+# This way, we can make sure we are all loading in the exact same data and working with the exact same dataframes because we are using identical code (from this one script).
+# If we need to edit anything about our dataframes, we can do so in that single script.
 
 nrow(fulldata) # 5934.
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
@@ -63,7 +66,10 @@ data <- fulldata[,c("src_subject_id",
                     "putamen_posvsneg_feedback_z",
                     "mOFC_posvsneg_feedback_z",
                     "lOFC_posvsneg_feedback_z",
-                    "striatum_posvsneg_feedback_z"
+                    "striatum_posvsneg_feedback_z",
+                    "bisbas_ss_basm_rr",
+                    "hormone_scr_ert_mean",
+                    "hormone_scr_dhea_mean"
 )]
 
 data$src_subject_id <- as.factor(data$src_subject_id)
