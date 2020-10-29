@@ -34,7 +34,8 @@ packages <- c("tidyverse",   #data wrangling
               "interactions",   #interactions
               "ggstatsplot",    #pretty plots
               "ggplot2",        #other pretty plots
-              "here",)           #file navigation within a project
+              "here",           #file navigation within a project
+              "gtsummary")       #to make summary tables.  
 #library("conflicted") #only run when there are issues with functions. Will illuminate which functions come from different packages
 #invisible(lapply(packages, install.packages, character.only = TRUE)) #Only run once to install packages
 library(tidyverse)
@@ -97,23 +98,13 @@ nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
 
 ```
 
-```{r SummarizeDataFrame, echo = FALSE}
-# Summarize everything except the individual level variables (like participant ID, site, etc.).
-summarizing_dataframe <- PDS_correct %>% select(-c("src_subject_id",
-                                         "site_id_l",
-                                         "mri_info_deviceserialnumber",
-                                         "rel_family_id"))
-
-View(summary(summarizing_dataframe))
+```{r SummarizeMRIData, echo = FALSE}
 
 # Create data tables for each subject of interest (PDS, brain measures, etc.).
 # Note: For the MRI variables, I am ignoring the right and left hemisphere variables and only using the combined ones for now.
 
 # All reward vs. neutral during anticipation stage (z scores).
-MRI_anticipation_stage <- PDS_correct[,c("src_subject_id",
-                    "interview_age",
-                    "eventname",
-                    "sex",
+MRI_anticipation_stage <- PDS_correct[,c("sex",
                     "accumbens_rvsn_ant_z",
                     "caudate_rvsn_ant_z",
                     "putamen_rvsn_ant_z",
@@ -121,42 +112,23 @@ MRI_anticipation_stage <- PDS_correct[,c("src_subject_id",
                     "lOFC_rvsn_ant_z",
                     "striatum_rvsn_ant_z")]
 
-attach(MRI_anticipation_stage)
-MRI_anticipation_stage_summary <- list("Accumbens" =
-       list("min"       = ~ min(accumbens_rvsn_ant_z, na_rm = TRUE),
-            "max"       = ~ max(accumbens_rvsn_ant_z, na_rm = TRUE),
-            "mean (sd)" = ~ qwraps2::mean_sd(accumbens_rvsn_ant_z, na_rm = TRUE)),
-       "Caudate" =
-       list("min"       = ~ min(caudate_rvsn_ant_z, na_rm = TRUE),
-            "median"    = ~ median(caudate_rvsn_ant_z, na_rm = TRUE),
-            "max"       = ~ max(caudate_rvsn_ant_z, na_rm = TRUE),
-            "mean (sd)" = ~ qwraps2::mean_sd(caudate_rvsn_ant_z, na_rm = TRUE)),
-       "Putamen" =
-       list("min"       = ~ min(putamen_rvsn_ant_z, na_rm = TRUE),
-            "max"       = ~ max(putamen_rvsn_ant_z, na_rm = TRUE),
-            "mean (sd)" = ~ qwraps2::mean_sd(putamen_rvsn_ant_z, na_rm = TRUE)),
-       "Striatum (Combined Areas)" =
-       list("min"       = ~ min(striatum_rvsn_ant_z, na_rm = TRUE),
-            "max"       = ~ max(striatum_rvsn_ant_z, na_rm = TRUE),
-            "mean (sd)" = ~ qwraps2::mean_sd(striatum_rvsn_ant_z, na_rm = TRUE)),
-       "Medial OFC" =
-        list("min"       = ~ min(mOFC_rvsn_ant_z, na_rm = TRUE),
-            "max"       = ~ max(mOFC_rvsn_ant_z, na_rm = TRUE),
-            "mean (sd)" = ~ qwraps2::mean_sd(mOFC_rvsn_ant_z, na_rm = TRUE)),
-       "Lateral OFC" =
-        list("min"       = ~ min(lOFC_rvsn_ant_z, na_rm = TRUE),
-            "max"       = ~ max(lOFC_rvsn_ant_z, na_rm = TRUE),
-            "mean (sd)" = ~ qwraps2::mean_sd(lOFC_rvsn_ant_z, na_rm = TRUE))
-       )
-
-x <- summary_table(MRI_anticipation_stage, MRI_anticipation_stage_summary)
-x
-
+MRI_anticipation_stage %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      #digits = all_continuous() ~ 2,
+                                      label = list(accumbens_rvsn_ant_z ~ "Accumbens (z)",
+                                                   caudate_rvsn_ant_z ~ "Caudate (z)",
+                                                   putamen_rvsn_ant_z ~ "Putamen (z)",
+                                                   mOFC_rvsn_ant_z ~ "Medial OFC (z)",
+                                                   lOFC_rvsn_ant_z ~ "Lateral OFC (z)",
+                                                   striatum_rvsn_ant_z~ "Striatum Combined Areas (z)"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Reward Anticipation Stage (Reward vs. Neutral)**")
+ 
 # All positive vs. negative feedback.
-MRI_feedback_stage <- PDS_correct[,c("src_subject_id",
-                    "interview_age",
-                    "eventname",
-                    "sex",
+MRI_feedback_stage <- PDS_correct[,c("sex",
                     "accumbens_posvsneg_feedback_z", 
                     "caudate_posvsneg_feedback_z",
                     "putamen_posvsneg_feedback_z",
@@ -164,6 +136,165 @@ MRI_feedback_stage <- PDS_correct[,c("src_subject_id",
                     "lOFC_posvsneg_feedback_z",
                     "striatum_posvsneg_feedback_z")]
 
+MRI_feedback_stage %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      #digits = all_continuous() ~ 2,
+                                      label = list(accumbens_posvsneg_feedback_z ~ "Accumbens (z)",
+                                                   caudate_posvsneg_feedback_z ~ "Caudate (z)",
+                                                   putamen_posvsneg_feedback_z ~ "Putamen (z)",
+                                                   mOFC_posvsneg_feedback_z ~ "Medial OFC (z)",
+                                                   lOFC_posvsneg_feedback_z ~ "Lateral OFC (z)",
+                                                   striatum_posvsneg_feedback_z ~ "Striatum Combined Areas (z)"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Reward Feedback Stage (Positive vs. Negative)**")
+ 
+
+
+```
+
+```{r SummarizeBISBASData, echo = FALSE}
+# Note: Currently in our variable definitions sheet, we only have this single variable for BIS/BAS, so that is the only one I am including here.
+bisbas <- PDS_correct[,c("sex",
+                    "bisbas_ss_basm_rr")]
+
+bisbas %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      label = bisbas_ss_basm_rr ~ "BAS Reward Responsiveness",
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**BAS Reward Responsiveness**")
+
+```
+
+```{r SummarizeTestosteroneData, echo = FALSE}
+
+testosterone <- PDS_correct[,c("sex",
+                   "hormone_scr_ert_mean")]
+                 
+testosterone %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = hormone_scr_ert_mean ~ "Testosterone mean of measures (pg/mL)",
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Testosterone**")
+
+```
+
+```{r SummarizeCBCLData, echo = FALSE}
+
+# Plot raw scores.
+CBCL_r <- PDS_correct[,c("sex",
+                      "cbcl_scr_syn_internal_r",
+                      "cbcl_scr_syn_anxdep_r",
+                      "cbcl_scr_syn_withdep_r",
+                      "cbcl_scr_dsm5_depress_r")]
+
+CBCL_r %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(cbcl_scr_syn_internal_r ~ "Internalizing CBCL Syndrome Scale (raw score)",
+                                                   cbcl_scr_syn_anxdep_r ~ "Anxious/Depressive CBCL Syndrome Scale (raw score)",
+                                                   cbcl_scr_syn_withdep_r ~ "With Depression CBCL Syndrome Scale (raw score)",
+                                                   cbcl_scr_dsm5_depress_r ~ "Depression CBCL DSM5 Scale (raw score)"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**CBCL**")
+
+# Plot t scores (we will probably not be using these in our analyses, but worth looking at for now).
+CBCL_t <- PDS_correct[,c("sex",
+                      "cbcl_scr_syn_internal_t",
+                      "cbcl_scr_syn_anxdep_t",
+                      "cbcl_scr_syn_withdep_t",
+                      "cbcl_scr_dsm5_depress_t")]
+
+CBCL_t %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(cbcl_scr_syn_internal_t ~ "Internalizing CBCL Syndrome Scale (t-score)",
+                                                   cbcl_scr_syn_anxdep_t ~ "Anxious/Depressive CBCL Syndrome Scale (t-score)",
+                                                   cbcl_scr_syn_withdep_t ~ "With Depression CBCL Syndrome Scale (t-score)",
+                                                   cbcl_scr_dsm5_depress_t ~ "Depression CBCL DSM5 Scale (t-score)"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**CBCL**")
+
+
+```
+
+```{r SummarizePDSData, echo = FALSE}
+
+PDS <- PDS_correct[,c("sex",
+                    "PDS_score",
+                    "PDS_sum",
+                    "pds_p_ss_category")]
+
+PDS %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(PDS_score ~ "PDS score",
+                                                   PDS_sum ~ "PDS sum",
+                                                   pds_p_ss_category ~ "PDS category"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**PDS**")
+
+```
+
+```{r SummarizeDemographicData, echo = FALSE}
+
+# Just to make the tables less long, I am going to put the demographics into two tables.
+Demographics_1 <- PDS_correct[,c("interview_age",
+                    "sex",
+                    "race.ethnicity.5level",
+                    "race.eth.7level",
+                    "demo_race_hispanic")]
+
+Demographics_2 <- PDS_correct[,c("interview_age",
+                    "sex",
+                    "high.educ",
+                    "household.income",
+                    "married.or.livingtogether")]
+
+Demographics_1 %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(interview_age ~ "Age in months",
+                                                   race.ethnicity.5level ~ "Race/Ethnicity (Five levels)",
+                                                   race.eth.7level  ~ "Race/Ethnicity (Seven levels)",
+                                                   demo_race_hispanic ~ "Hispanic"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Demographics**")
+
+Demographics_2 %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(interview_age ~ "Age in months",
+                                                   high.educ ~ "Parent highest education level",
+                                                   household.income ~ "Household income",
+                                                   married.or.livingtogether ~ "Married or living together"),
+                                      type = married.or.livingtogether ~ "categorical",
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Demographics**")
 
 ```
 
