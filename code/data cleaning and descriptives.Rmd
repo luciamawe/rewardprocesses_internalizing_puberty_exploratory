@@ -4,22 +4,22 @@ date: "date started 01/july/20"
 output:
   html_document: default
   pdf_document: default
-authors: Lucia Magis Weinberg 
+authors: Lucia Magis Weinberg, Natalie Saragosa-Harris
 ---
 
-```{r, include=FALSE}
-# Load packages
+```{LoadPackages, include=FALSE}
+# Load packages.
 #install.packages("devtools")
 #devtools::install_github("easystats/report")
 #devtools::install_github("goodekat/ggResidpanel")
 #library(ggResidpanel)
 #library(report)
-# Natalie adding comment.
 packages <- c("tidyverse",   #data wrangling
              # "summarytools",  #data exploration and simple reporting
-              "psych",       #correlations and Cronbach alpha for internal consistency  
-              "readr",       #read csv
-              "tidyr",       #create tidy data, where every column is a variable, every row is an                               observation 
+              "psych",          #correlations and Cronbach alpha for internal consistency  
+              "readr",          #read csv
+              "tidyr",          #create tidy data, where every column is a variable, every row is an observation 
+              "dplyr",          #selecting columns, mutating, summarizing, etc.
               "Hmisc",          #correlations
               "RColorBrewer",   #choose nice colors for graphs
               "psychotools",    #psychometric modeling
@@ -33,7 +33,9 @@ packages <- c("tidyverse",   #data wrangling
               "DataExplorer",   #data exploration
               "interactions",   #interactions
               "ggstatsplot",    #pretty plots
-              "here")           #file navigation within a project
+              "ggplot2",        #other pretty plots
+              "here",           #file navigation within a project
+              "gtsummary")       #to make summary tables.  
 #library("conflicted") #only run when there are issues with functions. Will illuminate which functions come from different packages
 #invisible(lapply(packages, install.packages, character.only = TRUE)) #Only run once to install packages
 library(tidyverse)
@@ -42,8 +44,8 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 
 # needed package to download from GitHub repo
-install.packages("remotes")
-
+#install.packages("remotes")
+library(remotes)
 # downloading the package from GitHub (needs `remotes` package to be installed)
 remotes::install_github(
   repo = "IndrajeetPatil/ggstatsplot", # package path on GitHub
@@ -52,9 +54,9 @@ remotes::install_github(
 )
 ```
 
-```{r, include=FALSE}
-# Load data
-## This script assumes that data has already been names (with Natalie's code) and split into two halves
+```{GetData, include=FALSE}
+# Load data.
+## This script assumes that data has already been named and split into two halves.
 ## This script is based on the variable names on VariableDefinitions.csv
 
 data_dir = ((dirname(here()))) #figure out how to navigate to data source
@@ -62,123 +64,249 @@ data_dir = ((dirname(here()))) #figure out how to navigate to data source
 phase_folder = "exploratory"  #select the appropiate folder
 #phase_folder = "confirmatory"  #select the appropiate folder
 
-data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)  
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
 file_name <- "nda20_exploratory.csv" #specify file name here 
 
-full_ABCD_Data <- read.csv(file.path(data_folder,file_name))
-as_tibble(full_ABCD_Data)
-```
-
-```{r GetData, echo = FALSE}
-#fulldata <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
-length(fulldata$src_subject_id) # 5934.
-# Because this is such a big data file, let's only keep the columns that we need for this analysis.
-data <- fulldata[,c("src_subject_id",
-                "interview_age",
-                "eventname",
-                "sex",
-                "site_id_l",
-                "mri_info_deviceserialnumber",
-                "rel_family_id",
-                "race.ethnicity.5level",
-                "race.eth.7level",
-                "demo_race_hispanic", # Do you consider the child Hispanic/Latino/Latina?
-                "high.educ",
-                "household.income",
-                "married.or.livingtogether",
-                "cbcl_scr_syn_internal_t",
-                "cbcl_scr_syn_anxdep_t",
-                "cbcl_scr_syn_withdep_t",
-                "cbcl_scr_dsm5_depress_t",
-                "cbcl_scr_syn_internal_r",
-                "cbcl_scr_syn_anxdep_r",
-                "cbcl_scr_syn_withdep_r",
-                "cbcl_scr_dsm5_depress_r",
-                "PDS_score_f",
-                "PDS_score_m",
-                "PDS_score",
-                "PDS_sum_f",
-                "PDS_sum_m",
-                "PDS_sum",
-                "pds_p_ss_category",
-                "fam_history_q6d_depression",
-                "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
-                "tfmri_ma_acdn_b_scs_aalh",
-                "tfmri_ma_acdn_b_scs_cdrh", # Caudate reward vs. neutral anticipation.
-                "tfmri_ma_acdn_b_scs_cdlh",
-                "tfmri_ma_acdn_b_scs_ptrh", # Putamen reward vs. neutral anticipation.
-                "tfmri_ma_acdn_b_scs_ptlh",
-                "tfmri_ma_arvn_b_cds_mobofrrh", # Medial OFC reward vs. neutral anticipation.
-                "tfmri_ma_arvn_b_cds_mobofrlh",
-                "tfmri_ma_arvn_b_cds_lobofrrh", # Lateral OFC reward vs. neutral anticipation.
-                "tfmri_ma_arvn_b_cds_lobofrlh",
-                "tfmri_ma_rpvnfb_b_scs_aarh", # Accumbens reward positive versus negative feedback.
-                "tfmri_ma_rpvnfb_b_scs_aalh",
-                "tfmri_ma_rpvnfb_b_scs_cdrh", # Caudate reward positive versus negative feedback.
-                "tfmri_ma_rpvnfb_b_scs_cdlh",
-                "tfmri_ma_rpvnfb_b_scs_ptrh", # Putamen reward positive versus negative feedback.
-                "tfmri_ma_rpvnfb_b_scs_ptlh",
-                "tfmri_ma_rpvnfb_b_cds_mobofrrh", # Medial OFC reward positive versus negative feedback.
-                "tfmri_ma_rpvnfb_b_cds_mobofrlh",
-                "tfmri_ma_rpvnfb_b_cds_lobofrrh", # Lateral OFC reward positive versus negative feedback.
-                "tfmri_ma_rpvnfb_b_cds_lobofrlh",
-                "accumbens_rvsn_ant_z", # Reward vs. neutral during anticipation stage (z scores).
-                "caudate_rvsn_ant_z",
-                "putamen_rvsn_ant_z",
-                "mOFC_rvsn_ant_z",
-                "lOFC_rvsn_ant_z",
-                "striatum_rvsn_ant_z", # reward vs. neutral anticipation.
-                "accumbens_posvsneg_feedback_z", # All positive vs. negative feedback.
-                "caudate_posvsneg_feedback_z",
-                "putamen_posvsneg_feedback_z",
-                "mOFC_posvsneg_feedback_z",
-                "lOFC_posvsneg_feedback_z",
-                "striatum_posvsneg_feedback_z"
-                )]
-
-data$src_subject_id <- as.factor(data$src_subject_id)
-data$rel_family_id <- as.factor(data$rel_family_id)
-data$eventname <- as.factor(data$eventname)
-data$sex <- as.factor(data$sex)
-data$demo_race_hispanic <- as.factor(data$demo_race_hispanic)
-data$site_id_l <- as.factor(data$site_id_l)
-data$mri_info_deviceserialnumber <- as.factor(data$mri_info_deviceserialnumber)
-data$race.eth.7level <- as.factor(data$race.eth.7level)
-data$high.educ <- as.factor(data$high.educ)
-data$household.income <- as.factor(data$household.income)
-data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
-as.factor(data$pds_p_ss_category)
+fulldata <- read.csv(file.path(data_folder,file_name))
+#as_tibble(fulldata)
+nrow(fulldata) # 5934.
 
 ```
 
-```{r}
-ABCD_Data <- data %>% filter(sex!="") #remove 6 participants with no gender
-nrow(ABCD_Data)
-```
-```{r}
-ABCD_Data$PDS_score
-ABCD_Data <- ABCD_Data %>% filter(PDS_score<5) 
-nrow(ABCD_Data)
-```
-```{r}
-ABCD_Data <- ABCD_Data %>% filter(PDS_sum<30) #remove 6
-nrow(ABCD_Data)
+```{r CreateDataframes, echo = FALSE}
+# Call the script that keeps the columns of interest in the data and creates data frames that exclude outliers for certain variables.
+script_dir = ((dirname(here()))) #figure out how to navigate to data source
+phase_folder = "exploratory"  #select the appropiate folder
+#phase_folder = "confirmatory"  #select the appropiate folder
+script_folder <- file.path(script_dir,"ABCD","derivatives",phase_folder)
+#script_folder <- "/Users/nataliesaragosa-harris/Desktop/ABCD/rewardprocesses_internalizing_puberty_exploratory/code/"
+source(file.path(script_folder,"define_dataframes.R")) # Now, all of your different data frames should be loaded!
+
 ```
 
-```{r}
-# 
-ABCD_Data$src_subject_id<- as.factor(ABCD_Data$src_subject_id) # check that this is the correct column for participant IDs.
-ABCD_Data$ERT_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_ert_mean) # I used the floor function to round down testosterone levels to a whole number. This creates a new variable (and so a new column), Testosterone_Rounded, in my dataframe (ABCD_Data).
-#ABCD_Data$DHEA_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_dhea_mean) # DHEA
-#ABCD_Data$HSE_Hormone_Rounded <- floor(ABCD_Data$hormone_scr_hse_mean) # Estrogen, only for women
+```{r settheme, echo = FALSE}
+nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
+         plot.title = element_blank(),
+         axis.title.x= element_text(size=18, vjust=-0.3),
+         axis.title.y= element_text(size=18, vjust=1.5),
+         axis.text.x= element_text(size=18, colour="black"),
+         axis.text.y= element_text(size=18, colour="black"),
+         strip.text = element_text(size=24, face="bold"),
+         panel.background = element_blank(),
+         axis.line = element_line(colour = "black"))
+
 ```
 
-```{r}
+```{r SummarizeMRIData, echo = FALSE}
+
+# Create data tables for each subject of interest (PDS, brain measures, etc.).
+# Note: For the MRI variables, I am ignoring the right and left hemisphere variables and only using the combined ones for now.
+
+# All reward vs. neutral during anticipation stage (z scores).
+MRI_anticipation_stage <- PDS_correct[,c("sex",
+                    "accumbens_rvsn_ant_z",
+                    "caudate_rvsn_ant_z",
+                    "putamen_rvsn_ant_z",
+                    "mOFC_rvsn_ant_z",
+                    "lOFC_rvsn_ant_z",
+                    "striatum_rvsn_ant_z")]
+
+MRI_anticipation_stage %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      #digits = all_continuous() ~ 2,
+                                      label = list(accumbens_rvsn_ant_z ~ "Accumbens (z)",
+                                                   caudate_rvsn_ant_z ~ "Caudate (z)",
+                                                   putamen_rvsn_ant_z ~ "Putamen (z)",
+                                                   mOFC_rvsn_ant_z ~ "Medial OFC (z)",
+                                                   lOFC_rvsn_ant_z ~ "Lateral OFC (z)",
+                                                   striatum_rvsn_ant_z~ "Striatum Combined Areas (z)"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Reward Anticipation Stage (Reward vs. Neutral)**")
+ 
+# All positive vs. negative feedback.
+MRI_feedback_stage <- PDS_correct[,c("sex",
+                    "accumbens_posvsneg_feedback_z", 
+                    "caudate_posvsneg_feedback_z",
+                    "putamen_posvsneg_feedback_z",
+                    "mOFC_posvsneg_feedback_z",
+                    "lOFC_posvsneg_feedback_z",
+                    "striatum_posvsneg_feedback_z")]
+
+MRI_feedback_stage %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      #digits = all_continuous() ~ 2,
+                                      label = list(accumbens_posvsneg_feedback_z ~ "Accumbens (z)",
+                                                   caudate_posvsneg_feedback_z ~ "Caudate (z)",
+                                                   putamen_posvsneg_feedback_z ~ "Putamen (z)",
+                                                   mOFC_posvsneg_feedback_z ~ "Medial OFC (z)",
+                                                   lOFC_posvsneg_feedback_z ~ "Lateral OFC (z)",
+                                                   striatum_posvsneg_feedback_z ~ "Striatum Combined Areas (z)"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Reward Feedback Stage (Positive vs. Negative)**")
+ 
+
+
+```
+
+```{r SummarizeBISBASData, echo = FALSE}
+# Note: Currently in our variable definitions sheet, we only have this single variable for BIS/BAS, so that is the only one I am including here.
+bisbas <- PDS_correct[,c("sex",
+                    "bisbas_ss_basm_rr")]
+
+bisbas %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      label = bisbas_ss_basm_rr ~ "BAS Reward Responsiveness",
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**BAS Reward Responsiveness**")
+
+```
+
+```{r SummarizeTestosteroneData, echo = FALSE}
+
+testosterone <- PDS_correct[,c("sex",
+                   "hormone_scr_ert_mean")]
+                 
+testosterone %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = hormone_scr_ert_mean ~ "Testosterone mean of measures (pg/mL)",
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Testosterone**")
+
+```
+
+```{r SummarizeCBCLData, echo = FALSE}
+
+# Plot raw scores.
+CBCL_r <- PDS_correct[,c("sex",
+                      "cbcl_scr_syn_internal_r",
+                      "cbcl_scr_syn_anxdep_r",
+                      "cbcl_scr_syn_withdep_r",
+                      "cbcl_scr_dsm5_depress_r")]
+
+CBCL_r %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(cbcl_scr_syn_internal_r ~ "Internalizing CBCL Syndrome Scale (raw score)",
+                                                   cbcl_scr_syn_anxdep_r ~ "Anxious/Depressive CBCL Syndrome Scale (raw score)",
+                                                   cbcl_scr_syn_withdep_r ~ "With Depression CBCL Syndrome Scale (raw score)",
+                                                   cbcl_scr_dsm5_depress_r ~ "Depression CBCL DSM5 Scale (raw score)"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**CBCL**")
+
+# Plot t scores (we will probably not be using these in our analyses, but worth looking at for now).
+CBCL_t <- PDS_correct[,c("sex",
+                      "cbcl_scr_syn_internal_t",
+                      "cbcl_scr_syn_anxdep_t",
+                      "cbcl_scr_syn_withdep_t",
+                      "cbcl_scr_dsm5_depress_t")]
+
+CBCL_t %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(cbcl_scr_syn_internal_t ~ "Internalizing CBCL Syndrome Scale (t-score)",
+                                                   cbcl_scr_syn_anxdep_t ~ "Anxious/Depressive CBCL Syndrome Scale (t-score)",
+                                                   cbcl_scr_syn_withdep_t ~ "With Depression CBCL Syndrome Scale (t-score)",
+                                                   cbcl_scr_dsm5_depress_t ~ "Depression CBCL DSM5 Scale (t-score)"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**CBCL**")
+
+
+```
+
+```{r SummarizePDSData, echo = FALSE}
+
+PDS <- PDS_correct[,c("sex",
+                    "PDS_score",
+                    "PDS_sum",
+                    "pds_p_ss_category")]
+
+PDS %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(PDS_score ~ "PDS score",
+                                                   PDS_sum ~ "PDS sum",
+                                                   pds_p_ss_category ~ "PDS category"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**PDS**")
+
+```
+
+```{r SummarizeDemographicData, echo = FALSE}
+
+# Just to make the tables less long, I am going to put the demographics into two tables.
+Demographics_1 <- PDS_correct[,c("interview_age",
+                    "sex",
+                    "race.ethnicity.5level",
+                    "race.eth.7level",
+                    "demo_race_hispanic")]
+
+Demographics_2 <- PDS_correct[,c("interview_age",
+                    "sex",
+                    "high.educ",
+                    "household.income",
+                    "married.or.livingtogether")]
+
+Demographics_1 %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(interview_age ~ "Age in months",
+                                                   race.ethnicity.5level ~ "Race/Ethnicity (Five levels)",
+                                                   race.eth.7level  ~ "Race/Ethnicity (Seven levels)",
+                                                   demo_race_hispanic ~ "Hispanic"),
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Demographics**")
+
+Demographics_2 %>% tbl_summary(by = sex,
+                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+                                      digits = all_continuous() ~ 2,
+                                      label = list(interview_age ~ "Age in months",
+                                                   high.educ ~ "Parent highest education level",
+                                                   household.income ~ "Household income",
+                                                   married.or.livingtogether ~ "Married or living together"),
+                                      type = married.or.livingtogether ~ "categorical",
+                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+                          c(label ~ "**Variable**",
+                            stat_1 ~ "*Female*",
+                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Demographics**")
+
+```
+
+```{TestosteroneDistributions}
+PDS_correct$ERT_Hormone_Rounded <- floor(PDS_correct$hormone_scr_ert_mean) # I used the floor function to round down testosterone levels to a whole number. This creates a new variable (and so a new column), Testosterone_Rounded, in my dataframe (PDS_correct.
+#PDS_correct$DHEA_Hormone_Rounded <- floor(PDS_correct$hormone_scr_dhea_mean) # DHEA
+#PDS_correct$HSE_Hormone_Rounded <- floor(PDS_correct$hormone_scr_hse_mean) # Estrogen, only for women
+
 # Example distribution: Plot testosterone levels (rounded down) in the sample.
-max_level <- max(ABCD_Data$ERT_Hormone_Rounded,na.rm = TRUE)
-min_level <- min(ABCD_Data$ERT_Hormone_Rounded,na.rm = TRUE)
-total_plot <- ggplot(ABCD_Data, aes(x=ERT_Hormone_Rounded)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+max_level <- max(PDS_correct$ERT_Hormone_Rounded,na.rm = TRUE)
+min_level <- min(PDS_correct$ERT_Hormone_Rounded,na.rm = TRUE)
+total_plot <- ggplot(PDS_correct, aes(x=ERT_Hormone_Rounded)) + # this line is saying plot my data (PDS_correct), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=0.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=5))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
               labs(title = "Testosterone Levels by sex (Exploratory sample)",x = "Testosterone") + # Set the title of the graph and label the x axis.
@@ -186,32 +314,34 @@ facet_grid(. ~ sex)
 total_plot
 ```
 
-```{r}
-p <- ggplot(ABCD_Data, aes(x=sex, y=ERT_Hormone_Rounded)) + 
+```{TestosteroneByGroup}
+p <- ggplot(PDS_correct, aes(x=sex, y=ERT_Hormone_Rounded)) + 
   geom_boxplot()
 p
 ```
 
-```{r}
+```{BehavioralRewardDistributions}
 # Example distribution: Plot BIS/BAS RR in the sample.
-max_level <- max(ABCD_Data$bisbas_ss_basm_rr,na.rm = TRUE)
-min_level <- min(ABCD_Data$bisbas_ss_basm_rr,na.rm = TRUE)
-total_plot <- ggplot(ABCD_Data, aes(x=bisbas_ss_basm_rr)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+max_level <- max(PDS_correct$bisbas_ss_basm_rr,na.rm = TRUE)
+min_level <- min(PDS_correct$bisbas_ss_basm_rr,na.rm = TRUE)
+total_plot <- ggplot(PDS_correct, aes(x=bisbas_ss_basm_rr)) + # this line is saying plot my data (PDS_correct), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
               labs(title = "Reward responsiveness by sex (Exploratory sample)",x = "BIS/BAS RR")+ # Set the title of the graph and label the x axis.
 facet_grid(. ~ sex)
 total_plot
 ```
-```{r}
-p <- ggplot(ABCD_Data, aes(x=sex, y=bisbas_ss_basm_rr)) + 
+
+```{BehavioralRewardByGroup}
+p <- ggplot(PDS_correct, aes(x=sex, y=bisbas_ss_basm_rr)) + 
   geom_boxplot()
 p
 ```
-```{r}
+
+```{BehavioralRewardByGender}
 #RR by gender
 p <- ggbetweenstats(
-  data = ABCD_Data,
+  data = PDS_correct,
   x = sex, # > 2 groups
   y = bisbas_ss_basm_rr,
   xlab = "Sex",
@@ -236,47 +366,46 @@ p <- ggbetweenstats(
 p
 ```
 
-
-
-```{r}
+```{CBCLDistributions}
 # Example distribution: Plot CBCL (rounded down) in the sample.
-max_level <- max(ABCD_Data$cbcl_scr_syn_internal_r,na.rm = TRUE)
-min_level <- min(ABCD_Data$cbcl_scr_syn_internal_r,na.rm = TRUE)
-total_plot <- ggplot(ABCD_Data, aes(x=cbcl_scr_syn_internal_r)) +
+max_level <- max(PDS_correct$cbcl_scr_syn_internal_r,na.rm = TRUE)
+min_level <- min(PDS_correct$cbcl_scr_syn_internal_r,na.rm = TRUE)
+total_plot <- ggplot(PDS_correct, aes(x=cbcl_scr_syn_internal_r)) +
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
               labs(title = "CBCL Internalizing symptoms by sex (Exploratory sample)",x = "cbcl_scr_syn_internal_t") + # Set the title of the graph and label the x axis. 
 facet_grid(. ~ sex)
 total_plot
 ```
-```{r}
-p <- ggplot(ABCD_Data, aes(x=sex, y=cbcl_scr_syn_internal_t)) + 
+
+```{CBCLByGroup}
+p <- ggplot(PDS_correct, aes(x=sex, y=cbcl_scr_syn_internal_t)) + 
   geom_boxplot()
 p
 ```
 
-
-```{r}
+```{CBCLWithDepressionDistributions}
 # Example distribution: Plot CBCL (rounded down) in the sample.
-max_level <- max(ABCD_Data$cbcl_scr_syn_withdep_t,na.rm = TRUE)
-min_level <- min(ABCD_Data$cbcl_scr_syn_withdep_t,na.rm = TRUE)
-total_plot <- ggplot(ABCD_Data, aes(x=cbcl_scr_syn_withdep_t)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
+max_level <- max(PDS_correct$cbcl_scr_syn_withdep_t,na.rm = TRUE)
+min_level <- min(PDS_correct$cbcl_scr_syn_withdep_t,na.rm = TRUE)
+total_plot <- ggplot(PDS_correct, aes(x=cbcl_scr_syn_withdep_t)) + # this line is saying plot my data (PDS_correct), with the x axis being their rounded testosterone.
               geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
               scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
               labs(title = "CBCL withdrawn depression symptoms by sex (Exploratory sample)",x = "CBCL_scr_syn_withdep_t") +# Set the title of the graph and label the x axis.
 facet_grid(. ~ sex)
 total_plot
 ```
-```{r}
-p <- ggplot(ABCD_Data, aes(x=sex, y=cbcl_scr_syn_withdep_t)) + 
+
+```{CBCLWithDepressionByGroup}
+p <- ggplot(PDS_correct, aes(x=sex, y=cbcl_scr_syn_withdep_t)) + 
   geom_boxplot()
 p
 ```
 
-```{r}
+```{CBCLWithDepressionByGender}
 #Withdrawn depression by gender
 p <- ggbetweenstats(
-  data = ABCD_Data,
+  data = PDS_correct,
   x = sex, # > 2 groups
   y = cbcl_scr_syn_internal_r,
   xlab = "Sex",
@@ -304,7 +433,7 @@ p
 ```{r}
 #Depression by gender
 p <- ggbetweenstats(
-  data = ABCD_Data,
+  data = PDS_correct,
   x = sex, # > 2 groups
   y = cbcl_scr_syn_internal_r,
   xlab = "Sex",
@@ -334,7 +463,7 @@ p
 ```{r}
 #Depression by gender
 p <- ggbetweenstats(
-  data = ABCD_Data,
+  data = PDS_correct,
   x = sex, # > 2 groups
   y = cbcl_scr_syn_withdep_t,
   xlab = "Sex",
@@ -360,22 +489,17 @@ p
 ```
 
 
-```{r}
-# Example distribution: Plot PDS_score in the sample.
-max_level <- max(ABCD_Data$PDS_score_both,na.rm = TRUE)
-min_level <- min(ABCD_Data$PDS_score_both,na.rm = TRUE)
-total_plot <- ggplot(ABCD_Data, aes(x=PDS_score_both)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
-              geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
-              scale_x_continuous(breaks=c(seq(min_level, max_level, by=1))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "Self-reported pubertal development by sex (Exploratory sample)",x = "PDS score") +# Set the title of the graph and label the x axis.
-facet_grid(. ~ sex)
-total_plot
+```{PDSScoreDistributions}
+# Plot PDS_score in the sample.
+p <-  ggplot(PDS_correct, aes(PDS_score, ..count..)) + geom_bar(position = "dodge") + facet_grid(. ~ sex)
+p
+
 ```
 
-```{r}
+```{PDSScoreByGender}
 #PDS score by gender
 p <- ggbetweenstats(
-  data = ABCD_Data,
+  data = PDS_correct,
   x = sex, # > 2 groups
   y = PDS_score_both,
   xlab = "Sex",
@@ -405,7 +529,7 @@ p
 ```{r}
 #PDS score by gender
 p <- ggbetweenstats(
-  data = ABCD_Data,
+  data = PDS_correct,
   x = race.eth.8level, # > 2 groups
   y = PDS_score_both,
   xlab = "Race/ethnicity",
@@ -432,26 +556,27 @@ p
 
 ```
 
-#Brain
-```{r}
-# Example distribution: Plot CBCL (rounded down) in the sample.
-max_level <- max(ABCD_Data$striatum_rvsn_ant,na.rm = TRUE)
-min_level <- min(ABCD_Data$striatum_rvsn_ant,na.rm = TRUE)
-total_plot <- ggplot(ABCD_Data, aes(x=striatum_rvsn_ant)) + # this line is saying plot my data (ABCD_Data), with the x axis being their rounded testosterone.
-              geom_histogram(binwidth=.5,alpha= 0.8) + # this is specifying the width of the histogram bars and how transparent the color is (that is the alpha).
-              scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) + # include mininum to maximum observed values on the axis and to plot by intervals of 5.
-              labs(title = "Striatal activity during reward anticipation by sex (Exploratory sample)",x = "striatum_rvsn_ant") +# Set the title of the graph and label the x axis.
-facet_grid(. ~ sex)
-total_plot
-```
-
-```{r}
-p <- ggplot(ABCD_Data, aes(x=sex, y=striatum_rvsn_ant)) + 
-  geom_boxplot() + labs(title = "Striatal activity during reward anticipation by sex (Exploratory sample)",x = "striatum_rvsn_ant")# Set the title of the graph and label the x axis.
+```{PubertalCategory}
+p <-  ggplot(PDS_correct, aes(pds_p_ss_category, ..count..)) + geom_bar(aes(fill = sex), position = "dodge")
 p
 ```
 
-```{r, Pubertal category}
-p <-  ggplot(data, aes(pds_p_ss_category, ..count..)) + geom_bar(aes(fill = sex), position = "dodge")
+#Brain
+```{StriatumAnticipationDistributions}
+
+max_level <- max(PDS_correct$striatum_rvsn_ant_z,na.rm = TRUE)
+min_level <- min(PDS_correct$striatum_rvsn_ant_z,na.rm = TRUE)
+total_plot <- ggplot(PDS_correct, aes(x=striatum_rvsn_ant_z)) +
+              geom_histogram(binwidth=.5,alpha= 0.8) +
+              scale_x_continuous(breaks=c(seq(min_level, max_level, by=10))) +
+              labs(title = "Striatal activity during reward anticipation by sex (Exploratory sample)",x = "striatum_rvsn_ant_z") +
+              facet_grid(. ~ sex)
+total_plot
 ```
 
+```{StriatumAnticipationByGroup}
+p <- ggplot(PDS_correct, aes(x=sex, y=striatum_rvsn_ant_z)) + 
+  geom_boxplot() + labs(title = "Striatal activity during reward anticipation by sex (Exploratory sample)",x = "striatum_rvsn_ant")
+
+p
+```

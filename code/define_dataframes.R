@@ -1,0 +1,140 @@
+# Call this function after you have loaded "nda20_exploratory.csv" into data frame named "fulldata".
+# Instead of writing this long code for every single script, we are going to call one script to do it.
+# This way, we can make sure we are all loading in the exact same data and working with the exact same dataframes because we are using identical code (from this one script).
+# If we need to edit anything about our dataframes, we can do so in that single script.
+
+nrow(fulldata) # 5934.
+# Because this is such a big data file, let's only keep the columns that we need for this analysis.
+data <- fulldata[,c("src_subject_id",
+                    "interview_age",
+                    "eventname",
+                    "sex",
+                    "site_id_l",
+                    "mri_info_deviceserialnumber",
+                    "rel_family_id",
+                    "race.ethnicity.5level",
+                    "race.eth.7level",
+                    "demo_race_hispanic", # Do you consider the child Hispanic/Latino/Latina?
+                    "high.educ",
+                    "household.income",
+                    "married.or.livingtogether",
+                    "bisbas_ss_basm_rr",
+                    "cbcl_scr_syn_internal_t",
+                    "cbcl_scr_syn_anxdep_t",
+                    "cbcl_scr_syn_withdep_t",
+                    "cbcl_scr_dsm5_depress_t",
+                    "cbcl_scr_syn_internal_r",
+                    "cbcl_scr_syn_anxdep_r",
+                    "cbcl_scr_syn_withdep_r",
+                    "cbcl_scr_dsm5_depress_r",
+                    "PDS_score_f",
+                    "PDS_score_m",
+                    "PDS_score",
+                    "PDS_sum_f",
+                    "PDS_sum_m",
+                    "PDS_sum",
+                    "pds_p_ss_category",
+                    "fam_history_q6d_depression",
+                    "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
+                    "tfmri_ma_acdn_b_scs_aalh",
+                    "tfmri_ma_acdn_b_scs_cdrh", # Caudate reward vs. neutral anticipation.
+                    "tfmri_ma_acdn_b_scs_cdlh",
+                    "tfmri_ma_acdn_b_scs_ptrh", # Putamen reward vs. neutral anticipation.
+                    "tfmri_ma_acdn_b_scs_ptlh",
+                    "tfmri_ma_arvn_b_cds_mobofrrh", # Medial OFC reward vs. neutral anticipation.
+                    "tfmri_ma_arvn_b_cds_mobofrlh",
+                    "tfmri_ma_arvn_b_cds_lobofrrh", # Lateral OFC reward vs. neutral anticipation.
+                    "tfmri_ma_arvn_b_cds_lobofrlh",
+                    "tfmri_ma_rpvnfb_b_scs_aarh", # Accumbens reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_scs_aalh",
+                    "tfmri_ma_rpvnfb_b_scs_cdrh", # Caudate reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_scs_cdlh",
+                    "tfmri_ma_rpvnfb_b_scs_ptrh", # Putamen reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_scs_ptlh",
+                    "tfmri_ma_rpvnfb_b_cds_mobofrrh", # Medial OFC reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_cds_mobofrlh",
+                    "tfmri_ma_rpvnfb_b_cds_lobofrrh", # Lateral OFC reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_cds_lobofrlh",
+                    "accumbens_rvsn_ant_z", # Reward vs. neutral during anticipation stage (z scores).
+                    "caudate_rvsn_ant_z",
+                    "putamen_rvsn_ant_z",
+                    "mOFC_rvsn_ant_z",
+                    "lOFC_rvsn_ant_z",
+                    "striatum_rvsn_ant_z", # reward vs. neutral anticipation.
+                    "accumbens_posvsneg_feedback_z", # All positive vs. negative feedback.
+                    "caudate_posvsneg_feedback_z",
+                    "putamen_posvsneg_feedback_z",
+                    "mOFC_posvsneg_feedback_z",
+                    "lOFC_posvsneg_feedback_z",
+                    "striatum_posvsneg_feedback_z",
+                    "bisbas_ss_basm_rr",
+                    "hormone_scr_ert_mean",
+                    "hormone_scr_dhea_mean"
+)]
+
+data$src_subject_id <- as.factor(data$src_subject_id)
+data$rel_family_id <- as.factor(data$rel_family_id)
+data$eventname <- as.factor(data$eventname)
+data$sex <- as.factor(data$sex)
+data$demo_race_hispanic <- as.factor(data$demo_race_hispanic)
+data$site_id_l <- as.factor(data$site_id_l)
+data$mri_info_deviceserialnumber <- as.factor(data$mri_info_deviceserialnumber)
+data$race.eth.7level <- as.factor(data$race.eth.7level)
+data$high.educ <- as.factor(data$high.educ)
+data$household.income <- as.factor(data$household.income)
+data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
+data$pds_p_ss_category <-as.factor(data$pds_p_ss_category)
+data$race.ethnicity.5level = data$race.eth.7level
+data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
+data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
+
+data$PDS_score_z<- scale(data$PDS_score)
+data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
+
+nrow(data) # 5934.
+
+# Use data with only correct PDS scores.
+PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous).
+nrow(PDS_correct) # 4224.
+
+PDS_correct <- subset(PDS_correct, PDS_sum<30) # This shouldn't change anything but just in case there is somehow a participant with a PDS score less than 5 but a sum that is incorrect.
+nrow(PDS_correct) # 4224.
+PDS_correct <- PDS_correct %>% filter(sex!="") #remove 6 participants with no gender.
+nrow(PDS_correct) # 4224. Were these participants already removed from the dataframe?
+
+# Separate by sex.
+PDS_correct_females <- subset(PDS_correct, sex == "F")
+PDS_correct_males <- subset(PDS_correct, sex == "M")
+nrow(PDS_correct_females)  # 2059.
+nrow(PDS_correct_males) # 2165.
+
+# Create different subsets of the data based on removing outliers for specific variables of interest.
+# No CBCL outliers.
+data_no_CBCL_outliers <- subset(PDS_correct, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+nrow(data_no_CBCL_outliers) # 4152.
+
+data_no_CBCL_outliers_females<- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+nrow(data_no_CBCL_outliers_females) # 2026.
+
+data_no_CBCL_outliers_males<- subset(PDS_correct_males, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+nrow(data_no_CBCL_outliers_males) # 2126.
+
+# No striatal anticipation outliers.
+data_no_striatal_ant_outliers <- subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
+nrow(data_no_striatal_ant_outliers) # 4169.
+
+data_no_striatal_ant_outliers_females <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
+nrow(data_no_striatal_ant_outliers_females) # 2035.
+
+data_no_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
+nrow(data_no_striatal_ant_outliers_males) # 2134.
+
+# No CBCL or striatal anticipation outliers.
+data_no_CBCL_striatal_ant_outliers <- subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+nrow(data_no_CBCL_striatal_ant_outliers) # 4097.
+
+data_no_CBCL_striatal_ant_outliers_females <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+nrow(data_no_CBCL_striatal_ant_outliers_females) # 2002.
+
+data_no_CBCL_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+nrow(data_no_CBCL_striatal_ant_outliers_males) # 2095.
