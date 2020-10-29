@@ -14,6 +14,7 @@ library(sjPlot)
 library(here)
 library(jtools)
 library(interactions)
+library(gamm4.test)
 ```
 
 ```{r setdirectories, echo = FALSE}
@@ -51,7 +52,6 @@ fulldata <- read.csv(file.path(data_folder,file_name))
 ```
 
 ```{r GetData, echo = FALSE}
-#LMW alternative to read in the data
 length(fulldata$src_subject_id) # 5934.
 data <- fulldata[,c("src_subject_id",
                 "interview_age",
@@ -61,7 +61,7 @@ data <- fulldata[,c("src_subject_id",
                 "mri_info_deviceserialnumber",
                 "rel_family_id",
                 "race.ethnicity.5level",
-                "race.eth.5level",
+                "race.eth.7level",
                 "demo_race_hispanic", # Do you consider the child Hispanic/Latino/Latina?
                 "high.educ",
                 "household.income",
@@ -122,13 +122,13 @@ data$sex <- as.factor(data$sex)
 data$demo_race_hispanic <- as.factor(data$demo_race_hispanic)
 data$site_id_l <- as.factor(data$site_id_l)
 data$mri_info_deviceserialnumber <- as.factor(data$mri_info_deviceserialnumber)
-data$race.eth.5level <- as.factor(data$race.eth.5level)
+data$race.eth.7level <- as.factor(data$race.eth.7level)
 data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 data$pds_p_ss_category <-as.factor(data$pds_p_ss_category)
-data$race.ethnicity.5level = data$race.eth.5level
-data$race.ethnicity.5level[(data$race.eth.5level == "AIAN" | data$race.eth.5level == "NHPI")] = "Other"
+data$race.ethnicity.5level = data$race.eth.7level
+data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
 data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
@@ -191,21 +191,20 @@ boxplot(data$cbcl_scr_syn_internal_r)
 ```{r}
 #Count NAs per variable 
 # We are missing many cases of maternal depression - consider dropping
-data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-nrow(data) 
+dataformodel <- data_no_CBCL_striatal_ant_outliers 
 
-sum(is.na(data$src_subject_id)) #0 missing  
-sum(is.na(data$sex))  #0 missing   
-sum(is.na(data$mri_info_deviceserialnumber)) #0 missing 
-sum(is.na(data$rel_family_id)) #0 missing 
-sum(is.na(data$race.ethnicity.5level)) #41
-sum(is.na(data$demo_race_hispanic))  #50
-sum(is.na(data$high.educ))  #3
-sum(is.na(data$household.income)) #293
-sum(is.na(data$married.or.livingtogether))  #22
-sum(is.na(data$fam_history_q6d_depression)) #1937 missing!
+sum(is.na(dataformodel$src_subject_id)) #0 missing  
+sum(is.na(dataformodel$sex))  #0 missing   
+sum(is.na(dataformodel$mri_info_deviceserialnumber)) #0 missing 
+sum(is.na(dataformodel$rel_family_id)) #0 missing 
+sum(is.na(dataformodel$race.ethnicity.5level)) #41
+sum(is.na(dataformodel$demo_race_hispanic))  #50
+sum(is.na(dataformodel$high.educ))  #3
+sum(is.na(dataformodel$household.income)) #293
+sum(is.na(dataformodel$married.or.livingtogether))  #22
+sum(is.na(dataformodel$fam_history_q6d_depression)) #1937 missing!
 
-summary(data)
+summary(dataformodel)
 
 #Also, some brain variables seem to have large outliers. Check before including in the models 
 ```
@@ -213,9 +212,11 @@ summary(data)
 ##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
 ##  N o
 ```{r Confirmatory4, echo = FALSE}
-# Composite striatum score.
+# Composite striatum score, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
+
+dataformodel <- data_no_striatal_ant_outliers  #Specify data subset here
 
 confirmatory4_compositestriatum <- lmer(cbcl_scr_syn_internal_r ~ 
                                            PDS_score*striatum_rvsn_ant_z +
@@ -227,16 +228,12 @@ confirmatory4_compositestriatum <- lmer(cbcl_scr_syn_internal_r ~
                             interview_age+
                             #fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
-                            data = subset(PDS_correct, 
-                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3))
+                            dataformodel)
 summary(confirmatory4_compositestriatum)
 
 plot_model(confirmatory4_compositestriatum,type = "int", show.data = FALSE) #Interaction plot
 
 plot_model(confirmatory4_compositestriatum,type = "est", show.data = FALSE) #Forest plot
-
-# Note: Most of these fixed effects should be nested within family, correct?
-# I have added random effects for family nested in site
 
 #p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score",            show.data = TRUE, jitter = 0.1, line.size = 2) +
 
@@ -255,17 +252,17 @@ plot_model(confirmatory4_compositestriatum,type = "est", show.data = FALSE) #For
 # Excluding CBCL outliers 
 # Without covariates
 
-data = subset(PDS_correct,  striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+dataformodel <- data_no_CBCL_striatal_ant_outliers
 
 #Select only cases that have complete data for all covariates of intest. It seems that we are missing many cases of maternal depression. We might drop it going forwards. 
-tempdata <- data[which(complete.cases(data[,c("race.ethnicity.5level",
+tempdata <- dataformodel[which(complete.cases(dataformodel[,c("race.ethnicity.5level",
                             "demo_race_hispanic",
                             "high.educ",
                             "household.income",
                             "married.or.livingtogether",
                             "interview_age"
                             )])),]
-nrow(data)
+nrow(dataformodel)
 nrow(tempdata)
 
 confirmatory4_compositestriatum_excludingoutliers_core <- lmer(cbcl_scr_syn_internal_r ~
@@ -275,60 +272,82 @@ confirmatory4_compositestriatum_excludingoutliers_core <- lmer(cbcl_scr_syn_inte
 
 summary(confirmatory4_compositestriatum_excludingoutliers_core)
 
-
+print.gamtest(confirmatory4_compositestriatum_excludingoutliers_core,2)
 
 plot_model(confirmatory4_compositestriatum_excludingoutliers_core,type = "int", show.data = FALSE, show.p = TRUE) #Interaction plot
 
 plot_model(confirmatory4_compositestriatum_excludingoutliers_core,type = "std", show.data = FALSE) #Forest plot
 
-p <- plot_model(confirmatory4_compositestriatum_excludingoutliers_core,
-                type = "pred", # To specify values for striatal response, have to use "pred" instead.
-                terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
-                show.data = TRUE, jitter = 0.1, line.size = 2) +
-                ylab("Internalizing Score") +
-                xlab("Average PDS score") +
-                labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
-                scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
-                theme(title= element_text(size=20, vjust=2, face="bold"),
-                plot.title = element_blank(),
-                axis.title.x= element_text(size=18, vjust=-0.3),
-                axis.title.y= element_text(size=18, vjust=1.5),
-                axis.text.x= element_text(size=18, colour="black"),
-                axis.text.y= element_text(size=18, colour="black"),
-                legend.title=element_text(size=12, colour = "black"),
-                legend.position = c(.80, .80),
-                # legend.position="none",
-                strip.text = element_text(size=18, face="bold"),
-                panel.background = element_blank(),
-                axis.line = element_line(colour = "black"))
-p 
+# p <- plot_model(confirmatory4_compositestriatum_excludingoutliers_core,
+#                 type = "pred", # To specify values for striatal response, have to use "pred" instead.
+#                 terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
+#                 show.data = TRUE, jitter = 0.1, line.size = 2) +
+#                 ylab("Internalizing Score") +
+#                 xlab("Average PDS score") +
+#                 labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
+#                 scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
+#                 theme(title= element_text(size=20, vjust=2, face="bold"),
+#                 plot.title = element_blank(),
+#                 axis.title.x= element_text(size=18, vjust=-0.3),
+#                 axis.title.y= element_text(size=18, vjust=1.5),
+#                 axis.text.x= element_text(size=18, colour="black"),
+#                 axis.text.y= element_text(size=18, colour="black"),
+#                 legend.title=element_text(size=12, colour = "black"),
+#                 legend.position = c(.80, .80),
+#                 # legend.position="none",
+#                 strip.text = element_text(size=18, face="bold"),
+#                 panel.background = element_blank(),
+#                 axis.line = element_line(colour = "black"))
+# p 
 
 ```
-
 
 ```{r}
 #Excluding outliers in CBCL 
 #Reveals main effect of striatum as well as interaction, but in the opposite way?
-confirmatory4_compositestriatum_excludingoutliers <- lmer(cbcl_scr_syn_internal_r ~ 
+
+dataformodel<- data_no_CBCL_striatal_ant_outliers
+
+#Select only cases that have complete data for all covariates of intest. It seems that we are missing many cases of maternal depression. We might drop it going forwards. 
+tempdata <- dataformodel[which(complete.cases(dataformodel[,c("race.ethnicity.5level",
+                            "demo_race_hispanic",
+                            "high.educ",
+                            "household.income",
+                            "married.or.livingtogether",
+                            "interview_age"
+                            )])),]
+
+confirmatory4_compositestriatum_excludingoutliers <- lme4::lmer(cbcl_scr_syn_internal_r ~ 
                                            PDS_score*striatum_rvsn_ant_z*sex +
-                            race.eth.5level +
+                            race.ethnicity.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
                             interview_age+
-                            fam_history_q6d_depression + #added mother's depression
+                          #  fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),  #same thing as site is the same thing as (1|site) + (1|family:site), this is what done in paper by Paulus et al. (2019), 22 sites 
 #data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
 data = tempdata)
-
 summary(confirmatory4_compositestriatum_excludingoutliers)
 
-data = subset(PDS_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 
-sum(is.na(data$site_id_l))
-levels((data$site_id_l))
+mod <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                         PDS_score*striatum_rvsn_ant_z*sex +
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=tempdata, random = ~ (1 | site_id_l/rel_family_id))
 
+print(mod$gam)
+print(summary(mod))
+
+summary(mod$gam)
+
+summary(confirmatory4_compositestriatum_excludingoutliers)
+gam.grptest(confirmatory4_compositestriatum_excludingoutliers)
 ```
 
 ```{r}
@@ -369,9 +388,6 @@ p <- plot_model(confirmatory4_compositestriatum_excludingoutliers,
                 axis.line = element_line(colour = "black"))
 p 
                  
-                   
-                
-
 file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 #ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 ```
@@ -384,17 +400,19 @@ file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 # Splitting by sex
 # FEMALES
 
+dataformodel <- data_no_CBCL_striatal_ant_outliers_females
+
 confirmatory4_compositestriatum_excludingoutliers_femalesonly <- lmer(cbcl_scr_syn_internal_r ~ 
                             PDS_score*striatum_rvsn_ant_z +
-                           # race.eth.5level +
-                            #demo_race_hispanic +
-                            #high.educ +
-                            #household.income +
-                            #married.or.livingtogether +
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
                             interview_age+
                             #fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
-                            data = subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+                            dataformodel)
 
 summary(PDS_correct_females$interview_age)
 summary(confirmatory4_compositestriatum_excludingoutliers_femalesonly)
@@ -403,7 +421,7 @@ summary(confirmatory4_compositestriatum_excludingoutliers_femalesonly)
 #Quick plots
 plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly,type = "pred", terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly,type = "std", show.data = FALSE) #Forest plot with standardized coefficients
+plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly, type= "std",how.data = FALSE) #Forest plot with standardized coefficients
 ```
 
 ```{r}
@@ -411,17 +429,19 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly,type = 
 # Splitting by sex
 # MALES
 
+dataformodel <- data_no_CBCL_striatal_ant_outliers_males
+
 confirmatory4_compositestriatum_excludingoutliers_malesonly <- lmer(cbcl_scr_syn_internal_r ~ 
                             PDS_score*striatum_rvsn_ant_z +
-                            #race.eth.5level +
-                            #demo_race_hispanic +
-                            #high.educ +
-                            #household.income +
-                            #married.or.livingtogether +
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
                             interview_age+
                             #fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
-                            data = subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+                            dataformodel)
 
 summary(confirmatory4_compositestriatum_excludingoutliers_malesonly)
 ```
