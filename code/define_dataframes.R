@@ -3,6 +3,24 @@
 # This way, we can make sure we are all loading in the exact same data and working with the exact same dataframes because we are using identical code (from this one script).
 # If we need to edit anything about our dataframes, we can do so in that single script.
 
+# Covariates.
+#      Random effects.
+#           1. Family. (rel_family_id) # Make sure this is nested correctly and looks about right.
+#           2. Site. (site_id_l)
+#           3. Subject. (src_subject_id) # There is only one timepoint so we cannot do a random effect for each participant.
+#           4. Device. # mri_info_deviceserialnumber.
+
+#  Random effects are nested: (1|abcd_site/device/rel_family_id) [unless some siblings went in different scanners?]
+
+#      Fixed effects.
+#           1. Race parent. (race.ethnicity.5level).
+#           2. Education parent. (high.educ).
+#           3. Income parent. (household.income)
+#           4. Marital status parent. (married.or.livingtogether)
+#           5. Age. (interview_age).
+#           6. Hispanic. (demo_race_hispanic).
+
+
 nrow(fulldata) # 5934.
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
 data <- fulldata[,c("src_subject_id",
@@ -138,3 +156,13 @@ nrow(data_no_CBCL_striatal_ant_outliers_females) # 2002.
 
 data_no_CBCL_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 nrow(data_no_CBCL_striatal_ant_outliers_males) # 2095.
+
+data_no_CBCL_striatal_ant_outliers_females_pubertal <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != 1)
+length(data_no_CBCL_striatal_ant_outliers_females_pubertal$src_subject_id) #1380
+data_no_CBCL_striatal_ant_outliers_males_pubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != 1)
+length(data_no_CBCL_striatal_ant_outliers_males_pubertal$src_subject_id) #583
+
+data_no_CBCL_striatal_ant_outliers_females_prepubertal <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == 1)
+length(data_no_CBCL_striatal_ant_outliers_females_prepubertal$src_subject_id) #1380
+data_no_CBCL_striatal_ant_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
+length(data_no_CBCL_striatal_ant_outliers_males_prepubertal$src_subject_id) #583
