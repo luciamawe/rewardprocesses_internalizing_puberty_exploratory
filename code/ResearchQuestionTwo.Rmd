@@ -8,12 +8,18 @@ authors: Natalie Saragosa-Harris
 ---
 
 ``` {r loadPackages, echo = FALSE, message=FALSE, warning=FALSE}
+#install.packages("gamm4.test")
+#install.packages("mgcv")
+install.packages("gamm4")
+
 library(ggplot2)
 library(gamm4)
 library(dplyr)
 library(sjPlot)
 library(lmerTest)
 library(here)
+library(gamm4.test)
+library(mgcv)
 ```
 
 ```{r LoadData, echo = FALSE}
@@ -78,9 +84,7 @@ ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_s
   scale_color_manual(values = c("#7BACAB", "gray40"), labels = c("Female", "Male"), name = "Sex") +
   scale_fill_manual(values = c("#7BACAB", "gray40"), labels = c("Female", "Male"), name = "Sex") +
   ylab("CBCL Internalizing") +
-  xlab("PDS Score") +
-  nsh_theme
-
+  xlab("PDS Score")
 
 ```
 
@@ -92,68 +96,51 @@ ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_s
 
 dataformodel <- data_no_CBCL_outliers
 
-confirmatory2 <- lmer(cbcl_scr_syn_internal_r ~ PDS_score +
+confirmatory2 <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2)
+                      demo_race_hispanic, 
+                      data = dataformodel, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+                      
+
+summary(confirmatory2$gam)
+
+gamtabs(confirmatory2, type="HTML")
 ```
 
 ### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2,type = "pred", show.data = FALSE) #Interaction plot
+
+plot(confirmatory2$gam)
+
+plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
 
 plot_model(confirmatory2,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
-```
-# (1 | site_id_l/mri_info_deviceserialnumber/rel_family_id)
-# (1 | mri_info_deviceserialnumber/rel_family_id)
-
-
-# predicteddata <- get_model_data(confirmatory2,type = "pred", terms = "PDS_score")
-
-#geom_segment(aes(x = -4, xend = 4, 
-#                     y = fixedeffect_intercept + fixedeffect_slope*-4, yend = fixedeffect_intercept + fixedeffect_slope*4), # size = 2,  color = "black") +
-
-
-#plot_model(confirmatory2,type = "pred", terms = "PDS_score", 
-           show.data = TRUE, jitter = 0.1, line.size = 2) +
-   ylab("Internalizing Score") +
-   xlab("PDS Stage") +
-   scale_y_continuous(breaks = seq(0, 100, by = 10), limits = c(30,100)) +
-   theme(title= element_text(size=26, vjust=2, face="bold"),
-         plot.title = element_blank(),
-         axis.title.x= element_text(size=18, vjust=-0.3),
-         axis.title.y= element_text(size=18, vjust=1.5),
-         axis.text.x= element_text(size=18, colour="black"),
-         axis.text.y= element_text(size=18, colour="black"),
-         legend.position="none",
-         strip.text = element_text(size=24, face="bold"),
-         panel.background = element_blank(),
-         axis.line = element_line(colour = "black"))
-```
 
 ### Are there gender differences in this effect?
 ```{r}
 dataformodel <- data_no_CBCL_outliers
 
-confirmatory2_gender <- lmer(cbcl_scr_syn_internal_r ~ PDS_score*sex +
+confirmatory2_gender <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score*sex +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2_gender)
+                      demo_race_hispanic, 
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+                      
+
+
+summary(confirmatory2_gender$gam)
 ```
 
 #### Quick plots
@@ -168,40 +155,42 @@ plot_model(confirmatory2_gender,type = "std", show.data = FALSE) #Forest plot wi
 ```{r}
 dataformodel <- data_no_CBCL_outliers_females
 
-confirmatory2_female <- lmer(cbcl_scr_syn_internal_r ~ PDS_score +
+confirmatory2_female <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2_female)
+                      demo_race_hispanic,
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+            
+summary(confirmatory2_female$gam)
 ```
 
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_female,type = "pred", show.data = FALSE) #Interaction plot
+plot_model(confirmatory2_female,type = "pred", show.data = TRUE) #Interaction plot
 
-plot_model(confirmatory2_female,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+plot_model(confirmatory2_female,type = "std", show.data = TRUE) #Forest plot with standarized coefficients
 ```
 
 ### Male
 ```{r}
 dataformodel <- data_no_CBCL_outliers_males
 
-confirmatory2_male <- lmer(cbcl_scr_syn_internal_r ~ PDS_score +
+confirmatory2_male <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2_male)
+                      demo_race_hispanic,
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2_male$gam)
 ```
 
 #### Quick plots
@@ -217,6 +206,22 @@ plot_model(confirmatory2_male,type = "std", show.data = FALSE) #Forest plot with
 # Exploratory Hypothesis 2: We will investigate whether testosterone relates to internalizing symptoms and whether this relationship is present after controlling for PDS.
 ## Model A: CBCL internalizing factor ~ Testosterone
 ```{r Exploratory2A, echo = FALSE}
+PDS_correct$hormone_scr_ert_mean_z <- scale(PDS_correct$hormone_scr_ert_mean)
+PDS_correct$cbcl_scr_syn_internal_r_z <- scale(PDS_correct$cbcl_scr_syn_internal_r)
+
+PDS_correct_females$hormone_scr_ert_mean_z <- scale(PDS_correct_females$hormone_scr_ert_mean)
+PDS_correct_females$cbcl_scr_syn_internal_r_z <- scale(PDS_correct_females$cbcl_scr_syn_internal_r)
+
+PDS_correct_males$hormone_scr_ert_mean_z <- scale(PDS_correct_males$hormone_scr_ert_mean)
+PDS_correct_males$cbcl_scr_syn_internal_r_z <- scale(PDS_correct_males$cbcl_scr_syn_internal_r)
+
+
+data_no_CBCL_test_outliers <- subset(PDS_correct, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+data_no_CBCL_test_outliers_females <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+data_no_CBCL_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
 # Get an idea of the sample.
 
 mean(data_no_CBCL_test_outliers$hormone_scr_ert_mean_z,na.rm= TRUE) 
@@ -234,17 +239,18 @@ t.test(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean_z,data_no_CBCL_test
 ```{r}
 dataformodel <- data_no_CBCL_test_outliers
 
-confirmatory2_testosterone_CBCL <- lmer(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
+confirmatory2_testosterone_CBCL <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
+                      demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2_testosterone_CBCL)
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2_testosterone_CBCL$gam)
 ```
 
 ### Gender Differences
@@ -252,34 +258,36 @@ summary(confirmatory2_testosterone_CBCL)
 ```{r}
 dataformodel <- data_no_CBCL_test_outliers_females
 
-confirmatory2_testosterone_CBCL_female <- lmer(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
+                      demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2_testosterone_CBCL_female)
+                      data = dataformodel,
+                      random = ~ (1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2_testosterone_CBCL_female$gam)
 ```
 
 #### Male
 ```{r}
 dataformodel <- data_no_CBCL_test_outliers_males
 
-confirmatory2_testosterone_CBCL_male <- lmer(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
+                      demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2_testosterone_CBCL_male)
+                      data = dataformodel,
+                      random = ~ (1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2_testosterone_CBCL_male$gam)
 ```
 
 ## Model B: CBCL internalizing factor ~ Testosterone + Pubertal stage 
@@ -288,33 +296,35 @@ summary(confirmatory2_testosterone_CBCL_male)
 
 dataformodel <- data_no_CBCL_test_outliers_females
 
-confirmatory2B_testosterone_CBCL_female <- lmer(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
+                      demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2B_testosterone_CBCL_female)
+                      data = dataformodel,  
+                      random = ~ (1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2B_testosterone_CBCL_female$gam)
 ```
 
 #### Male
 ```{r}
 dataformodel <- data_no_CBCL_test_outliers_males
 
-confirmatory2B_testosterone_CBCL_male <- lmer(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
+                      demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2B_testosterone_CBCL_male)
+                      data = dataformodel,
+                      random = ~ (1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2B_testosterone_CBCL_male$gam)
 ```
 
