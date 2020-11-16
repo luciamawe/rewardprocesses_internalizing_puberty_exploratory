@@ -109,14 +109,27 @@ confirmatory2 <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
 
 summary(confirmatory2$gam)
 
-gamtabs(confirmatory2, type="HTML")
+#TESTING PDS CATEGORY (instead of continuous)
+confirmatory2_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = dataformodel, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+                      
+
+summary(confirmatory2_category$gam)
+
 ```
 
 ### Quick plots
 ```{r}
 #Quick plots
 
-plot(confirmatory2$gam)
+
 
 plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
 
@@ -141,6 +154,22 @@ confirmatory2_gender <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score*sex +
 
 
 summary(confirmatory2_gender$gam)
+
+
+#TESTING PDS CATEGORY
+confirmatory2_gender_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category*sex +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+                      
+
+
+summary(confirmatory2_gender_category$gam)
 ```
 
 #### Quick plots
@@ -166,6 +195,19 @@ confirmatory2_female <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       random = ~(1 | site_id_l/rel_family_id))
             
 summary(confirmatory2_female$gam)
+
+#TESTING PDS CATEGORY
+confirmatory2_female_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic,
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+            
+summary(confirmatory2_female_category$gam)
 ```
 
 #### Quick plots
@@ -191,6 +233,19 @@ confirmatory2_male <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       random = ~(1 | site_id_l/rel_family_id))
                       
 summary(confirmatory2_male$gam)
+
+#TESTING PDS CATEGORY
+confirmatory2_male_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic,
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2_male_category$gam)
 ```
 
 #### Quick plots
@@ -308,6 +363,21 @@ confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormo
                       random = ~ (1 | site_id_l/rel_family_id))
                       
 summary(confirmatory2B_testosterone_CBCL_female$gam)
+
+
+#TESTING PDS CATEGORY
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic,
+                      #fam_history_q6d_depression + #added mother's depression
+                      data = dataformodel,  
+                      random = ~ (1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ```
 
 #### Male
@@ -326,5 +396,19 @@ confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone
                       random = ~ (1 | site_id_l/rel_family_id))
                       
 summary(confirmatory2B_testosterone_CBCL_male$gam)
+
+#TESTING PDS CATEGORY
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic,
+                      #fam_history_q6d_depression + #added mother's depression
+                      data = dataformodel,
+                      random = ~ (1 | site_id_l/rel_family_id))
+                      
+summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 
