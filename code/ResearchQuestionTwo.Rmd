@@ -131,9 +131,9 @@ summary(confirmatory2_category$gam)
 
 
 
-plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 
@@ -175,9 +175,9 @@ summary(confirmatory2_gender_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_gender,type = "int", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2_gender,type = "int", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2_gender,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_gender,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 ### Female
@@ -213,9 +213,9 @@ summary(confirmatory2_female_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_female,type = "pred", show.data = TRUE) #Interaction plot
+#plot_model(confirmatory2_female,type = "pred", show.data = TRUE) #Interaction plot
 
-plot_model(confirmatory2_female,type = "std", show.data = TRUE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_female,type = "std", show.data = TRUE) #Forest plot with standarized coefficients
 ```
 
 ### Male
@@ -251,9 +251,9 @@ summary(confirmatory2_male_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_male,type = "pred", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2_male,type = "pred", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2_male,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_male,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 
@@ -278,6 +278,8 @@ data_no_CBCL_test_outliers_females <- subset(PDS_correct_females, hormone_scr_er
 data_no_CBCL_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 
 # Get an idea of the sample.
+
+sum(is.na(data_no_CBCL_test_outliers$hormone_scr_ert_mean_z))
 
 mean(data_no_CBCL_test_outliers$hormone_scr_ert_mean_z,na.rm= TRUE) 
 mean(data_no_CBCL_test_outliers_females$hormone_scr_ert_mean_z,na.rm= TRUE) 
