@@ -131,9 +131,9 @@ summary(confirmatory2_category$gam)
 
 
 
-plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 
@@ -175,9 +175,9 @@ summary(confirmatory2_gender_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_gender,type = "int", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2_gender,type = "int", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2_gender,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_gender,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 ### Female
@@ -197,6 +197,23 @@ confirmatory2_female <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
 summary(confirmatory2_female$gam)
 
 #TESTING PDS CATEGORY
+dataformodel <- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+confirmatory2_female_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic,
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+            
+summary(confirmatory2_female_category$gam)
+
+
+dataformodel <- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category !="5")
+
 confirmatory2_female_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
                       high.educ +
@@ -213,9 +230,9 @@ summary(confirmatory2_female_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_female,type = "pred", show.data = TRUE) #Interaction plot
+#plot_model(confirmatory2_female,type = "pred", show.data = TRUE) #Interaction plot
 
-plot_model(confirmatory2_female,type = "std", show.data = TRUE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_female,type = "std", show.data = TRUE) #Forest plot with standarized coefficients
 ```
 
 ### Male
@@ -251,9 +268,9 @@ summary(confirmatory2_male_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_male,type = "pred", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2_male,type = "pred", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2_male,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_male,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 
@@ -366,6 +383,9 @@ summary(confirmatory2B_testosterone_CBCL_female$gam)
 
 
 #TESTING PDS CATEGORY
+
+dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category !="5")
+
 confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
                       high.educ +
@@ -382,7 +402,8 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 
 #### Male
 ```{r}
-dataformodel <- data_no_CBCL_test_outliers_males
+dataformodel <- data_no_CBCL_test_outliers_males %>% 
+  
 
 confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
