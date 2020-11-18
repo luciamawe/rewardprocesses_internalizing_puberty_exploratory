@@ -123,6 +123,51 @@ confirmatory2_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
 
 summary(confirmatory2_category$gam)
 
+
+summary(confirmatory2$gam)
+
+
+# Is there a quadratic effect of PDS score? Maybe something about the initial transition to puberty?
+dataformodel$PDS_score_squared <- (dataformodel$PDS_score)^2
+confirmatory2_quadratic <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = dataformodel, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(confirmatory2_quadratic$gam)
+
+confirmatory2_quadratic <- lmer(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic +
+                      (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(confirmatory2_quadratic)
+
+plot_model(confirmatory2_quadratic, type = "pred", terms = c("PDS_score")) # Can't figure out how to plot quadratic estimate from multilevel model.
+
+# Trying a simpler model first, just for plotting purposes.
+confirmatory2_quadratic_simple <-lm(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared, data = dataformodel)
+summary(confirmatory2_quadratic_simple)
+plotdata <-dataformodel
+plotdata$predicted <- fortify(confirmatory2_quadratic_simple)$.fitted # Add predicted values from model to the data to plot.
+
+# Just plot the model predictions (to make sure later graphs are correct when the predicted quadratic is added to original data).
+ggplot(plotdata,aes(x=PDS_score, y=predicted)) +
+      geom_point() +
+      ylim(min(dataformodel$cbcl_scr_syn_internal_r),max(dataformodel$cbcl_scr_syn_internal_r)) +
+      xlab("PDS Score") +
+      ylab("Model Predicted CBCL score") 
+# In the quadratic effect, it does not predict CBCL to be above 5.27? Why?
+max(predict(confirmatory2_quadratic_simple)) #5.271192
+min(predict(confirmatory2_quadratic_simple)) #3.98063
 ```
 
 ### Quick plots
@@ -131,9 +176,9 @@ summary(confirmatory2_category$gam)
 
 
 
-plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 
@@ -175,9 +220,9 @@ summary(confirmatory2_gender_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_gender,type = "int", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2_gender,type = "int", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2_gender,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_gender,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 ### Female
@@ -197,6 +242,23 @@ confirmatory2_female <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
 summary(confirmatory2_female$gam)
 
 #TESTING PDS CATEGORY
+dataformodel <- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+confirmatory2_female_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic,
+                      data = dataformodel,
+                      random = ~(1 | site_id_l/rel_family_id))
+            
+summary(confirmatory2_female_category$gam)
+
+
+dataformodel <- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category !="5")
+
 confirmatory2_female_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
                       high.educ +
@@ -213,9 +275,9 @@ summary(confirmatory2_female_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_female,type = "pred", show.data = TRUE) #Interaction plot
+#plot_model(confirmatory2_female,type = "pred", show.data = TRUE) #Interaction plot
 
-plot_model(confirmatory2_female,type = "std", show.data = TRUE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_female,type = "std", show.data = TRUE) #Forest plot with standarized coefficients
 ```
 
 ### Male
@@ -251,9 +313,9 @@ summary(confirmatory2_male_category$gam)
 #### Quick plots
 ```{r}
 #Quick plots
-plot_model(confirmatory2_male,type = "pred", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2_male,type = "pred", show.data = FALSE) #Interaction plot
 
-plot_model(confirmatory2_male,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_male,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
 
@@ -366,6 +428,9 @@ summary(confirmatory2B_testosterone_CBCL_female$gam)
 
 
 #TESTING PDS CATEGORY
+
+dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category !="5")
+
 confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
                       high.educ +
@@ -382,7 +447,8 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 
 #### Male
 ```{r}
-dataformodel <- data_no_CBCL_test_outliers_males
+dataformodel <- data_no_CBCL_test_outliers_males %>% 
+  
 
 confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
