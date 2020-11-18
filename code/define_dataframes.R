@@ -120,6 +120,15 @@ nrow(PDS_correct) # 4224.
 PDS_correct <- PDS_correct %>% filter(sex!="") #remove 6 participants with no gender.
 nrow(PDS_correct) # 4224. Were these participants already removed from the dataframe?
 
+# There are two people with a PDS category score of 5, which will bias the category estimates a lot, so we are removing them.
+PDS_correct$pds_p_ss_category <- as.factor(PDS_correct$pds_p_ss_category)
+PDS_correct <- subset(PDS_correct, pds_p_ss_category != "5")
+nrow(PDS_correct) # 4222.
+mean_PDS_score <- mean(PDS_correct$PDS_score)
+sd_PDS_score <- sd(PDS_correct$PDS_score)
+PDS_correct$PDS_score_z <- (PDS_correct$PDS_score-mean_PDS_score)/sd_PDS_score 
+
+
 # Separate by sex.
 PDS_correct_females <- subset(PDS_correct, sex == "F")
 PDS_correct_males <- subset(PDS_correct, sex == "M")
