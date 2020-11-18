@@ -108,6 +108,7 @@ data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
 
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
+data$hormone_scr_ert_mean_z <- scale(hormone_scr_ert_mean)
 
 nrow(data) # 5934.
 
@@ -175,3 +176,12 @@ data_no_CBCL_striatal_ant_outliers_females_prepubertal <- subset(PDS_correct_fem
 length(data_no_CBCL_striatal_ant_outliers_females_prepubertal$src_subject_id) #1380
 data_no_CBCL_striatal_ant_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
 length(data_no_CBCL_striatal_ant_outliers_males_prepubertal$src_subject_id) #583
+
+# No CBCL or testosterone outliers
+data_no_CBCL_test_outliers <- subset(PDS_correct, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+data_no_CBCL_test_outliers_females <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+data_no_CBCL_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+
