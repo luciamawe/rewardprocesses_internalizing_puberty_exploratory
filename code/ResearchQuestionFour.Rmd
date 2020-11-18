@@ -169,6 +169,13 @@ data_no_CBCL_striatal_ant_outliers_females <- subset(PDS_correct_females, striat
 length(data_no_CBCL_striatal_ant_outliers_females$src_subject_id) # 2002.
 data_no_CBCL_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 length(data_no_CBCL_striatal_ant_outliers_males$src_subject_id) # 2095.
+
+# Pubertal
+data_no_CBCL_striatal_ant_outliers_females_pubertal <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != 1)
+length(data_no_CBCL_striatal_ant_outliers_females_pubertal$src_subject_id) #1380
+data_no_CBCL_striatal_ant_outliers_males_pubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != 1)
+length(data_no_CBCL_striatal_ant_outliers_males_pubertal$src_subject_id) #583
+
 ```
 
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
@@ -219,21 +226,22 @@ summary(dataformodel)
 dataformodel <- data_no_striatal_ant_outliers  #Specify data subset here
 
 confirmatory4_compositestriatum <- lmer(cbcl_scr_syn_internal_r ~ 
-                                           PDS_score*striatum_rvsn_ant_z +
-                            race.ethnicity.5level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
-                            interview_age+
+                                           PDS_score
+                                        #*striatum_rvsn_ant_z +
+                            #race.ethnicity.5level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            #interview_age+
                             #fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
                             dataformodel)
 summary(confirmatory4_compositestriatum)
 
-plot_model(confirmatory4_compositestriatum,type = "int", show.data = FALSE) #Interaction plot
+plot_model(confirmatory4_compositestriatum,type = "pred", show.data = TRUE) #Interaction plot
 
-plot_model(confirmatory4_compositestriatum,type = "est", show.data = FALSE) #Forest plot
+plot_model(confirmatory4_compositestriatum,type = "est", show.data = TRUE) #Forest plot
 
 #p <- plot_model(confirmatory4_compositestriatum,type = "int", terms = "PDS_score",            show.data = TRUE, jitter = 0.1, line.size = 2) +
 
@@ -306,7 +314,8 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_core,type = "std", 
 #Excluding outliers in CBCL 
 #Reveals main effect of striatum as well as interaction, but in the opposite way?
 
-dataformodel<- data_no_CBCL_striatal_ant_outliers
+dataformodel<- data_no_CBCL_striatal_ant_outliers_males
+dataformodel<-data_no_CBCL_striatal_ant_outliers_females_pubertal
 
 #Select only cases that have complete data for all covariates of intest. It seems that we are missing many cases of maternal depression. We might drop it going forwards. 
 tempdata <- dataformodel[which(complete.cases(dataformodel[,c("race.ethnicity.5level",
@@ -318,7 +327,8 @@ tempdata <- dataformodel[which(complete.cases(dataformodel[,c("race.ethnicity.5l
                             )])),]
 
 confirmatory4_compositestriatum_excludingoutliers <- lme4::lmer(cbcl_scr_syn_internal_r ~ 
-                                           PDS_score*striatum_rvsn_ant_z*sex +
+                            pds_p_ss_category*
+                            striatum_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
                             high.educ +
@@ -333,21 +343,29 @@ summary(confirmatory4_compositestriatum_excludingoutliers)
 
 
 mod <- gamm4(cbcl_scr_syn_internal_r ~ 
-                                         PDS_score*striatum_rvsn_ant_z*sex +
+                            PDS_score_z^2+
+                            striatum_rvsn_ant_z+
+                            #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
-                            interview_age, data=tempdata, random = ~ (1 | site_id_l/rel_family_id))
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+plot_model(mod$mer,type = "est", show.data = FALSE, show.p = TRUE) #Interaction plot
+
 
 print(mod$gam)
 print(summary(mod))
 
 summary(mod$gam)
 
+vis.gam(mod$gam)
+
 summary(confirmatory4_compositestriatum_excludingoutliers)
 gam.grptest(confirmatory4_compositestriatum_excludingoutliers)
+
 ```
 
 ```{r}
