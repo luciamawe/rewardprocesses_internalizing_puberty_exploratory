@@ -108,7 +108,7 @@ data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
 
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
-data$hormone_scr_ert_mean_z <- scale(hormone_scr_ert_mean)
+data$hormone_scr_ert_mean_z <- scale(data$hormone_scr_ert_mean)
 
 nrow(data) # 5934.
 
