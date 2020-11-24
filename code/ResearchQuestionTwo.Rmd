@@ -91,12 +91,13 @@ ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_s
 # Confirmatory Hypothesis 2: We hypothesize that advanced pubertal stage will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL) internalizing factor (Ullsperger & Nikolas, 2017).
 
 ## Model: CBCL internalizing factor ~ Pubertal stage
+# Females and males modeled separately.
 ```{r Confirmatory2, echo = FALSE}
 # Excluding CBCL outliers.
+dataformodel <- data_no_CBCL_outliers_females
 
-dataformodel <- data_no_CBCL_outliers
-
-confirmatory2 <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
+# Females.
+confirmatory2_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -105,12 +106,12 @@ confirmatory2 <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       demo_race_hispanic, 
                       data = dataformodel, 
                       random = ~ (1 | site_id_l/rel_family_id))
-                      
 
-summary(confirmatory2$gam)
+summary(confirmatory2_females$gam) # PDS p < 0.001; R squared = 0.0388.
 
-#TESTING PDS CATEGORY (instead of continuous)
-confirmatory2_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+# Males.
+dataformodel <- data_no_CBCL_outliers_males
+confirmatory2_males <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -119,17 +120,52 @@ confirmatory2_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
                       demo_race_hispanic, 
                       data = dataformodel, 
                       random = ~ (1 | site_id_l/rel_family_id))
-                      
+          
+summary(confirmatory2_males$gam) # PDS p < 0.001; R squared = 0.024.
 
-summary(confirmatory2_category$gam)
+```
 
+# What about PDS category (instead of continuous)?
+# Females and males modeled separately.
+```{r Confirmatory2_category, echo = FALSE}
+# Females.
+dataformodel <- data_no_CBCL_outliers_females
+confirmatory2_category_females <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = dataformodel, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(confirmatory2_category_females$gam) # PDS category 2: p < 0.001, PDS category 3: p < 0.001, PDS category 4 = 0.03; R squared = 0.406.
 
-summary(confirmatory2$gam)
-
+# Males.
+dataformodel <- data_no_CBCL_outliers_males
+confirmatory2_category_males <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = dataformodel, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(confirmatory2_category_males$gam) # PDS category 2: p = 0.1859, PDS category 3: p < 0.001, PDS category 4 = 0.10; R squared = 00275.
+```
 
 # Is there a quadratic effect of PDS score? Maybe something about the initial transition to puberty?
-dataformodel$PDS_score_squared <- (dataformodel$PDS_score)^2
-confirmatory2_quadratic <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
+# Females and males modeled separately.
+```{r Confirmatory2_quadratic, echo = FALSE}
+
+# Create quadratic PDS score variable.
+data_no_CBCL_outliers_females$PDS_score_squared <- (data_no_CBCL_outliers_females$PDS_score)^2
+data_no_CBCL_outliers_males$PDS_score_squared <- (data_no_CBCL_outliers_males$PDS_score)^2
+
+# Females.
+dataformodel <- data_no_CBCL_outliers_females
+confirmatory2_quadratic_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -138,19 +174,24 @@ confirmatory2_quadratic <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score
                       demo_race_hispanic, 
                       data = dataformodel, 
                       random = ~ (1 | site_id_l/rel_family_id))
-summary(confirmatory2_quadratic$gam)
+summary(confirmatory2_quadratic_females$gam)
+# Quadratic effect p = 0.08 (not significant); linear effect p = 0.00121.
 
-confirmatory2_quadratic <- lmer(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
+# Males.
+dataformodel <- data_no_CBCL_outliers_males
+confirmatory2_quadratic_males <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic +
-                      (1 | site_id_l/rel_family_id),
-                      data = dataformodel)
-summary(confirmatory2_quadratic)
+                      demo_race_hispanic, 
+                      data = dataformodel, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(confirmatory2_quadratic_males$gam)
+# Quadratic effect p = 0.18 (not significant); linear effect p = 0.0576.
 
+# So there is a significant linear effect, but not a significant quadratic effect, of PDS for both males and females.
 plot_model(confirmatory2_quadratic, type = "pred", terms = c("PDS_score")) # Can't figure out how to plot quadratic estimate from multilevel model.
 
 # Trying a simpler model first, just for plotting purposes.
@@ -169,178 +210,27 @@ ggplot(plotdata,aes(x=PDS_score, y=predicted)) +
 max(predict(confirmatory2_quadratic_simple)) #5.271192
 min(predict(confirmatory2_quadratic_simple)) #3.98063
 ```
-
-### Quick plots
+#### Quick plots (Females)
 ```{r}
 #Quick plots
+#plot_model(confirmatory2_females,type = "pred", show.data = TRUE) # Interaction plot.
 
-
-
-#plot_model(confirmatory2$mer,type = "pred", show.data = FALSE) #Interaction plot
-
-#plot_model(confirmatory2,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_females,type = "std", show.data = TRUE) # Forest plot with standarized coefficients.
 ```
 
-
-### Are there gender differences in this effect?
-```{r}
-dataformodel <- data_no_CBCL_outliers
-
-confirmatory2_gender <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score*sex +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = dataformodel,
-                      random = ~(1 | site_id_l/rel_family_id))
-                      
-
-
-summary(confirmatory2_gender$gam)
-
-
-#TESTING PDS CATEGORY
-confirmatory2_gender_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category*sex +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = dataformodel,
-                      random = ~(1 | site_id_l/rel_family_id))
-                      
-
-
-summary(confirmatory2_gender_category$gam)
-```
-
-#### Quick plots
+#### Quick plots (Males)
 ```{r}
 #Quick plots
-#plot_model(confirmatory2_gender,type = "int", show.data = FALSE) #Interaction plot
+#plot_model(confirmatory2_males,type = "pred", show.data = FALSE) #Interaction plot.
 
-#plot_model(confirmatory2_gender,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
+#plot_model(confirmatory2_males,type = "std", show.data = FALSE) #Forest plot with standarized coefficients.
 ```
-
-### Female
-```{r}
-dataformodel <- data_no_CBCL_outliers_females
-
-confirmatory2_female <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      data = dataformodel,
-                      random = ~(1 | site_id_l/rel_family_id))
-            
-summary(confirmatory2_female$gam)
-
-#TESTING PDS CATEGORY
-dataformodel <- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-
-confirmatory2_female_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      data = dataformodel,
-                      random = ~(1 | site_id_l/rel_family_id))
-            
-summary(confirmatory2_female_category$gam)
-
-
-dataformodel <- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category !="5")
-
-confirmatory2_female_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      data = dataformodel,
-                      random = ~(1 | site_id_l/rel_family_id))
-            
-summary(confirmatory2_female_category$gam)
-```
-
-#### Quick plots
-```{r}
-#Quick plots
-#plot_model(confirmatory2_female,type = "pred", show.data = TRUE) #Interaction plot
-
-#plot_model(confirmatory2_female,type = "std", show.data = TRUE) #Forest plot with standarized coefficients
-```
-
-### Male
-```{r}
-dataformodel <- data_no_CBCL_outliers_males
-
-confirmatory2_male <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      data = dataformodel,
-                      random = ~(1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2_male$gam)
-
-#TESTING PDS CATEGORY
-confirmatory2_male_category <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      data = dataformodel,
-                      random = ~(1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2_male_category$gam)
-```
-
-#### Quick plots
-```{r}
-#Quick plots
-#plot_model(confirmatory2_male,type = "pred", show.data = FALSE) #Interaction plot
-
-#plot_model(confirmatory2_male,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
-```
-
 
 
 # Exploratory Hypothesis 2: We will investigate whether testosterone relates to internalizing symptoms and whether this relationship is present after controlling for PDS.
 ## Model A: CBCL internalizing factor ~ Testosterone
 ```{r Exploratory2A, echo = FALSE}
-PDS_correct$hormone_scr_ert_mean_z <- scale(PDS_correct$hormone_scr_ert_mean)
-PDS_correct$cbcl_scr_syn_internal_r_z <- scale(PDS_correct$cbcl_scr_syn_internal_r)
-
-PDS_correct_females$hormone_scr_ert_mean_z <- scale(PDS_correct_females$hormone_scr_ert_mean)
-PDS_correct_females$cbcl_scr_syn_internal_r_z <- scale(PDS_correct_females$cbcl_scr_syn_internal_r)
-
-PDS_correct_males$hormone_scr_ert_mean_z <- scale(PDS_correct_males$hormone_scr_ert_mean)
-PDS_correct_males$cbcl_scr_syn_internal_r_z <- scale(PDS_correct_males$cbcl_scr_syn_internal_r)
-
-
-data_no_CBCL_test_outliers <- subset(PDS_correct, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-
-data_no_CBCL_test_outliers_females <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-
-data_no_CBCL_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-
 # Get an idea of the sample.
-
 mean(data_no_CBCL_test_outliers$hormone_scr_ert_mean_z,na.rm= TRUE) 
 mean(data_no_CBCL_test_outliers_females$hormone_scr_ert_mean_z,na.rm= TRUE) 
 
