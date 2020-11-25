@@ -325,17 +325,16 @@ file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 
 dataformodel <- data_no_CBCL_striatal_ant_outliers_females
 
-confirmatory4_compositestriatum_excludingoutliers_femalesonly <- lmer(cbcl_scr_syn_internal_r ~ 
-                            PDS_score*striatum_rvsn_ant_z +
+confirmatory4_compositestriatum_excludingoutliers <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score_z+
+                            striatum_rvsn_ant_z+
+                            #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
                             high.educ +
                             household.income +
                             married.or.livingtogether +
-                            interview_age+
-                            #fam_history_q6d_depression + #added mother's depression
-                            (1 | site_id_l/rel_family_id),
-                            dataformodel)
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(PDS_correct_females$interview_age)
 summary(confirmatory4_compositestriatum_excludingoutliers_femalesonly)
