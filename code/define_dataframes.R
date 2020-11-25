@@ -247,3 +247,6 @@ length(data_no_CBCL_lOFC_feed_outliers_females_prepubertal$src_subject_id) #620
 data_no_CBCL_lOFC_feed_outliers_males_prepubertal <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
 length(data_no_CBCL_lOFC_feed_outliers_males_prepubertal$src_subject_id) #1508
 
+
+
+
