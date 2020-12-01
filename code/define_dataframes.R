@@ -296,23 +296,23 @@ nrow(data_no_CBCL_mOFC_ant_outliers_males_prepubertal) # 1504.
 
 # No lateral OFC (lOFC) FEEDBACK outliers.
 data_no_lOFC_feed_outliers <- subset(PDS_correct, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3)
-nrow(data_no_lOFC_feed_outliers) #4086
+nrow(data_no_lOFC_feed_outliers) # 4156.
 
 data_no_lOFC_feed_outliers_females <- subset(PDS_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3)
-nrow(data_no_lOFC_feed_outliers_females) # 1999
+nrow(data_no_lOFC_feed_outliers_females) # 2302.
 
 data_no_lOFC_feed_outliers_males <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3)
-nrow(data_no_lOFC_feed_outliers_males) # 2087.
+nrow(data_no_lOFC_feed_outliers_males) # 2124.
 
 data_no_lOFC_feed_outliers_females_pubertal <- subset(PDS_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & pds_p_ss_category != 1)
-nrow(data_no_lOFC_feed_outliers_females_pubertal) #1379
+nrow(data_no_lOFC_feed_outliers_females_pubertal) # 1406.
 data_no_lOFC_feed_outliers_males_pubertal <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category != 1)
-nrow(data_no_lOFC_feed_outliers_males_pubertal) #579
+nrow(data_no_lOFC_feed_outliers_males_pubertal) # 596.
 
 data_no_lOFC_feed_outliers_females_prepubertal <- subset(PDS_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & pds_p_ss_category == 1)
-nrow(data_no_lOFC_feed_outliers_females_prepubertal) #620
+nrow(data_no_lOFC_feed_outliers_females_prepubertal) # 626.
 data_no_lOFC_feed_outliers_males_prepubertal <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category == 1)
-nrow(data_no_lOFC_feed_outliers_males_prepubertal) #1508
+nrow(data_no_lOFC_feed_outliers_males_prepubertal) # 1528.
 
 # No CBCL or lateral OFC (lOFC) FEEDBACK outliers.
 data_no_CBCL_lOFC_feed_outliers <- subset(PDS_correct, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
@@ -392,3 +392,39 @@ data_no_bisbas_outliers_females <- subset(data_no_bisbas_outliers, sex == "F")
 nrow(data_no_bisbas_outliers_females) # 2049.
 data_no_bisbas_outliers_males <- subset(data_no_bisbas_outliers, sex == "M")
 nrow(data_no_bisbas_outliers_males) # 2155.
+
+
+# No striatal anticipation or testosterone outliers.
+data_no_striatal_ant_test_outliers <- subset(data_no_striatal_ant_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_striatal_ant_test_outliers_females <- subset(data_no_striatal_ant_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_striatal_ant_test_outliers_males <- subset(data_no_striatal_ant_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+# No striatal feedback or testosterone outliers.
+data_no_striatal_feed_test_outliers <- subset(data_no_striatal_feed_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_striatal_feed_test_outliers_females <- subset(data_no_striatal_feed_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_striatal_feed_test_outliers_males <- subset(data_no_striatal_feed_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+# No lOFC anticipation or testosterone outliers.
+data_no_lOFC_ant_test_outliers <- subset(data_no_lOFC_ant_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_lOFC_ant_test_outliers_females <- subset(data_no_lOFC_ant_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_lOFC_ant_test_outliers_males <- subset(data_no_lOFC_ant_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+# No lOFC feedback or testosterone outliers.
+data_no_lOFC_feed_test_outliers <- subset(data_no_lOFC_feed_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_lOFC_feed_test_outliers_females <- subset(data_no_lOFC_feed_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_lOFC_feed_test_outliers_males <- subset(data_no_lOFC_feed_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+# No mOFC anticipation or testosterone outliers.
+data_no_mOFC_ant_test_outliers <- subset(data_no_mOFC_ant_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_mOFC_ant_test_outliers_females <- subset(data_no_mOFC_ant_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_mOFC_ant_test_outliers_males <- subset(data_no_mOFC_ant_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+# No mOFC feedback or testosterone outliers.
+data_no_mOFC_feed_test_outliers <- subset(data_no_mOFC_feed_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_mOFC_feed_test_outliers_females <- subset(data_no_mOFC_feed_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_mOFC_feed_test_outliers_males <- subset(data_no_mOFC_feed_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+# No BIS/BAS or testosterone outliers.
+data_no_bisbas_test_outliers <- subset(data_no_bisbas_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_bisbas_test_outliers_females <- subset(data_no_bisbas_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_bisbas_test_outliers_males <- subset(data_no_bisbas_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
