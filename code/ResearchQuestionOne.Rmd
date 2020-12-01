@@ -144,8 +144,15 @@ summary(exploratory1A_males$gam)
 ```
 # Exploratory Hypothesis 1B: We hypothesize that more advanced pubertal stages will be associated with greater self-reported reward responsiveness (BAS - RR) (Harden et al. 2018).
 ## Model: BIS-BAS-RR ~ Pubertal stage
-```{r Exploratory1B, echo = FALSE}
-
+# Females.
+```{r Exploratory1BFemales, echo = FALSE}
+dataformodel <- data_no_bisbas_outliers_females
+bisbas_ss_basm_rr_z
+```
+# Males.
+```{r Exploratory1BMales, echo = FALSE}
+dataformodel <- data_no_bisbas_outliers_males
+bisbas_ss_basm_rr_z
 ```
 # Exploratory Hypothesis 1C: We hypothesize that greater pubertal stage will be associated with greater behavioral reactivity to reward (i.e., reaction time on reward vs. neutral trials).
 ## Model: Reaction Time ~ Pubertal Stage
