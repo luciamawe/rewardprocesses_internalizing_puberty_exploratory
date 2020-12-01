@@ -7,10 +7,8 @@
 #      Random effects.
 #           1. Family. (rel_family_id) # Make sure this is nested correctly and looks about right.
 #           2. Site. (site_id_l)
-#           3. Subject. (src_subject_id) # There is only one timepoint so we cannot do a random effect for each participant.
-#           4. Device. # mri_info_deviceserialnumber.
-
-#  Random effects are nested: (1|abcd_site/device/rel_family_id) [unless some siblings went in different scanners?]
+#       
+#  Random effects are nested: (1|abcd_site/rel_family_id).
 
 #      Fixed effects.
 #           1. Race parent. (race.ethnicity.5level).

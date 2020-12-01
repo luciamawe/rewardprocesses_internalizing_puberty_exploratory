@@ -102,7 +102,6 @@ confirmatory4_compositestriatum <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age+
                             PDS_score_z+
                             striatum_rvsn_ant_z+
-                            #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
                             high.educ +

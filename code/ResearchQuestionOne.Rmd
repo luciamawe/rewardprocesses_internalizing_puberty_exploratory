@@ -63,23 +63,51 @@ nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
 
 # Confirmatory Hypothesis 1: We hypothesize that pubertal stage will be associated with neural response to reward during a monetary incentive delay task (Braams et al., 2015). In particular, we expect heightened striatal activation during reward anticipation for more advanced pubertal stages.
 ## Model: Striatal activation (anticipation stage) ~ Pubertal stage
-```{r Confirmatory1, echo = FALSE}
-confirmatory1_females <- lmer(striatum_rvsn_ant_z ~ PDS_score +
+
+#### Female.
+```{r Confirmatory1Female, echo = FALSE}
+dataformodel <- data_no_striatal_ant_outliers_females
+
+
+confirmatory1_females <- gamm4(striatum_rvsn_ant_z ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
                       married.or.livingtogether +
                       interview_age +
-                      demo_race_hispanic, +
-                      (1 | site_id_l/rel_family_id),
-                      data = data_no_striatal_ant_outliers_females)
-summary(confirmatory1_females) # Singularity problem?
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(confirmatory1_females$gam)
 plot_model(confirmatory1_females,type = "pred", terms = "PDS_score", show.data = FALSE)
 
 plot_model(confirmatory1_females,type = "est", show.data = FALSE) # forest plot.
 
 
 ```
+
+#### Male.
+```{r Confirmatory1Female, echo = FALSE}
+dataformodel <- data_no_striatal_ant_outliers_males
+
+
+confirmatory1_males<- gamm4(striatum_rvsn_ant_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(confirmatory1_males$gam)
+plot_model(confirmatory1_males,type = "pred", terms = "PDS_score", show.data = FALSE)
+
+plot_model(confirmatory1_males,type = "est", show.data = FALSE) # forest plot.
+
+
+```
+
 # Exploratory Hypothesis 1A: We will explore whether striatal activation during reward feedback is related to pubertal stage.
 ## Model: Striatal activation (feedback stage) ~ Pubertal stage 
 ```{r Exploratory1A, echo = FALSE}
