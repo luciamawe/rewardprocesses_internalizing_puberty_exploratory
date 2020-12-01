@@ -68,7 +68,6 @@ nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
 ```{r Confirmatory1Female, echo = FALSE}
 dataformodel <- data_no_striatal_ant_outliers_females
 
-
 confirmatory1_females <- gamm4(striatum_rvsn_ant_z ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
@@ -78,18 +77,18 @@ confirmatory1_females <- gamm4(striatum_rvsn_ant_z ~ PDS_score +
                       demo_race_hispanic, 
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
+
 summary(confirmatory1_females$gam)
-plot_model(confirmatory1_females,type = "pred", terms = "PDS_score", show.data = FALSE)
 
-plot_model(confirmatory1_females,type = "est", show.data = FALSE) # forest plot.
-
-
+# None of these plots are working?
+#plot.gam(confirmatory1_females$gam,residuals=TRUE,all.terms=TRUE)
+#plot_model(confirmatory1_females$mer,type = "pred", terms = "PDS_score", show.data = FALSE)
+#plot_model(confirmatory1_females$mer,type = "est", show.data = FALSE) # forest plot.
 ```
 
 #### Male.
-```{r Confirmatory1Female, echo = FALSE}
+```{r Confirmatory1Male, echo = FALSE}
 dataformodel <- data_no_striatal_ant_outliers_males
-
 
 confirmatory1_males<- gamm4(striatum_rvsn_ant_z ~ PDS_score +
                       race.ethnicity.5level +
@@ -101,16 +100,46 @@ confirmatory1_males<- gamm4(striatum_rvsn_ant_z ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(confirmatory1_males$gam)
-plot_model(confirmatory1_males,type = "pred", terms = "PDS_score", show.data = FALSE)
 
-plot_model(confirmatory1_males,type = "est", show.data = FALSE) # forest plot.
-
-
+#plot_model(confirmatory1_males,type = "pred", terms = "PDS_score", show.data = FALSE)
+#plot_model(confirmatory1_males,type = "est", show.data = FALSE) # forest plot.
 ```
 
 # Exploratory Hypothesis 1A: We will explore whether striatal activation during reward feedback is related to pubertal stage.
-## Model: Striatal activation (feedback stage) ~ Pubertal stage 
-```{r Exploratory1A, echo = FALSE}
+## Model: Striatal activation (feedback stage) ~ Pubertal stage
+## Females.
+```{r Exploratory1AFemales, echo = FALSE}
+dataformodel <- data_no_striatal_feed_outliers_females
+
+exploratory1A_females <- gamm4(striatum_posvsneg_feedback_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory1A_females$gam)
+
+```
+
+## Males.
+```{r Exploratory1AMales, echo = FALSE}
+dataformodel <- data_no_striatal_feed_outliers_males
+
+exploratory1A_males <- gamm4(striatum_posvsneg_feedback_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory1A_males$gam)
 
 ```
 # Exploratory Hypothesis 1B: We hypothesize that more advanced pubertal stages will be associated with greater self-reported reward responsiveness (BAS - RR) (Harden et al. 2018).

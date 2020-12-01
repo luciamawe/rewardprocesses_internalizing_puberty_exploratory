@@ -175,13 +175,25 @@ length(data_no_CBCL_striatal_ant_outliers_females_prepubertal$src_subject_id) #1
 data_no_CBCL_striatal_ant_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
 length(data_no_CBCL_striatal_ant_outliers_males_prepubertal$src_subject_id) #583
 
-# No CBCL or testosterone outliers
-data_no_CBCL_test_outliers <- subset(PDS_correct, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+# No striatal FEEDBACK outliers.
+data_no_striatal_feed_outliers <- subset(PDS_correct, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3)
+nrow(data_no_striatal_feed_outliers) # 4181.
 
-data_no_CBCL_test_outliers_females <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+data_no_striatal_feed_outliers_females <- subset(PDS_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3)
+nrow(data_no_striatal_feed_outliers_females) # 2041.
 
-data_no_CBCL_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+data_no_striatal_feed_outliers_males <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3)
+nrow(data_no_striatal_feed_outliers_males) # 2140.
 
+data_no_striatal_feed_outliers_females_pubertal <- subset(PDS_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3  & pds_p_ss_category != 1)
+nrow(data_no_striatal_feed_outliers_females_pubertal) # 1412.
+data_no_striatal_feed_outliers_males_pubertal <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3  &  pds_p_ss_category != 1)
+nrow(data_no_striatal_feed_outliers_males_pubertal) # 605.
+
+data_no_striatal_feed_outliers_females_prepubertal <- subset(PDS_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3   & pds_p_ss_category == 1)
+nrow(data_no_striatal_feed_outliers_females_prepubertal) # 629.
+data_no_striatal_feed_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3   &  pds_p_ss_category == 1)
+nrow(data_no_striatal_feed_outliers_males_prepubertal) # 1535.
 
 # No CBCL or striatal FEEDBACK outliers.
 data_no_CBCL_striatal_feed_outliers <- subset(PDS_correct, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
@@ -202,7 +214,6 @@ data_no_CBCL_striatal_feed_outliers_females_prepubertal <- subset(PDS_correct_fe
 length(data_no_CBCL_striatal_feed_outliers_females_prepubertal$src_subject_id) #623
 data_no_CBCL_striatal_feed_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
 length(data_no_CBCL_striatal_feed_outliers_males_prepubertal$src_subject_id) #1515
-
 
 # No CBCL or OFC anticipation outliers.
 data_no_CBCL_lOFC_ant_outliers <- subset(PDS_correct, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
@@ -246,5 +257,11 @@ data_no_CBCL_lOFC_feed_outliers_males_prepubertal <- subset(PDS_correct_males, l
 length(data_no_CBCL_lOFC_feed_outliers_males_prepubertal$src_subject_id) #1508
 
 
+# No CBCL or testosterone outliers.
+data_no_CBCL_test_outliers <- subset(PDS_correct, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+data_no_CBCL_test_outliers_females <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+
+data_no_CBCL_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 
 
