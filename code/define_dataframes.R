@@ -137,6 +137,7 @@ nrow(PDS_correct_males) # 2165.
 # No CBCL outliers.
 data_no_CBCL_outliers <- subset(PDS_correct, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 nrow(data_no_CBCL_outliers) # 4152.
+cbcl_outliers <- subset(PDS_correct, cbcl_scr_syn_internal_r_z < -3 | cbcl_scr_syn_internal_r_z > 3)
 
 data_no_CBCL_outliers_females<- subset(PDS_correct_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 nrow(data_no_CBCL_outliers_females) # 2026.
