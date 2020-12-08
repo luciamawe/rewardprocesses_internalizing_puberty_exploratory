@@ -119,7 +119,9 @@ nrow(data) # 5934.
 data$rt_diff_large_neutral <- data$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt - data$tfmri_mid_all_beh_neutral.pos.feedback_mean.rt
 data$rt_diff_small_neutral <- data$tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt - data$tfmri_mid_all_beh_neutral.pos.feedback_mean.rt
 
-  
+data$rt_diff_large_neutral_z <- scale(data$rt_diff_large_neutral)
+data$rt_diff_small_neutral_z <- scale(data$rt_diff_small_neutral)
+
 
 # Use data with only correct PDS scores.
 PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous).
@@ -443,7 +445,9 @@ data_no_bisbas_test_outliers_females <- subset(data_no_bisbas_outliers_females, 
 data_no_bisbas_test_outliers_males <- subset(data_no_bisbas_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 
 
-
+#No MID Reaction Time outliers.
+data_no_RT_MID_outliers_females <- subset(PDS_correct_females, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_small_neutral_z > -3 & rt_diff_small_neutral_z < 3)
+data_no_RT_MID_outliers_males <- subset(PDS_correct_males, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_small_neutral_z > -3 & rt_diff_small_neutral_z < 3)
 
 
 
