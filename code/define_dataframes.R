@@ -87,8 +87,7 @@ data <- fulldata[,c("src_subject_id",
                     "hormone_scr_dhea_mean",
                     "tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt", #Average MID RT Large Reward Positive
                     "tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt", #Average MID RT Small Reward Positive
-                    "tfmri_mid_all_beh_neutral.pos.feedback_mean.rt", #Average MID RT Neutral Positive
-                    "tfmri_mid_beh_perform.flag"
+                    "tfmri_mid_all_beh_neutral.pos.feedback_mean.rt" #Average MID RT Neutral Positive
 )]
 
 data$src_subject_id <- as.factor(data$src_subject_id)
@@ -449,6 +448,9 @@ data_no_bisbas_test_outliers_males <- subset(data_no_bisbas_outliers_males, horm
 data_no_RT_MID_outliers_females <- subset(PDS_correct_females, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_small_neutral_z > -3 & rt_diff_small_neutral_z < 3)
 data_no_RT_MID_outliers_males <- subset(PDS_correct_males, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_small_neutral_z > -3 & rt_diff_small_neutral_z < 3)
 
+# No MID Reaction Time or testosterone outliers.
+data_no_RT_test_outliers_females <- subset(data_no_RT_MID_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+data_no_RT_test_outliers_males <- subset(data_no_RT_MID_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 
 
 
