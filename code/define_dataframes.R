@@ -84,7 +84,11 @@ data <- fulldata[,c("src_subject_id",
                     "striatum_posvsneg_feedback_z",
                     "bisbas_ss_basm_rr",
                     "hormone_scr_ert_mean",
-                    "hormone_scr_dhea_mean"
+                    "hormone_scr_dhea_mean",
+                    "tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt", #Average MID RT Large Reward Positive
+                    "tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt", #Average MID RT Small Reward Positive
+                    "tfmri_mid_all_beh_neutral.pos.feedback_mean.rt", #Average MID RT Neutral Positive
+                    "tfmri_mid_beh_perform.flag"
 )]
 
 data$src_subject_id <- as.factor(data$src_subject_id)
@@ -108,6 +112,14 @@ data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
 data$hormone_scr_ert_mean_z <- scale(data$hormone_scr_ert_mean)
 
 nrow(data) # 5934.
+
+
+#MID Reaction Time Variable Creation  (Adding here so the variable is in the main "data" set before it's subset)
+## Reaction time difference between large reward trials and neutral trials
+data$rt_diff_large_neutral <- data$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt - data$tfmri_mid_all_beh_neutral.pos.feedback_mean.rt
+data$rt_diff_small_neutral <- data$tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt - data$tfmri_mid_all_beh_neutral.pos.feedback_mean.rt
+
+  
 
 # Use data with only correct PDS scores.
 PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous).
@@ -429,3 +441,11 @@ data_no_mOFC_feed_test_outliers_males <- subset(data_no_mOFC_feed_outliers_males
 data_no_bisbas_test_outliers <- subset(data_no_bisbas_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 data_no_bisbas_test_outliers_females <- subset(data_no_bisbas_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 data_no_bisbas_test_outliers_males <- subset(data_no_bisbas_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+
+
+
+
+
+
+
