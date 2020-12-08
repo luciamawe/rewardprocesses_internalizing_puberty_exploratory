@@ -180,12 +180,60 @@ summary(exploratory1B_males$gam)
 
 # Females.
 ```{r Exploratory1CFemales, echo = FALSE}
+dataformodel <- data_no_RT_MID_outliers_females
 
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratory1C_lrgRT_females <- gamm4(rt_diff_large_neutral_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(exploratory1C_lrgRT_females$gam)
+
+#SMALL REWARD VS. NEUTRAL POSITIVE
+exploratory1C_smRT_females <- gamm4(rt_diff_small_neutral_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(exploratory1C_smRT_females$gam)
 ```
 
 # Males..
 ```{r Exploratory1CMales, echo = FALSE}
+dataformodel <- data_no_RT_MID_outliers_males
 
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratory1C_lrgRT_males <- gamm4(rt_diff_large_neutral_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(exploratory1C_lrgRT_males$gam)
+
+#SMALL REWARD VS. NEUTRAL POSITIVE
+exploratory1C_smRT_males <- gamm4(rt_diff_small_neutral_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(exploratory1C_smRT_males$gam)
 ```
 # Exploratory Hypothesis 1D: We hypothesize that testosterone will be positively associated with our indicators of reward (neural activity, behavioral reaction time, and self-reported reward responsiveness).
 ## Model A: Striatal activation (anticipation stage) ~ Testosterone
@@ -193,6 +241,60 @@ summary(exploratory1B_males$gam)
 ## Model C: OFC activation (anticipation stage) ~ Testosterone
 ## Model D: OFC activation (feedback stage) ~ Testosterone
 ## Model E: MID Reaction Time ~ Testosterone
+```{r Exploratory1D, echo = FALSE}
+## Model E: MID Reaction Time ~ Testosterone
+# Females - LARGE REWARD VS. NEUTRAL
+dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
+modelE_lrgRT_females <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(modelE_lrgRT_females$gam)
+
+# Females - SMALL REWARD VS. NEUTRAL
+dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
+modelE_smRT_females <- gamm4(rt_diff_small_neutral_z ~ hormone_scr_ert_mean_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(modelE_smRT_females$gam)
+
+# Males - LARGE REWARD VS. NEUTRAL
+dataformodel <- data_no_RT_test_outliers_males # No MID RT difference score or testosterone outliers.
+modelE_lrgRT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(modelE_lrgRT_males$gam)
+
+
+modelE_smRT_males <- gamm4(rt_diff_small_neutral_z ~ hormone_scr_ert_mean_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(modelE_smRT_males$gam)
+```
+
 ## Model F: BIS-BAS-RR ~ Testosterone
 ```{r Exploratory1D, echo = FALSE}
 ## Model A: Striatal activation (anticipation stage) ~ Testosterone
