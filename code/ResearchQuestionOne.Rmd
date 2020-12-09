@@ -245,7 +245,7 @@ summary(exploratory1C_lg_small_RT_males$gam)
 ## Model E: MID Reaction Time ~ Testosterone
 # Females - LARGE REWARD VS. NEUTRAL
 dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
-modelE_lrgRT_females <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z +
+modelE_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -254,11 +254,11 @@ modelE_lrgRT_females <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z +
                       demo_race_hispanic, 
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
-summary(modelE_lrgRT_females$gam)
+summary(modelE_lg_neutral_RT_females$gam)
 
-# Females - SMALL REWARD VS. NEUTRAL
+# Females - LARGE REWARD VS. SMALL REWARD
 dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
-modelE_smRT_females <- gamm4(rt_diff_small_neutral_z ~ hormone_scr_ert_mean_z +
+modelE_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -267,11 +267,15 @@ modelE_smRT_females <- gamm4(rt_diff_small_neutral_z ~ hormone_scr_ert_mean_z +
                       demo_race_hispanic, 
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
-summary(modelE_smRT_females$gam)
+summary(modelE_lg_small_RT_females$gam)
+```
 
+
+```{r}
 # Males - LARGE REWARD VS. NEUTRAL
 dataformodel <- data_no_RT_test_outliers_males # No MID RT difference score or testosterone outliers.
-modelE_lrgRT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z +
+
+modelE_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -280,10 +284,10 @@ modelE_lrgRT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z +
                       demo_race_hispanic, 
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
-summary(modelE_lrgRT_males$gam)
+summary(modelE_lg_neutral_RT_males$gam)
 
-
-modelE_smRT_males <- gamm4(rt_diff_small_neutral_z ~ hormone_scr_ert_mean_z +
+# Males - LARGE REWARD VS. SMALL REWARDS
+modelE_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -292,7 +296,7 @@ modelE_smRT_males <- gamm4(rt_diff_small_neutral_z ~ hormone_scr_ert_mean_z +
                       demo_race_hispanic, 
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
-summary(modelE_smRT_males$gam)
+summary(modelE_lg_small_RT_males$gam)
 ```
 
 ## Model F: BIS-BAS-RR ~ Testosterone
