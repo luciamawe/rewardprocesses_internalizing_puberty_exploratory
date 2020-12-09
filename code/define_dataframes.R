@@ -114,8 +114,11 @@ nrow(data) # 5934.
 
 
 #MID Reaction Time Variable Creation  (Adding here so the variable is in the main "data" set before it's subset)
-## Reaction time difference between large reward trials and neutral trials
+## Reaction time difference between large reward trials and neutral trials (Positive value indicates greater sensitivity to large reward than neutral trials)
+
 data$rt_diff_large_neutral <- data$tfmri_mid_all_beh_neutral.pos.feedback_mean.rt - data$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt
+
+## Reaction time difference between large reward trials and neutral trials (Positive value indicates greater sensitivity to large reward than small trials)
 data$rt_diff_large_small <- data$tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt - data$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt
 
 data$rt_diff_large_neutral_z <- scale(data$rt_diff_large_neutral)
@@ -445,13 +448,15 @@ data_no_bisbas_test_outliers_males <- subset(data_no_bisbas_outliers_males, horm
 
 
 #No MID Reaction Time outliers.
-data_no_RT_MID_outliers_females <- subset(PDS_correct_females, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_small_neutral_z > -3 & rt_diff_small_neutral_z < 3)
-data_no_RT_MID_outliers_males <- subset(PDS_correct_males, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_small_neutral_z > -3 & rt_diff_small_neutral_z < 3)
+data_no_RT_MID_outliers_females <- subset(PDS_correct_females, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_large_small_z > -3 & rt_diff_large_small_z < 3)
+data_no_RT_MID_outliers_males <- subset(PDS_correct_males, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_large_small_z > -3 & rt_diff_large_small_z < 3)
 
 # No MID Reaction Time or testosterone outliers.
 data_no_RT_test_outliers_females <- subset(data_no_RT_MID_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 data_no_RT_test_outliers_males <- subset(data_no_RT_MID_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 
-
+#No MID Reaction Time or CBCL outliers
+data_no_RT_MID_CBCL_outliers_females<- subset(data_no_RT_MID_outliers_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+data_no_RT_MID_CBCL_outliers_males<- subset(data_no_RT_MID_outliers_males, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 
 
