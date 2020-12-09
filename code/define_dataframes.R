@@ -446,6 +446,10 @@ data_no_bisbas_test_outliers <- subset(data_no_bisbas_outliers, hormone_scr_ert_
 data_no_bisbas_test_outliers_females <- subset(data_no_bisbas_outliers_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 data_no_bisbas_test_outliers_males <- subset(data_no_bisbas_outliers_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 
+# No CBCL or BIS/BAS outliers.
+data_no_CBCL_bisbas_outliers <- subset(data_no_bisbas_outliers, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+data_no_CBCL_bisbas_outliers_females <- subset(data_no_bisbas_outliers_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
+data_no_CBCL_bisbas_outliers_males <- subset(data_no_bisbas_outliers_males, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 
 #No MID Reaction Time outliers.
 data_no_RT_MID_outliers_females <- subset(PDS_correct_females, rt_diff_large_neutral_z > -3 & rt_diff_large_neutral_z < 3 & rt_diff_large_small_z > -3 & rt_diff_large_small_z < 3)
@@ -458,5 +462,3 @@ data_no_RT_test_outliers_males <- subset(data_no_RT_MID_outliers_males, hormone_
 #No MID Reaction Time or CBCL outliers
 data_no_RT_MID_CBCL_outliers_females<- subset(data_no_RT_MID_outliers_females, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 data_no_RT_MID_CBCL_outliers_males<- subset(data_no_RT_MID_outliers_males, cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
-
-
