@@ -270,12 +270,34 @@ summary(confirmatory3D_mOFC_males$gam)
 ```{r Exploratory3AFemale, echo = FALSE}
 dataformodel <- data_no_CBCL_bisbas_outliers_females
 
+exploratory3A_females <- gamm4(cbcl_scr_syn_internal_r ~ bisbas_ss_basm_rr +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3A_females$gam)
 
 ```
 #### Males.
 ```{r Exploratory3AMale, echo = FALSE}
 dataformodel <- data_no_CBCL_bisbas_outliers_males
 
+exploratory3A_males <- gamm4(cbcl_scr_syn_internal_r ~ bisbas_ss_basm_rr +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3A_males$gam)
 
 ```
 
@@ -283,11 +305,70 @@ dataformodel <- data_no_CBCL_bisbas_outliers_males
 # Model: CBCL internalizing factor ~ MID Reaction Time (reward vs. neutral trials)
 #### Females.
 ```{r Exploratory3BFemale, echo = FALSE}
+
+# Large reward vs. neutral trial reaction time.
 dataformodel <- data_no_RT_MID_CBCL_outliers_females
+
+exploratory3B_females_largereward_neutral <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_neutral_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3B_females_largereward_neutral$gam)
+
+# Large reward vs. small reward trial reaction time.
+dataformodel <- data_no_RT_MID_CBCL_outliers_females
+
+exploratory3B_females_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_small_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3B_females_largesmallreward$gam)
+
 ```
 #### Males.
 ```{r Exploratory3BMale, echo = FALSE}
+
+# Large reward vs. neutral trial reaction time.
 dataformodel <- data_no_RT_MID_CBCL_outliers_males
+
+exploratory3B_males_largereward_neutral <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_neutral_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3B_males_largereward_neutral$gam)
+
+# Large reward vs. small reward trial reaction time.
+dataformodel <- data_no_RT_MID_CBCL_outliers_males
+
+exploratory3B_males_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_small_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3B_males_largesmallreward$gam)
 ```
 
 # Exploratory Hypothesis 3C: For any models within Hypothesis 3 that are significant using the CBCL internalizing scale, we will then investigate whether a more specific CBCL subscale (i.e., anxious/depressive, withdrawn/depressive, or the DSM-based affective scale) is a better fit to our models. 
