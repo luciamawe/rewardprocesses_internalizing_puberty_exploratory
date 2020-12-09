@@ -71,7 +71,10 @@ boxplot(data$cbcl_scr_syn_internal_r)
 ```{r}
 #Count NAs per variable 
 # We are missing many cases of maternal depression - consider dropping
-dataformodel <- data_no_CBCL_striatal_ant_outliers 
+dataformodel <- data_no_CBCL_outliers 
+nrow(data_no_CBCL_outliers)
+nrow(PDS_correct)
+dataformodel <- PDS_correct
 
 sum(is.na(dataformodel$src_subject_id)) #0 missing  
 sum(is.na(dataformodel$sex))  #0 missing   
@@ -84,7 +87,7 @@ sum(is.na(dataformodel$household.income)) #293
 sum(is.na(dataformodel$married.or.livingtogether))  #22
 sum(is.na(dataformodel$fam_history_q6d_depression)) #1937 missing!
 
-#summary(dataformodel)
+summary(dataformodel)
 
 #Also, some brain variables seem to have large outliers. Check before including in the models 
 ```
@@ -335,7 +338,7 @@ confirmatory4_compositestriatum_excludingoutliersCBCL_femalesonly <- gamm4(cbcl_
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(PDS_correct_females$interview_age)
-summary(confirmatory4_compositestriatum_excludingoutliersCBCL_femalesonly$mer)
+anova(confirmatory4_compositestriatum_excludingoutliersCBCL_femalesonly)$lme
 ```
 
 ## Females, all CBCL values, striatal anticipation
@@ -1123,5 +1126,65 @@ bisbas_lOFCfeedback <- gamm4(lOFC_posvsneg_feedback_z ~
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(bisbas_lOFCfeedback$gam )
 ```
+#Females testosterone and age
+```{r}
+dataformodel <- PDS_correct_females
+testosterone_age_females  <- gamm4(hormone_scr_ert_mean_z ~ 
+                            #bisbas_ss_basm_rr+
+                            #race.ethnicity.5level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(testosterone_age_males $gam )
+```
+#Males Testosterone and age males
+```{r}
+dataformodel <- PDS_correct_males
+testosterone_age_males <- gamm4(hormone_scr_ert_mean_z ~ 
+                            #bisbas_ss_basm_rr+
+                            #race.ethnicity.5level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(testosterone_age_males $gam )
+```
+#Males age and PDS 
+```{r}
+dataformodel <- PDS_correct_males
+age_pds_males<- gamm4(PDS_score_z ~ 
+                            #bisbas_ss_basm_rr+
+                            #race.ethnicity.5level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(age_pds_males$gam )
+```
 
 
+#Females PDS and age
+```{r}
+dataformodel <- PDS_correct_females
+PDS_age_females  <- gamm4(PDS_score_z ~ 
+                            #bisbas_ss_basm_rr+
+                            #race.ethnicity.5level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(PDS_age_females$gam )
+```
