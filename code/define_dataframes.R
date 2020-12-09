@@ -119,7 +119,7 @@ data$rt_diff_large_neutral <- data$tfmri_mid_all_beh_neutral.pos.feedback_mean.r
 data$rt_diff_large_small <- data$tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt - data$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt
 
 data$rt_diff_large_neutral_z <- scale(data$rt_diff_large_neutral)
-data$rt_diff_small_neutral_z <- scale(data$rt_diff_small_neutral)
+data$rt_diff_large_small_z <- scale(data$rt_diff_large_small)
 
 
 # Use data with only correct PDS scores.
