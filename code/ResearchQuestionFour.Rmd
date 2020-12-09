@@ -652,6 +652,70 @@ summary(exploratory4c_bisbas_males$gam )
 ```{r Exploratory4D, echo = FALSE}
 ##Lucia: pick up here!
 
+#FEMALES
+dataformodel <- data_no_RT_MID_CBCL_outliers_females
+
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratory4c_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score_z*
+                            rt_diff_large_neutral_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_lg_neutral_RT_females$gam)
+
+#LARGE REWARD VS. SMALL REWARD POSITIVE
+exploratory4c_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score_z*
+                            rt_diff_large_small_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_lg_small_RT_females$gam)
+```
+
+```{r}
+#MALES
+dataformodel <- data_no_RT_MID_CBCL_outliers_males
+
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratory4c_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score_z*
+                            rt_diff_large_neutral_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_lg_neutral_RT_males$gam)
+
+#LARGE REWARD VS. SMALL REWARD POSITIVE
+exploratory4c_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score_z*
+                            rt_diff_large_small_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_lg_small_RT_males$gam)
+
 ```
 
 # Exploratory Hypothesis 4E: We will investigate whether testosterone, and its relationship with reward, relates to internalizing symptoms, while controlling for PDS.
