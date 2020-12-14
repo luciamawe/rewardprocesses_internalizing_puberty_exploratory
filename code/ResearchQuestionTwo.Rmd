@@ -80,9 +80,9 @@ females <- PDS_correct_females
 males <- PDS_correct_males
 
 # Get an idea of the sample.
-mean(dataformodel$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.633976.
-mean(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.635062.
-mean(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.632941.
+mean(dataformodel$cbcl_scr_syn_internal_r,na.rm= TRUE) # 5.004
+mean(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.97.
+mean(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 5.03.
 min(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 0.0.
 min(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 0.0.
 t.test(males$cbcl_scr_syn_internal_r,females$cbcl_scr_syn_internal_r) # Not significant.
@@ -475,7 +475,7 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 
 #### Male.
 ```{r}
-dataformodel <- data_no_CBCL_test_outliers_males %>% 
+dataformodel <- data_no_CBCL_test_outliers_males
   
 
 confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
