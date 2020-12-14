@@ -398,6 +398,16 @@ data_no_CBCL_test_outliers_females <- subset(PDS_correct_females, hormone_scr_er
 
 data_no_CBCL_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 
+
+# No testosterone outliers.
+data_no_test_outliers <- subset(PDS_correct, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+data_no_test_outliers_females <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+data_no_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+
+
+
 # Get z scores for bis bas rr scores.
 mean_bisbas <- mean(PDS_correct$bisbas_ss_basm_rr, na.rm=TRUE)
 sd_bisbas <- sd(PDS_correct$bisbas_ss_basm_rr, na.rm=TRUE)
