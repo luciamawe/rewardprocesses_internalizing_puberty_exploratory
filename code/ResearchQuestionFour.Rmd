@@ -1183,8 +1183,295 @@ PDS_age_females  <- gamm4(PDS_score_z ~
                             #high.educ +
                             #household.income +
                             #married.or.livingtogether +
-                            interview_age
+                            interview_age  
                             ,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(PDS_age_females$gam )
+
+summary(PDS_age_females$gam)
+```
+#Dummy model to check effect sizes, regressing two very correlated variables does give an Rsq of 0.70
+```{r}
+dataformodel <- PDS_correct_females
+PDS_age_females_score_category  <- gamm4(PDS_score_z ~ 
+                            #bisbas_ss_basm_rr+
+                            #race.ethnicity.5level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            pds_p_ss_category  
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+
+PDS_age_females_score_category <- lm(PDS_score_z ~pds_p_ss_category    ,
+                            data=dataformodel)
+summary(PDS_age_females_score_category)
+#We get comparable Rsq with lm and gamm
+```
+
+#Separate reward regions
+
+#Females
+##  Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage)
+```{r Confirmatory4, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_accumbens_ant_outliers_females  #Specify data subset here
+
+confirmatory4_accumbens_ant_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_accumbens_ant_females$gam)
+```
+
+#Females
+##  Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage)
+```{r Confirmatory4, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_putamen_ant_outliers_females  #Specify data subset here
+
+confirmatory4_putamen_ant_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            interview_age+
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether 
+                            , data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_putamen_ant_females$gam)
+```
+
+#Females
+##  Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
+```{r Confirmatory4, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_caudate_ant_outliers_females  #Specify data subset here
+
+confirmatory4_caudate_ant_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            interview_age+
+                            PDS_score*
+                            caudate_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether 
+                            , data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_caudate_ant_females$gam)
+```
+
+#Separate reward regions
+
+#Males
+##  Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage)
+```{r Confirmatory4, echo = FALSE}
+# Accumbens anticipation exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_accumbens_ant_outliers_males  #Specify data subset here
+
+confirmatory4_accumbens_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            interview_age+
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether 
+                            , data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_accumbens_ant_males$gam)
+plot_model(confirmatory4_accumbens_ant_males,type = "int", show.data = TRUE) #Interaction plot
+```
+
+#Males
+##  Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage)
+```{r Confirmatory4, echo = FALSE}
+# Putament anticipation exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_putamen_ant_outliers_males  #Specify data subset here
+
+confirmatory4_putamen_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            interview_age+
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether 
+                            , data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_putamen_ant_males$gam)
+#plot_model(confirmatory4_putamen_ant_males,type = "int", show.data = TRUE) #Interaction plot
+```
+
+#Males
+##  Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
+```{r Confirmatory4, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_caudate_ant_outliers_males  #Specify data subset here
+
+confirmatory4_caudate_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            interview_age+
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether 
+                            , data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_putamen_ant_males$gam)
+```
+
+
+#Females
+##  Model: CBCL internalizing factor ~ PDS*accumbens activity (feedback stage)
+```{r Exploratory4, echo = FALSE}
+# Accumbens feedback, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_accumbens_feed_outliers_females
+
+exploratory4a_accumbens_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            accumbens_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_accumbens_feedback_females$gam )
+```
+
+#Females
+##  Model: CBCL internalizing factor ~ PDS*caudate activity (feedback stage)
+```{r Exploratory4a, echo = FALSE}
+# Caudate feedback, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_caudate_feed_outliers_females
+
+exploratory4a_caudate_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            caudate_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_caudate_feedback_females$gam )
+```
+#Females
+##  Model: CBCL internalizing factor ~ PDS*putamen activity (feedback stage)
+```{r Exploratory4, echo = FALSE}
+# Putamen feedback, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+dataformodel <- data_no_putamen_feed_outliers_females
+
+exploratory4a_putamen_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            putamen_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_putamen_feedback_females$gam )
+```
+#Feedback, separate reward regions
+## males, accumbens feedback
+```{r Exploratory4A, echo = FALSE}
+#Accumbens feedback, maleS
+
+dataformodel <- data_no_accumbens_feed_outliers_males
+
+exploratory4a_accumbens_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            accumbens_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_accumbens_feedback_males$gam )
+```
+#Feedback, separate reward regions
+## males, caudate feedback
+```{r Exploratory4A, echo = FALSE}
+#Caudate feedback", maleS
+
+dataformodel <- data_no_caudate_feed_outliers_males
+
+exploratory4a_caudate_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            caudate_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_caudate_feedback_males$gam )
+```
+#Feedback, separate reward regions
+## males, putamen feedback
+```{r Exploratory4A, echo = FALSE}
+#Putamen feedback", maleS
+
+dataformodel <- data_no_putamen_feed_outliers_males
+
+exploratory4a_putamen_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            putamen_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_putamen_feedback_males$gam )
 ```
