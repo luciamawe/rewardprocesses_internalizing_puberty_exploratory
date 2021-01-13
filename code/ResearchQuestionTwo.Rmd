@@ -1150,3 +1150,75 @@ confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r 
                       
 summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
+
+## Exploring CBCL categories without excluding outliers: normal range (<65), borderline (65-70) and clinical (>70) 
+## Separate males and females
+```{r Confirmatory2, echo = FALSE}
+# Females
+
+dataformodel <- PDS_correct_females
+
+PDS_correct_females <- PDS_correct_females %>% 
+     mutate (cbcl_scr_syn_internal_cat = 
+               case_when(
+                            cbcl_scr_syn_internal_t <= 64 ~ "a.Normal",         
+                            cbcl_scr_syn_internal_t >=  65 & cbcl_scr_syn_internal_t <= 70 ~ "b.Borderline",
+                            cbcl_scr_syn_internal_t >= 71 ~ "c. Clinical",         
+                        )
+             )
+ 
+table(PDS_correct_females$cbcl_scr_syn_internal_cat)       
+       #Normal 1923, Borderline 94, Clinical 40
+
+# Males.
+PDS_correct_males <- PDS_correct_males %>% 
+     mutate (cbcl_scr_syn_internal_cat = 
+               case_when(
+                            cbcl_scr_syn_internal_t <= 64 ~ "a.Normal",         
+                            cbcl_scr_syn_internal_t >=  65 & cbcl_scr_syn_internal_t <= 70 ~ "b.Borderline",
+                            cbcl_scr_syn_internal_t >= 71 ~ "c. Clinical",       
+                        )
+             )
+ 
+table(PDS_correct_males$cbcl_scr_syn_internal_cat)  
+      #Normal 1916, Borderline 190, Clinical 58
+```
+#Association between PDS and CBCL category (normal, borderline, clinical)
+```{r}
+#Females
+
+dataformodel <- PDS_correct_females
+
+# Females.
+cbcl_cat_pds_females <- gamm4(PDS_score ~ cbcl_scr_syn_internal_cat+
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = dataformodel, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+
+summary(cbcl_cat_pds_females$gam) 
+plot_model(cbcl_cat_pds_females, type = "pred", terms = c("cbcl_scr_syn_internal_cat")) 
+```
+
+#Association between PDS and CBCL category (normal, borderline, clinical)
+```{r}
+#Males
+dataformodel <- PDS_correct_males
+
+cbcl_cat_pds_males <- gamm4(PDS_score ~ cbcl_scr_syn_internal_cat+
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = dataformodel, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+
+summary(cbcl_cat_pds_males$gam) 
+plot_model(cbcl_cat_pds_males, type = "pred", terms = c("cbcl_scr_syn_internal_cat")) 
+```
