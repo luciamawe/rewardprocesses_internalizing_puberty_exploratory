@@ -4,19 +4,31 @@
 
 library(tidyr)
 library(dplyr)
+library(here)
+
+data_dir = ((dirname(here()))) 
+
+#phase_folder = "exploratory"  # select the appropiate folder.
+phase_folder = "confirmatory"  # select the appropiate folder.
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+
+#file_name <- "nda20_exploratory.csv" # specify file name here. 
+file_name <- "nda20_confirmatory.csv" # specify file name here. 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+nrow(fulldata) # exploratory = 5934; confirmatory = 5935.
 
 # Change this to your directory and the name of your already created data file.
-datafile <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output/nda20_exploratory.csv"
-# Change this to your directory where you have the abcd_ssphp01 file saved.
-textfile <- "/Users/nataliesaragosa-harris/Desktop/ABCD/data/abcd_ssphp01.txt"
-csvfile <- "/Users/nataliesaragosa-harris/Desktop/ABCD/data/abcd_ssphp01.csv" # Will create this file in this script.
+#datafile <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output/nda20_exploratory.csv"
 
-data <- read.table(datafile, header=T, sep=",",as.is=TRUE,strip.white=TRUE,fill=TRUE)
-length(data$src_subject_id) # 5934.
-
-# Save as a csv file.
+# This should be your directory where you have the abcd_ssphp01 file saved.
+textfile <- "/Users/nataliesaragosa-harris/Desktop/ABCD/individualdatafiles/abcd_ssphp01.txt"
 abcd_ssphp01 <- read.delim(textfile, header = TRUE) 
-write.table(abcd_ssphp01, file=csvfile, sep=",", col.names=TRUE, row.names=FALSE)
+
+# Save as a csv file (if you have not already).
+# csvfile <- "/Users/nataliesaragosa-harris/Desktop/ABCD/individualdatafiles/abcd_ssphp01.csv" # Name of file to save.
+# write.table(abcd_ssphp01, file=csvfile, sep=",", col.names=TRUE, row.names=FALSE)
 
 abcd_ssphp01 <- abcd_ssphp01[-1,]
 
@@ -25,7 +37,7 @@ abcd_ssphp01 <- abcd_ssphp01[,!(names(abcd_ssphp01) %in% c("collection_id", "col
 colnames(abcd_ssphp01)
 
 # Merge by participant ID and eventname.
-data <- merge(data, abcd_ssphp01, by = c("src_subject_id","eventname"))
+data <- merge(fulldata, abcd_ssphp01, by = c("src_subject_id","eventname"))
 
 # Create new variable that combines male and female columns.
 data <- data %>%
@@ -37,4 +49,5 @@ data <- data %>%
 # pds <- data[,c("src_subject_id","PDS_sum","PDS_score", 
 #        "pds_p_ss_female_category", "pds_p_ss_male_category", "pds_p_ss_category","pds_p_ss_cat_nm","pds_p_ss_cat_nt")]
 
-write.csv(data,datafile, row.names = FALSE)
+
+write.csv(data,file.path(data_folder,file_name), row.names = FALSE)
