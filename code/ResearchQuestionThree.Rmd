@@ -64,7 +64,7 @@ nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
 
 # Confirmatory Hypothesis 3: We hypothesize that striatal and orbitofrontal cortex activity during the reward anticipation and feedback stages of the MID task will be negatively associated with internalizing symptoms (Forbes et al., 2010; Ubl et al., 2015; Luking et al., 2016).
 
-## Model A: CBCL internalizing factor ~ Striatal activity (anticipation stage)
+## Model A: CBCL internalizing factor ~ Striatal activity (anticipation stage - All reward v. neutral)
 #### Females.
 ```{r Confirmatory3AFemale, echo = FALSE}
 dataformodel <- data_no_CBCL_striatal_ant_outliers_females
@@ -101,12 +101,13 @@ summary(confirmatory3A_males$gam)
 ```
 
 
-## Model A: CBCL internalizing factor ~ Striatal activity (anticipation stage - LARGE REWARD V. NEUTRAL)
+## Model A: CBCL internalizing factor ~ Nucleus Accumbens activity (anticipation stage - All reward v. neutral)
 #### Females.
 ```{r Confirmatory3AFemale, echo = FALSE}
-dataformodel <- data_no_CBCL_striatal_ant_outliers_females
 
-confirmatory3A_females <- gamm4(cbcl_scr_syn_internal_r ~ striatum_rvsn_ant_z +
+dataformodel <- data_no_accumbens_ant_outliers_females
+
+confirmatory3A_nacc_females <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_rvsn_ant_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -116,14 +117,15 @@ confirmatory3A_females <- gamm4(cbcl_scr_syn_internal_r ~ striatum_rvsn_ant_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 
-summary(confirmatory3A_females$gam)
+summary(confirmatory3A_nacc_females$gam)
 
 
 ```
 #### Males.
 ```{r Confirmatory3AMale, echo = FALSE}
-dataformodel <- data_no_CBCL_striatal_ant_outliers_males
-confirmatory3A_males <- gamm4(cbcl_scr_syn_internal_r ~ striatum_rvsn_ant_z +
+dataformodel <- data_no_accumbens_ant_outliers_males
+
+confirmatory3A_nacc_males <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_rvsn_ant_z +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -133,15 +135,86 @@ confirmatory3A_males <- gamm4(cbcl_scr_syn_internal_r ~ striatum_rvsn_ant_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 
-summary(confirmatory3A_males$gam)
+summary(confirmatory3A_nacc_males$gam)
 
 ```
 
 
+## Model A: CBCL internalizing factor ~ Caudate activity (anticipation stage - All reward v. neutral)
+#### Females.
+```{r Confirmatory3AFemale, echo = FALSE}
+dataformodel <- data_no_caudate_ant_outliers_females
+
+confirmatory3A_caud_females <- gamm4(cbcl_scr_syn_internal_r ~ caudate_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_caud_females$gam)
 
 
+```
+#### Males.
+```{r Confirmatory3AMale, echo = FALSE}
+dataformodel <- data_no_caudate_ant_outliers_males
+
+confirmatory3A_caud_males <- gamm4(cbcl_scr_syn_internal_r ~ caudate_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_caud_males$gam)
 
 
+```
+
+
+## Model A: CBCL internalizing factor ~ Putamen activity (anticipation stage - All reward v. neutral)
+#### Females.
+```{r Confirmatory3AFemale, echo = FALSE}
+dataformodel <- data_no_putamen_ant_outliers_females
+
+confirmatory3A_putamen_females <- gamm4(cbcl_scr_syn_internal_r ~ putamen_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_putamen_females$gam)
+
+
+```
+#### Males.
+```{r Confirmatory3AMale, echo = FALSE}
+dataformodel <- data_no_putamen_ant_outliers_males
+
+confirmatory3A_putamen_males <- gamm4(cbcl_scr_syn_internal_r ~ putamen_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_putamen_males$gam)
+
+```
 
 
 
