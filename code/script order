@@ -7,12 +7,12 @@ Order in which scripts should be run.
 5. calculate_BISBAS_Reward.
 6. split data.
 
-7. calculate_MRI_averages.
-8. add_PDS_categories. (this should be in calculate_PDS for the future, but for now, will have it here because we already have the two separate data files).
+After exploratory and confirmatory data files are created.
+7. add_PDS_categories (in the future, this should be in calculate_PDS, before creating the two separate data files).
+8. calculate_MRI_averages  (in the future, can do before creating the two samples; the z scores that are created in this script would be compared to the whole sample rather than the half sample, however, so might want to do that part after dividing the data into the samples).
 
 Exploratory sample
 1. data cleaning and descriptives.
 
 Confirmatory sample 
-
-
+1. data cleaning and descriptives.
