@@ -51,10 +51,8 @@ script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_explora
 source(script_path)
 ```
 
-# Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
-
 #Basic data checks and transformations
-```{r Confirmatory4, echo = FALSE}
+```{r Data check and transformations, echo = FALSE}
 # Use combined score for accumbens, caudate, and putamen?
 # Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses.
 cor.test(data$accumbens_rvsn_ant_z,data$caudate_rvsn_ant_z) # 0.64.
@@ -68,7 +66,7 @@ boxplot(data$putamen_rvsn_ant_z)
 boxplot(data$cbcl_scr_syn_internal_r)
 ```
 #Count NAs per variable 
-```{r}
+```{r Count NAs}
 #Count NAs per variable 
 # We are missing many cases of maternal depression - consider dropping
 dataformodel <- data_no_CBCL_outliers 
@@ -92,9 +90,31 @@ summary(dataformodel)
 #Also, some brain variables seem to have large outliers. Check before including in the models 
 ```
 
+#Exploring PDS outliers
+```{r Exploring PDS outliers}
+d <- density(PDS_correct_females$PDS_score) # returns the density data
+plot(d) # plots the results
+
+p2 <- ggplot(data=PDS_correct, aes(x=PDS_score, group=sex, fill=sex)) +
+    geom_density(adjust=1.5, alpha=.4) 
+p2
+
+summary(PDS_correct$PDS_score)
+boxplot(PDS_correct$PDS_score,spread_text = F)
+
+ggbetweenstats(data = PDS_correct, 
+               x = sex,
+               y = PDS_score, 
+               outlier.coef = 3.0,
+               outlier.tagging = TRUE,
+               outlier.label = src_subject_id)
+```
+
+
+# Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
+
 ##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
-##  N o
-```{r Confirmatory4, echo = FALSE}
+```{r Confirmatory4, both sexes, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -128,8 +148,8 @@ plot_model(confirmatory4_compositestriatum,type = "est", show.data = TRUE) #Fore
 #p
 ```
 
-# Core model (no covariates)
-```{r}
+## Core model (no covariates)
+```{r Confirmatory4_coremodel_nocovariates}
 # Core model (no covariates)
 # Composite striatum score.
 # Excluding CBCL outliers 
@@ -182,27 +202,6 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_core,type = "std", 
 #                 panel.background = element_blank(),
 #                 axis.line = element_line(colour = "black"))
 # p 
-
-```
-
-```{r}
-#Exploring PDS outliers
-d <- density(PDS_correct_females$PDS_score) # returns the density data
-plot(d) # plots the results
-
-p2 <- ggplot(data=PDS_correct, aes(x=PDS_score, group=sex, fill=sex)) +
-    geom_density(adjust=1.5, alpha=.4) 
-p2
-
-summary(PDS_correct$PDS_score)
-boxplot(PDS_correct$PDS_score,spread_text = F)
-
-ggbetweenstats(data = PDS_correct, 
-               x = sex,
-               y = PDS_score, 
-               outlier.coef = 3.0,
-               outlier.tagging = TRUE,
-               outlier.label = src_subject_id)
 ```
 
 
@@ -281,12 +280,12 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", show.
 
 plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
-
-```{r}
+## Compare model with and without covariates
+```{r Compare model with and without covariates}
 #Compare model with and without covariates - adding covariates makes the model significantly improve
 anova(confirmatory4_compositestriatum_excludingoutliers_core,confirmatory4_compositestriatum_excludingoutliers)
 ```
-
+## Publication plot
 ```{r}
 #Publication plot
 #Both sexes
@@ -318,7 +317,7 @@ file.name = (here("output","question4_exploratory_excludingCBCLoutliers.tiff"))
 ```
 
 
-## Females, excl outliers in CBCL, striatal anticipation
+### Females, excl outliers in CBCL, striatal anticipation
 ```{r}
 # Excluding outliers in CBCL 
 # Splitting by sex
@@ -341,7 +340,7 @@ summary(PDS_correct_females$interview_age)
 anova(confirmatory4_compositestriatum_excludingoutliersCBCL_femalesonly)$lme
 ```
 
-## Females, all CBCL values, striatal anticipation
+### Females, all CBCL values, striatal anticipation
 ```{r}
 # Not excluding outliers in CBCL 
 # Splitting by sex
@@ -368,7 +367,7 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly,type = 
 plot_model(confirmatory4_compositestriatum_excludingoutliers_femalesonly, type= "std",how.data = FALSE) #Forest plot with standardized coefficients
 ```
 
-## Males, excluding CBCL values, striatal anticipation
+### Males, excluding CBCL values, striatal anticipation
 ```{r}
 # Excluding outliers in CBCL 
 # Splitting by sex
@@ -389,7 +388,7 @@ confirmatory4_compositestriatum_excludingoutliersCBCL_malesonly<- gamm4(cbcl_scr
 summary(confirmatory4_compositestriatum_excludingoutliersCBCL_malesonly$gam)
 ```
 
-## Males, all CBCL values, striatal anticipation
+### Males, all CBCL values, striatal anticipation
 ```{r}
 # Excluding outliers in CBCL 
 # Splitting by sex
@@ -1210,11 +1209,12 @@ summary(PDS_age_females_score_category)
 #We get comparable Rsq with lm and gamm
 ```
 
-#Separate reward regions
+# Confirmatory Hypothesis 4: Anticipation, SEPARATE REGIONS
 
-#Females
-##  Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage)
-```{r Confirmatory4, echo = FALSE}
+##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
+
+### Females
+```{r Confirmatory4Accumbens_Females, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -1235,9 +1235,8 @@ confirmatory4_accumbens_ant_females <- gamm4(cbcl_scr_syn_internal_r ~
 summary(confirmatory4_accumbens_ant_females$gam)
 ```
 
-#Females
-##  Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage)
-```{r Confirmatory4, echo = FALSE}
+###Females
+```{r Confirmatory4Putamen_Females, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -1258,9 +1257,8 @@ confirmatory4_putamen_ant_females <- gamm4(cbcl_scr_syn_internal_r ~
 summary(confirmatory4_putamen_ant_females$gam)
 ```
 
-#Females
-##  Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
-```{r Confirmatory4, echo = FALSE}
+###Females
+```{r Confirmatory4Caudate_Females, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -1281,11 +1279,10 @@ confirmatory4_caudate_ant_females <- gamm4(cbcl_scr_syn_internal_r ~
 summary(confirmatory4_caudate_ant_females$gam)
 ```
 
-#Separate reward regions
 
-#Males
-##  Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage)
-```{r Confirmatory4, echo = FALSE}
+
+###Males
+```{r Confirmatory4Accumbens_males, echo = FALSE}
 # Accumbens anticipation exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -1307,10 +1304,9 @@ summary(confirmatory4_accumbens_ant_males$gam)
 plot_model(confirmatory4_accumbens_ant_males,type = "int", show.data = TRUE) #Interaction plot
 ```
 
-#Males
-##  Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage)
-```{r Confirmatory4, echo = FALSE}
-# Putament anticipation exlcuding outliers.
+###Males
+```{r Confirmatory4Putamen_Males, echo = FALSE}
+# Putamen anticipation exlcuding outliers.
 # No CBCL exclusions
 # With covariates
 
@@ -1331,9 +1327,8 @@ summary(confirmatory4_putamen_ant_males$gam)
 #plot_model(confirmatory4_putamen_ant_males,type = "int", show.data = TRUE) #Interaction plot
 ```
 
-#Males
-##  Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
-```{r Confirmatory4, echo = FALSE}
+###Males
+```{r Confirmatory4Caudate_Males, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -1343,7 +1338,7 @@ dataformodel <- data_no_caudate_ant_outliers_males  #Specify data subset here
 confirmatory4_caudate_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             interview_age+
                             PDS_score*
-                            putamen_rvsn_ant_z+
+                            caudate_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
                             high.educ +
@@ -1351,13 +1346,15 @@ confirmatory4_caudate_ant_males <- gamm4(cbcl_scr_syn_internal_r ~
                             married.or.livingtogether 
                             , data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
-summary(confirmatory4_putamen_ant_males$gam)
+summary(confirmatory4_caudate_ant_males$gam)
 ```
 
+# Exploratory Hypothesis 4: SEPARATE REGIONS
 
-#Females
-##  Model: CBCL internalizing factor ~ PDS*accumbens activity (feedback stage)
-```{r Exploratory4, echo = FALSE}
+##  Model: CBCL internalizing factor ~ PDS*striatal (separate regions) activity (feedback stage)
+
+###Females
+```{r Exploratory4Accumbens_Females, echo = FALSE}
 # Accumbens feedback, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -1377,9 +1374,8 @@ exploratory4a_accumbens_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4a_accumbens_feedback_females$gam )
 ```
 
-#Females
-##  Model: CBCL internalizing factor ~ PDS*caudate activity (feedback stage)
-```{r Exploratory4a, echo = FALSE}
+###Females
+```{r Exploratory4Caudate_Females, echo = FALSE}
 # Caudate feedback, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -1398,9 +1394,9 @@ exploratory4a_caudate_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_caudate_feedback_females$gam )
 ```
-#Females
-##  Model: CBCL internalizing factor ~ PDS*putamen activity (feedback stage)
-```{r Exploratory4, echo = FALSE}
+
+###Females
+```{r Exploratory4Putamen_Females, echo = FALSE}
 # Putamen feedback, exlcuding outliers.
 # No CBCL exclusions
 # With covariates
@@ -1418,9 +1414,9 @@ exploratory4a_putamen_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_putamen_feedback_females$gam )
 ```
-#Feedback, separate reward regions
-## males, accumbens feedback
-```{r Exploratory4A, echo = FALSE}
+
+###Males
+```{r Exploratory4Accumbens_Males, echo = FALSE}
 #Accumbens feedback, maleS
 
 dataformodel <- data_no_accumbens_feed_outliers_males
@@ -1437,9 +1433,8 @@ exploratory4a_accumbens_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_accumbens_feedback_males$gam )
 ```
-#Feedback, separate reward regions
-## males, caudate feedback
-```{r Exploratory4A, echo = FALSE}
+###Males
+```{r Exploratory4Caudate_Females, echo = FALSE}
 #Caudate feedback", maleS
 
 dataformodel <- data_no_caudate_feed_outliers_males
@@ -1456,9 +1451,8 @@ exploratory4a_caudate_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_caudate_feedback_males$gam )
 ```
-#Feedback, separate reward regions
-## males, putamen feedback
-```{r Exploratory4A, echo = FALSE}
+###Males
+```{r Exploratory4Putamen_Females, echo = FALSE}
 #Putamen feedback", maleS
 
 dataformodel <- data_no_putamen_feed_outliers_males
