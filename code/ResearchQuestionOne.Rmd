@@ -496,9 +496,11 @@ summary(modelF_males$gam)
 ```
 
 
-####Separate reward regions
+# Confirmatory Hypothesis 1 SEPARATE REGIONS
 
-#### Females.
+## Model: Striatal activation (anticipation stage) ~ Pubertal stage
+
+#### Caudate Anticipation Females.
 ```{r Confirmatory1Female, echo = FALSE}
 dataformodel <- data_no_caudate_ant_outliers_females 
 
@@ -520,11 +522,11 @@ summary(confirmatory1_caudate_females$gam)
 #plot_model(confirmatory1_females$mer,type = "est", show.data = FALSE) # forest plot.
 ```
 
-#### Males.
+#### Caudate Anticipation Males
 ```{r Confirmatory1Male, echo = FALSE}
 dataformodel <- data_no_striatal_ant_outliers_males
 
-confirmatory1_males<- gamm4(striatum_rvsn_ant_z ~ PDS_score +
+confirmatory1_caudate_males<- gamm4(caudate_rvsn_ant_z ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -533,19 +535,94 @@ confirmatory1_males<- gamm4(striatum_rvsn_ant_z ~ PDS_score +
                       demo_race_hispanic, 
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
-summary(confirmatory1_males$gam)
+summary(confirmatory1_caudate_males$gam)
 
 #plot_model(confirmatory1_males,type = "pred", terms = "PDS_score", show.data = FALSE)
 #plot_model(confirmatory1_males,type = "est", show.data = FALSE) # forest plot.
 ```
 
-# Exploratory Hypothesis 1A: We will explore whether striatal activation during reward feedback is related to pubertal stage.
+#### Putamen Anticipation Females.
+```{r Confirmatory1Female, echo = FALSE}
+dataformodel <- data_no_putamen_ant_outliers_females 
+
+confirmatory1_putamen_females <- gamm4(putamen_rvsn_ant_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory1_putamen_females$gam)
+
+# None of these plots are working?
+#plot.gam(confirmatory1_females$gam,residuals=TRUE,all.terms=TRUE)
+#plot_model(confirmatory1_females$mer,type = "pred", terms = "PDS_score", show.data = FALSE)
+#plot_model(confirmatory1_females$mer,type = "est", show.data = FALSE) # forest plot.
+```
+
+#### Putamen Anticipation Males.
+```{r Confirmatory1Female, echo = FALSE}
+dataformodel <- data_no_putamen_ant_outliers_males 
+
+confirmatory1_putamen_males <- gamm4(putamen_rvsn_ant_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory1_putamen_males$gam)
+
+```
+
+#### Accumbens Anticipation Females.
+```{r Confirmatory1Female, echo = FALSE}
+dataformodel <- data_no_accumbens_ant_outliers_females 
+
+confirmatory1_accumbens_females <- gamm4(accumbens_rvsn_ant_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory1_accumbens_females$gam)
+```
+
+#### Accumbens Anticipation Males.
+```{r Confirmatory1Female, echo = FALSE}
+dataformodel <- data_no_accumbens_ant_outliers_males 
+
+confirmatory1_accumbens_males <- gamm4(accumbens_rvsn_ant_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory1_accumbens_males$gam)
+```
+
+# Exploratory Hypothesis 1A: SEPARATE REGIONS
 ## Model: Striatal activation (feedback stage) ~ Pubertal stage
-## Females.
-```{r Exploratory1AFemales, echo = FALSE}
-dataformodel <- data_no_striatal_feed_outliers_females
 
-exploratory1A_females <- gamm4(striatum_posvsneg_feedback_z ~ PDS_score +
+#### Caudate Feedback Females.
+```{r Exploratory1A_Caudate_Females, echo = FALSE}
+dataformodel <- data_no_caudate_feed_outliers_females
+
+exploratory1A_caudate_females <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -555,15 +632,14 @@ exploratory1A_females <- gamm4(striatum_posvsneg_feedback_z ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 
-summary(exploratory1A_females$gam)
+summary(exploratory1A_caudate_females$gam)
 
 ```
+#### Caudate Feedback Males.
+```{r Exploratory1A_Caudate_Males, echo = FALSE}
+dataformodel <- data_no_caudate_feed_outliers_males
 
-## Males.
-```{r Exploratory1AMales, echo = FALSE}
-dataformodel <- data_no_striatal_feed_outliers_males
-
-exploratory1A_males <- gamm4(striatum_posvsneg_feedback_z ~ PDS_score +
+exploratory1A_caudate_males <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score +
                       race.ethnicity.5level +
                       high.educ +
                       household.income +
@@ -573,26 +649,77 @@ exploratory1A_males <- gamm4(striatum_posvsneg_feedback_z ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 
-summary(exploratory1A_males$gam)
+summary(exploratory1A_caudate_males$gam)
 
 ```
 
+#### Putamen Feedback Females.
+```{r Exploratory1A_Putamen_Females, echo = FALSE}
+dataformodel <- data_no_putamen_feed_outliers_females
 
+exploratory1A_putamen_females <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
 
-```{r Exploratory4A, echo = FALSE}
-#Putamen feedback", maleS
+summary(exploratory1A_putamen_females$gam)
 
+```
+
+#### Putamen Feedback Males.
+```{r Exploratory1A_Putamen_males, echo = FALSE}
 dataformodel <- data_no_putamen_feed_outliers_males
 
-exploratory4a_putamen_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~ 
-                            PDS_score*
-                            putamen_posvsneg_feedback_z+
-                            #sex+
-                            race.ethnicity.5level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
-                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4a_putamen_feedback_males$gam )
+exploratory1A_putamen_males <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory1A_putamen_males$gam)
+
+```
+#### Accumbens Feedback Females.
+```{r Exploratory1A_Accumbens_Females, echo = FALSE}
+dataformodel <- data_no_accumbens_feed_outliers_females
+
+exploratory1A_accumbens_females <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory1A_accumbens_females$gam)
+
+```
+
+#### Accumbens Feedback Males.
+```{r Exploratory1A_Accumbens_Males, echo = FALSE}
+dataformodel <- data_no_accumbens_feed_outliers_males
+
+exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory1A_accumbens_males$gam)
+
 ```
