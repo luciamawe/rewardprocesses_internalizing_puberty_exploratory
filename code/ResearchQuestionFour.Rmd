@@ -55,9 +55,9 @@ source(script_path)
 ```{r Data check and transformations, echo = FALSE}
 # Use combined score for accumbens, caudate, and putamen?
 # Jen: I would probably run the 3 separately and control for multiple comparisons. If the three give you highly correlated results you could take a composite measure for subsequent analyses.
-cor.test(data$accumbens_rvsn_ant_z,data$caudate_rvsn_ant_z) # 0.64.
-cor.test(data$accumbens_rvsn_ant_z,data$putamen_rvsn_ant_z) # 0.63.
-cor.test(data$caudate_rvsn_ant_z,data$putamen_rvsn_ant_z) # 0.851. 
+cor.test(data$accumbens_rvsn_ant_z,data$caudate_rvsn_ant_z) # Exp 0.64.
+cor.test(data$accumbens_rvsn_ant_z,data$putamen_rvsn_ant_z) # Exp 0.63.
+cor.test(data$caudate_rvsn_ant_z,data$putamen_rvsn_ant_z) # Exp 0.851. 
 
 #Explore outliers
 boxplot(data$accumbens_rvsn_ant_z)
@@ -203,6 +203,91 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_core,type = "std", 
 #                 axis.line = element_line(colour = "black"))
 # p 
 ```
+
+## Core model (no covariates) females, no interaction
+```{r Confirmatory4_coremodel_nocovariates}
+# Core model (no covariates)
+# Composite striatum score.
+# Excluding CBCL outliers 
+# Without covariates
+
+dataformodel <- PDS_correct_females
+
+#Select only cases that have complete data for all covariates of intest. It seems that we are missing many cases of maternal depression. We might drop it going forwards. 
+tempdata <- dataformodel[which(complete.cases(dataformodel[,c("race.ethnicity.5level",
+                            "demo_race_hispanic",
+                            "high.educ",
+                            "household.income",
+                            "married.or.livingtogether",
+                            "interview_age"
+                            )])),]
+nrow(dataformodel)
+nrow(tempdata)
+
+female_CBCL_PDS_core <- lmer(cbcl_scr_syn_internal_r ~
+                                           PDS_score+
+                                           interview_age+
+                                           (1 | site_id_l/rel_family_id), data = tempdata)
+summary(female_CBCL_PDS_core)
+
+
+
+female_CBCL_PDS_covariates <-  lmer(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age+(1 | site_id_l/rel_family_id), data = tempdata)
+
+summary(female_CBCL_PDS_covariates)
+
+anova(female_CBCL_PDS_core,female_CBCL_PDS_covariates)
+```
+
+## Core model (no covariates) males, no interaction
+```{r Confirmatory4_coremodel_nocovariates}
+# Core model (no covariates)
+# Composite striatum score.
+# Excluding CBCL outliers 
+# Without covariates
+
+dataformodel <- PDS_correct_males
+
+#Select only cases that have complete data for all covariates of intest. It seems that we are missing many cases of maternal depression. We might drop it going forwards. 
+tempdata <- dataformodel[which(complete.cases(dataformodel[,c("race.ethnicity.5level",
+                            "demo_race_hispanic",
+                            "high.educ",
+                            "household.income",
+                            "married.or.livingtogether",
+                            "interview_age"
+                            )])),]
+nrow(dataformodel)
+nrow(tempdata)
+
+male_CBCL_PDS_core <- lmer(cbcl_scr_syn_internal_r ~
+                                           PDS_score+
+                                           interview_age+
+                                           (1 | site_id_l/rel_family_id), data = tempdata)
+summary(male_CBCL_PDS_core)
+
+
+
+male_CBCL_PDS_covariates <-  lmer(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age+(1 | site_id_l/rel_family_id), data = tempdata)
+
+summary(male_CBCL_PDS_covariates)
+
+anova(male_CBCL_PDS_core,male_CBCL_PDS_covariates)
+```
+
 
 
 ```{r}
@@ -419,7 +504,6 @@ plot_model(confirmatory4_compositestriatum_excludingoutliers_malesonly,type = "p
 plot_model(confirmatory4_compositestriatum_excludingoutliers_malesonly,type = "std", show.data = FALSE) #Forest plot with standarized coefficients
 ```
 
-
 ```{r}
 #Excluding outliers in CBCL 
 #PDS category 
@@ -465,62 +549,9 @@ p <- plot_model(confirmatory4_compositestriatum_excludingoutliers_cat,
 p 
                    
 file.name = (here("output","question4_exploratory_excludingCBCLoutliers_PDScat.tiff"))
-ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
-
-```
-
-
-
-```{r}
-#Quickly checking whether reward is associated with pubertal development
-#This needs to be moved to the another script
-exploratory_compositestriatum_puberty <- lmer(striatum_rvsn_ant_z ~ 
-                                           PDS_score +
-                            race.eth.5level +
-                            demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
-                            interview_age+
-                            fam_history_q6d_depression + #added mother's depression
-                            (1 | site_id_l/rel_family_id),
-                            data = subset(PDS_correct, 
-                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3))
-summary(exploratory_compositestriatum_puberty )
-
-plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "int", show.data = FALSE) #Interaction plot
-
-plot_model(exploratory_compositestriatum_puberty,type = "est", show.data = FALSE) #Forest plot
-
-p <- plot_model(exploratory_compositestriatum_puberty,type,
-                type = "pred", # To specify values for striatal response, have to use "pred" instead.
-                terms = c("PDS_score"),
-                show.data = TRUE, jitter = 0.1, line.size = 2) +
-                ylab("MID Striatal activity z-score \n (reward anticipation vs neutral)") +
-                xlab("Average PDS score") +
-                #labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
-                #scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
-                theme(title= element_text(size=20, vjust=2, face="bold"),
-                plot.title = element_blank(),
-                axis.title.x= element_text(size=18, vjust=-0.3),
-                axis.title.y= element_text(size=18, vjust=1.5),
-                axis.text.x= element_text(size=18, colour="black"),
-                axis.text.y= element_text(size=18, colour="black"),
-                legend.title=element_text(size=12, colour = "black"),
-                legend.position = c(.80, .80),
-                # legend.position="none",
-                strip.text = element_text(size=18, face="bold"),
-                panel.background = element_blank(),
-                axis.line = element_line(colour = "black"))
-p 
-                   
-                   
-                   
-
-file.name = (here("output","striatum_puberty.tiff"))
 #ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
-
 ```
+
 
 
 # Exploratory Hypothesis 4A: We will investigate whether striatal responses to reward during reward feedback moderates the effect of pubertal stage on internalizing symptoms. 
@@ -609,10 +640,6 @@ plot_model(exploratory4a_compositestriatum_feedback_allCBCL_males,type = "pred",
 
 #plot_model(exploratory4a_compositestriatum_feedback_allCBCL_males$mer,type = "std", show.data = FALSE) #Not working
 ```
-
-
-
-
 
 # Exploratory Hypothesis 4B: We will investigate whether OFC activation during reward anticipation and feedback moderates the relationship between pubertal stage and internalizing symptoms.
 ## Model A: CBCL internalizing factor ~ PDS*OFC activity (anticipation stage)
@@ -1140,10 +1167,51 @@ testosterone_age_females  <- gamm4(hormone_scr_ert_mean_z ~
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(testosterone_age_males $gam )
 ```
+#Females testosterone and PDS
+```{r}
+dataformodel <- PDS_correct_females
+testosterone_pds_females  <- gamm4(hormone_scr_ert_mean_z ~
+                                     PDS_score_z+
+                            #bisbas_ss_basm_rr+
+                            #race.ethnicity.5level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(testosterone_pds_females $gam )
+```
+
+
+#Males testosterone and PDS
+```{r}
+dataformodel <- PDS_correct_males
+testosterone_pds_males  <- gamm4(hormone_scr_ert_mean_z ~
+                                     PDS_score+
+                            #bisbas_ss_basm_rr+
+                            #race.ethnicity.5level +
+                            #demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(testosterone_pds_males $gam )
+```
+
+
+
+
+
+
 #Males Testosterone and age males
 ```{r}
 dataformodel <- PDS_correct_males
 testosterone_age_males <- gamm4(hormone_scr_ert_mean_z ~ 
+                                  PDS_score+
                             #bisbas_ss_basm_rr+
                             #race.ethnicity.5level +
                             #demo_race_hispanic +
