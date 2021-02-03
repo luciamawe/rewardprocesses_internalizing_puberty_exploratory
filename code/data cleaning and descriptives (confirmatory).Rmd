@@ -63,9 +63,12 @@ remotes::install_github(
 data_dir = ((dirname(here()))) #figure out how to navigate to data source
 
 #phase_folder = "exploratory"  #select the appropiate folder
+phase_folder = "confirmatory"  #select the appropiate folder
+
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
 #file_name <- "nda20_exploratory.csv" #specify file name here 
+file_name <- "nda20_confirmatory.csv"
 
 fulldata <- read.csv(file.path(data_folder,file_name))
 #as_tibble(fulldata)
