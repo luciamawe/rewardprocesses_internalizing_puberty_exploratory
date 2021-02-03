@@ -1,5 +1,5 @@
 ---
-title: "ABCD depression puberty reward - Exploratory - Demographics and behavioral data description and cleaning"
+title: "ABCD depression puberty reward - Exploratory - Demographics and behavioral data description and cleaning (confirmatory sample)"
 date: "date started 01/july/20"
 output:
   html_document: default
@@ -50,8 +50,10 @@ library(remotes)
 # downloading the package from GitHub (needs `remotes` package to be installed)
 remotes::install_github(
   repo = "IndrajeetPatil/ggstatsplot", # package path on GitHub
-  dependencies = FALSE, # assumes you have already installed needed packages
-  quick = TRUE # skips docs, demos, and vignettes
+  #dependencies = FALSE, # assumes you have already installed needed packages
+  dependencies = TRUE, # installs packages which ggstatsplot depends on.
+  #quick = TRUE # skips docs, demos, and vignettes
+  upgrade_dependencies = TRUE # updates any out of date dependencies
 )
 ```
 
@@ -62,28 +64,22 @@ remotes::install_github(
 
 data_dir = ((dirname(here()))) #figure out how to navigate to data source
 
-#phase_folder = "exploratory"  #select the appropiate folder
 phase_folder = "confirmatory"  #select the appropiate folder
 
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
-#file_name <- "nda20_exploratory.csv" #specify file name here 
-file_name <- "nda20_confirmatory.csv"
+file_name <- "nda20_confirmatory.csv" #specify file name here 
 
 fulldata <- read.csv(file.path(data_folder,file_name))
 #as_tibble(fulldata)
-nrow(fulldata) # 5934.
+nrow(fulldata) # 5935.
 
 ```
 
 ```{r CreateDataframes, echo = FALSE}
 # Call the script that keeps the columns of interest in the data and creates data frames that exclude outliers for certain variables.
-script_dir = ((dirname(here()))) #figure out how to navigate to data source
-phase_folder = "exploratory"  #select the appropiate folder
-#phase_folder = "confirmatory"  #select the appropiate folder
-script_folder <- file.path(script_dir,"ABCD","derivatives",phase_folder)
-#script_folder <- "/Users/nataliesaragosa-harris/Desktop/ABCD/rewardprocesses_internalizing_puberty_exploratory/code/"
-source(file.path(script_folder,"define_dataframes.R")) # Now, all of your different data frames should be loaded!
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
+source(script_path)
 
 ```
 
