@@ -44,6 +44,7 @@ library(here)
 invisible(lapply(packages, library, character.only = TRUE))
 #library(qwraps2)
 #options(qwraps2_markup = "markdown")
+library(arsenal)
 
 # needed package to download from GitHub repo
 #install.packages("remotes")
@@ -110,6 +111,10 @@ MRI_anticipation_stage <- PDS_correct[,c("sex",
                     "mOFC_rvsn_ant_z",
                     "lOFC_rvsn_ant_z",
                     "striatum_rvsn_ant_z")]
+
+# using arsenal package.
+summarytable <- tableby(sex~.,data=MRI_anticipation_stage)
+summary(summarytable, title = "MRI Data")
 # 
 # MRI_anticipation_stage %>% tbl_summary(by = sex,
 #                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
@@ -275,18 +280,21 @@ PDS <- PDS_correct[,c("sex",
                     "PDS_score",
                     "PDS_sum",
                     "pds_p_ss_category")]
+# using arsenal package.
+summarytable <- tableby(sex~.,data=PDS)
+summary(summarytable, title = "PDS")
 
-PDS %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      digits = all_continuous() ~ 2,
-                                      label = list(PDS_score ~ "PDS score",
-                                                   PDS_sum ~ "PDS sum",
-                                                   pds_p_ss_category ~ "PDS category"),
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**PDS**")
+#PDS %>% tbl_summary(by = sex,
+#                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                      all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                      digits = all_continuous() ~ 2,
+#                                      label = list(PDS_score ~ "PDS score",
+#                                                   PDS_sum ~ "PDS sum",
+#                                                   pds_p_ss_category ~ "PDS category"),
+#                                      missing_text = "Missing Observations")  %>% modify_header(update = 
+#                          c(label ~ "**Variable**",
+#                            stat_1 ~ "*Female*",
+#                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**PDS**")
 
 ```
 

@@ -17,7 +17,7 @@ library(readr)
 getwd()
 # Set your data directory here.
 data_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/test"
-# data_directory <-  "/Users/nataliesaragosa-harris/Desktop/ABCD/data"
+# data_directory <-  "/Users/nataliesaragosa-harris/Desktop/ABCD/individualdatafiles"
 output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
 # output_directory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
 
