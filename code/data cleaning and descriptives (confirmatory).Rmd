@@ -201,14 +201,18 @@ MRI_feedback_stage <- PDS_correct[,c("sex",
 bisbas <- PDS_correct[,c("sex",
                     "bisbas_ss_basm_rr")]
 
-bisbas %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      label = bisbas_ss_basm_rr ~ "BAS Reward Responsiveness",
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**BAS Reward Responsiveness**")
+# bisbas %>% tbl_summary(by = sex,
+#                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                       all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                       label = bisbas_ss_basm_rr ~ "BAS Reward Responsiveness",
+#                                       missing_text = "Missing Observations")  %>% modify_header(update = 
+#                           c(label ~ "**Variable**",
+#                             stat_1 ~ "*Female*",
+#                             stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**BAS Reward Responsiveness**")
+
+# using arsenal package.
+summarytable <- tableby(sex~.,data=bisbas)
+summary(summarytable, title = "BIS/BAS")
 
 ```
 
@@ -217,15 +221,19 @@ bisbas %>% tbl_summary(by = sex,
 testosterone <- PDS_correct[,c("sex",
                    "hormone_scr_ert_mean")]
                  
-testosterone %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      digits = all_continuous() ~ 2,
-                                      label = hormone_scr_ert_mean ~ "Testosterone mean of measures (pg/mL)",
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Testosterone**")
+# testosterone %>% tbl_summary(by = sex,
+#                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                       all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                       digits = all_continuous() ~ 2,
+#                                       label = hormone_scr_ert_mean ~ "Testosterone mean of measures (pg/mL)",
+#                                       missing_text = "Missing Observations")  %>% modify_header(update = 
+#                           c(label ~ "**Variable**",
+#                             stat_1 ~ "*Female*",
+#                             stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Testosterone**")
+
+# using arsenal package.
+summarytable <- tableby(sex~.,data=testosterone)
+summary(summarytable, title = "Testosterone")
 
 ```
 
@@ -237,19 +245,22 @@ CBCL_r <- PDS_correct[,c("sex",
                       "cbcl_scr_syn_anxdep_r",
                       "cbcl_scr_syn_withdep_r",
                       "cbcl_scr_dsm5_depress_r")]
+# 
+# CBCL_r %>% tbl_summary(by = sex,
+#                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                       all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                       digits = all_continuous() ~ 2,
+#                                       label = list(cbcl_scr_syn_internal_r ~ "Internalizing CBCL Syndrome Scale (raw score)",
+#                                                    cbcl_scr_syn_anxdep_r ~ "Anxious/Depressive CBCL Syndrome Scale (raw score)",
+#                                                    cbcl_scr_syn_withdep_r ~ "With Depression CBCL Syndrome Scale (raw score)",
+#                                                    cbcl_scr_dsm5_depress_r ~ "Depression CBCL DSM5 Scale (raw score)"),
+#                                       missing_text = "Missing Observations")  %>% modify_header(update = 
+#                           c(label ~ "**Variable**",
+#                             stat_1 ~ "*Female*",
+#                             stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**CBCL**")
 
-CBCL_r %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      digits = all_continuous() ~ 2,
-                                      label = list(cbcl_scr_syn_internal_r ~ "Internalizing CBCL Syndrome Scale (raw score)",
-                                                   cbcl_scr_syn_anxdep_r ~ "Anxious/Depressive CBCL Syndrome Scale (raw score)",
-                                                   cbcl_scr_syn_withdep_r ~ "With Depression CBCL Syndrome Scale (raw score)",
-                                                   cbcl_scr_dsm5_depress_r ~ "Depression CBCL DSM5 Scale (raw score)"),
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**CBCL**")
+summarytable1 <- tableby(sex~.,data=CBCL_r)
+summary(summarytable1, title = "CBCL Raw Scores")
 
 # Plot t scores (we will probably not be using these in our analyses, but worth looking at for now).
 CBCL_t <- PDS_correct[,c("sex",
@@ -258,19 +269,21 @@ CBCL_t <- PDS_correct[,c("sex",
                       "cbcl_scr_syn_withdep_t",
                       "cbcl_scr_dsm5_depress_t")]
 
-CBCL_t %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      digits = all_continuous() ~ 2,
-                                      label = list(cbcl_scr_syn_internal_t ~ "Internalizing CBCL Syndrome Scale (t-score)",
-                                                   cbcl_scr_syn_anxdep_t ~ "Anxious/Depressive CBCL Syndrome Scale (t-score)",
-                                                   cbcl_scr_syn_withdep_t ~ "With Depression CBCL Syndrome Scale (t-score)",
-                                                   cbcl_scr_dsm5_depress_t ~ "Depression CBCL DSM5 Scale (t-score)"),
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**CBCL**")
+# CBCL_t %>% tbl_summary(by = sex,
+#                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                       all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                       digits = all_continuous() ~ 2,
+#                                       label = list(cbcl_scr_syn_internal_t ~ "Internalizing CBCL Syndrome Scale (t-score)",
+#                                                    cbcl_scr_syn_anxdep_t ~ "Anxious/Depressive CBCL Syndrome Scale (t-score)",
+#                                                    cbcl_scr_syn_withdep_t ~ "With Depression CBCL Syndrome Scale (t-score)",
+#                                                    cbcl_scr_dsm5_depress_t ~ "Depression CBCL DSM5 Scale (t-score)"),
+#                                       missing_text = "Missing Observations")  %>% modify_header(update = 
+#                           c(label ~ "**Variable**",
+#                             stat_1 ~ "*Female*",
+#                             stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**CBCL**")
 
+summarytable2 <- tableby(sex~.,data=CBCL_t)
+summary(summarytable2, title = "CBCL T Scores")
 
 ```
 
@@ -313,32 +326,40 @@ Demographics_2 <- PDS_correct[,c("interview_age",
                     "household.income",
                     "married.or.livingtogether")]
 
-Demographics_1 %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      digits = all_continuous() ~ 2,
-                                      label = list(interview_age ~ "Age in months",
-                                                   race.ethnicity.5level ~ "Race/Ethnicity (Five levels)",
-                                                   race.eth.7level  ~ "Race/Ethnicity (Seven levels)",
-                                                   demo_race_hispanic ~ "Hispanic"),
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Demographics**")
+# using arsenal package.
+summarytable1 <- tableby(sex~.,data=Demographics_1)
+summary(summarytable1, title = "Demographics")
 
-Demographics_2 %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      digits = all_continuous() ~ 2,
-                                      label = list(interview_age ~ "Age in months",
-                                                   high.educ ~ "Parent highest education level",
-                                                   household.income ~ "Household income",
-                                                   married.or.livingtogether ~ "Married or living together"),
-                                      type = married.or.livingtogether ~ "categorical",
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Demographics**")
+# using arsenal package.
+summarytable2 <- tableby(sex~.,data=Demographics_2)
+summary(summarytable2, title = "Demographics")
+
+# Demographics_1 %>% tbl_summary(by = sex,
+#                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                       all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                       digits = all_continuous() ~ 2,
+#                                       label = list(interview_age ~ "Age in months",
+#                                                    race.ethnicity.5level ~ "Race/Ethnicity (Five levels)",
+#                                                    race.eth.7level  ~ "Race/Ethnicity (Seven levels)",
+#                                                    demo_race_hispanic ~ "Hispanic"),
+#                                       missing_text = "Missing Observations")  %>% modify_header(update = 
+#                           c(label ~ "**Variable**",
+#                             stat_1 ~ "*Female*",
+#                             stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Demographics**")
+# 
+# Demographics_2 %>% tbl_summary(by = sex,
+#                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                       all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                       digits = all_continuous() ~ 2,
+#                                       label = list(interview_age ~ "Age in months",
+#                                                    high.educ ~ "Parent highest education level",
+#                                                    household.income ~ "Household income",
+#                                                    married.or.livingtogether ~ "Married or living together"),
+#                                       type = married.or.livingtogether ~ "categorical",
+#                                       missing_text = "Missing Observations")  %>% modify_header(update = 
+#                           c(label ~ "**Variable**",
+#                             stat_1 ~ "*Female*",
+#                             stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Demographics**")
 
 ```
 
