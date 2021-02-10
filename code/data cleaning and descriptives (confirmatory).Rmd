@@ -42,7 +42,8 @@ library(tidyverse)
 library(ggstatsplot)
 library(here)
 invisible(lapply(packages, library, character.only = TRUE))
-
+#library(qwraps2)
+#options(qwraps2_markup = "markdown")
 
 # needed package to download from GitHub repo
 #install.packages("remotes")
@@ -109,22 +110,59 @@ MRI_anticipation_stage <- PDS_correct[,c("sex",
                     "mOFC_rvsn_ant_z",
                     "lOFC_rvsn_ant_z",
                     "striatum_rvsn_ant_z")]
+# 
+# MRI_anticipation_stage %>% tbl_summary(by = sex,
+#                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                       all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                       #digits = all_continuous() ~ 2,
+#                                       label = list(accumbens_rvsn_ant_z ~ "Accumbens (z)",
+#                                                    caudate_rvsn_ant_z ~ "Caudate (z)",
+#                                                    putamen_rvsn_ant_z ~ "Putamen (z)",
+#                                                    mOFC_rvsn_ant_z ~ "Medial OFC (z)",
+#                                                    lOFC_rvsn_ant_z ~ "Lateral OFC (z)",
+#                                                    striatum_rvsn_ant_z~ "Striatum Combined Areas (z)"),
+#                                       missing_text = "Missing Observations")  %>% modify_header(update = 
+#                           c(label ~ "**Variable**",
+#                             stat_1 ~ "*Female*",
+#                             stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Reward Anticipation Stage (Reward vs. Neutral)**")
 
-MRI_anticipation_stage %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      #digits = all_continuous() ~ 2,
-                                      label = list(accumbens_rvsn_ant_z ~ "Accumbens (z)",
-                                                   caudate_rvsn_ant_z ~ "Caudate (z)",
-                                                   putamen_rvsn_ant_z ~ "Putamen (z)",
-                                                   mOFC_rvsn_ant_z ~ "Medial OFC (z)",
-                                                   lOFC_rvsn_ant_z ~ "Lateral OFC (z)",
-                                                   striatum_rvsn_ant_z~ "Striatum Combined Areas (z)"),
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Reward Anticipation Stage (Reward vs. Neutral)**")
- 
+#summary <- qwraps2::qsummary(MRI_anticipation_stage[, c("accumbens_rvsn_ant_z",
+#                                         "caudate_rvsn_ant_z",
+#                                         "putamen_rvsn_ant_z",
+#                                         "mOFC_rvsn_ant_z",
+#                                         "lOFC_rvsn_ant_z",
+#                                         "striatum_rvsn_ant_z")])
+#qwraps2::summary_table(MRI_anticipation_stage, summary, by = c("sex"))
+
+summary1 <-
+  list("Accumbens" =
+       list("min"       = ~ min(MRI_anticipation_stage$accumbens_rvsn_ant_z, na_rm = TRUE),
+            "max"       = ~ max(MRI_anticipation_stage$accumbens_rvsn_ant_z, na_rm = TRUE),
+            "mean (sd)" = ~ qwraps2::mean_sd(MRI_anticipation_stage$accumbens_rvsn_ant_z, na_rm = TRUE)),
+       "Caudate" =
+       list("min"       = ~ min(MRI_anticipation_stage$caudate_rvsn_ant_z, na_rm = TRUE),
+            "max"       = ~ max(MRI_anticipation_stage$caudate_rvsn_ant_z, na_rm = TRUE),
+            "mean (sd)" = ~ qwraps2::mean_sd(MRI_anticipation_stage$caudate_rvsn_ant_z, na_rm = TRUE)),
+       "Putamen" =
+       list("min"       = ~ min(MRI_anticipation_stage$putamen_rvsn_ant_z, na_rm = TRUE),
+            "max"       = ~ max(MRI_anticipation_stage$putamen_rvsn_ant_z, na_rm = TRUE),
+            "mean (sd)" = ~ qwraps2::mean_sd(MRI_anticipation_stage$putamen_rvsn_ant_z, na_rm = TRUE)),
+       "Striatum (Averaged)" =
+       list("min"       = ~ min(MRI_anticipation_stage$striatum_rvsn_ant_z, na_rm = TRUE),
+            "max"       = ~ max(MRI_anticipation_stage$striatum_rvsn_ant_z, na_rm = TRUE),
+            "mean (sd)" = ~ qwraps2::mean_sd(MRI_anticipation_stage$striatum_rvsn_ant_z, na_rm = TRUE)),
+       "Medial OFC" =
+       list("min"       = ~ min(MRI_anticipation_stage$mOFC_rvsn_ant_z, na_rm = TRUE),
+            "max"       = ~ max(MRI_anticipation_stage$mOFC_rvsn_ant_z, na_rm = TRUE),
+            "mean (sd)" = ~ qwraps2::mean_sd(MRI_anticipation_stage$mOFC_rvsn_ant_z, na_rm = TRUE)),
+       "Lateral OFC" =
+       list("min"       = ~ min(MRI_anticipation_stage$lOFC_rvsn_ant_z, na_rm = TRUE),
+            "max"       = ~ max(MRI_anticipation_stage$lOFC_rvsn_ant_z, na_rm = TRUE),
+            "mean (sd)" = ~ qwraps2::mean_sd(MRI_anticipation_stage$lOFC_rvsn_ant_z,na_rm = TRUE))
+       )
+
+qwraps2::summary_table(MRI_anticipation_stage, summary1)
+
 # All positive vs. negative feedback.
 MRI_feedback_stage <- PDS_correct[,c("sex",
                     "accumbens_posvsneg_feedback_z", 
@@ -133,22 +171,22 @@ MRI_feedback_stage <- PDS_correct[,c("sex",
                     "mOFC_posvsneg_feedback_z",
                     "lOFC_posvsneg_feedback_z",
                     "striatum_posvsneg_feedback_z")]
-
-MRI_feedback_stage %>% tbl_summary(by = sex,
-                                      statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
-                                      all_categorical() ~ "{n} / {N} ({p}%)"),
-                                      #digits = all_continuous() ~ 2,
-                                      label = list(accumbens_posvsneg_feedback_z ~ "Accumbens (z)",
-                                                   caudate_posvsneg_feedback_z ~ "Caudate (z)",
-                                                   putamen_posvsneg_feedback_z ~ "Putamen (z)",
-                                                   mOFC_posvsneg_feedback_z ~ "Medial OFC (z)",
-                                                   lOFC_posvsneg_feedback_z ~ "Lateral OFC (z)",
-                                                   striatum_posvsneg_feedback_z ~ "Striatum Combined Areas (z)"),
-                                      missing_text = "Missing Observations")  %>% modify_header(update = 
-                          c(label ~ "**Variable**",
-                            stat_1 ~ "*Female*",
-                            stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Reward Feedback Stage (Positive vs. Negative)**")
- 
+# 
+# MRI_feedback_stage %>% tbl_summary(by = sex,
+#                                       statistic = list(all_continuous() ~ "{mean} ({sd}) [{min},{max}]",
+#                                       all_categorical() ~ "{n} / {N} ({p}%)"),
+#                                       #digits = all_continuous() ~ 2,
+#                                       label = list(accumbens_posvsneg_feedback_z ~ "Accumbens (z)",
+#                                                    caudate_posvsneg_feedback_z ~ "Caudate (z)",
+#                                                    putamen_posvsneg_feedback_z ~ "Putamen (z)",
+#                                                    mOFC_posvsneg_feedback_z ~ "Medial OFC (z)",
+#                                                    lOFC_posvsneg_feedback_z ~ "Lateral OFC (z)",
+#                                                    striatum_posvsneg_feedback_z ~ "Striatum Combined Areas (z)"),
+#                                       missing_text = "Missing Observations")  %>% modify_header(update = 
+#                           c(label ~ "**Variable**",
+#                             stat_1 ~ "*Female*",
+#                             stat_2 ~ "*Male*")) %>% modify_spanning_header(c("stat_1", "stat_2") ~ "**Reward Feedback Stage (Positive vs. Negative)**")
+#  
 
 
 ```
