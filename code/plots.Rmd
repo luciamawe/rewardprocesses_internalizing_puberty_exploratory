@@ -1,0 +1,69 @@
+---
+title: "Plots"
+output: html_notebook
+---
+
+``` {r loadPackages, echo = FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gamm4)
+library(dplyr)
+library(sjPlot)
+library(here)
+library(jtools)
+library(interactions)
+library(gamm4.test)
+library(ggstatsplot)
+```
+
+```{r}
+#Model predicted values
+modelforplot <- confirmatory4_compositestriatum_excludingoutliers_core
+sample <- "Exploratory sample (boys)"
+sample <- "Confirmatory sample (boys)"
+sample <- "Exploratory sample (girls)"
+sample <- "Confirmatory sample (girls)"
+
+p <- plot_model(modelforplot,
+                 type = "pred", 
+                 terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
+                 show.data = TRUE, jitter = 0.1, line.size = 2) +
+                 labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
+                 scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
+                 theme(title= element_text(size=20, vjust=2, face="bold"),
+                 plot.title = element_blank(),
+                 axis.title.x= element_text(size=18, vjust=-0.3),
+                 axis.title.y= element_text(size=18, vjust=1.5),
+                 axis.text.x= element_text(size=18, colour="black"),
+                 axis.text.y= element_text(size=18, colour="black"),
+                 legend.title=element_text(size=12, colour = "black"),
+                 legend.position = c(.80, .80),
+                 # legend.position="none",
+                 strip.text = element_text(size=18, face="bold"),
+                 panel.background = element_blank(),
+                 axis.line = element_line(colour = "black"))
+p 
+
+p <- p +labs(subtitle=sample,
+        x ="Average PDS score \n (1 - 5)", y = "CBCL internalizing \n (mean)")
+
+p
+
+#file.name = (here("output","question4_exploratory.tiff"))  
+#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")  
+```
+```{r}
+#Forrest plots
+modelforplot <- confirmatory4_compositestriatum_excludingoutliers_core
+sample <- "Exploratory sample (boys)"
+sample <- "Confirmatory sample (boys)"
+sample <- "Exploratory sample (girls)"
+sample <- "Confirmatory sample (girls)"
+
+# create plot-object
+p <- plot_model(modelforplot )
+
+# change theme
+p + theme_sjplot() + labs(subtitle=sample)
+#file.name = (here("output","question4_exploratory.tiff"))  
+#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")  
+```
