@@ -63,7 +63,7 @@ sample <- "Confirmatory sample (girls)"
 p <- plot_model(modelforplot )
 
 # change theme
-p + theme_sjplot() + labs(subtitle=sample)
+p + labs(subtitle=sample)
 #file.name = (here("output","question4_exploratory.tiff"))  
 #ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")  
 ```
