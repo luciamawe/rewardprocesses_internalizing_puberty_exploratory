@@ -13,6 +13,111 @@ library(jtools)
 library(interactions)
 library(gamm4.test)
 library(ggstatsplot)
+library(glue)
+```
+
+```{r LoadData, echo = FALSE}
+
+data_dir = ((dirname(here()))) 
+
+phase_folder = "exploratory"  # select the appropriate folder.
+# phase_folder = "confirmatory"
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+
+file_name <- glue("nda20_{phase_folder}.csv")
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+nrow(fulldata) # 5935.
+
+# Call function to define all of the dataframes.
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
+source(script_path)
+
+```
+
+```{r settheme, echo = FALSE}
+nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
+         plot.title = element_blank(),
+         axis.title.x= element_text(size=18, vjust=-0.3),
+         axis.title.y= element_text(size=18, vjust=1.5),
+         axis.text.x= element_text(size=18, colour="black"),
+         axis.text.y= element_text(size=18, colour="black"),
+         strip.text = element_text(size=24, face="bold"),
+         panel.background = element_blank(),
+         axis.line = element_line(colour = "black"))
+
+```
+
+```{r PDS_Distributions, echo = FALSE}
+
+# Plot distributions of PDS continuous and categorical for this sample, colored by gender group.
+# First, calculate mean of each group (for plotting).
+
+library(plyr)
+pds_plot_data <- plyr::ddply(PDS_correct, "sex", summarise, pds.mean=mean(PDS_score,na.rm=TRUE))
+# PDS continuous plot.
+ggplot(PDS_correct, aes(x=PDS_score,fill = sex)) + 
+  geom_density(adjust = 1.5,alpha=0.86) +
+  facet_grid(sex ~ .) +
+  geom_vline(data=pds_plot_data, aes(xintercept=pds.mean), color = "black", # Add group averages.
+               linetype="dashed", size=1) +
+  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  xlab("PDS Score (Continuous)") + 
+  ylab("Density") +
+  nsh_theme
+
+# PDS categorical plot.
+ggplot(PDS_correct, aes(x=pds_p_ss_category,fill = sex, stat="count")) + 
+  geom_bar(alpha=0.86,position=position_dodge()) +
+  #facet_wrap(~sex) +
+  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  xlab("PDS Stage (Categorical)") + 
+  ylab("Count") +
+  nsh_theme
+
+
+```
+
+
+```{r CBCL_Distributions, echo = FALSE}
+# Plot distributions of CBCL scores for this sample, colored by gender group.
+# First, calculate mean of each group (for plotting).
+cbcl_plot_data <- plyr::ddply(PDS_correct, "sex", summarise, cbcl.mean=mean(cbcl_scr_syn_internal_r,na.rm=TRUE))
+
+ggplot(PDS_correct, aes(x=cbcl_scr_syn_internal_r,fill = sex)) + 
+  geom_density(alpha=0.86) +
+  facet_grid(sex ~ .) +
+  geom_vline(data=cbcl_plot_data, aes(xintercept=cbcl.mean), color = "black", # Add group averages.
+               linetype="dashed", size=1) +
+  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  xlab("CBCL Score") + 
+  ylab("Density") +
+  nsh_theme
+
+```
+
+```{r PDS_CBCL_Boxplots, echo = FALSE}
+# Plot PDS category and CBCL for this sample, colored by gender group.
+
+ggplot(aes(y = cbcl_scr_syn_internal_r, x = pds_p_ss_category, fill = sex), data = PDS_correct) + 
+  geom_boxplot(alpha=0.86) +
+  #geom_boxplot(alpha=0.78, varwidth = TRUE) + # Make boxplot widths proportional to the square root of the samples sizes.
+  #geom_violin(alpha=0.78) +
+  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  # scale_color_manual(values = c("#395B50", "#92B6B1"), name="Sex") + # If want outlines and outlier points to have same color as boxes.
+  xlab("PDS Stage") + 
+  ylab("CBCL Internalizing Score") + 
+  nsh_theme
+
+# With z scores instead.
+ggplot(aes(y = cbcl_scr_syn_internal_r_z, x = pds_p_ss_category, fill = sex), data = PDS_correct) + 
+  geom_boxplot(alpha=0.78) +
+  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  xlab("PDS Stage") + 
+  ylab("CBCL Internalizing Score") +
+  nsh_theme  
+
 ```
 
 ```{r}
@@ -52,7 +157,7 @@ p
 #ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")  
 ```
 ```{r}
-#Forrest plots
+#Forest plots
 modelforplot <- confirmatory4_compositestriatum_excludingoutliers_core
 sample <- "Exploratory sample (boys)"
 sample <- "Confirmatory sample (boys)"
