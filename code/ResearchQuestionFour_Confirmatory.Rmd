@@ -1444,7 +1444,7 @@ exploratory4a_accumbens_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~
                             household.income +
                             married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4a_accumbens_feedback_females$gam )
+summary(exploratory4a_accumbens_feedback_females$gam)
 ```
 
 ###Females
