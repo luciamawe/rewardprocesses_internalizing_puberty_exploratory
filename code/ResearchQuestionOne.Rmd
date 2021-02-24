@@ -605,6 +605,8 @@ confirmatory1_accumbens_females <- gamm4(accumbens_rvsn_ant_z ~ PDS_score +
                       data = dataformodel)
 
 summary(confirmatory1_accumbens_females$gam)
+coef_test(confirmatory1_accumbens_females$mer, vcov = "CR2", coeffs = "all")
+# beta = -0.05, t = -1.32, p = 0.20.
 ```
 
 #### Accumbens Anticipation Males.
@@ -622,6 +624,8 @@ confirmatory1_accumbens_males <- gamm4(accumbens_rvsn_ant_z ~ PDS_score +
                       data = dataformodel)
 
 summary(confirmatory1_accumbens_males$gam)
+coef_test(confirmatory1_accumbens_males$mer, vcov = "CR2", coeffs = "all")
+# beta = -0.09, t = -1.65, p = 0.12.
 ```
 
 # Exploratory Hypothesis 1A: SEPARATE REGIONS

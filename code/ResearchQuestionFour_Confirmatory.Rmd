@@ -1306,6 +1306,8 @@ confirmatory4_accumbens_ant_females <- gamm4(cbcl_scr_syn_internal_r ~
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(confirmatory4_accumbens_ant_females$gam)
+coef_test(confirmatory4_accumbens_ant_females$mer, vcov = "CR2", coeffs = "all")
+# beta = 0.004; t= 0.01; p = 0.99.
 ```
 
 ###Females
@@ -1357,9 +1359,8 @@ summary(confirmatory4_caudate_ant_females$gam)
 ###Males
 ```{r Confirmatory4Accumbens_males, echo = FALSE}
 # Accumbens anticipation exlcuding outliers.
-# No CBCL exclusions
-# With covariates
-
+# No CBCL exclusions.
+# With covariates.
 dataformodel <- data_no_accumbens_ant_outliers_males  #Specify data subset here
 
 confirmatory4_accumbens_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
@@ -1375,6 +1376,8 @@ confirmatory4_accumbens_ant_males <- gamm4(cbcl_scr_syn_internal_r ~
 
 summary(confirmatory4_accumbens_ant_males$gam)
 plot_model(confirmatory4_accumbens_ant_males,type = "int", show.data = TRUE) #Interaction plot
+coef_test(confirmatory4_accumbens_ant_males$mer, vcov = "CR2", coeffs = "all")
+# beta = 0.37; t= 0.90; p = 0.38.
 ```
 
 ###Males
@@ -1429,9 +1432,8 @@ summary(confirmatory4_caudate_ant_males$gam)
 ###Females
 ```{r Exploratory4Accumbens_Females, echo = FALSE}
 # Accumbens feedback, exlcuding outliers.
-# No CBCL exclusions
-# With covariates
-
+# No CBCL exclusions.
+# With covariates.
 dataformodel <- data_no_accumbens_feed_outliers_females
 
 exploratory4a_accumbens_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~ 
@@ -1445,6 +1447,9 @@ exploratory4a_accumbens_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~
                             married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_accumbens_feedback_females$gam)
+coef_test(exploratory4a_accumbens_feedback_females$mer, vcov = "CR2", coeffs = "all")
+# beta = 0.004; t= 0.01; p = 0.99.
+```
 ```
 
 ###Females
@@ -1504,7 +1509,9 @@ exploratory4a_accumbens_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
                             household.income +
                             married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4a_accumbens_feedback_males$gam )
+summary(exploratory4a_accumbens_feedback_males$gam)
+coef_test(exploratory4a_accumbens_feedback_males$mer, vcov = "CR2", coeffs = "all")
+# beta = -0.35; t= -0.64; p = 0.53.
 ```
 ###Males
 ```{r Exploratory4Caudate_Males, echo = FALSE}
