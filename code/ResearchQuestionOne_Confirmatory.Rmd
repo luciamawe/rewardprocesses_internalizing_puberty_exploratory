@@ -40,12 +40,25 @@ data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 file_name <- "nda20_confirmatory.csv" # specify file name here. 
 
 fulldata <- read.csv(file.path(data_folder,file_name))
-length(fulldata$src_subject_id) # 5934.
+length(fulldata$src_subject_id) # 5935.
 
 # Call function to define all of the dataframes.
 script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
 source(script_path)
 
+min(PDS_correct$interview_age)
+max(PDS_correct$interview_age)
+mean(PDS_correct$interview_age)
+
+female_subset <- subset(fulldata, sex=="F")
+male_subset <- subset(fulldata, sex=="M")
+
+
+#Full data females N=2841
+#PDS_correct females N=2069
+
+#Full data males N=3094
+#PDS_correct males N=2173
 ```
 
 ```{r settheme, echo = FALSE}
