@@ -223,6 +223,34 @@ ggplot(model_predictions, aes(x, predicted)) +
     nsh_theme
 ```
 
+```{r PDS_Accumbens_Anticipation, echo = FALSE}
+#Model predicted values.
+# Females.
+summary(exploratory1A_accumbens_females$gam)
+model_predictions <- ggpredict(exploratory1A_accumbens_females, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#395B50",size=4,alpha=0.86) +
+    geom_ribbon(color="#395B50",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Accumbens Feedback Stage (Z-Score)") +
+    nsh_theme
+
+# Males.
+summary(exploratory1A_accumbens_males$gam)
+model_predictions <- ggpredict(exploratory1A_accumbens_males, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#92B6B1",size=4,alpha=0.86) +
+    geom_ribbon(color="#92B6B1",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Accumbens Feedback Stage (Z-Score)") +
+    nsh_theme
+
+```
+
 ```{r PDS_Accumbens_Feedback, echo = FALSE}
 #Model predicted values.
 # Females.
@@ -248,5 +276,50 @@ ggplot(model_predictions, aes(x, predicted)) +
     xlab("PDS Score (Continuous)") + 
     ylab("Accumbens Feedback Stage (Z-Score)") +
     nsh_theme
+
+```
+
+```{r PDS_CBCL_Accumbens_Anticipation, echo = FALSE}
+
+plot_model(confirmatory4_accumbens_ant_females,
+                type = "pred", # To specify values for striatal response, have to use "pred" instead.
+                terms = c("PDS_score","accumbens_rvsn_ant_z[-2.0,0,2.0]"),colors = "Pastel1") +
+                ylab("Internalizing Score") +
+                xlab("PDS Score") +
+                #labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)") +
+                nsh_theme + 
+                theme(legend.position = "none")
+               
+plot_model(confirmatory4_accumbens_ant_males,
+                type = "pred", # To specify values for striatal response, have to use "pred" instead.
+                terms = c("PDS_score","accumbens_rvsn_ant_z[-2.0,0,2.0]"),colors = "Pastel1") +
+                ylab("Internalizing Score") +
+                xlab("PDS Score") +
+                #labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)") +
+                nsh_theme + 
+                theme(legend.position = "none")
+               
+
+```
+
+```{r PDS_CBCL_Accumbens_Feedback, echo = FALSE}
+
+plot_model(exploratory4a_accumbens_feedback_females,
+                type = "pred", # To specify values for striatal response, have to use "pred" instead.
+                terms = c("PDS_score","accumbens_posvsneg_feedback_z[-2.0,0,2.0]"),colors = "Pastel1") +
+                ylab("Internalizing Score") +
+                xlab("PDS Score") +
+                #labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)") +
+                nsh_theme + 
+                theme(legend.position = "none")
+
+plot_model(exploratory4a_accumbens_feedback_males,
+                type = "pred", # To specify values for striatal response, have to use "pred" instead.
+                terms = c("PDS_score","accumbens_posvsneg_feedback_z[-2.0,0,2.0]"),colors = "Pastel1") +
+                ylab("Internalizing Score") +
+                xlab("PDS Score") +
+                #labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)") +
+                nsh_theme + 
+                theme(legend.position = "none")
 
 ```
