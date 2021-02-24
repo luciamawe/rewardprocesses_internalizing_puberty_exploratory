@@ -158,6 +158,9 @@ exploratory1B_females <- gamm4(bisbas_ss_basm_rr_z ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(exploratory1B_females$gam)
+
+coef_test(exploratory1B_females$mer, vcov = "CR2", coeffs = "all")
+# beta = -0.01; t =  -0.19; p = 0.85.
 ```
 # Males.
 ```{r Exploratory1BMales, echo = FALSE}
@@ -174,6 +177,8 @@ exploratory1B_males <- gamm4(bisbas_ss_basm_rr_z ~ PDS_score +
                       data = dataformodel)
 
 summary(exploratory1B_males$gam)
+coef_test(exploratory1B_males$mer, vcov = "CR2", coeffs = "all") # Not significant after robust standard errors.
+# beta = 0.13; t = 1.47 ; p = 0.16.
 ```
 # Exploratory Hypothesis 1C: We hypothesize that greater pubertal stage will be associated with greater behavioral reactivity to reward (i.e., reaction time on reward vs. neutral trials).
 ## Model: Reaction Time ~ Pubertal Stage
@@ -193,6 +198,8 @@ exploratory1C_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ PDS_score
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(exploratory1C_lg_neutral_RT_females$gam)
+coef_test(exploratory1C_lg_neutral_RT_females$mer, vcov = "CR2", coeffs = "all")
+# beta = 0.04; t = 0.99; p = 0.33.
 
 #LARGE REWARD VS. SMALL POSITIVE
 exploratory1C_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ PDS_score +
@@ -222,6 +229,8 @@ exploratory1C_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(exploratory1C_lg_neutral_RT_males$gam)
+coef_test(exploratory1C_lg_neutral_RT_males$mer, vcov = "CR2", coeffs = "all") # Not significant after robust standard errors.
+# beta = -0.10; t = -2.161; p = 0.045.
 
 #SMALL REWARD VS. NEUTRAL POSITIVE
 exploratory1C_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ PDS_score +
@@ -703,6 +712,8 @@ exploratory1A_accumbens_females <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_sco
                       data = dataformodel)
 
 summary(exploratory1A_accumbens_females$gam)
+coef_test(exploratory1A_accumbens_females$mer, vcov = "CR2", coeffs = "all")
+# beta = -0.02; t =  -0.73; p = 0.48.
 
 ```
 
@@ -721,5 +732,7 @@ exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score
                       data = dataformodel)
 
 summary(exploratory1A_accumbens_males$gam)
+coef_test(exploratory1A_accumbens_males$mer, vcov = "CR2", coeffs = "all")
+# beta = -0.08; t = -1.54; p = 0.14.
 
 ```

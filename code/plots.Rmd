@@ -14,6 +14,8 @@ library(interactions)
 library(gamm4.test)
 library(ggstatsplot)
 library(glue)
+library(ggeffects)
+library(clubSandwich) # For robust standard errors.
 ```
 
 ```{r LoadData, echo = FALSE}
@@ -41,8 +43,8 @@ nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
          plot.title = element_blank(),
          axis.title.x= element_text(size=18, vjust=-0.3),
          axis.title.y= element_text(size=18, vjust=1.5),
-         axis.text.x= element_text(size=18, colour="black"),
-         axis.text.y= element_text(size=18, colour="black"),
+         axis.text.x= element_text(size=28, colour="black"),
+         axis.text.y= element_text(size=28, colour="black"),
          strip.text = element_text(size=24, face="bold"),
          panel.background = element_blank(),
          axis.line = element_line(colour = "black"))
@@ -120,55 +122,131 @@ ggplot(aes(y = cbcl_scr_syn_internal_r_z, x = pds_p_ss_category, fill = sex), da
 
 ```
 
-```{r}
-#Model predicted values
-modelforplot <- confirmatory4_compositestriatum_excludingoutliers_core
-sample <- "Exploratory sample (boys)"
-sample <- "Confirmatory sample (boys)"
-sample <- "Exploratory sample (girls)"
-sample <- "Confirmatory sample (girls)"
+```{r PDS_Internalizing, echo = FALSE}
+#Model predicted values.
+# Females.
+model_predictions <- ggpredict(confirmatory2_females, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#395B50",size=4,alpha=0.86) +
+    geom_ribbon(color="#395B50",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Model Predicted CBCL Score") +
+    nsh_theme
 
-p <- plot_model(modelforplot,
-                 type = "pred", 
-                 terms = c("PDS_score","striatum_rvsn_ant_z [-2.0,0,2.0]"),
-                 show.data = TRUE, jitter = 0.1, line.size = 2) +
-                 labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
-                 scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
-                 theme(title= element_text(size=20, vjust=2, face="bold"),
-                 plot.title = element_blank(),
-                 axis.title.x= element_text(size=18, vjust=-0.3),
-                 axis.title.y= element_text(size=18, vjust=1.5),
-                 axis.text.x= element_text(size=18, colour="black"),
-                 axis.text.y= element_text(size=18, colour="black"),
-                 legend.title=element_text(size=12, colour = "black"),
-                 legend.position = c(.80, .80),
-                 # legend.position="none",
-                 strip.text = element_text(size=18, face="bold"),
-                 panel.background = element_blank(),
-                 axis.line = element_line(colour = "black"))
-p 
+# robust standard errors and test statistics
+dataformodel <- PDS_correct_females
+coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
+# beta = 0.42; t= 2.56; p = 0.0199.
+# How to do cluster = site_id_l/rel_family_id?
 
-p <- p +labs(subtitle=sample,
-        x ="Average PDS score \n (1 - 5)", y = "CBCL internalizing \n (mean)")
+#p <- plot_model(modelforplot_females,
+#                 type = "pred", 
+#                 terms = c("PDS_score"))
+#                 #color = "#395B50") +
+#                 scale_y_continuous(breaks = seq(0, 20, by = 5), limits = c(0,20)) +
+#                 scale_linetype_manual(values = c("#395B50"))
+#                 #scale_fill_manual(values = c("#395B50")) +
+#                 xlab("PDS Score (Continuous)") + 
+#                 ylab("Model Predicted CBCL Score") +
+#                 nsh_theme
+                  # axis.line = element_line(colour = "#395B50") 
+  
 
-p
+# Males.
+model_predictions <- ggpredict(confirmatory2_males, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#92B6B1",size=4,alpha=0.86) +
+    geom_ribbon(color="#92B6B1",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Model Predicted CBCL Score") +
+    nsh_theme
+# robust standard errors and test statistics
+dataformodel <- PDS_correct_males
+coef_test(confirmatory2_males$mer, vcov = "CR2", coeffs = "all")
+# beta =  0.75; t= 4.77; p < 0.001.
 
-#file.name = (here("output","question4_exploratory.tiff"))  
-#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")  
 ```
-```{r}
-#Forest plots
-modelforplot <- confirmatory4_compositestriatum_excludingoutliers_core
-sample <- "Exploratory sample (boys)"
-sample <- "Confirmatory sample (boys)"
-sample <- "Exploratory sample (girls)"
-sample <- "Confirmatory sample (girls)"
 
-# create plot-object
-p <- plot_model(modelforplot )
+```{r PDS_BISBAS, echo = FALSE}
+#Model predicted values.
+# Females.
+model_predictions <- ggpredict(exploratory1B_females, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#395B50",size=4,alpha=0.86) +
+    geom_ribbon(color="#395B50",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Model Predicted BIS/BAS Reward Seeking Z-Score") +
+    nsh_theme
 
-# change theme
-p + labs(subtitle=sample)
-#file.name = (here("output","question4_exploratory.tiff"))  
-#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")  
+# Males.
+model_predictions <- ggpredict(exploratory1B_males, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#92B6B1",size=4,alpha=0.86) +
+    geom_ribbon(color="#92B6B1",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Model Predicted BIS/BAS Reward Seeking Z-Score") +
+    nsh_theme
+```
+
+```{r PDS_MID_Behavioral, echo = FALSE}
+#Model predicted values.
+# Females.
+summary(exploratory1C_lg_neutral_RT_females$gam)
+model_predictions <- ggpredict(exploratory1C_lg_neutral_RT_females, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#395B50",size=4,alpha=0.86) +
+    geom_ribbon(color="#395B50",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Model Predicted RT Difference (Z-Score)") +
+    nsh_theme
+
+# Males.
+summary(exploratory1C_lg_neutral_RT_males$gam)
+model_predictions <- ggpredict(exploratory1C_lg_neutral_RT_males, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#92B6B1",size=4,alpha=0.86) +
+    geom_ribbon(color="#92B6B1",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Model Predicted RT Difference (Z-Score)") +
+    nsh_theme
+```
+
+```{r PDS_Accumbens_Feedback, echo = FALSE}
+#Model predicted values.
+# Females.
+summary(exploratory1A_accumbens_females$gam)
+model_predictions <- ggpredict(exploratory1A_accumbens_females, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#395B50",size=4,alpha=0.86) +
+    geom_ribbon(color="#395B50",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Accumbens Feedback Stage (Z-Score)") +
+    nsh_theme
+
+# Males.
+summary(exploratory1A_accumbens_males$gam)
+model_predictions <- ggpredict(exploratory1A_accumbens_males, terms = c("PDS_score"))
+ggplot(model_predictions, aes(x, predicted)) + 
+    geom_line(color="#92B6B1",size=4,alpha=0.86) +
+    geom_ribbon(color="#92B6B1",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
+    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
+    xlab("PDS Score (Continuous)") + 
+    ylab("Accumbens Feedback Stage (Z-Score)") +
+    nsh_theme
+
 ```

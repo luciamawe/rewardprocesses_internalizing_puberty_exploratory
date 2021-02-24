@@ -20,6 +20,7 @@ library(lmerTest)
 library(here)
 library(gamm4.test)
 library(mgcv)
+library(clubSandwich) # For robust standard errors.
 ```
 
 ```{r LoadData, echo = FALSE}
@@ -286,6 +287,10 @@ confirmatory2_females <- gamm4(cbcl_scr_syn_anxdep_r ~ PDS_score +
 
 summary(confirmatory2_females$gam)
 
+coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
+# beta =  0.42161; t= 2.56; p = 0.019.
+
+
 # Males.
 dataformodel <- PDS_correct_males
 
@@ -320,6 +325,8 @@ confirmatory2_females <- gamm4(cbcl_scr_syn_withdep_r ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id))
 
 summary(confirmatory2_females$gam)
+coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
+# beta = 0.38; t= 4.53; p < 0.001.
 
 # Males.
 dataformodel <- PDS_correct_males
@@ -355,6 +362,9 @@ confirmatory2_females <- gamm4(cbcl_scr_dsm5_depress_r ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id))
 
 summary(confirmatory2_females$gam)
+
+coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
+# beta = 0.32; t= 3.32; p = 0.004.
 
 # Males.
 dataformodel <- PDS_correct_males
