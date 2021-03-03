@@ -1535,3 +1535,56 @@ exploratory4a_putamen_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_putamen_feedback_males$gam )
 ```
+
+###Depression only
+```{r Exploratory4Accumbens_Males, echo = FALSE}
+#Accumbens feedback, maleS
+
+dataformodel <- data_no_accumbens_feed_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+exploratory4a_accumbens_feedback_males <- gamm4(
+                           cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_accumbens_feedback_males$gam)
+
+
+coef_test(exploratory4a_accumbens_feedback_males$mer, vcov = "CR2", coeffs = "all")
+```
+
+###Anxiety only
+```{r Exploratory4Accumbens_Males, echo = FALSE}
+#Accumbens feedback, maleS
+
+dataformodel <- data_no_accumbens_feed_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+exploratory4a_accumbens_feedback_males <- gamm4(
+                           cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_accumbens_feedback_males$gam)
+
+
+coef_test(exploratory4a_accumbens_feedback_males$mer, vcov = "CR2", coeffs = "all")
+# beta = -0.35; t= -0.64; p = 0.53.
+```
