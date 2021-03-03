@@ -1529,7 +1529,7 @@ exploratory4a_caudate_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
                             household.income +
                             married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4a_caudate_feedback_males$gam )
+summary(exploratory4a_caudate_feedback_males$gam)
 ```
 ###Males
 ```{r Exploratory4Putamen_Males, echo = FALSE}

@@ -38,10 +38,12 @@ data <- fulldata[,c("src_subject_id",
                     "cbcl_scr_syn_anxdep_t",
                     "cbcl_scr_syn_withdep_t",
                     "cbcl_scr_dsm5_depress_t",
+                    "cbcl_scr_dsm5_anxdisord_t",
                     "cbcl_scr_syn_internal_r",
                     "cbcl_scr_syn_anxdep_r",
                     "cbcl_scr_syn_withdep_r",
                     "cbcl_scr_dsm5_depress_r",
+                    "cbcl_scr_dsm5_anxdisord_r",
                     "PDS_score_f",
                     "PDS_score_m",
                     "PDS_score",
@@ -87,7 +89,11 @@ data <- fulldata[,c("src_subject_id",
                     "hormone_scr_dhea_mean",
                     "tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt", #Average MID RT Large Reward Positive
                     "tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt", #Average MID RT Small Reward Positive
-                    "tfmri_mid_all_beh_neutral.pos.feedback_mean.rt" #Average MID RT Neutral Positive
+                    "tfmri_mid_all_beh_neutral.pos.feedback_mean.rt",#Average MID RT Neutral Positive
+                    "tfmri_mid_beh_performflag", # Exclude or include based on MID behavioral data (1 = good; 0 = exclude).
+                    #  0    1 NA's 
+                    # 288 4250 1397
+                    "imgincl_mid_include" # Exclude or include based on neuroimaging data (1 = good; 0 = exclude).
 )]
 
 data$src_subject_id <- as.factor(data$src_subject_id)
@@ -102,6 +108,7 @@ data$high.educ <- as.factor(data$high.educ)
 data$household.income <- as.factor(data$household.income)
 data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
 data$pds_p_ss_category <-as.factor(data$pds_p_ss_category)
+data$tfmri_mid_beh_performflag <- as.factor(data$tfmri_mid_beh_performflag)
 data$race.ethnicity.5level = data$race.eth.7level
 data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
 data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
@@ -112,27 +119,14 @@ data$hormone_scr_ert_mean_z <- scale(data$hormone_scr_ert_mean)
 
 nrow(data) # 5934.
 
-
-#MID Reaction Time Variable Creation  (Adding here so the variable is in the main "data" set before it's subset)
-## Reaction time difference between large reward trials and neutral trials (Positive value indicates greater sensitivity to large reward than neutral trials)
-
-data$rt_diff_large_neutral <- data$tfmri_mid_all_beh_neutral.pos.feedback_mean.rt - data$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt
-
-## Reaction time difference between large reward trials and neutral trials (Positive value indicates greater sensitivity to large reward than small trials)
-data$rt_diff_large_small <- data$tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt - data$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt
-
-data$rt_diff_large_neutral_z <- scale(data$rt_diff_large_neutral)
-data$rt_diff_large_small_z <- scale(data$rt_diff_large_small)
-
-
 # Use data with only correct PDS scores.
-PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_average goes from 1 to 4 (continuous).
-nrow(PDS_correct) # 4224.
+PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_score goes from 1 to 4 (continuous).
+nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244.
 
 PDS_correct <- subset(PDS_correct, PDS_sum<30) # This shouldn't change anything but just in case there is somehow a participant with a PDS score less than 5 but a sum that is incorrect.
-nrow(PDS_correct) # 4224.
+nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244.
 PDS_correct <- PDS_correct %>% filter(sex!="") #remove 6 participants with no gender.
-nrow(PDS_correct) # 4224. Were these participants already removed from the dataframe?
+nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244. Were these participants already removed from the dataframe?
 
 # There are two people with a PDS category score of 5, which will bias the category estimates a lot, so we are removing them.
 PDS_correct$pds_p_ss_category <- as.factor(PDS_correct$pds_p_ss_category)
@@ -141,6 +135,22 @@ nrow(PDS_correct) # 4222.
 mean_PDS_score <- mean(PDS_correct$PDS_score)
 sd_PDS_score <- sd(PDS_correct$PDS_score)
 PDS_correct$PDS_score_z <- (PDS_correct$PDS_score-mean_PDS_score)/sd_PDS_score 
+
+# Exclude people ABCD says to exclude for MID task (use this for behavioral and neural dataframes).
+MID_correct <- subset(PDS_correct, tfmri_mid_beh_performflag ==1)
+# In confirmatory, goes from 4242 (PDS_correct) to 3959 (MID_correct).
+# How many had NAs for MID task already?
+
+#MID Reaction Time Variable Creation  (Adding here so the variable is in the main "data" set before it's subset)
+## Reaction time difference between large reward trials and neutral trials (Positive value indicates greater sensitivity to large reward than neutral trials)
+
+MID_correct$rt_diff_large_neutral <- MID_correct$tfmri_mid_all_beh_neutral.pos.feedback_mean.rt - MID_correct$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt
+
+## Reaction time difference between large reward trials and neutral trials (Positive value indicates greater sensitivity to large reward than small trials)
+MID_correct$rt_diff_large_small <- MID_correct$tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt - MID_correct$tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt
+
+MID_correct$rt_diff_large_neutral_z <- scale(MID_correct$rt_diff_large_neutral)
+MID_correct$rt_diff_large_small_z <- scale(MID_correct$rt_diff_large_small)
 
 
 # Separate by sex.
