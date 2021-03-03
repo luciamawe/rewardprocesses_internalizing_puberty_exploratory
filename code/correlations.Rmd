@@ -1,0 +1,203 @@
+---
+title: "Correlations"
+output: html_notebook
+---
+
+``` {r loadPackages, echo = FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gamm4)
+library(dplyr)
+library(sjPlot)
+library(here)
+library(jtools)
+library(interactions)
+library(gamm4.test)
+library(ggstatsplot)
+library(corrplot)
+```
+
+```{r LoadData, echo = FALSE}
+# Elizabeth.
+# Data: Desktop⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code: Desktop⁩ ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code⁩
+
+# Lucia.
+# Data:  Github⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Github ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# Natalie.
+# Data:  Desktop ▸ ABCD⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Desktop ▸ ABCD ⁩▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# LMW alternative to read in the data.
+
+data_dir = ((dirname(here()))) 
+
+phase_folder = "exploratory"  # select the appropiate folder.
+#phase_folder = "confirmatory"  # select the appropiate folder.
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+
+file_name <- "nda20_exploratory.csv" # specify file name here. 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+length(fulldata$src_subject_id) # 5934.
+
+# Call function to define all of the dataframes.
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
+source(script_path)
+```
+
+```{r}
+dataformodel <- data_no_striatal_ant_outliers_females
+
+data_correlation_table <- dataformodel %>%  
+ select('PDS_score','interview_age', 'hormone_scr_ert_mean_z', 'cbcl_scr_syn_internal_r_z',  "rt_diff_large_neutral_z","accumbens_rvsn_ant_z","caudate_rvsn_ant_z","putamen_rvsn_ant_z","accumbens_rvsn_ant_z", "caudate_rvsn_ant_z", "putamen_rvsn_ant_z")
+
+corrplot::corrplot(cor(data_correlation_table ))
+```
+
+```{r}
+dataformodel <- data_no_striatal_ant_outliers_females
+
+data_correlation_table <- dataformodel %>%  
+ select("bisbas_ss_basm_rr","rt_diff_large_neutral_z","accumbens_rvsn_ant_z","accumbens_posvsneg_feedback_z")
+
+corrplot::corrplot(cor(data_correlation_table ))
+```
+
+```{r}
+Hmisc::rcorr(as.matrix(data_correlation_table))
+```
+
+
+
+
+```{r}
+library(ggcorrplot)
+ggcorrplot(cor(data_correlation_table))
+```
+
+```{r}
+Hmisc::rcorr(as.matrix(data_correlation_table))
+```
+
+```{r}
+library(knitr)
+females_exp_cor<-Hmisc::rcorr(as.matrix(data_correlation_table))
+data.frame(females_exp_cor$r) %>% head() %>% knitr::kable()
+data.frame(females_exp_cor$P) %>% head() %>% knitr::kable()
+data.frame(females_exp_cor$n) %>% head(n=3) %>% knitr::kable()
+
+
+cors <- function(df) { 
+   # turn all three matrices (r, n, and P into a data frame)
+   M <- Hmisc::rcorr(as.matrix(df))
+   # return the three data frames in a list return(Mdf)
+   Mdf <- purrr::map(M, ~data.frame(.x))
+  }
+```
+
+```{r}
+cors(data_correlation_table) %>% 
+   purrr::map(~rownames_to_column(.x, var="measure1")) %>%
+ 
+```
+
+
+```{r}
+formatted_cors <- function(data_correlation_table){
+ cors(df) %>%
+ purrr::map(~rownames_to_column(.x, var="measure1")) %>%
+ purrr::map(~pivot_longer(.x, -measure1, "measure2")) %>% 
+ bind_rows(.id = "id") %>%
+ pivot_wider(names_from = id, values_from = value) %>%
+ mutate(sig_p = ifelse(P < .05, T, F), p_if_sig = ifelse(P <.05, P, NA), r_if_sig = ifelse(P <.05, r, NA)) }
+```
+```{r}
+formatted_cors(data_correlation_table) %>% 
+ ggplot(aes(measure1, measure2, fill=r, label=round(r_if_sig,2))) +
+ geom_tile() + 
+ labs(x = NULL, y = NULL, fill = "Pearson's\nCorrelation", title="Correlations in Mtcars", subtitle="Only significant Pearson's correlation coefficients shown") + 
+ scale_fill_gradient2(mid="#FBFEF9",low="#0C6291",high="#A63446", limits=c(-1,1)) +
+ geom_text() +
+ theme_classic() +
+ scale_x_discrete(expand=c(0,0)) + 
+ scale_y_discrete(expand=c(0,0)) +
+ theme(text=element_text(family="Roboto"))
+```
+
+
+#Females 
+##PDS and age
+```{r}
+dataformodel <- PDS_correct_females
+PDS_age_females  <- gamm4(PDS_score ~ 
+                            interview_age  
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(PDS_age_females$gam)
+```
+##PDS and testosterone
+```{r}
+dataformodel <- PDS_correct_females
+PDS_test_females  <- gamm4(PDS_score ~ 
+                            hormone_scr_ert_mean_z
+                           ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(PDS_test_females$gam)
+```
+
+
+##BISBAS and MID RT
+```{r}
+dataformodel <- PDS_correct_females
+PDS_test_females  <- gamm4(PDS_score ~ 
+                            hormone_scr_ert_mean_z
+                           ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(PDS_test_females$gam)
+```
+
+##BISBAS and accumbens
+
+
+##MID RT
+```{r}
+dataformodel <- PDS_correct_females
+PDS_test_females  <- gamm4(PDS_score ~ 
+                            hormone_scr_ert_mean_z
+                           ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(PDS_test_females$gam)
+```
+
+
+
+
+#Males
+##PDS and age 
+```{r}
+dataformodel <- PDS_correct_males
+age_pds_males<- gamm4(PDS_score ~ 
+                            interview_age
+                            ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(age_pds_males$gam )
+```
+##PDS and age
+```{r}
+dataformodel <- PDS_correct_males
+PDS_test_males  <- gamm4(PDS_score ~ 
+                            hormone_scr_ert_mean_z
+                           ,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(PDS_test_males$gam)
+```
+```
+
+
