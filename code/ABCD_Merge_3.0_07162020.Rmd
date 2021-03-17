@@ -24,15 +24,20 @@ output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Worksh
 #Convert .txt files to .csv format. This assumes all of the text files you want to use (and no other random files) are in the current directory.
 setwd(data_directory)
 filelist = list.files(pattern = ".txt")
-length(filelist) # Should be fifteen files.
+length(filelist) # Should be eighteen (?) files.
 for (i in 1:length(filelist)){
     input<-filelist[i]
     output <- paste0(gsub("\\.txt$", "", input), ".csv")
     print(paste("Processing the file:", input))
     data = read.delim(input, header = TRUE)
-    baselinedata = subset(data,eventname == "baseline_year_1_arm_1")
-    print(paste("Rows for baseline:",nrow(baselinedata)))
-    write.table(data, file=output, sep=",", col.names=TRUE, row.names=FALSE)
+    if('eventname' %in% colnames(data)){ 
+        baselinedata = subset(data,eventname == "baseline_year_1_arm_1")
+        print(paste("Rows for baseline:",nrow(baselinedata)))
+    }
+    else{
+      print(paste("No 'eventname' column. Total rows, without filtering by this variable:",nrow(data)))
+    }
+    #write.table(data, file=output, sep=",", col.names=TRUE, row.names=FALSE)
 }
 
 names(input)
