@@ -29,7 +29,9 @@ for (i in 1:length(filelist)){
     input<-filelist[i]
     output <- paste0(gsub("\\.txt$", "", input), ".csv")
     print(paste("Processing the file:", input))
-    data = read.delim(input, header = TRUE)   
+    data = read.delim(input, header = TRUE)
+    baselinedata = subset(data,eventname == "baseline_year_1_arm_1")
+    print(paste("Rows for baseline:",nrow(baselinedata)))
     write.table(data, file=output, sep=",", col.names=TRUE, row.names=FALSE)
 }
 ```
