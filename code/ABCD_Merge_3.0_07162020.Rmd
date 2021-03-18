@@ -37,7 +37,7 @@ for (i in 1:length(filelist)){
     else{
       print(paste("No 'eventname' column. Total rows, without filtering by this variable:",nrow(data)))
     }
-    #write.table(data, file=output, sep=",", col.names=TRUE, row.names=FALSE)
+    write.table(data, file=output, sep=",", col.names=TRUE, row.names=FALSE)
 }
 
 names(input)
@@ -64,7 +64,7 @@ setwd(data_directory)
 # }
 # 
 
- acspsw03 <- read.csv(paste(data_directory,"abcd_acspsw03.csv",sep="/"))
+ acspsw03 <- read.csv(paste(data_directory,"acspsw03.csv",sep="/"))
 
  bisbas01 <- read.csv(paste(data_directory,"abcd_bisbas01.csv",sep="/"))
 
@@ -96,7 +96,7 @@ setwd(data_directory)
  
  imgincl01 <- read_csv(paste(data_directory,"abcd_imgincl01.csv",sep="/"))
  
- 
+ ##NOTE : add dataframes for ssphp01 and ssphy01 and height/weight
 ```
 
 
