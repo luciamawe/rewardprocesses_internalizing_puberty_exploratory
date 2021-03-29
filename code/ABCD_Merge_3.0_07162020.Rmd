@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(plyr)
 library(readr)
+library(glue)
 
 getwd()
 # Set your data directory here.
@@ -50,53 +51,56 @@ names(input)
 
 #Read in data in separate data frames.
 setwd(data_directory)
-# csv_filelist = list.files(pattern = ".csv")
+csv_filelist = list.files(pattern = ".csv")
 # 
-# # This loop should work instead of the code below (commented out), but if not then use that instead.
-# # The function read_csv has a lot of output messages but it's the one that worked for all of them.
-# for (i in 1:length(csv_filelist)){
-#     filename <- csv_filelist[i]
-#     dataframe_name <- sub("abcd_", "", filename) # There's a prettier way to do this, but not all of them have "abcd" in the title, so will just do this for now.
-#     dataframe_name <- sub(".csv", "", dataframe_name)
-#     temporary_df <- read_csv(paste(data_directory,filename,sep="/")) # Create a temporary dataframe and then rename it based on the name of the file.
-#     assign(dataframe_name, temporary_df)
-#     print(paste("Created dataframe: ", dataframe_name))
-# }
+ # This loop should work instead of the code below (commented out), but if not then use that instead.
+# The function read_csv has a lot of output messages but it's the one that worked for all of them.
+for (i in 1:length(csv_filelist)){
+     filename <- csv_filelist[i]
+     dataframe_name <- sub("abcd_", "", filename) # There's a prettier way to do this, but not all of them have "abcd" in the title, so will just do this for now.
+     dataframe_name <- sub(".csv", "", dataframe_name)
+     temporary_df <- read_csv(glue('{data_directory}/{filename}')) #paste(data_directory,filename,sep="/")) # Create a temporary dataframe and then rename it based on the name of the file.
+     assign(dataframe_name, temporary_df)
+     print(paste("Created dataframe: ", dataframe_name))
+ }
+ 
 # 
-
- acspsw03 <- read.csv(paste(data_directory,"acspsw03.csv",sep="/"))
-
- bisbas01 <- read.csv(paste(data_directory,"abcd_bisbas01.csv",sep="/"))
-
- cbcls01 <- read.csv(paste(data_directory,"abcd_cbcls01.csv",sep="/"))
-
- hsss01 <- read.csv(paste(data_directory,"abcd_hsss01.csv",sep="/"))
-
- lpds01 <- read_csv(paste(data_directory,"abcd_lpds01.csv",sep="/"))
-
- lt01 <- read.csv(paste(data_directory,"abcd_lt01.csv",sep="/"))
-
- mid02 <- read.csv(paste(data_directory,"abcd_mid02.csv",sep="/"))
-
- mri01 <- read.csv(paste(data_directory,"abcd_mri01.csv",sep="/"))
-
- ppdms01 <- read.csv(paste(data_directory,"abcd_ppdms01.csv",sep="/"))
-
- ypdms01 <- read.csv(paste(data_directory,"abcd_ypdms01.csv",sep="/"))
-
- fhxp102 <- read.csv(paste(data_directory,"fhxp102.csv",sep="/"))
-
- midaparc03 <- read.csv(paste(data_directory,"midaparc03.csv",sep="/"))
-
- midaparcp203 <- read.csv(paste(data_directory,"midaparcp203.csv",sep="/"))
-
- pdem02 <- read_csv(paste(data_directory,"pdem02.csv",sep="/"))
-
- sph01 <- read_csv(paste(data_directory,"sph01.csv",sep="/"))
+#  acspsw03 <- read.csv(glue('{data_directory}/acspsw03.csv'))
+# 
+#  bisbas01 <- read.csv(glue('{data_directory}/abcd_bisbas01.csv'))
+# 
+#  cbcls01 <- read.csv(glue('{data_directory}/abcd_cbcls01.csv'))
+# 
+#  hsss01 <- read.csv(glue('{data_directory}/abcd_hsss01.csv'))
+# 
+#  lpds01 <- read_csv(glue('{data_directory}/abcd_lpds01.csv'))
+# 
+#  lt01 <- read.csv(glue('{data_directory}/abcd_lt01.csv'))
+# 
+#  mid02 <- read.csv(glue('{data_directory}/abcd_mid02.csv'))
+# 
+#  mri01 <- read.csv(glue('{data_directory}/abcd_mri01.csv'))
+# 
+#  ppdms01 <- read.csv(glue('{data_directory}/abcd_ppdms01.csv'))
+# 
+#  ypdms01 <- read.csv(glue('{data_directory}/abcd_ypdms01.csv'))
+# 
+#  fhxp102 <- read.csv(glue('{data_directory}/fhxp102.csv'))
+# 
+#  midaparc03 <- read.csv(glue('{data_directory}/midaparc03.csv'))
+# 
+#  midaparcp203 <- read.csv(glue('{data_directory}/midaparcp203.csv'))
+# 
+#  pdem02 <- read_csv(glue('{data_directory}/pdem02.csv'))
+# 
+#  sph01 <- read_csv(glue('{data_directory}/sph01.csv'))
+#  
+#  imgincl01 <- read_csv(glue('{data_directory}/abcd_imgincl01.csv'))
+# 
+#  abcd_ant01 <- read.csv(glue('{data_directory}/abcd_ant01.csv'))
+#  ssphp01 <- read.csv(glue('{data_directory}/ssphp01.csv'))
+#  ssphy01 <- read.csv(glue('{data_directory}/ssphp01.csv'))
  
- imgincl01 <- read_csv(paste(data_directory,"abcd_imgincl01.csv",sep="/"))
- 
- ##NOTE : add dataframes for ssphp01 and ssphy01 and height/weight
 ```
 
 
@@ -121,6 +125,10 @@ midaparcp203 = midaparcp203[-1,]
 pdem02 = pdem02[-1,]
 sph01 = sph01[-1,]
 imgincl01 = imgincl01[-1,]
+abcd_ant01 = abcd_ant01[-1,]
+ssphp01 = ssphp01[-1,]
+ssphy01 = ssphy01[-1,]
+
 # imgincl01 <- subset(imgincl01,eventname=="baseline_year_1_arm_1")
 imgincl01 <- subset(imgincl01,!is.na(visit)) # For whatever reason, each participant has two rows, one with a date and one without a date in the 'visit' column, so for now only use the rows that have a date (otherwise will have two rows for each participant).
 # length(unique(imgincl01$src_subject_id)) # Has 11,788 unique participants (11,787 if remove 'NA' values from 'visit' column). I think there are 11,869 at baseline, so 81 participants are not included in this file.
@@ -168,6 +176,13 @@ pdem02 = pdem02[,!(names(pdem02) %in% c("collection_id", "collection_title", "su
 sph01 = sph01[,!(names(sph01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
 
 imgincl01 = imgincl01[,!(names(imgincl01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
+
+abcd_ant01 = abcd_ant01[,!(names(abcd_ant01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
+
+ssphp01 = ssphp01[,!(names(ssphp01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
+
+ssphy01 = ssphy01[,!(names(ssphy01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
+
 ```
 
 
@@ -179,7 +194,7 @@ imgincl01 = imgincl01[,!(names(imgincl01) %in% c("collection_id", "collection_ti
 #mri01
 #sph01
 
-t2 = list(acspsw03, bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, mri01, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02, sph01,imgincl01)
+t2 = list(acspsw03, bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, mri01, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02, sph01,imgincl01, abcd_ant01, ssphp01, ssphy01)
 # sph01 does not have event name.
 # In sph01, 'eventname' is called 'visit', so need to change that first.
 sph01$eventname <- sph01$visit
