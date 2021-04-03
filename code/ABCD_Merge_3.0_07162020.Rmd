@@ -17,7 +17,7 @@ library(glue)
 
 getwd()
 # Set your data directory here.
-data_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/download_20210317"
+data_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/newdownload_20210329"
 # data_directory <-  "/Users/nataliesaragosa-harris/Desktop/ABCD/individualdatafiles"
 output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
 # output_directory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
@@ -125,7 +125,7 @@ midaparcp203 = midaparcp203[-1,]
 pdem02 = pdem02[-1,]
 sph01 = sph01[-1,]
 imgincl01 = imgincl01[-1,]
-abcd_ant01 = abcd_ant01[-1,]
+ant01 = ant01[-1,]
 ssphp01 = ssphp01[-1,]
 ssphy01 = ssphy01[-1,]
 
@@ -177,7 +177,7 @@ sph01 = sph01[,!(names(sph01) %in% c("collection_id", "collection_title", "subje
 
 imgincl01 = imgincl01[,!(names(imgincl01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
 
-abcd_ant01 = abcd_ant01[,!(names(abcd_ant01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
+ant01 = ant01[,!(names(ant01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
 
 ssphp01 = ssphp01[,!(names(ssphp01) %in% c("collection_id", "collection_title", "subjectkey","interview_age", "interview_date","sex"))]
 
@@ -194,7 +194,7 @@ ssphy01 = ssphy01[,!(names(ssphy01) %in% c("collection_id", "collection_title", 
 #mri01
 #sph01
 
-t2 = list(acspsw03, bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, mri01, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02, sph01,imgincl01, abcd_ant01, ssphp01, ssphy01)
+t2 = list(acspsw03, bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, mri01, ppdms01, ypdms01, fhxp102, midaparc03, midaparcp203, pdem02, sph01,imgincl01, ant01, ssphp01, ssphy01)
 # sph01 does not have event name.
 # In sph01, 'eventname' is called 'visit', so need to change that first.
 sph01$eventname <- sph01$visit
