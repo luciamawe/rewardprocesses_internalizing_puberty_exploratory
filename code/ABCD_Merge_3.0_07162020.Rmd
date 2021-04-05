@@ -190,6 +190,7 @@ ssphy01 = ssphy01[,!(names(ssphy01) %in% c("collection_id", "collection_title", 
 ```{r}
 #Merge the individual tables into a single spreadsheet. The following loop performs repeated merging operations between pairs of spreadsheets.
 
+
 #acspsw03 
 #mri01
 #sph01
@@ -200,24 +201,27 @@ t2 = list(acspsw03, bisbas01, cbcls01, hsss01, lpds01, lt01, mid02, mri01, ppdms
 sph01$eventname <- sph01$visit
 sph01$visit <- NULL
 
-while (length(t2) > 1 ) {
-  print("iteration")
-  access= seq(1,length(t2)-1,2)
-  for (i in access) {
-    bm = dim(t2[[i]])
-
-    by.vars=c("src_subject_id","eventname")
-    t2[[i]] = merge(t2[[i]], t2[[i+1]], by=by.vars, all=TRUE)
-
-    print(paste("rows before: ", bm[1], dim(t2[[i+1]])[1], " rows after: ",dim(t2[[i]])[1], "indices: ",i,i+1," columns: ",bm[2],"+",dim(t2[[i+1]])[2], " = ",dim(t2[[i]])[2]))
-  }
-  # for odd number of instruments add the last spreadsheet back to the list
-  if (length(t2) %% 2 != 0) access = append(access,length(t2))
-  # reduce the list
-  t2 = t2[access]
-}
-nda20 = t2[[1]]
-nda20=nda20[,-which(grepl("dataset_id",colnames(nda20)))]
+nda20 <- Reduce(function(x,y) merge(x,y, all=TRUE,by=c("src_subject_id","eventname")),t2,accumulate=FALSE)
+# 
+# while (length(t2) > 1 ) {
+#   print("iteration")
+#   #print(deparse(substitute(bm)))
+#   access= seq(1,length(t2)-1,2)
+#   for (i in access) {
+#     bm = dim(t2[[i]])
+#     #print(deparse(substitute(bm)))
+#     by.vars=c("src_subject_id","eventname")
+#     t2[[i]] = merge(t2[[i]], t2[[i+1]], by=by.vars, all=TRUE)
+# 
+#     print(paste("rows before: ", bm[1], dim(t2[[i+1]])[1], " rows after: ",dim(t2[[i]])[1], "indices: ",i,i+1," columns: ",bm[2],"+",dim(t2[[i+1]])[2], " = ",dim(t2[[i]])[2]))
+#   }
+#   # for odd number of instruments add the last spreadsheet back to the list
+#   if (length(t2) %% 2 != 0) access = append(access,length(t2))
+#   # reduce the list
+#   t2 = t2[access]
+# }
+# nda20 = t2[[1]]
+# nda20=nda20[,-which(grepl("dataset_id",colnames(nda20)))]
 
 
 
@@ -247,6 +251,8 @@ write.csv(nda20, paste(output_directory,"nda20.csv",sep="/"), row.names = FALSE)
 ```{r}
 # In order to read the data back into memory use:
 nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
+
+
 
 ```
 
