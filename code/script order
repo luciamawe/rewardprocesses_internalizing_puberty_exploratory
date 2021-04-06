@@ -2,7 +2,7 @@ Order in which scripts should be run.
 
 1. ABCD_Merge_3.0.
 2. core_demographics_3.0.
-3. ABCD_renamevariables.
+3. ABCD_renamevariables. Note: Make sure that the later scripts are in fact using the correct alias names, otherwise this script might need to be moved later.
 4. calculate_PDS. [Change to Herting et al. script?]
 5. calculate_BISBAS_Reward.
 6. add_PDS_categories. [Change to Herting et al. script?]
