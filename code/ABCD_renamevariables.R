@@ -11,18 +11,19 @@ outputdirectory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/ABCD/derivatives"
 setwd(variabledirectory)
 variablenames <- read.csv("VariableDefinitions.csv")
 setwd(outputdirectory)
-datafile <- readRDS('nda20.rds')
+#nda20 <- readRDS('nda20.rds')
+nda20 <- read.csv('nda20.csv')
 
 variables <- as.data.frame(variablenames$Variable.Name)
 variables <- variables[!apply(variables == "", 1, all),] # Remove empty rows.
 variables <- tolower(variables)  # Make sure they are all lowercase.
-missingvariables <- setdiff(variables,colnames(datafile)) # List variables that are in the "variable names" file but not in the data file.
+missingvariables <- setdiff(variables,colnames(nda20)) # List variables that are in the "variable names" file but not in the data file.
 missingvariables <- as.data.frame(missingvariables)
 colnames(missingvariables) <- "Variable.Name"
 
 
-print("These variable names do not appear in the data: ")
-print(missingvariables)
+print(glue('These variable names do not appear in the data: {missingvariables}.'))
+#print(missingvariables)
 
 # Get the aliases for all of the variable names.
 aliases <- variablenames[,c("Variable.Name","Aliases")]
@@ -44,11 +45,11 @@ print(no_aliases$Variable.Name)
 missingvariables <- subset(missingvariables, Aliases!= "")
 
 # Do these aliases exist in the dataframe?
-aliases_in_data <- intersect(missingvariables$Aliases,colnames(datafile))
+aliases_in_data <- intersect(missingvariables$Aliases,colnames(nda20))
 print("Alias exists in dataframe for the following variables: ")
 print(aliases_in_data)
 
-aliases_not_in_data <- setdiff(missingvariables$Aliases,colnames(datafile))
+aliases_not_in_data <- setdiff(missingvariables$Aliases,colnames(nda20))
 print("Neither the original variable name nor its alias exist in the dataframe for the following variables: ")
 print(aliases_not_in_data)
 # These variables need to be calculated so they are not in the dataframe currently.
@@ -65,11 +66,11 @@ for (i in 1:length(aliases_in_data)){
   new_name <- subset(aliases, Aliases == alias)
   new_name <- new_name$Variable.Name
   # Find alias in dataframe and replace with the new name.
-  names(datafile)[names(datafile) == alias] <- new_name
+  names(nda20)[names(nda20) == alias] <- new_name
 }
 
 print("The following variables were not found in the data frame under this name or an alias: ")
-print(setdiff(variables,colnames(datafile)))
+print(setdiff(variables,colnames(nda20)))
 
 # The bisbas ones need to be calculated (see definition in variable definitions file).
 # bisbas_ss_basm_rr.
@@ -80,11 +81,11 @@ setwd(outputdirectory)
 
 # As a last step we can save the data in R's native file format.
 
-saveRDS(datafile, glue('{outputdirectory}/nda20.rds'))
+saveRDS(nda20, glue('{outputdirectory}/nda20.rds'))
 
-names.nda20=colnames(datafile)
+names.nda20=colnames(nda20)
 
 save(file="names.nda20.RData",names.nda20)
 
 # Save as .csv file as well.
-write.csv(datafile, glue('{outputdirectory}/nda20.csv', row.names = FALSE))
+write.csv(nda20, glue('{outputdirectory}/nda20.csv', row.names = FALSE))

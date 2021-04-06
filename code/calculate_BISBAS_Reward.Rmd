@@ -26,29 +26,48 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 
 library(dplyr)
+library(here)
+library(glue)
+#Set your directory with merged data set (nda20) here:
 
-data_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
-output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
+# Elizabeth.
+# Data: Desktop⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code: Desktop⁩ ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code⁩
+
+# Lucia.
+# Data:  Github⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Github ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# Natalie.
+# Data:  Desktop ▸ ABCD⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Desktop ▸ ABCD ⁩▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# LMW alternative to read in the data.
+
+data_dir = ((dirname(here()))) 
+data_folder <- file.path(data_dir,"ABCD","derivatives")
+output_directory <- data_folder
 
 
+#data_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
+#output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"
 
-#Read in data:
-
+# Read in data.
 nda20 = readRDS(paste(data_directory,"nda20.rds",sep="/"))
 
-#Change to numeric
+# Change to numeric.
 nda20$bisbas8_y = as.numeric(nda20$bisbas8_y)
 nda20$bisbas9_y = as.numeric(nda20$bisbas9_y)
 nda20$bisbas11_y = as.numeric(nda20$bisbas11_y)
 nda20$bisbas12_y = as.numeric(nda20$bisbas12_y)
 
 
-#Calculate composite
+# Calculate composite.
 nda20 <- nda20 %>%
   mutate(bisbas_ss_basm_rr = bisbas8_y + bisbas9_y + bisbas11_y + bisbas12_y)
 
 
-saveRDS(nda20, paste(output_directory,"nda20.rds",sep="/"))
+saveRDS(nda20, glue('{output_directory}/nda20.rds'))
 
-write.csv(nda20, paste(output_directory,"nda20.csv",sep="/"), row.names = FALSE)
+write.csv(nda20, glue('{output_directory}/nda20.csv'), row.names = FALSE)
 ```

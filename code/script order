@@ -2,19 +2,21 @@ Order in which scripts should be run.
 
 1. ABCD_Merge_3.0_07162020. {NSH}
 2. ABCD_renamevariables. (Note: Make sure that the later scripts are in fact using the correct alias names, otherwise this script might need to be moved later). {NSH}
-3. core_demographics_3.0.
-4. calculate_BISBAS_Reward.
-5. calculate_MRI_averages. (Note: the z scores that are created in this script would be compared to the whole sample rather than the half sample, however, so might want to do that part after dividing the data into the samples).
+3. core_demographics_3.0. {NSH}
+4. calculate_BISBAS_Reward. {NSH}
+5. calculate_MRI_averages. {NSH}
 
 PDS calculations.
 6. calculate_PDS. [Change to Herting et al. script?]
-7. add_PDS_categories. Note: Not needed anymore, as this has been added in the merge script.
 
 Split data.
-8. split data.
+7. split data.
 
 Exploratory sample
-1. data cleaning and descriptives.
+8. data cleaning and descriptives.
 
 Confirmatory sample 
-1. data cleaning and descriptives.
+9. data cleaning and descriptives.
+
+Old scripts.
+add_PDS_categories. Note: Not needed anymore, as this has been added in the merge script.

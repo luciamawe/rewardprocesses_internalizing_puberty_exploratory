@@ -11,11 +11,34 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+library(here)
+
 #Set your directory with merged data set (nda20) here:
 
+# Elizabeth.
+# Data: Desktop⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code: Desktop⁩ ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code⁩
+
+# Lucia.
+# Data:  Github⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Github ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# Natalie.
+# Data:  Desktop ▸ ABCD⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Desktop ▸ ABCD ⁩▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# LMW alternative to read in the data.
+
+data_dir = ((dirname(here()))) 
+data_folder <- file.path(data_dir,"ABCD","derivatives")
+output_directory <- data_folder
+
+#file_name <- "nda20.csv" # specify file name here. 
+
+#fulldata <- read.csv(file.path(data_folder,file_name))
 #output_directory <- "~/Desktop/Desktop_MacBookPro/Desktop_Folders/UO/ABCD_Workshop/Data_Analysis_3.0/Output"   #EM
 
-output_directory <- "C:\\Users\\lucia\\GitHub\\ABCD\\derivatives"   #LMW
+#output_directory <- "C:\\Users\\lucia\\GitHub\\ABCD\\derivatives"   #LMW
 #output_directory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
 
 ```
@@ -38,41 +61,31 @@ output_directory <- "C:\\Users\\lucia\\GitHub\\ABCD\\derivatives"   #LMW
 ```
 
 
-
-
 ```{r}
 # Start by reading in the merged data from disk.
 
 #nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
 nda20 = readRDS(paste(output_directory,"nda20.rds",sep="/"))
 
-
 # Now extend nda20 by the new columns.
 
 ### Site name
 # The site name is anonymized and stored per event in case participants move from one site to another during the study.
 
-
 nda20$abcd_site = nda20$site_id_l
-
 
 ### Subjectid
 
-
 nda20$subjectid = nda20$src_subject_id
-
 
 ### Age (in month)
 # Get a better name for interview_age.
 
 nda20$age = nda20$interview_age
 
-
-
 ### Household income
 
 #1= Less than $5,000; 2=$5,000 through $11,999; 3=$12,000 through $15,999; 4=$16,000 through $24,999; 5=$25,000 through $34,999; 6=$35,000 through $49,999; 7=$50,000 through $74,999; 8= $75,000 through $99,999; 9=$100,000 through $199,999; 10=$200,000 and greater. 999 = Don't know; 777 = Refuse to answer.
-
 
 household.income = nda20$demo_comb_income_v2
 household.income[nda20$demo_comb_income_v2 == "777"] = NA
@@ -98,8 +111,8 @@ nda20$household.income = factor(household.income, levels= 1:10, labels = c("[<5K
                                                                                "[100K-200K]",
                                                                                "[>=200K]"))
                                       
-# temp <- nda20[,c("demo_comb_income_v2", "household.income")]
-
+#temp <- nda20[,c("eventname","demo_comb_income_v2", "household.income")]
+#temp <- subset(temp,eventname=="baseline_year_1_arm_1")
 
 ### Highest level of parental education
 # This can be either the first (demo_prnt_ed_v2) or the second (demo_prtnr_ed_v2) parent.
@@ -178,6 +191,9 @@ high.educ[which(high.educ == "777")]=NA
 nda20$high.educ = factor( high.educ, levels= 1:5, labels = c("< HS Diploma","HS Diploma/GED","Some College","Bachelor","Post Graduate Degree") )
 
 
+# temp2 <- nda20[,c("eventname","demo_prnt_ed_v2", "demo_prtnr_ed_v2", "highest.education","high.educ")]
+# temp2 <- subset(temp2,eventname=="baseline_year_1_arm_1")
+
 ### Marital status.
 
 # The demo_prnt_marital_v2 variable has also been renamed in NDA_DEAP_names_2.0.csv to demo_prnt_marital_v2b.
@@ -193,9 +209,10 @@ nda20$married = factor( married, levels= 0:1, labels = c("no", "yes") )
 married.livingtogether = rep(NA, length(nda20$demo_prnt_marital_v2))
 married.livingtogether[nda20$demo_prnt_marital_v2 %in% c(1,6)] = 1
 married.livingtogether[nda20$demo_prnt_marital_v2 %in% 2:5] = 0
-nda20$married.or.livingtogether = factor( married.livingtogether, levels= 0:1, labels = c("no", "yes") )
+nda20$married.or.livingtogether = factor(married.livingtogether, levels= 0:1, labels = c("no", "yes") )
 
-
+# temp3 <- nda20[,c("eventname","demo_prnt_marital_v2","married.or.livingtogether")]
+# temp3 <- subset(temp3,eventname=="baseline_year_1_arm_1")
 
 #Keeping BMI calculation in case we want it in the future:
 
@@ -259,11 +276,21 @@ nda20$race.ethnicity.5level = nda20$race.eth.7level
 nda20$race.ethnicity.5level[(nda20$race.eth.7level == "AIAN" | nda20$race.eth.7level == "NHPI")] = "Other"
 nda20$race.ethnicity.5level = droplevels(nda20$race.ethnicity.5level)
 
+
+#temp4 <- nda20[,c("eventname","demo_race_white","demo_race_black","demo_race_asian","demo_race_aian","demo_race_nhpi","demo_race_other","demo_race_mixed","demo_race_hispanic","race.eth.7level","race.ethnicity.5level")]
+# temp4 <- subset(temp4,eventname=="baseline_year_1_arm_1")
+
 # It is worthwhile to point out here that the above category for Hispanic is calculated in ABCD differently from the other race categories. In particular any ethnicity selection of hispanic will map the participant into the hispanic category regardless of the selection of one or more race categories.
-# For the exploratory dataset, this is the number of participants in each of the seven categories.
-# AIAN Asian Black Mixed  NHPI Other White 
-#   22   102   666   542     6   198  2964
-# So we are going to use the five levels for race ("White", "Black", "Asian", "Other", "Mixed") and also use the variable demo_race_hispanic.
+
+# summary(temp4$race.ethnicity.5level)
+# White Black Asian Other Mixed  NA's 
+# 7527  1870   278   603  1434   171 
+
+# summary(temp4$race.eth.7level)
+# White Black Asian  AIAN  NHPI Other Mixed  NA's 
+#  7527  1870   278    62    16   525  1434   171 
+
+# We are going to use the five levels for race ("White", "Black", "Asian", "Other", "Mixed") and also use the variable demo_race_hispanic.
 
 ```
 
@@ -273,11 +300,9 @@ nda20$race.ethnicity.5level = droplevels(nda20$race.ethnicity.5level)
 ```{r}
 
 # Save the new data frame again.
+saveRDS(nda20, glue('{output_directory}/nda20.rds'))
 
-saveRDS(nda20, paste(output_directory,"nda20.rds",sep="/"))
-
-# Optional -- save as .csv file as well
-
-write.csv(nda20, paste(output_directory,"nda20.csv",sep="/"), row.names = FALSE)
+# Save as csv file as well.
+write.csv(nda20,glue('{output_directory}/nda20.csv'), row.names = FALSE)
 
 ```
