@@ -3,13 +3,11 @@ Order in which scripts should be run.
 1. ABCD_Merge_3.0.
 2. core_demographics_3.0.
 3. ABCD_renamevariables.
-4. calculate_PDS.
+4. calculate_PDS. [Change to Herting et al. script?]
 5. calculate_BISBAS_Reward.
-6. split data.
-
-After exploratory and confirmatory data files are created.
-7. add_PDS_categories (in the future, this should be in calculate_PDS, before creating the two separate data files).
-8. calculate_MRI_averages  (in the future, can do before creating the two samples; the z scores that are created in this script would be compared to the whole sample rather than the half sample, however, so might want to do that part after dividing the data into the samples).
+6. add_PDS_categories. [Change to Herting et al. script?]
+7. calculate_MRI_averages. (Note: the z scores that are created in this script would be compared to the whole sample rather than the half sample, however, so might want to do that part after dividing the data into the samples).
+8. split data.
 
 Exploratory sample
 1. data cleaning and descriptives.
