@@ -3,9 +3,10 @@
 # This code renames the ABCD variables to have shorter and more interpretable names.
 
 library(plyr)
+library(glue)
 # Replace with your directories here.
 variabledirectory <- "/Users/nataliesaragosa-harris/Desktop/ABCD"
-outputdirectory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/output"
+outputdirectory <- "/Users/nataliesaragosa-harris/Desktop/ABCD/ABCD/derivatives"
 
 setwd(variabledirectory)
 variablenames <- read.csv("VariableDefinitions.csv")
@@ -37,8 +38,7 @@ missingvariables <- merge(missingvariables,aliases, by = "Variable.Name")
 
 no_aliases <- subset(missingvariables, Aliases== "")
 print("No alias provided for the following variables: ")
-print(no_aliases$Variable.Name) # looks like imgincl_mid_include is not in the dataset. it might not exist for abcd 3.0 dataset.
-
+print(no_aliases$Variable.Name)
 
 # Keep only the ones that have an alias.
 missingvariables <- subset(missingvariables, Aliases!= "")
@@ -54,8 +54,6 @@ print(aliases_not_in_data)
 # These variables need to be calculated so they are not in the dataframe currently.
 # bis_y_ss_basm_rr.
 # bis_y_ss_basm_rr_nm.
-# pubertdev_ss_female_category_p.
-# pubertdev_ss_male_category_p.
 
 # Go through the variables that do have aliases in the data.
 for (i in 1:length(aliases_in_data)){
@@ -73,10 +71,6 @@ for (i in 1:length(aliases_in_data)){
 print("The following variables were not found in the data frame under this name or an alias: ")
 print(setdiff(variables,colnames(datafile)))
 
-# We need to calculate PDS category ourselves so these two variables are not in the dataframe (see definition in variable definitions file).
-# pds_p_ss_male_category.
-# pds_p_ss_female_category.
-
 # The bisbas ones need to be calculated (see definition in variable definitions file).
 # bisbas_ss_basm_rr.
 # bisbas_ss_basm_rr_nm.
@@ -86,11 +80,11 @@ setwd(outputdirectory)
 
 # As a last step we can save the data in R's native file format.
 
-saveRDS(datafile, paste(outputdirectory,"nda20.rds",sep="/"))
+saveRDS(datafile, glue('{outputdirectory}/nda20.rds'))
 
 names.nda20=colnames(datafile)
 
 save(file="names.nda20.RData",names.nda20)
 
 # Save as .csv file as well.
-write.csv(datafile, paste(outputdirectory,"nda20.csv",sep="/"), row.names = FALSE)
+write.csv(datafile, glue('{outputdirectory}/nda20.csv', row.names = FALSE))

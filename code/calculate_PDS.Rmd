@@ -57,6 +57,19 @@ nda20$PDS_sum = as.numeric(nda20$PDS_sum)
 
 PDS_subset <- nda20 %>%
   select(sex, age, PDS_score_f, PDS_score_m, PDS_score, PDS_sum_f,  PDS_sum_m, PDS_sum)
+
+
+# Create new variable for the category variable that combines male and female columns.
+nda20 <- nda20 %>%
+  mutate(
+    pds_p_ss_category = ifelse((sex=="F"), pds_p_ss_female_category, pds_p_ss_male_category),
+    pds_p_ss_cat_nm = ifelse((sex=="F"), pds_p_ss_female_cat_nm, pds_p_ss_male_cat_nm),
+    pds_p_ss_cat_nt = ifelse((sex=="F"), pds_p_ss_female_cat_nt, pds_p_ss_male_cat_nt))
+
+# pds <- data[,c("src_subject_id","PDS_sum","PDS_score", 
+#        "pds_p_ss_female_category", "pds_p_ss_male_category", "pds_p_ss_category","pds_p_ss_cat_nm","pds_p_ss_cat_nt")]
+
+
 ```
 #SAVE DATA
 ```{r}
