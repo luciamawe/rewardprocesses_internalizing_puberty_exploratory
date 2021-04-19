@@ -7,8 +7,6 @@ output: html_document
 
 #####2ND THING TO DO:Clean up PDS data
 
-####  PLOT: sqc_qu_motion , fsqc_qu_pialover, fsqc_qu_wmunder, fsqc_qu_inhomogeneity, fsqc_qu_artifact
-
 ### FALSE discovery right -> rank p values and drop the non significant ones (narrow down on outcome data) FDR function for correcting for multiple comparisons https://stat.ethz.ch/R-manual/R-devel/library/stats/html/p.adjust.html
 
 ```{r}
@@ -45,7 +43,7 @@ nda30 <- read.table(file.path(data_folder,file_name),header=T, sep=",",as.is=TRU
 ## This line is not working. Lucia to return to it after we have nda30 ready
 ## Also, Megan has used DEAP names, we are using NDA names. Need to update
 
-myvars <- c("src_subject_id",
+myvars<- c("src_subject_id",
                     "interview_age",
                     "eventname",
                     "sex",
@@ -58,29 +56,103 @@ myvars <- c("src_subject_id",
                     "high.educ",
                     "household.income",
                     "married.or.livingtogether",
-                    "pds_1_p",
-                    "pds_2_p",
-                    "pds_3_p",
-                    "pds_f4_p",
-                    "pds_f5b_p",
-                    "pds_f6_p",
-                    "pds_m4_p",
-                    "pds_m5_p",
-                    )      
+                    "cbcl_scr_syn_internal_t",
+                    "cbcl_scr_syn_anxdep_t",
+                    "cbcl_scr_syn_withdep_t",
+                    "cbcl_scr_dsm5_depress_t",
+                    "cbcl_scr_dsm5_anxdisord_t",
+                    "cbcl_scr_syn_internal_r",
+                    "cbcl_scr_syn_anxdep_r",
+                    "cbcl_scr_syn_withdep_r",
+                    "cbcl_scr_dsm5_depress_r",
+                    "cbcl_scr_dsm5_anxdisord_r",
+                  "pubertal_sex_p",
+"pds_select_language___1",
+"pds_1_p",
+"pds_2_p",
+"pds_3_p",
+"pds_m4_p",
+"pds_m5_p",
+"pds_f4_p",
+"pds_f5b_p",
+"pds_f6_p",
+"pds_f6_p_dk", 
+"pds_p_ss_male_category",
+"pds_p_ss_male_cat_nm",
+"pds_p_ss_male_cat_nt",
+"pds_p_ss_female_category",
+"pds_p_ss_female_cat_nm",
+"pds_p_ss_female_cat_nt",
+"pds_sex_y",
+"pds_ht2_y",
+"pds_skin2_y",
+"pds_bdyhair_y",
+"pds_m4_y",
+"pds_m5_y",
+"pds_f4_2_y",
+"pds_f5_y",
+"pds_f6_y",
+"pds_f6_y_dk",
+                    "pds_y_ss_male_category",
+                    "pds_y_ss_male_cat_nm",
+                    "pds_y_ss_male_cat_nt",
+                    "pds_y_ss_female_category",
+                    "pds_y_ss_female_cat_nm",
+                    "pds_y_ss_female_cat_nt",
+                    "fam_history_q6d_depression",
+                    "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
+                    "tfmri_ma_acdn_b_scs_aalh",
+                    "tfmri_ma_acdn_b_scs_cdrh", # Caudate reward vs. neutral anticipation.
+                    "tfmri_ma_acdn_b_scs_cdlh",
+                    "tfmri_ma_acdn_b_scs_ptrh", # Putamen reward vs. neutral anticipation.
+                    "tfmri_ma_acdn_b_scs_ptlh",
+                    "tfmri_ma_arvn_b_cds_mobofrrh", # Medial OFC reward vs. neutral anticipation.
+                    "tfmri_ma_arvn_b_cds_mobofrlh",
+                    "tfmri_ma_arvn_b_cds_lobofrrh", # Lateral OFC reward vs. neutral anticipation.
+                    "tfmri_ma_arvn_b_cds_lobofrlh",
+                    "tfmri_ma_rpvnfb_b_scs_aarh", # Accumbens reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_scs_aalh",
+                    "tfmri_ma_rpvnfb_b_scs_cdrh", # Caudate reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_scs_cdlh",
+                    "tfmri_ma_rpvnfb_b_scs_ptrh", # Putamen reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_scs_ptlh",
+                    "tfmri_ma_rpvnfb_b_cds_mobofrrh", # Medial OFC reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_cds_mobofrlh",
+                    "tfmri_ma_rpvnfb_b_cds_lobofrrh", # Lateral OFC reward positive versus negative feedback.
+                    "tfmri_ma_rpvnfb_b_cds_lobofrlh",
+                    "accumbens_rvsn_ant_z", # Reward vs. neutral during anticipation stage (z scores).
+                    "caudate_rvsn_ant_z",
+                    "putamen_rvsn_ant_z",
+                    "mOFC_rvsn_ant_z",
+                    "lOFC_rvsn_ant_z",
+                    "striatum_rvsn_ant_z", # reward vs. neutral anticipation.
+                    "accumbens_posvsneg_feedback_z", # All positive vs. negative feedback.
+                    "caudate_posvsneg_feedback_z",
+                    "putamen_posvsneg_feedback_z",
+                    "mOFC_posvsneg_feedback_z",
+                    "lOFC_posvsneg_feedback_z",
+                    "striatum_posvsneg_feedback_z",
+                    "bisbas_ss_basm_rr",
+                    "hormone_scr_ert_mean",
+                    "hormone_scr_dhea_mean",
+                    "tfmri_mid_all_beh_large.reward.pos.feedback_mean.rt", #Average MID RT Large Reward Positive
+                    "tfmri_mid_all_beh_small.reward.pos.feedback_mean.rt", #Average MID RT Small Reward Positive
+                    "tfmri_mid_all_beh_neutral.pos.feedback_mean.rt",#Average MID RT Neutral Positive
+                    "tfmri_mid_beh_performflag", # Exclude or include based on MID behavioral data (1 = good; 0 = exclude).
+                    "imgincl_mid_include" # Exclude or include based on neuroimaging data (1 = good; 0 = exclude).
+)
 
 
 df<-  nda30  %>% 
   select (myvars)
 
-df <- select = c('a' , 'b')
 
-##Reduce to baseline data only N=11,875
+##Reduce to baseline data only N=11,883
 df<- subset(df,eventname=="baseline_year_1_arm_1")
-
 
 ##Look at data formats
 str(df)
-describeBy(df, group=df$sex_at_birth)
+describeBy(df, group=df$sex) #sex is sex for DEAP
 
 ##
 write_rds(df, "df_puberty.rds")
@@ -90,69 +162,71 @@ write_rds(df, "df_puberty.rds")
 ###CAREGIVER REPORT -- CLEAN, VALIDATED, AND PREPARE FINAL SAMPLE
 ```{r}
 ##Let's create a caregiver PDS set to clean 
-caregivervars <- c("src_subject_id", "eventname", "demo_prim_p", "interview_age", "sex_at_birth", "race_ethnicity",
-"pubertdev_sex_p",
-"pubertdev_select_language_p",
-"pubertdev_1_p",
-"pubertdev_2_p",
-"pubertdev_3_p",
-"pubertdev_m4_p",
-"pubertdev_m5_p",
-"pubertdev_f4_p",
-"pubertdev_f5b_p",
-"pubertdev_f6_p",
-"pubertdev_f6_dk_p", 
-"pubertdev_ss_female_category_p",
-"pubertdev_ss_male_category_p",
-"pubertdev_ss_male_cat_nt_p",
-"pubertdev_ss_male_cat_nm_p",
-"pubertdev_ss_female_cat_nt_p",
-"pubertdev_ss_female_cat_nm_p")
+caregivervars <- c("src_subject_id", "eventname", "interview_age", "sex", "race.ethnicity.5level",
+"pubertal_sex_p",
+"pds_select_language___1",
+"pds_1_p",
+"pds_2_p",
+"pds_3_p",
+"pds_m4_p",
+"pds_m5_p",
+"pds_f4_p",
+"pds_f5b_p",
+"pds_f6_p",
+"pds_f6_p_dk", 
+"pds_p_ss_male_category",
+"pds_p_ss_male_cat_nm",
+"pds_p_ss_male_cat_nt",
+"pds_p_ss_female_category",
+"pds_p_ss_female_cat_nm",
+"pds_p_ss_female_cat_nt")
 
-df_caregiver <- df[caregivervars]
+df_caregiver <- df[caregivervars] #11883
+head(df_caregiver)
 ```
 
 
-##STEP 1: Clean mis-match of data -- sex_at_birth = sex at birth
+##STEP 1: Clean mis-match of data -- sex = sex at birth
 ```{r}
 ##How many participants do we have for this analysis when we begin?
 ##Load library to explore data 
 library(tidyverse)
 
 library(dplyr)
-df_caregiver %>% dplyr::count(sex_at_birth)
+df_caregiver %>% dplyr::count(sex)
 
-##Remove 6 people with blank sex_at_birth
-df_caregiver<- df_caregiver[-which(is.na(df_caregiver$sex_at_birth)), ]
-df_caregiver %>% dplyr::count(sex_at_birth)
+##Remove 0 people with blank sex  #no NAs for 3.0, there were 6 NAs in 2.0
+
+df_caregiver<-df_caregiver %>% drop_na(sex)
+df_caregiver %>% dplyr::count(sex)
 ```
 
-### Check some more sex_at_birth/sex matching
+### Check some more sex/sex matching
 ```{r}
-#PDS vs. sex_at_birth check
+#PDS vs. sex check
 ##Who has a PDS sex variable of "NA" and remove
 
-df_caregiver %>%
-dplyr::count(pubertdev_sex_p) ##5 NA
-df_caregiver=df_caregiver[-c(which(is.na(df_caregiver$pubertdev_sex_p))),]
+df_caregiver %>% dplyr::count(pubertal_sex_p) ##pubertal_sex_p is missing in 3.0 release, 2.1 had 5 NAs
 
-table(df_caregiver$sex_at_birth,df_caregiver$pubertdev_sex_p) ##Mismatch =63 
+df_caregiver=df_caregiver[-c(which(is.na(df_caregiver$pubertal_sex_p))),]
+
+table(df_caregiver$sex,df_caregiver$pubertal_sex_p) ##Mismatch =63 
 
 
 ##Remove mismatches
-df_caregiver <- df_caregiver[-c(which(df_caregiver$sex_at_birth == "M" & df_caregiver$pubertdev_sex_p == "Female"), which(df_caregiver$sex_at_birth == "F" & df_caregiver$pubertdev_sex_p == "Male")),]
+df_caregiver <- df_caregiver[-c(which(df_caregiver$sex == "M" & df_caregiver$pubertal_sex_p == "Female"), which(df_caregiver$sex == "F" & df_caregiver$pubertal_sex_p == "Male")),]
 
 ##Check this worked and rerun descriptives
-table(df_caregiver$sex_at_birth,df_caregiver$pubertdev_sex_p) #N=5659 F and N=6142 M
+table(df_caregiver$sex,df_caregiver$pubertal_sex_p) #N=5659 F and N=6142 M
 
-describeBy(df_caregiver, group=df_caregiver$sex_at_birth)
+describeBy(df_caregiver, group=df_caregiver$sex)
 
-##Note NDAR_INV5D3CU8ML has Male sex_at_birth but female answers -- we will remove from dataset
-c(which(df_caregiver$sex_at_birth == "M" & !is.na(df_caregiver$pubertdev_f4_p)))
-df_caregiver=df_caregiver[-c(which(df_caregiver$sex_at_birth == "M" & !is.na(df_caregiver$pubertdev_f4_p))),]
+##Note NDAR_INV5D3CU8ML has Male sex but female answers -- we will remove from dataset
+c(which(df_caregiver$sex == "M" & !is.na(df_caregiver$pds_f4_p)))
+df_caregiver=df_caregiver[-c(which(df_caregiver$sex == "M" & !is.na(df_caregiver$pds_f4_p))),]
 
 ##Final sample for PDS caregiver reporting = N=6141 MALES AND N=5659 FEMALES
-xtabs(~df_caregiver$sex_at_birth+df_caregiver$pubertdev_sex_p)
+xtabs(~df_caregiver$sex+df_caregiver$pubertal_sex_p)
 
 ```
 
@@ -160,60 +234,98 @@ xtabs(~df_caregiver$sex_at_birth+df_caregiver$pubertdev_sex_p)
 ```{r}
 ##Now let's see what these caregivers report!
 df_caregiver %>%
-dplyr::count(pubertdev_select_language_p, pubertdev_sex_p)
+dplyr::count(pubertdev_select_language_p, pubertal_sex_p)
 
 ##Double check the numbers For Table 1 to update tables: Note there are NO female answers for male questions and males answers for female questions --> Are cleaning worked
-table(df_caregiver$pubertdev_1_p, df_caregiver$pubertdev_sex_p)
-table(df_caregiver$pubertdev_2_p, df_caregiver$pubertdev_sex_p)
-table(df_caregiver$pubertdev_3_p, df_caregiver$pubertdev_sex_p)
-table(df_caregiver$pubertdev_m4_p, df_caregiver$pubertdev_sex_p)
-table(df_caregiver$pubertdev_m5_p, df_caregiver$pubertdev_sex_p)
-table(df_caregiver$pubertdev_f4_p, df_caregiver$pubertdev_sex_p)
-table(df_caregiver$pubertdev_f5b_p, df_caregiver$pubertdev_sex_p)
-table(df_caregiver$pubertdev_f6_p, df_caregiver$pubertdev_sex_p)
+# table(df_caregiver$pds_1_p, df_caregiver$pubertal_sex_p)
+# table(df_caregiver$pds_2_p, df_caregiver$pubertal_sex_p)
+# table(df_caregiver$pds_3_p, df_caregiver$pubertal_sex_p)
+# table(df_caregiver$pds_m4_p, df_caregiver$pubertal_sex_p)
+# table(df_caregiver$pds_m5_p, df_caregiver$pubertal_sex_p)
+# table(df_caregiver$pds_f4_p, df_caregiver$pubertal_sex_p)
+# table(df_caregiver$pds_f5b_p, df_caregiver$pubertal_sex_p)
+# table(df_caregiver$pds_f6_p, df_caregiver$pubertal_sex_p)
+
+
+table(df_caregiver$pds_1_p, df_caregiver$sex)  #Height
+table(df_caregiver$pds_2_p, df_caregiver$sex)  #Body hair
+table(df_caregiver$pds_3_p, df_caregiver$sex)  #Skin changes
+table(df_caregiver$pds_m4_p, df_caregiver$sex)  # Facial hair
+table(df_caregiver$pds_m5_p, df_caregiver$sex)  #Voice change
+table(df_caregiver$pds_f4_p, df_caregiver$sex)  #Breasts
+table(df_caregiver$pds_f5b_p, df_caregiver$sex)  #Menarche yes/no
+table(df_caregiver$pds_f6_p, df_caregiver$sex)    #Menarche age  
 
 #Check the demographics of reporter for Don't know for menarche as inquired by Reviewer 1
-xtabs(~df_caregiver$demo_prim_p+df_caregiver$pubertdev_f5b_p)
-xtabs(~df_caregiver$race_ethnicity+df_caregiver$pubertdev_f5b_p)
+xtabs(~df_caregiver$demo_prim_p+df_caregiver$pds_f5b_p)  #primary reporter, not used in our analyses
+xtabs(~df_caregiver$race.ethnicity.5level+df_caregiver$pds_f5b_p)
 
 ```
 #Make factors into numeric variables for equations below
 ```{r}
 ##PDS Recode categorical into variables with labels so we can sum and average; Note "I don't know is not numerically meaningful" so turned into NA for just these variables
 
-df_caregiver$pubertdev_1_p_num=as.numeric(df_caregiver$pubertdev_1_p)
-df_caregiver$pubertdev_1_p_num[df_caregiver$pubertdev_1_p_num == 5] <- NA
-df_caregiver$pubertdev_2_p_num=as.numeric(df_caregiver$pubertdev_2_p)
-df_caregiver$pubertdev_2_p_num[df_caregiver$pubertdev_2_p_num == 5] <- NA
-df_caregiver$pubertdev_3_p_num=as.numeric(df_caregiver$pubertdev_3_p)
-df_caregiver$pubertdev_3_p_num[df_caregiver$pubertdev_3_p_num == 5] <- NA
-df_caregiver$pubertdev_m4_p_num=as.numeric(df_caregiver$pubertdev_m4_p)
-df_caregiver$pubertdev_m4_p_num[df_caregiver$pubertdev_m4_p_num == 5] <- NA
-df_caregiver$pubertdev_m5_p_num=as.numeric(df_caregiver$pubertdev_m5_p)
-df_caregiver$pubertdev_m5_p_num[df_caregiver$pubertdev_m5_p_num == 5] <- NA
-df_caregiver$pubertdev_f4_p_num=as.numeric(df_caregiver$pubertdev_f4_p)
-df_caregiver$pubertdev_f4_p_num[df_caregiver$pubertdev_f4_p_num == 5] <- NA
+# df_caregiver$pds_1_p_num=as.numeric(df_caregiver$pds_1_p)
+# df_caregiver$pds_1_p_num[df_caregiver$pds_1_p_num == 5] <- NA
+# df_caregiver$pds_2_p_num=as.numeric(df_caregiver$pds_2_p)
+# df_caregiver$pds_2_p_num[df_caregiver$pds_2_p_num == 5] <- NA
+# df_caregiver$pds_3_p_num=as.numeric(df_caregiver$pds_3_p)
+# df_caregiver$pds_3_p_num[df_caregiver$pds_3_p_num == 5] <- NA
+# df_caregiver$pds_m4_p_num=as.numeric(df_caregiver$pds_m4_p)
+# df_caregiver$pds_m4_p_num[df_caregiver$pds_m4_p_num == 5] <- NA
+# df_caregiver$pds_m5_p_num=as.numeric(df_caregiver$pds_m5_p)
+# df_caregiver$pds_m5_p_num[df_caregiver$pds_m5_p_num == 5] <- NA
+# df_caregiver$pds_f4_p_num=as.numeric(df_caregiver$pds_f4_p)
+# df_caregiver$pds_f4_p_num[df_caregiver$pds_f4_p_num == 5] <- NA
 
-#Make an empty variable
-df_caregiver$pubertdev_f5b_p_num[df_caregiver$pubertdev_f5b_p == "Yes"] <- 4
-df_caregiver$pubertdev_f5b_p_num[df_caregiver$pubertdev_f5b_p == "No"] <- 1
+##PDS Recode categorical into variables with labels so we can sum and average; Note "I don't know 999 is not numerically meaningful" so turned into NA for just these variables
+df_caregiver$pds_1_p_num=as.numeric(df_caregiver$pds_1_p)
+df_caregiver$pds_1_p_num[df_caregiver$pds_1_p_num == 777] <- NA
+df_caregiver$pds_1_p_num[df_caregiver$pds_1_p_num == 999] <- NA
+df_caregiver$pds_2_p_num=as.numeric(df_caregiver$pds_2_p)
+df_caregiver$pds_2_p_num[df_caregiver$pds_2_p_num == 777] <- NA
+df_caregiver$pds_2_p_num[df_caregiver$pds_2_p_num == 999] <- NA
+df_caregiver$pds_3_p_num=as.numeric(df_caregiver$pds_3_p)
+df_caregiver$pds_3_p_num[df_caregiver$pds_3_p_num == 777] <- NA
+df_caregiver$pds_3_p_num[df_caregiver$pds_3_p_num == 999] <- NA
+df_caregiver$pds_m4_p_num=as.numeric(df_caregiver$pds_m4_p)
+df_caregiver$pds_m4_p_num[df_caregiver$pds_m4_p_num == 777] <- NA
+df_caregiver$pds_m4_p_num[df_caregiver$pds_m4_p_num == 999] <- NA
+df_caregiver$pds_m5_p_num=as.numeric(df_caregiver$pds_m5_p)
+df_caregiver$pds_m5_p_num[df_caregiver$pds_m5_p_num == 777] <- NA
+df_caregiver$pds_m5_p_num[df_caregiver$pds_m5_p_num == 999] <- NA
+df_caregiver$pds_f4_p_num=as.numeric(df_caregiver$pds_f4_p)
+df_caregiver$pds_f4_p_num[df_caregiver$pds_f4_p_num == 777] <- NA
+df_caregiver$pds_f4_p_num[df_caregiver$pds_f4_p_num == 999] <- NA
 
+df_caregiver$sex[df_caregiver$sex == "F"] <- "Female"
+df_caregiver$sex[df_caregiver$sex == "M"] <- "Male"
+
+#Megan has the following lines which I do not think we need, as we already have the numbers
+
+# df_caregiver$pds_f5b_p_num[df_caregiver$pds_f5b_p == "Yes"] <- 4
+# df_caregiver$pds_f5b_p_num[df_caregiver$pds_f5b_p == "No"] <- 1
+
+df_caregiver$pds_f5b_p_num=as.numeric(df_caregiver$pds_f5b_p)
+df_caregiver$pds_f5b_p_num[df_caregiver$pds_f5b_p == 999] <- NA
 ```
 
 ##Examine correlation of raw data for caregiver report
 ```{r}
 ##Split data base by male and female and only use those that have valid puberty
-df_caregiverm=subset(df_caregiver, pubertdev_sex_p=="Male")
-df_caregiverf=subset(df_caregiver, pubertdev_sex_p=="Female")
+# df_caregiverm=subset(df_caregiver, pubertal_sex_p=="Male")
+# df_caregiverf=subset(df_caregiver, pubertal_sex_p=="Female")
+df_caregiverm=subset(df_caregiver, sex=="Male")
+df_caregiverf=subset(df_caregiver, sex=="Female")
 
 ##Group female pds correlations
 library(GGally)
-keeps_pds_f=c("pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_f4_p_num","pubertdev_f5b_p_num", "interview_age")
+keeps_pds_f=c("pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_f4_p_num","pds_f5b_p_num", "interview_age")
 df_f_all_corr=ggpairs(df_caregiverf, keeps_pds_f, title = "Within PDS Females")
 df_f_all_corr
 
 ##Group male pds correlations with age
-keeps_pds_m=c("pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_m4_p_num","pubertdev_m5_p_num", "interview_age")
+keeps_pds_m=c("pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_m4_p_num","pds_m5_p_num", "interview_age")
 df_m_all_corr=ggpairs(df_caregiverm, keeps_pds_m, title = "Within PDS Males")
 df_m_all_corr
 ```
@@ -223,44 +335,48 @@ df_m_all_corr
 #Male summary scores
 
 #Sum puberty scores across rows for males. Then change female values for this field to NA
-df_caregiver$pubertdev_maless_p <-rowSums(df_caregiver[,c("pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_m4_p_num", "pubertdev_m5_p_num")], na.rm=T)
+df_caregiver$pubertdev_maless_p <-rowSums(df_caregiver[,c("pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_m4_p_num", "pds_m5_p_num")], na.rm=T)
 df_caregiver$pubertdev_maless_p[df_caregiver$pubertdev_maless_p == 0] <- NA
-df_caregiver$pubertdev_maless_p[df_caregiver$sex_at_birth=="F"] <- NA
+df_caregiver$pubertdev_maless_p[df_caregiver$sex=="Female"] <- NA
 
 #Sum puberty scores across rows for females. Then change male values for this field to NA
-df_caregiver$pubertdev_femaless_p <- rowSums(df_caregiver[,c("pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_f4_p_num", "pubertdev_f5b_p_num")], na.rm=T)
+df_caregiver$pubertdev_femaless_p <- rowSums(df_caregiver[,c("pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_f4_p_num", "pds_f5b_p_num")], na.rm=T)
 df_caregiver$pubertdev_femaless_p[df_caregiver$pubertdev_femaless_p == 0] <- NA
-df_caregiver$pubertdev_femaless_p[df_caregiver$sex_at_birth=="M"] <- NA
+df_caregiver$pubertdev_femaless_p[df_caregiver$sex=="Male"] <- NA
 
 #Count number of Qs per subject in males that are not NA/DK
-df_caregiver$pubertdev_males_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_m4_p_num", "pubertdev_m5_p_num")]))
+df_caregiver$pubertdev_males_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_m4_p_num", "pds_m5_p_num")]))
 
-df_caregiver$pubertdev_males_Qcount_p[df_caregiver$sex_at_birth=="F"] <- NA
+df_caregiver$pubertdev_males_Qcount_p[df_caregiver$sex=="Female"] <- NA
 
 #Count number of Qs per subject in females that are not NA/DK
-df_caregiver$pubertdev_females_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_f4_p_num", "pubertdev_f5b_p_num")]))
-df_caregiver$pubertdev_females_Qcount_p[df_caregiver$sex_at_birth=="M"] <- NA
+df_caregiver$pubertdev_females_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_f4_p_num", "pds_f5b_p_num")]))
+df_caregiver$pubertdev_females_Qcount_p[df_caregiver$sex=="Male"] <- NA
 
 #This will give total number of NAs in males per pubertdev column
-apply(subset(df_caregiver, sex_at_birth=="M")[,c("pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_m4_p_num", "pubertdev_m5_p_num")], 2, function(x) sum(is.na(x)))
+apply(subset(df_caregiver, sex=="M")[,c("pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_m4_p_num", "pds_m5_p_num")], 2, function(x) sum(is.na(x)))
 #And total number of NAs in females per pubertdev column
-apply(subset(df_caregiver, sex_at_birth=="F")[,c("pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_f4_p_num", "pubertdev_f5b_p_num")], 2, function(x) sum(is.na(x)))
+apply(subset(df_caregiver, sex=="F")[,c("pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_f4_p_num", "pds_f5b_p_num")], 2, function(x) sum(is.na(x)))
 
 #If more than 1 IDK/NA for males. Then code to not valid.
 df_caregiver$pubertdev_males_valid_for_avg<-NA
-df_caregiver$pubertdev_males_valid_for_avg <- ifelse(df_caregiver$sex_at_birth=="M" & df_caregiver$pubertdev_males_Qcount_p>=4, 1, 0)
+df_caregiver$pubertdev_males_valid_for_avg <- ifelse(df_caregiver$sex=="Male" & df_caregiver$pubertdev_males_Qcount_p>=4, 1, 0)
 
 #If more than 1 IDK/NA for females. Then code to not valid.
 df_caregiver$pubertdev_females_valid_for_avg<-NA
-df_caregiver$pubertdev_females_valid_for_avg <- ifelse(df_caregiver$sex_at_birth=="F" & df_caregiver$pubertdev_females_Qcount_p>=4, 1, 0)
+df_caregiver$pubertdev_females_valid_for_avg <- ifelse(df_caregiver$sex=="Female" & df_caregiver$pubertdev_females_Qcount_p>=4, 1, 0)
 
 ##Count who is valid
 df_caregiver %>% dplyr::count(pubertdev_females_valid_for_avg)
 df_caregiver %>% dplyr::count(pubertdev_males_valid_for_avg)
 
 ##Count who is valid based on sex 
-xtabs(~df_caregiver$pubertdev_males_valid_for_avg+df_caregiver$pubertdev_sex_p)
-xtabs(~df_caregiver$pubertdev_females_valid_for_avg+df_caregiver$pubertdev_sex_p)
+# xtabs(~df_caregiver$pubertdev_males_valid_for_avg+df_caregiver$pubertal_sex_p)
+# xtabs(~df_caregiver$pubertdev_females_valid_for_avg+df_caregiver$pubertal_sex_p)
+
+##Count who is valid based on sex 
+xtabs(~df_caregiver$pubertdev_males_valid_for_avg+df_caregiver$sex)
+xtabs(~df_caregiver$pubertdev_females_valid_for_avg+df_caregiver$sex)
 
 ##ONLY for valid PDS calculate the folowing meaningful average and category scores of puberty: 
 ##Calculate average of PDS values for males for only those with valid data (see definition of valid above)
@@ -268,17 +384,17 @@ df_caregiver$pubertdev_maleAvg_p <- df_caregiver$pubertdev_maless_p/df_caregiver
 df_caregiver$pubertdev_maleAvg_p[df_caregiver$pubertdev_males_valid_for_avg==0] <- NA
 
 ##Calculate average of PDS values for females for only those with valid data (see definition of valid above)
-df_caregiver$pubertdev_femaleAvg_p <- df_caregiver$pubertdev_femaless_p/df_caregiver$pubertdev_females_Qcount_p
+df_caregiver$pubertdev_femaleAvg_p <-  df_caregiver$pubertdev_femaless_p/df_caregiver$pubertdev_females_Qcount_p
 df_caregiver$pubertdev_femaleAvg_p[df_caregiver$pubertdev_females_valid_for_avg==0] <- NA
 
 #Make a single variable for PDS Average
 df_caregiver$pubertdev_Avg_p_all<-coalesce(df_caregiver$pubertdev_femaleAvg_p,df_caregiver$pubertdev_maleAvg_p)
 
 ##Plot the data
-M_Avg=ggplot(subset(df_caregiver, sex_at_birth=="M"),aes(x=pubertdev_maleAvg_p))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-F_Avg=ggplot(subset(df_caregiver, sex_at_birth=="F"),aes(x=pubertdev_femaleAvg_p))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+M_Avg=ggplot(subset(df_caregiver, sex=="M"),aes(x=pubertdev_maleAvg_p))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+F_Avg=ggplot(subset(df_caregiver, sex=="F"),aes(x=pubertdev_femaleAvg_p))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
 
-Both_Avg=ggplot(df_caregiver,aes(x=pubertdev_Avg_p_all,group=sex_at_birth,fill=sex_at_birth))+geom_histogram(na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+Both_Avg=ggplot(df_caregiver,aes(x=pubertdev_Avg_p_all,group=sex,fill=sex))+geom_histogram(na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
 
 
 ##Fancy plots
@@ -287,12 +403,12 @@ library(devtools)
 install_github("kassambara/easyGgplot2")
 library(easyGgplot2)
 AvgPDS=ggplot2.histogram(data=df_caregiver, xName='pubertdev_Avg_p_all',binwidth=0.2,
-    groupName='sex_at_birth', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex_at_birth)
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 ggsave(AvgPDS,  file="AvgPDS.tiff", width = 12, height = 8, units = "in",
   dpi = 300)
 
-ggplot2.histogram(data=df_caregiver, xName='pubertdev_Avg_p_all',addDensity=TRUE,groupName='sex_at_birth', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.2)+theme_bw()
+ggplot2.histogram(data=df_caregiver, xName='pubertdev_Avg_p_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.2)+theme_bw()
 
 ```
   
@@ -300,11 +416,14 @@ ggplot2.histogram(data=df_caregiver, xName='pubertdev_Avg_p_all',addDensity=TRUE
 ```{r}
 ##Check category score already in NDAR dataset
 ##How many  missing
-xtabs(~df_caregiver$pubertdev_ss_female_cat_nm_p+df_caregiver$pubertdev_sex_p)
-xtabs(~df_caregiver$pubertdev_ss_male_cat_nm_p+df_caregiver$pubertdev_sex_p)
+# xtabs(~df_caregiver$pds_y_ss_female_cat_nm_p+df_caregiver$pubertal_sex_p)
+# xtabs(~df_caregiver$pds_p_ss_male_cat_nm+df_caregiver$pubertal_sex_p)
+
+xtabs(~df_caregiver$pds_p_ss_female_cat_nm+df_caregiver$sex)
+xtabs(~df_caregiver$pds_p_ss_male_cat_nm+df_caregiver$sex)
 
 ##Make a single variable
-df_caregiver$pubertdev_ss_category_p_all<-coalesce(df_caregiver$pubertdev_ss_female_category_p, df_caregiver$pubertdev_ss_male_category_p)
+df_caregiver$pds_p_ss_cat_all<-coalesce(df_caregiver$pds_p_ss_female_category, df_caregiver$pds_p_ss_male_category)
 
 ##Code into Tanner Stage Based on Petersen, A. C., Crockett, L., et al. (1988) A self-report measure of pubertal status: Reliability, validity, and initial norms. J Youth Adolesc 17(2): 117-133. Puberty Category Scores for boys used body hair growth, voice... https://www.jahonline.org/article/1054-139X(93)90004-9/pdf
 
@@ -313,13 +432,15 @@ df_caregiver$pubertdev_ss_category_p_all<-coalesce(df_caregiver$pubertdev_ss_fem
 
 ## FEMALES Prepubertal = 3; Early Puberty = 3 and no menarche; Midpubertal = 4 and no menarche; Late Puberty = <=7 and menarche; Postpubertal = 8 and menarche
 
-df_caregiver$pubertdev_ss_category_p_all<-factor(df_caregiver$pubertdev_ss_category_p_all,
+df_caregiver$pds_p_ss_cat_all<-factor(df_caregiver$pds_p_ss_cat_all,
 levels = c(1,2,3,4,5), labels=c("Pre", "Early", "Mid", "Late","Post"))
 
-xtabs(~df_caregiver$pubertdev_ss_category_p_all+df_caregiver$pubertdev_sex_p)
+# xtabs(~df_caregiver$pds_p_ss_cat_all+df_caregiver$pubertal_sex_p)
+xtabs(~df_caregiver$pds_p_ss_cat_all+df_caregiver$sex)
 
-PubertyCategory=ggplot(subset(df_caregiver, !is.na(pubertdev_ss_category_p_all)),aes(x=factor(pubertdev_ss_category_p_all,levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex_at_birth,fill=sex_at_birth))+geom_histogram(stat="count",position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex_at_birth)
 
+PubertyCategory=ggplot(subset(df_caregiver, !is.na(pds_p_ss_cat_all)),aes(x=factor(pds_p_ss_cat_all,levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex,fill=sex))+geom_histogram(stat="count",position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
+PubertyCategory
 
 ggsave(PubertyCategory,  file="PubertyCategory.tiff", width = 12, height = 8, units = "in",
   dpi = 300)
@@ -331,42 +452,44 @@ ggsave(PubertyCategory,  file="PubertyCategory.tiff", width = 12, height = 8, un
 ##Shirtcliff 2009 method: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2727719/; In girls, growth spurt, breast development, and menarche are associated with gonadal hormonal signals. In boys, growth spurt, deepening of voice and facial hair growth are associated with gonadal hormones. For both sexes, pubic/body hair and skin changes are associated with adrenal hormones. Doesn't say if items were summed or averaged. To be consistent with Herting et al 2017, we will average.
 
 #Male Gonads
-df_caregiver$pubertdev_malegonadss_p <-rowSums(df_caregiver[,c("pubertdev_1_p_num", "pubertdev_m4_p_num", "pubertdev_m5_p_num")], na.rm=T)
-df_caregiver$pubertdev_malegonad_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pubertdev_1_p_num", "pubertdev_m4_p_num", "pubertdev_m5_p_num")]))
+df_caregiver$pubertdev_malegonadss_p <-rowSums(df_caregiver[,c("pds_1_p_num", "pds_m4_p_num", "pds_m5_p_num")], na.rm=T)
+df_caregiver$pubertdev_malegonad_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pds_1_p_num", "pds_m4_p_num", "pds_m5_p_num")]))
 df_caregiver$pubertdev_malegonad_Qcount_p[df_caregiver$pubertdev_malegonad_Qcount_p == 0] <- NA
-df_caregiver$pubertdev_malegonad_Qcount_p[df_caregiver$sex_at_birth=="F"] <- NA
+df_caregiver$pubertdev_malegonad_Qcount_p[df_caregiver$sex=="Female"] <- NA
 
 #ANY IDK/NA for males in these 3 variables for gonad. Then code to not valid.
 df_caregiver$pubertdev_males_valid_for_gonad<-NA
-df_caregiver$pubertdev_males_valid_for_gonad<-ifelse(df_caregiver$sex_at_birth=="M" & df_caregiver$pubertdev_malegonad_Qcount_p==3, 1, 0)
+df_caregiver$pubertdev_males_valid_for_gonad<-ifelse(df_caregiver$sex=="Male" & df_caregiver$pubertdev_malegonad_Qcount_p==3, 1, 0)
 
 
 #Compute male gonad avg
 df_caregiver$pubertdev_malegonadAvg_p <- df_caregiver$pubertdev_malegonadss_p/df_caregiver$pubertdev_malegonad_Qcount_p
 df_caregiver$pubertdev_malegonadAvg_p[df_caregiver$pubertdev_males_valid_for_gonad==0] <- NA
 
-
 #Female Gonads
-df_caregiver$pubertdev_femalegonadss_p <-rowSums(df_caregiver[,c("pubertdev_1_p_num", "pubertdev_f4_p_num", "pubertdev_f5b_p_num")], na.rm=T)
-df_caregiver$pubertdev_femalegonad_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pubertdev_1_p_num", "pubertdev_f4_p_num", "pubertdev_f5b_p_num")]))
+df_caregiver$pubertdev_femalegonadss_p <-rowSums(df_caregiver[,c("pds_1_p_num", "pds_f4_p_num", "pds_f5b_p_num")], na.rm=T)
+df_caregiver$pubertdev_femalegonad_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pds_1_p_num", "pds_f4_p_num", "pds_f5b_p_num")]))
 df_caregiver$pubertdev_femalegonad_Qcount_p[df_caregiver$pubertdev_femalegonad_Qcount_p == 0] <- NA
-df_caregiver$pubertdev_femalegonad_Qcount_p[df_caregiver$sex_at_birth=="M"] <- NA
+df_caregiver$pubertdev_femalegonad_Qcount_p[df_caregiver$sex=="Male"] <- NA
 
 #ANY IDK/NA for males in these 3 variables for gonad. Then code to not valid.
 df_caregiver$pubertdev_females_valid_for_gonad<-NA
-df_caregiver$pubertdev_females_valid_for_gonad<-ifelse(df_caregiver$sex_at_birth=="F" & df_caregiver$pubertdev_femalegonad_Qcount_p==3, 1, 0)
+df_caregiver$pubertdev_females_valid_for_gonad<-ifelse(df_caregiver$sex=="Female" & df_caregiver$pubertdev_femalegonad_Qcount_p==3, 1, 0)
 
 #Compute female gonad avg
 df_caregiver$pubertdev_femalegonadAvg_p <- df_caregiver$pubertdev_femalegonadss_p/df_caregiver$pubertdev_femalegonad_Qcount_p
 df_caregiver$pubertdev_femalegonadAvg_p[df_caregiver$pubertdev_females_valid_for_gonad==0] <- NA
 
 ##Count who is valid based on sex 
-xtabs(~df_caregiver$pubertdev_males_valid_for_gonad+df_caregiver$pubertdev_sex_p)
-xtabs(~df_caregiver$pubertdev_females_valid_for_gonad+df_caregiver$pubertdev_sex_p)
+# xtabs(~df_caregiver$pubertdev_males_valid_for_gonad+df_caregiver$pubertal_sex_p)
+# xtabs(~df_caregiver$pubertdev_females_valid_for_gonad+df_caregiver$pubertal_sex_p)
+
+xtabs(~df_caregiver$pubertdev_males_valid_for_gonad+df_caregiver$sex)
+xtabs(~df_caregiver$pubertdev_females_valid_for_gonad+df_caregiver$sex)
 
 #Adrenal
-df_caregiver$pubertdevadrenalss_p <-rowSums(df_caregiver[,c("pubertdev_2_p_num", "pubertdev_3_p_num")], na.rm=T)
-df_caregiver$pubertdev_adrenal_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pubertdev_2_p_num", "pubertdev_3_p_num")]))
+df_caregiver$pubertdevadrenalss_p <-rowSums(df_caregiver[,c("pds_2_p_num", "pds_3_p_num")], na.rm=T)
+df_caregiver$pubertdev_adrenal_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pds_2_p_num", "pds_3_p_num")]))
 df_caregiver$pubertdev_adrenal_Qcount_p[df_caregiver$pubertdev_adrenal_Qcount_p == 0] <- NA
 
 #ANY IDK/NA in these 2 variables for adrenal. Then code to not valid.
@@ -374,40 +497,41 @@ df_caregiver$pubertdev_valid_for_adrenal<-NA
 df_caregiver$pubertdev_valid_for_adrenal<-ifelse(df_caregiver$pubertdev_adrenal_Qcount_p==2, 1, 0)
 
 ##Count who is valid based on sex 
-xtabs(~df_caregiver$pubertdev_valid_for_adrenal+df_caregiver$pubertdev_sex_p)
+# xtabs(~df_caregiver$pubertdev_valid_for_adrenal+df_caregiver$pubertal_sex_p)
+xtabs(~df_caregiver$pubertdev_valid_for_adrenal+df_caregiver$sex)
 
 #Compute adrenal avg
 df_caregiver$pubertdev_adrenalAvg_p <- df_caregiver$pubertdevadrenalss_p/df_caregiver$pubertdev_adrenal_Qcount_p
 df_caregiver$pubertdev_adrenalAvg_p[df_caregiver$pubertdev_valid_for_adrenal==0] <- NA
 
 ##Plot the data
-Avg_adrenal=ggplot(df_caregiver,aes(x=pubertdev_adrenalAvg_p,group=sex_at_birth,fill=sex_at_birth))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+Avg_adrenal=ggplot(df_caregiver,aes(x=pubertdev_adrenalAvg_p,group=sex,fill=sex))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
 
 df_caregiver$pubertdev_gonadAvg_p_all<-coalesce(df_caregiver$pubertdev_femalegonadAvg_p,df_caregiver$pubertdev_malegonadAvg_p)
 
 AdrenalAvg=ggplot2.histogram(data=df_caregiver, xName='pubertdev_adrenalAvg_p' ,binwidth=0.5,
-    groupName='sex_at_birth', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex_at_birth)
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 
 ggsave(AdrenalAvg,  file="AdrenalAvg.tiff", width = 12, height = 8, units = "in",
   dpi = 300)
 
 GonadalAvg=ggplot2.histogram(data=df_caregiver, xName='pubertdev_gonadAvg_p_all' ,binwidth=0.5,
-    groupName='sex_at_birth', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex_at_birth)
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 
 ggsave(GonadalAvg,  file="GonadalAvg.tiff", width = 12, height = 8, units = "in",
   dpi = 300)
 
-ggplot2.histogram(data=df_caregiver, xName='pubertdev_adrenalAvg_p',addDensity=TRUE,groupName='sex_at_birth', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
+ggplot2.histogram(data=df_caregiver, xName='pubertdev_adrenalAvg_p',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
 
-ggplot2.histogram(data=df_caregiver, xName='pubertdev_gonadAvg_p_all',addDensity=TRUE,groupName='sex_at_birth', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
+ggplot2.histogram(data=df_caregiver, xName='pubertdev_gonadAvg_p_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
 
 ```
 
 ```{r}
 ##Create CAREGIVER PDS dataset for covariates in other projects
-PDSCaregivervars <- c("src_subject_id", "sex_at_birth", "eventname", "demo_prim_p", "interview_age", "pubertdev_sex_p", "pubertdev_Avg_p_all","pubertdev_ss_category_p_all", "pubertdev_gonadAvg_p_all", "pubertdev_adrenalAvg_p","pubertdev_1_p","pubertdev_2_p", "pubertdev_3_p", "pubertdev_m4_p", "pubertdev_m5_p", "pubertdev_f4_p", "pubertdev_f5b_p", "pubertdev_1_p_num","pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_m4_p_num", "pubertdev_m5_p_num", "pubertdev_f4_p_num", "pubertdev_f5b_p_num")
+PDSCaregivervars <- c("src_subject_id", "sex", "eventname", "demo_prim_p", "interview_age", "pubertal_sex_p", "pubertdev_Avg_p_all","pds_p_ss_cat_all", "pubertdev_gonadAvg_p_all", "pubertdev_adrenalAvg_p","pds_1_p","pds_2_p", "pds_3_p", "pds_m4_p", "pds_m5_p", "pds_f4_p", "pds_f5b_p", "pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_m4_p_num", "pds_m5_p_num", "pds_f4_p_num", "pds_f5b_p_num")
 PDSCaregiver <- df_caregiver[PDSCaregivervars]
 saveRDS(PDSCaregiver, "PDS_caregiver_clean.rds")
 ```
@@ -416,58 +540,58 @@ saveRDS(PDSCaregiver, "PDS_caregiver_clean.rds")
 ```{r}
 ##Remove previous variables and datasets to reduce mistakes
 rm(list=ls())
-df<-readRDS("df_pubertyCPP.rds")
+df<-readRDS("df_puberty.rds")
 
 ##Let's create a caregiver PDS set to clean 
-youthvars <- c("src_subject_id", "eventname", "demo_prim_p", "interview_age", "sex_at_birth", 
-"pubertdev_sex",
-"pubertdev_ht",
-"pubertdev_bdyhair",
-"pubertdev_skin",
-"pubertdev_m4",
-"pubertdev_m5",
-"pubertdev_f4",
-"pubertdev_f5",
-"pubertdev_f6",
-"pubertdev_f6_dk",
-"pubertdev_ss_female_category",
-"pubertdev_ss_male_category",
-"pubertdev_ss_male_cat_nt",
-"pubertdev_ss_male_cat_nm",
-"pubertdev_ss_female_cat_nt",
-"pubertdev_ss_female_cat_nm")
+youthvars <- c("src_subject_id", "eventname", "interview_age", "sex", "race.ethnicity.5level",
+"pds_sex_y",
+"pds_ht2_y",
+"pds_skin2_y",
+"pds_bdyhair_y",
+"pds_m4_y",
+"pds_m5_y",
+"pds_f4_2_y",
+"pds_f5_y",
+"pds_f6_y",
+"pds_f6_y_dk",
+"pds_y_ss_female_category",
+"pds_y_ss_male_category",
+"pds_y_ss_male_cat_nt",
+"pds_y_ss_male_cat_nm",
+"pds_y_ss_female_cat_nt",
+"pds_y_ss_female_cat_nm")
 
 df_youth <- df[youthvars]
 
 ```
 
-##STEP 1: Clean mis-match of data -- sex_at_birth = sex at birth/sex matching
+##STEP 1: Clean mis-match of data -- sex = sex at birth/sex matching
 ```{r}
-##Remove 6 people with blank sex_at_birth
-df_youth<- df_youth[-which(is.na(df_youth$sex_at_birth)), ]
-df_youth %>% dplyr::count(sex_at_birth)
+##Remove 6 people with blank sex
+df_youth<- df_youth[-which(is.na(df_youth$sex)), ]
+df_youth %>% dplyr::count(sex)
 
-### Check some more sex_at_birth/sex matching
+### Check some more sex/sex matching
 
-#PDS vs. sex_at_birth check
+#PDS vs. sex check
 ##Who has a PDS sex variable of "NA" and remove
 
 df_youth %>%
-dplyr::count(pubertdev_sex) ##20
-df_youth=df_youth[-c(which(is.na(df_youth$pubertdev_sex))),]
+dplyr::count(pds_sex_y) ##20
+df_youth=df_youth[-c(which(is.na(df_youth$pds_sex_y))),]
 
-table(df_youth$sex_at_birth,df_youth$pubertdev_sex) ##Mismatch 63 
+table(df_youth$sex,df_youth$pds_sex_y) ##Mismatch 63 
 
 ##Remove mismatches
-df_youth <- df_youth[-c(which(df_youth$sex_at_birth == "M" & df_youth$pubertdev_sex == "Female"), which(df_youth$sex_at_birth == "F" & df_youth$pubertdev_sex == "Male")),]
+df_youth <- df_youth[-c(which(df_youth$sex == "M" & df_youth$pds_sex_y == "Female"), which(df_youth$sex == "F" & df_youth$pds_sex_y == "Male")),]
 
 ##Check this worked and rerun descriptives
-table(df_youth$sex_at_birth,df_youth$pubertdev_sex) #N=5628 F and N=6158 M
+table(df_youth$sex,df_youth$pds_sex_y) #N=5628 F and N=6158 M
 
-describeBy(df_youth, group=df_youth$sex_at_birth)
+describeBy(df_youth, group=df_youth$sex)
 
 ##Final sample for PDS youth reporting #N=5628 F and N=6158 M
-table(df_youth$sex_at_birth,df_youth$pubertdev_sex) 
+table(df_youth$sex,df_youth$pds_sex_y) 
 
 ```
 
@@ -476,59 +600,70 @@ table(df_youth$sex_at_birth,df_youth$pubertdev_sex)
 ##Now let's see what these youth report!
 
 ##Double check the numbers For Table 1 to update tables: Note there are NO female answers for male questions and males answers for female questions --> Are cleaning worked
-table(df_youth$pubertdev_ht, df_youth$pubertdev_sex)
-table(df_youth$pubertdev_bdyhair, df_youth$pubertdev_sex)
-table(df_youth$pubertdev_skin, df_youth$pubertdev_sex)
-table(df_youth$pubertdev_m4, df_youth$pubertdev_sex)
-table(df_youth$pubertdev_m5, df_youth$pubertdev_sex)
-table(df_youth$pubertdev_f4, df_youth$pubertdev_sex)
-table(df_youth$pubertdev_f5, df_youth$pubertdev_sex)
-table(df_youth$pubertdev_f6, df_youth$pubertdev_sex)
+table(df_youth$pds_ht2_y, df_youth$pds_sex_y)
+table(df_youth$pds_bdyhair_y, df_youth$pds_sex_y)
+table(df_youth$pds_skin2_y, df_youth$pds_sex_y)
+table(df_youth$pds_m4_y, df_youth$pds_sex_y)
+table(df_youth$pds_m5_y, df_youth$pds_sex_y)
+table(df_youth$pds_f4_2_y, df_youth$pds_sex_y)
+table(df_youth$pds_f5_y, df_youth$pds_sex_y)
+table(df_youth$pds_f6_y, df_youth$pds_sex_y)
 
 ##See the average age of those that don't know if they have menarche per reviewer 1's inquiry.
-describeBy(df_youth$interview_age, group=df_youth$pubertdev_f5)
+describeBy(df_youth$interview_age, group=df_youth$pds_f5_y)
 ```
 ```{r}
 ##PDS Recode categorical into variables with labels so we can sum and average; Note "I don't know is not numerically meaningful" so turned into NA for just these variables
 
-df_youth$pubertdev_ht_num=as.numeric(df_youth$pubertdev_ht)
-df_youth$pubertdev_ht_num[df_youth$pubertdev_ht_num == 5] <- NA
-df_youth$pubertdev_ht_num[df_youth$pubertdev_ht_num == 6] <- NA
-df_youth$pubertdev_bdyhair_num=as.numeric(df_youth$pubertdev_bdyhair)
-df_youth$pubertdev_bdyhair_num[df_youth$pubertdev_bdyhair_num == 5] <- NA
-df_youth$pubertdev_bdyhair_num[df_youth$pubertdev_bdyhair_num == 6] <- NA
-df_youth$pubertdev_skin_num=as.numeric(df_youth$pubertdev_skin)
-df_youth$pubertdev_skin_num[df_youth$pubertdev_skin_num == 5] <- NA
-df_youth$pubertdev_skin_num[df_youth$pubertdev_skin_num == 6] <- NA
-df_youth$pubertdev_m4_num=as.numeric(df_youth$pubertdev_m4)
-df_youth$pubertdev_m4_num[df_youth$pubertdev_m4_num == 5] <- NA
-df_youth$pubertdev_m4_num[df_youth$pubertdev_m4_num == 6] <- NA
-df_youth$pubertdev_m5_num=as.numeric(df_youth$pubertdev_m5)
-df_youth$pubertdev_m5_num[df_youth$pubertdev_m5_num == 5] <- NA
-df_youth$pubertdev_m5_num[df_youth$pubertdev_m5_num == 6] <- NA
-df_youth$pubertdev_f4_num=as.numeric(df_youth$pubertdev_f4)
-df_youth$pubertdev_f4_num[df_youth$pubertdev_f4_num == 5] <- NA
-df_youth$pubertdev_f4_num[df_youth$pubertdev_f4_num == 6] <- NA
-#Make an empty variable
-df_youth$pubertdev_f5_num[df_youth$pubertdev_f5 == "Yes"] <- 4
-df_youth$pubertdev_f5_num[df_youth$pubertdev_f5 == "No"] <- 1
+df_youth$pds_ht2_y_num=as.numeric(df_youth$pds_ht2_y)
+df_youth$pds_ht2_y_num[df_youth$pds_ht2_y_num == 777] <- NA
+df_youth$pds_ht2_y_num[df_youth$pds_ht2_y_num == 999] <- NA
+df_youth$pds_bdyhair_y_num=as.numeric(df_youth$pds_bdyhair_y)
+df_youth$pds_bdyhair_y_num[df_youth$pds_bdyhair_y_num == 777] <- NA
+df_youth$pds_bdyhair_y_num[df_youth$pds_bdyhair_y_num == 999] <- NA
+df_youth$pds_skin2_y_num=as.numeric(df_youth$pds_skin2_y)
+df_youth$pds_skin2_y_num[df_youth$pds_skin2_y_num == 777] <- NA
+df_youth$pds_skin2_y_num[df_youth$pds_skin2_y_num == 999] <- NA
+df_youth$pds_m4_y_num=as.numeric(df_youth$pds_m4_y)
+df_youth$pds_m4_y_num[df_youth$pds_m4_y_num == 777] <- NA
+df_youth$pds_m4_y_num[df_youth$pds_m4_y_num == 999] <- NA
+df_youth$pds_m5_y_num=as.numeric(df_youth$pds_m5_y)
+df_youth$pds_m5_y_num[df_youth$pds_m5_y_num == 777] <- NA
+df_youth$pds_m5_y_num[df_youth$pds_m5_y_num == 999] <- NA
+df_youth$pds_f4_2_y_num=as.numeric(df_youth$pds_f4_2_y)
+df_youth$pds_f4_2_y_num[df_youth$pds_f4_2_y_num == 777] <- NA
+df_youth$pds_f4_2_y_num[df_youth$pds_f4_2_y_num == 999] <- NA
+
+df_youth$sex[df_youth$sex == "F"] <- "Female"
+df_youth$sex[df_youth$sex == "M"] <- "Male"
+
+summary(df_youth)
+
+
+#Megan has the following lines which I do not think we need, as we already have the numbers
+#df_youth$pds_f5_y_num[df_youth$pds_f5_y == "Yes"] <- 4
+#df_youth$pds_f5_y_num[df_youth$pds_f5_y == "No"] <- 1
+
+df_youth$pds_f5_y_num=as.numeric(df_youth$pds_f5_y)
+df_youth$pds_f5_y_num[df_youth$pds_f5_y == 777] <- NA
+df_youth$pds_f5_y_num[df_youth$pds_f5_y == 999] <- NA
 
 ```
 
 ##Examine correlation of raw data for youth
 ```{r}
 ##Split data base by male and female and only use those that have valid puberty
-df_youthm=subset(df_youth, pubertdev_sex=="Male")
-df_youthf=subset(df_youth, pubertdev_sex=="Female")
+df_youthm=subset(df_youth, sex=="Male")
+df_youthf=subset(df_youth, sex=="Female")
 
 ##Group female pds correlations
 library(GGally)
-keeps_pds_f=c("pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_f4_num","pubertdev_f5_num", "interview_age")
+keeps_pds_f=c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_f4_2_y_num","pds_f5_y_num", "interview_age")
 df_f_all_corr=ggpairs(df_youthf, keeps_pds_f, title = "Within PDS Females")
 df_f_all_corr
 
 ##Group male pds correlations with age
-keeps_pds_m=c("pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_m4_num","pubertdev_m5_num", "interview_age")
+keeps_pds_m=c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num","pds_m5_y_num", "interview_age")
 df_m_all_corr=ggpairs(df_youthm, keeps_pds_m, title = "Within PDS Males")
 df_m_all_corr
 ```
@@ -538,44 +673,44 @@ df_m_all_corr
 #Male summary scores
 
 #Sum puberty scores across rows for males. Then change female values for this field to NA
-df_youth$pubertdev_maless <-rowSums(df_youth[,c("pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_m4_num", "pubertdev_m5_num")], na.rm=T)
+df_youth$pubertdev_maless <-rowSums(df_youth[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num", "pds_m5_y_num")], na.rm=T)
 df_youth$pubertdev_maless[df_youth$pubertdev_maless == 0] <- NA
-df_youth$pubertdev_maless[df_youth$sex_at_birth=="F"] <- NA
+df_youth$pubertdev_maless[df_youth$sex=="Female"] <- NA
 
 #Sum puberty scores across rows for females. Then change male values for this field to NA
-df_youth$pubertdev_femaless <- rowSums(df_youth[,c("pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_f4_num", "pubertdev_f5_num")], na.rm=T)
+df_youth$pubertdev_femaless <- rowSums(df_youth[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_f4_2_y_num", "pds_f5_y_num")], na.rm=T)
 df_youth$pubertdev_femaless[df_youth$pubertdev_femaless == 0] <- NA
-df_youth$pubertdev_femaless[df_youth$sex_at_birth=="M"] <- NA
+df_youth$pubertdev_femaless[df_youth$sex=="Male"] <- NA
 
 #Count number of Qs per subject in males that are not NA/DK
-df_youth$pubertdev_males_Qcount <- rowSums(!is.na(df_youth[,c("pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_m4_num", "pubertdev_m5_num")]))
+df_youth$pubertdev_males_Qcount <- rowSums(!is.na(df_youth[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num", "pds_m5_y_num")]))
 
-df_youth$pubertdev_males_Qcount[df_youth$sex_at_birth=="F"] <- NA
+df_youth$pubertdev_males_Qcount[df_youth$sex=="Female"] <- NA
 
 #Count number of Qs per subject in females that are not NA/DK
-df_youth$pubertdev_females_Qcount <- rowSums(!is.na(df_youth[,c("pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_f4_num", "pubertdev_f5_num")]))
-df_youth$pubertdev_females_Qcount[df_youth$sex_at_birth=="M"] <- NA
+df_youth$pubertdev_females_Qcount <- rowSums(!is.na(df_youth[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_f4_2_y_num", "pds_f5_y_num")]))
+df_youth$pubertdev_females_Qcount[df_youth$sex=="Male"] <- NA
 
 #This will give total number of NAs in males per pubertdev column
-apply(subset(df_youth, sex_at_birth=="M")[,c("pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_m4_num", "pubertdev_m5_num")], 2, function(x) sum(is.na(x)))
+apply(subset(df_youth, sex=="M")[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num", "pds_m5_y_num")], 2, function(x) sum(is.na(x)))
 #And total number of NAs in females per pubertdev column
-apply(subset(df_youth, sex_at_birth=="F")[,c("pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_f4_num", "pubertdev_f5_num")], 2, function(x) sum(is.na(x)))
+apply(subset(df_youth, sex=="F")[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_f4_2_y_num", "pds_f5_y_num")], 2, function(x) sum(is.na(x)))
 
 #If more than 1 IDK/NA for males. Then code to not valid.
 df_youth$pubertdev_males_valid_for_avg<-NA
-df_youth$pubertdev_males_valid_for_avg <- ifelse(df_youth$sex_at_birth=="M" & df_youth$pubertdev_males_Qcount>=4, 1, 0)
+df_youth$pubertdev_males_valid_for_avg <- ifelse(df_youth$sex=="Male" & df_youth$pubertdev_males_Qcount>=4, 1, 0)
 
 #If more than 1 IDK/NA for females. Then code to not valid.
 df_youth$pubertdev_females_valid_for_avg<-NA
-df_youth$pubertdev_females_valid_for_avg <- ifelse(df_youth$sex_at_birth=="F" & df_youth$pubertdev_females_Qcount>=4, 1, 0)
+df_youth$pubertdev_females_valid_for_avg <- ifelse(df_youth$sex=="Female" & df_youth$pubertdev_females_Qcount>=4, 1, 0)
 
 ##Count who is valid
 df_youth %>% dplyr::count(pubertdev_females_valid_for_avg)
 df_youth %>% dplyr::count(pubertdev_males_valid_for_avg)
 
 ##Count who is valid based on sex 
-xtabs(~df_youth$pubertdev_males_valid_for_avg+df_youth$pubertdev_sex)
-xtabs(~df_youth$pubertdev_females_valid_for_avg+df_youth$pubertdev_sex)
+# xtabs(~df_youth$pubertdev_males_valid_for_avg+df_youth$pds_sex_y)
+# xtabs(~df_youth$pubertdev_females_valid_for_avg+df_youth$pds_sex_y)
 
 ##ONLY for valid PDS calculate the folowing meaningful average and category scores of puberty: 
 ##Calculate average of PDS values for males for only those with valid data (see definition of valid above)
@@ -590,10 +725,10 @@ df_youth$pubertdev_femaleAvg[df_youth$pubertdev_females_valid_for_avg==0] <- NA
 df_youth$pubertdev_Avg_all<-coalesce(df_youth$pubertdev_femaleAvg,df_youth$pubertdev_maleAvg)
 
 ##Plot the data
-M_Avg=ggplot(subset(df_youth, sex_at_birth=="M"),aes(x=pubertdev_maleAvg))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-F_Avg=ggplot(subset(df_youth, sex_at_birth=="F"),aes(x=pubertdev_femaleAvg))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+M_Avg=ggplot(subset(df_youth, sex=="Male"),aes(x=pubertdev_maleAvg))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+F_Avg=ggplot(subset(df_youth, sex=="Female"),aes(x=pubertdev_femaleAvg))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
 
-Both_Avg=ggplot(df_youth,aes(x=pubertdev_Avg_all,group=sex_at_birth,fill=sex_at_birth))+geom_histogram(na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+Both_Avg=ggplot(df_youth,aes(x=pubertdev_Avg_all,group=sex,fill=sex))+geom_histogram(na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
 
 
 ##Fancy plots
@@ -602,12 +737,12 @@ library(devtools)
 install_github("kassambara/easyGgplot2")
 library(easyGgplot2)
 AvgPDS=ggplot2.histogram(data=df_youth, xName='pubertdev_Avg_all',binwidth=0.2,
-    groupName='sex_at_birth', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex_at_birth)
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 ggsave(AvgPDS,  file="AvgPDS_youth.tiff", width = 12, height = 8, units = "in",
   dpi = 300)
 
-ggplot2.histogram(data=df_youth, xName='pubertdev_Avg_all',addDensity=TRUE,groupName='sex_at_birth', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.2)+theme_bw()
+ggplot2.histogram(data=df_youth, xName='pubertdev_Avg_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.2)+theme_bw()
 
 ```
 
@@ -616,11 +751,11 @@ ggplot2.histogram(data=df_youth, xName='pubertdev_Avg_all',addDensity=TRUE,group
 ```{r}
 ##Check category score already in NDAR dataset
 ##How many  missing
-xtabs(~df_youth$pubertdev_ss_female_cat_nm+df_youth$pubertdev_sex)
-xtabs(~df_youth$pubertdev_ss_male_cat_nm+df_youth$pubertdev_sex)
+# xtabs(~df_youth$pds_y_ss_female_cat_nm+df_youth$pds_sex_y)
+# xtabs(~df_youth$pds_y_ss_male_cat_nm+df_youth$pds_sex_y)
 
 ##Make a single variable
-df_youth$pubertdev_ss_category_all<-coalesce(df_youth$pubertdev_ss_female_category, df_youth$pubertdev_ss_male_category)
+df_youth$pds_y_ss_cat_all<-coalesce(df_youth$pds_y_ss_female_category, df_youth$pds_y_ss_male_category)
 
 ##Code into Tanner Stage Based on Petersen, A. C., Crockett, L., et al. (1988) A self-report measure of pubertal status: Reliability, validity, and initial norms. J Youth Adolesc 17(2): 117-133. Puberty Category Scores for boys used body hair growth, voice... https://www.jahonline.org/article/1054-139X(93)90004-9/pdf
 
@@ -629,12 +764,12 @@ df_youth$pubertdev_ss_category_all<-coalesce(df_youth$pubertdev_ss_female_catego
 
 ## FEMALES Prepubertal = 3; Early Puberty = 3 and no menarche; Midpubertal = 4 and no menarche; Late Puberty = <=7 and menarche; Postpubertal = 8 and menarche
 
-df_youth$pubertdev_ss_category_all<-factor(df_youth$pubertdev_ss_category_all,
+df_youth$pds_y_ss_cat_all<-factor(df_youth$pds_y_ss_cat_all,
 levels = c(1,2,3,4,5), labels=c("Pre", "Early", "Mid", "Late","Post"))
 
-xtabs(~df_youth$pubertdev_ss_category_all+df_youth$pubertdev_sex)
+xtabs(~df_youth$pds_y_ss_cat_all+df_youth$pds_sex_y)
 
-PubertyCategory=ggplot(subset(df_youth, !is.na(pubertdev_ss_category_all)),aes(x=factor(pubertdev_ss_category_all,levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex_at_birth,fill=sex_at_birth))+geom_histogram(stat="count",position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex_at_birth)
+PubertyCategory=ggplot(subset(df_youth, !is.na(pds_y_ss_cat_all)),aes(x=factor(pds_y_ss_cat_all,levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex,fill=sex))+geom_histogram(stat="count",position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 
 
 ggsave(PubertyCategory,  file="PubertyCategory_Youth.tiff", width = 12, height = 8, units = "in",
@@ -648,42 +783,48 @@ ggsave(PubertyCategory,  file="PubertyCategory_Youth.tiff", width = 12, height =
 ##Shirtcliff 2009 method: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2727719/; In girls, growth spurt, breast development, and menarche are associated with gonadal hormonal signals. In boys, growth spurt, deepening of voice and facial hair growth are associated with gonadal hormones. For both sexes, pubic/body hair and skin changes are associated with adrenal hormones. Doesn't say if items were summed or averaged. To be consistent with Herting et al 2017, we will average.
 
 #Male Gonads
-df_youth$pubertdev_malegonadss <-rowSums(df_youth[,c("pubertdev_ht_num", "pubertdev_m4_num", "pubertdev_m5_num")], na.rm=T)
-df_youth$pubertdev_malegonad_Qcount <- rowSums(!is.na(df_youth[,c("pubertdev_ht_num", "pubertdev_m4_num", "pubertdev_m5_num")]))
+df_youth$pubertdev_malegonadss <-rowSums(df_youth[,c("pds_ht2_y_num", "pds_m4_y_num", "pds_m5_y_num")], na.rm=T)
+df_youth$pubertdev_malegonad_Qcount <- rowSums(!is.na(df_youth[,c("pds_ht2_y_num", "pds_m4_y_num", "pds_m5_y_num")]))
 df_youth$pubertdev_malegonad_Qcount[df_youth$pubertdev_malegonad_Qcount == 0] <- NA
-df_youth$pubertdev_malegonad_Qcount[df_youth$sex_at_birth=="F"] <- NA
+df_youth$pubertdev_malegonad_Qcount[df_youth$sex=="Female"] <- NA
 
 #ANY IDK/NA for males in these 3 variables for gonad. Then code to not valid.
 df_youth$pubertdev_males_valid_for_gonad<-NA
-df_youth$pubertdev_males_valid_for_gonad<-ifelse(df_youth$sex_at_birth=="M" & df_youth$pubertdev_malegonad_Qcount==3, 1, 0)
+df_youth$pubertdev_males_valid_for_gonad<-ifelse(df_youth$sex=="M" & df_youth$pubertdev_malegonad_Qcount==3, 1, 0)
 
-
+####RETAKE HERE. MALE YOUTH GONADAL NOT WORKING
 #Compute male gonad avg
 df_youth$pubertdev_malegonadAvg <- df_youth$pubertdev_malegonadss/df_youth$pubertdev_malegonad_Qcount
 df_youth$pubertdev_malegonadAvg[df_youth$pubertdev_males_valid_for_gonad==0] <- NA
 
 
 #Female Gonads
-df_youth$pubertdev_femalegonadss <-rowSums(df_youth[,c("pubertdev_ht_num", "pubertdev_f4_num", "pubertdev_f5_num")], na.rm=T)
-df_youth$pubertdev_femalegonad_Qcount <- rowSums(!is.na(df_youth[,c("pubertdev_ht_num", "pubertdev_f4_num", "pubertdev_f5_num")]))
+df_youth$pubertdev_femalegonadss <-rowSums(df_youth[,c("pds_ht2_y_num", "pds_f4_2_y_num", "pds_f5_y_num")], na.rm=T)
+df_youth$pubertdev_femalegonad_Qcount <- rowSums(!is.na(df_youth[,c("pds_ht2_y_num", "pds_f4_2_y_num", "pds_f5_y_num")]))
 df_youth$pubertdev_femalegonad_Qcount[df_youth$pubertdev_femalegonad_Qcount == 0] <- NA
-df_youth$pubertdev_femalegonad_Qcount[df_youth$sex_at_birth=="M"] <- NA
+df_youth$pubertdev_femalegonad_Qcount[df_youth$sex=="Male"] <- NA
 
 #ANY IDK/NA for males in these 3 variables for gonad. Then code to not valid.
 df_youth$pubertdev_females_valid_for_gonad<-NA
-df_youth$pubertdev_females_valid_for_gonad<-ifelse(df_youth$sex_at_birth=="F" & df_youth$pubertdev_femalegonad_Qcount==3, 1, 0)
+df_youth$pubertdev_females_valid_for_gonad<-ifelse(df_youth$sex=="Female" & df_youth$pubertdev_femalegonad_Qcount==3, 1, 0)
 
 #Compute female gonad avg
 df_youth$pubertdev_femalegonadAvg <- df_youth$pubertdev_femalegonadss/df_youth$pubertdev_femalegonad_Qcount
 df_youth$pubertdev_femalegonadAvg[df_youth$pubertdev_females_valid_for_gonad==0] <- NA
 
+#Coalesce gonadal
+df_youth$pubertdev_gonadAvg_all<-coalesce(df_youth$pubertdev_femalegonadAvg,df_youth$pubertdev_malegonadAvg)
+
+
 ##Count who is valid based on sex 
-xtabs(~df_youth$pubertdev_males_valid_for_gonad+df_youth$pubertdev_sex)
-xtabs(~df_youth$pubertdev_females_valid_for_gonad+df_youth$pubertdev_sex)
+xtabs(~df_youth$pubertdev_males_valid_for_gonad+df_youth$pds_sex_y)
+xtabs(~df_youth$pubertdev_females_valid_for_gonad+df_youth$pds_sex_y)
+
+
 
 #Adrenal
-df_youth$pubertdevadrenalss_p <-rowSums(df_youth[,c("pubertdev_bdyhair_num", "pubertdev_skin_num")], na.rm=T)
-df_youth$pubertdev_adrenal_Qcount <- rowSums(!is.na(df_youth[,c("pubertdev_bdyhair_num", "pubertdev_skin_num")]))
+df_youth$pubertdevadrenalss_p <-rowSums(df_youth[,c("pds_bdyhair_y_num", "pds_skin2_y_num")], na.rm=T)
+df_youth$pubertdev_adrenal_Qcount <- rowSums(!is.na(df_youth[,c("pds_bdyhair_y_num", "pds_skin2_y_num")]))
 df_youth$pubertdev_adrenal_Qcount_p[df_youth$pubertdev_adrenal_Qcount == 0] <- NA
 
 #ANY IDK/NA in these 2 variables for adrenal. Then code to not valid.
@@ -691,40 +832,38 @@ df_youth$pubertdev_valid_for_adrenal<-NA
 df_youth$pubertdev_valid_for_adrenal<-ifelse(df_youth$pubertdev_adrenal_Qcount==2, 1, 0)
 
 ##Count who is valid based on sex 
-xtabs(~df_youth$pubertdev_valid_for_adrenal+df_youth$pubertdev_sex)
+xtabs(~df_youth$pubertdev_valid_for_adrenal+df_youth$pds_sex_y)
 
 #Compute adrenal avg
 df_youth$pubertdev_adrenalAvg <- df_youth$pubertdevadrenalss/df_youth$pubertdev_adrenal_Qcount
 df_youth$pubertdev_adrenalAvg[df_youth$pubertdev_valid_for_adrenal==0] <- NA
 
 ##Plot the data
-Avg_adrenal=ggplot(df_youth,aes(x=pubertdev_adrenalAvg,group=sex_at_birth,fill=sex_at_birth))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-
-df_youth$pubertdev_gonadAvg_all<-coalesce(df_youth$pubertdev_femalegonadAvg,df_youth$pubertdev_malegonadAvg)
+Avg_adrenal=ggplot(df_youth,aes(x=pubertdev_adrenalAvg,group=sex,fill=sex))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
 
 AdrenalAvg=ggplot2.histogram(data=df_youth, xName='pubertdev_adrenalAvg' ,binwidth=0.5,
-    groupName='sex_at_birth', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex_at_birth)
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 
 ggsave(AdrenalAvg,  file="AdrenalAvg_Youth.tiff", width = 12, height = 8, units = "in",
   dpi = 300)
 
 GonadalAvg=ggplot2.histogram(data=df_youth, xName='pubertdev_gonadAvg_all' ,binwidth=0.5,
-    groupName='sex_at_birth', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex_at_birth)
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 
 ggsave(GonadalAvg,  file="GonadalAvg_Youth.tiff", width = 12, height = 8, units = "in",
   dpi = 300)
 
-ggplot2.histogram(data=df_youth, xName='pubertdev_adrenalAvg',addDensity=TRUE,groupName='sex_at_birth', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
+ggplot2.histogram(data=df_youth, xName='pubertdev_adrenalAvg',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
 
-ggplot2.histogram(data=df_youth, xName='pubertdev_gonadAvg_all',addDensity=TRUE,groupName='sex_at_birth', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
+ggplot2.histogram(data=df_youth, xName='pubertdev_gonadAvg_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
 
 ```
 
 ```{r}
 ##Create YOUTH PDS dataset for covariates in other projects
-PDSYouthvars <- c("src_subject_id", "sex_at_birth", "eventname", "demo_prim_p", "interview_age", "pubertdev_sex", "pubertdev_Avg_all","pubertdev_ss_category_all", "pubertdev_gonadAvg_all", "pubertdev_adrenalAvg","pubertdev_ht","pubertdev_bdyhair", "pubertdev_skin", "pubertdev_m4", "pubertdev_m5", "pubertdev_f4", "pubertdev_f5", "pubertdev_ht_num","pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_m4_num", "pubertdev_m5_num", "pubertdev_f4_num", "pubertdev_f5_num")
+PDSYouthvars <- c("src_subject_id", "sex", "eventname", "demo_prim_p", "interview_age", "pds_sex_y", "pubertdev_Avg_all","pds_y_ss_cat_all", "pubertdev_gonadAvg_all", "pubertdev_adrenalAvg","pds_ht2_y","pds_bdyhair_y", "pds_skin2_y", "pds_m4_y", "pds_m5_y", "pds_f4_2_y", "pds_f5_y", "pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num", "pds_m5_y_num", "pds_f4_2_y_num", "pds_f5_y_num")
 PDSYouth <- df_youth[PDSYouthvars]
 saveRDS(PDSYouth, "PDS_youth_clean.rds")
 ```
