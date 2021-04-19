@@ -58,10 +58,11 @@ data_dir = ((dirname(here()))) #figure out how to navigate to data source
 
 data_folder <- file.path(data_dir,"ABCD","derivatives")  
 
-file_name <- "nda20.csv" #specify file name here 
+file_name <- "nda30.csv" #specify file name here 
 
 output_directory <- data_folder
 
+#ABCD_Data <-  nda30
 ABCD_Data <- read.csv(file.path(data_folder,file_name))
 #as_tibble(ABCD_Data)
 
@@ -78,6 +79,9 @@ ABCD_Data <- read.csv(file.path(data_folder,file_name))
 library(janitor)
 #ABCD_Data<- readRDS(paste(output_directory,"nda20.rds",sep="/"))
 ABCD_Data_baseline <- ABCD_Data %>% filter(eventname=="baseline_year_1_arm_1")
+nrow(ABCD_Data_baseline)
+
+ABCD_Data_baseline <- unique(ABCD_Data_baseline)
 nrow(ABCD_Data_baseline)
 
 ABCD_Data_baseline <- ABCD_Data_baseline %>% filter(sex!="") #remove 6 participants with no gender
@@ -117,24 +121,29 @@ p.adjust(pvals, method = "BH")
 export_table <- createTable(table)
 export_table
 
-export2word(export_table, file = "split_data_exploratory_confirmatory_comparisons.doc")
+export2word(export_table, file = (here("output","split_data_exploratory_confirmatory_comparisons_newsplit.doc"))
 ```
 
 ```{r}
-ABCD_Data_exploratory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==0),]
-ABCD_Data_confirmatory <- ABCD_Data_baseline[(ABCD_Data_baseline$Z==1),]
+#List subject IDs
+subject_id_exploratory<-ABCD_Data_baseline[(ABCD_Data_baseline$Z==0),"src_subject_id"]
+subject_id_confirmatory<-ABCD_Data_baseline[(ABCD_Data_baseline$Z==1),"src_subject_id"]
+
+#Extract full data set based on the baseline IDs
+ABCD_Data_exploratory <- ABCD_Data[is.element(ABCD_Data$src_subject_id,subject_id_exploratory),]
+ABCD_Data_confirmatory <- ABCD_Data[is.element(ABCD_Data$src_subject_id,subject_id_confirmatory),]
 ```
 
 #SAVE DATA
 ```{r}
 save_folder <- file.path(data_dir,"ABCD","derivatives","exploratory")  
-saveRDS(ABCD_Data_exploratory,paste(save_folder,"nda20_exploratory.rds",sep="/"))
+saveRDS(ABCD_Data_exploratory,paste(save_folder,"nda30_exploratory.rds",sep="/"))
 
-write.csv(ABCD_Data_exploratory, paste(save_folder,"nda20_exploratory.csv",sep="/"), row.names = FALSE)
+write.csv(ABCD_Data_exploratory, paste(save_folder,"nda30_exploratory.csv",sep="/"), row.names = FALSE)
 ```
 
 ```{r}
 save_folder <- file.path(data_dir,"ABCD","derivatives","confirmatory") 
-saveRDS(ABCD_Data_confirmatory, paste(save_folder,"nda20_confirmatory.rds",sep="/"))
-write.csv(ABCD_Data_confirmatory, paste(save_folder,"nda20_confirmatory.csv",sep="/"), row.names = FALSE)
+saveRDS(ABCD_Data_confirmatory, paste(save_folder,"nda30_confirmatory.rds",sep="/"))
+write.csv(ABCD_Data_confirmatory, paste(save_folder,"nda30_confirmatory.csv",sep="/"), row.names = FALSE)
 ```
