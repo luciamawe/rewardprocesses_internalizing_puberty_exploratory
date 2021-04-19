@@ -40,8 +40,7 @@ nda30 <- read.table(file.path(data_folder,file_name),header=T, sep=",",as.is=TRU
 
 #subset clean with all variables for analysis
 ##Let's reduce these variables to only those we care about
-## This line is not working. Lucia to return to it after we have nda30 ready
-## Also, Megan has used DEAP names, we are using NDA names. Need to update
+## Megan has used DEAP names, we are using NDA names. 
 
 myvars<- c("src_subject_id",
                     "interview_age",
@@ -76,7 +75,7 @@ myvars<- c("src_subject_id",
 "pds_f4_p",
 "pds_f5b_p",
 "pds_f6_p",
-"pds_f6_p_dk", 
+"pds_f6_p_dk",
 "pds_p_ss_male_category",
 "pds_p_ss_male_cat_nm",
 "pds_p_ss_male_cat_nt",
@@ -144,18 +143,18 @@ myvars<- c("src_subject_id",
 
 
 df<-  nda30  %>% 
-  select (myvars)
+  select (myvars) 
 
 
 ##Reduce to baseline data only N=11,883
-df<- subset(df,eventname=="baseline_year_1_arm_1")
+#df<- subset(df,eventname=="baseline_year_1_arm_1")   #We are scoring all waves
 
 ##Look at data formats
 str(df)
 describeBy(df, group=df$sex) #sex is sex for DEAP
 
 ##
-write_rds(df, "df_puberty.rds")
+#write_rds(df, "df_puberty.rds")
 ```
 
 
@@ -190,7 +189,8 @@ head(df_caregiver)
 ```{r}
 ##How many participants do we have for this analysis when we begin?
 ##Load library to explore data 
-library(tidyverse)
+
+#library(tidyverse)
 
 library(dplyr)
 df_caregiver %>% dplyr::count(sex)
@@ -203,38 +203,39 @@ df_caregiver %>% dplyr::count(sex)
 
 ### Check some more sex/sex matching
 ```{r}
-#PDS vs. sex check
-##Who has a PDS sex variable of "NA" and remove
-
-df_caregiver %>% dplyr::count(pubertal_sex_p) ##pubertal_sex_p is missing in 3.0 release, 2.1 had 5 NAs
-
-df_caregiver=df_caregiver[-c(which(is.na(df_caregiver$pubertal_sex_p))),]
-
-table(df_caregiver$sex,df_caregiver$pubertal_sex_p) ##Mismatch =63 
-
-
-##Remove mismatches
-df_caregiver <- df_caregiver[-c(which(df_caregiver$sex == "M" & df_caregiver$pubertal_sex_p == "Female"), which(df_caregiver$sex == "F" & df_caregiver$pubertal_sex_p == "Male")),]
-
-##Check this worked and rerun descriptives
-table(df_caregiver$sex,df_caregiver$pubertal_sex_p) #N=5659 F and N=6142 M
-
-describeBy(df_caregiver, group=df_caregiver$sex)
-
-##Note NDAR_INV5D3CU8ML has Male sex but female answers -- we will remove from dataset
-c(which(df_caregiver$sex == "M" & !is.na(df_caregiver$pds_f4_p)))
-df_caregiver=df_caregiver[-c(which(df_caregiver$sex == "M" & !is.na(df_caregiver$pds_f4_p))),]
-
-##Final sample for PDS caregiver reporting = N=6141 MALES AND N=5659 FEMALES
-xtabs(~df_caregiver$sex+df_caregiver$pubertal_sex_p)
+#LMW commented this whole section out since we do not have pubertal_sex_p in nda30
+# #PDS vs. sex check
+# ##Who has a PDS sex variable of "NA" and remove
+# 
+# df_caregiver %>% dplyr::count(pubertal_sex_p) ##pubertal_sex_p is missing in 3.0 release, 2.1 had 5 NAs
+# 
+# df_caregiver=df_caregiver[-c(which(is.na(df_caregiver$pubertal_sex_p))),]
+# 
+# table(df_caregiver$sex,df_caregiver$pubertal_sex_p) ##Mismatch =63 
+# 
+# 
+# ##Remove mismatches
+# df_caregiver <- df_caregiver[-c(which(df_caregiver$sex == "M" & df_caregiver$pubertal_sex_p == "Female"), which(df_caregiver$sex == "F" & df_caregiver$pubertal_sex_p == "Male")),]
+# 
+# ##Check this worked and rerun descriptives
+# table(df_caregiver$sex,df_caregiver$pubertal_sex_p) #N=5659 F and N=6142 M
+# 
+# describeBy(df_caregiver, group=df_caregiver$sex)
+# 
+# ##Note NDAR_INV5D3CU8ML has Male sex but female answers -- we will remove from dataset
+# c(which(df_caregiver$sex == "M" & !is.na(df_caregiver$pds_f4_p)))
+# df_caregiver=df_caregiver[-c(which(df_caregiver$sex == "M" & !is.na(df_caregiver$pds_f4_p))),]
+# 
+# ##Final sample for PDS caregiver reporting = N=6141 MALES AND N=5659 FEMALES
+# xtabs(~df_caregiver$sex+df_caregiver$pubertal_sex_p)
 
 ```
 
 #Get reporting of each item from caregiver
 ```{r}
 ##Now let's see what these caregivers report!
-df_caregiver %>%
-dplyr::count(pubertdev_select_language_p, pubertal_sex_p)
+# df_caregiver %>%
+# dplyr::count(pubertdev_select_language_p, pubertal_sex_p)
 
 ##Double check the numbers For Table 1 to update tables: Note there are NO female answers for male questions and males answers for female questions --> Are cleaning worked
 # table(df_caregiver$pds_1_p, df_caregiver$pubertal_sex_p)
@@ -257,7 +258,7 @@ table(df_caregiver$pds_f5b_p, df_caregiver$sex)  #Menarche yes/no
 table(df_caregiver$pds_f6_p, df_caregiver$sex)    #Menarche age  
 
 #Check the demographics of reporter for Don't know for menarche as inquired by Reviewer 1
-xtabs(~df_caregiver$demo_prim_p+df_caregiver$pds_f5b_p)  #primary reporter, not used in our analyses
+#xtabs(~df_caregiver$demo_prim_p+df_caregiver$pds_f5b_p)  #primary reporter, not used in our analyses
 xtabs(~df_caregiver$race.ethnicity.5level+df_caregiver$pds_f5b_p)
 
 ```
@@ -390,25 +391,6 @@ df_caregiver$pubertdev_femaleAvg_p[df_caregiver$pubertdev_females_valid_for_avg=
 #Make a single variable for PDS Average
 df_caregiver$pubertdev_Avg_p_all<-coalesce(df_caregiver$pubertdev_femaleAvg_p,df_caregiver$pubertdev_maleAvg_p)
 
-##Plot the data
-M_Avg=ggplot(subset(df_caregiver, sex=="M"),aes(x=pubertdev_maleAvg_p))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-F_Avg=ggplot(subset(df_caregiver, sex=="F"),aes(x=pubertdev_femaleAvg_p))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-
-Both_Avg=ggplot(df_caregiver,aes(x=pubertdev_Avg_p_all,group=sex,fill=sex))+geom_histogram(na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-
-
-##Fancy plots
-install.packages("devtools")
-library(devtools)
-install_github("kassambara/easyGgplot2")
-library(easyGgplot2)
-AvgPDS=ggplot2.histogram(data=df_caregiver, xName='pubertdev_Avg_p_all',binwidth=0.2,
-    groupName='sex', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
-ggsave(AvgPDS,  file="AvgPDS.tiff", width = 12, height = 8, units = "in",
-  dpi = 300)
-
-ggplot2.histogram(data=df_caregiver, xName='pubertdev_Avg_p_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.2)+theme_bw()
 
 ```
   
@@ -438,12 +420,6 @@ levels = c(1,2,3,4,5), labels=c("Pre", "Early", "Mid", "Late","Post"))
 # xtabs(~df_caregiver$pds_p_ss_cat_all+df_caregiver$pubertal_sex_p)
 xtabs(~df_caregiver$pds_p_ss_cat_all+df_caregiver$sex)
 
-
-PubertyCategory=ggplot(subset(df_caregiver, !is.na(pds_p_ss_cat_all)),aes(x=factor(pds_p_ss_cat_all,levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex,fill=sex))+geom_histogram(stat="count",position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
-PubertyCategory
-
-ggsave(PubertyCategory,  file="PubertyCategory.tiff", width = 12, height = 8, units = "in",
-  dpi = 300)
 
 ```
 
@@ -487,6 +463,8 @@ df_caregiver$pubertdev_femalegonadAvg_p[df_caregiver$pubertdev_females_valid_for
 xtabs(~df_caregiver$pubertdev_males_valid_for_gonad+df_caregiver$sex)
 xtabs(~df_caregiver$pubertdev_females_valid_for_gonad+df_caregiver$sex)
 
+df_caregiver$pubertdev_gonadAvg_p_all<-coalesce(df_caregiver$pubertdev_femalegonadAvg_p,df_caregiver$pubertdev_malegonadAvg_p)
+
 #Adrenal
 df_caregiver$pubertdevadrenalss_p <-rowSums(df_caregiver[,c("pds_2_p_num", "pds_3_p_num")], na.rm=T)
 df_caregiver$pubertdev_adrenal_Qcount_p <- rowSums(!is.na(df_caregiver[,c("pds_2_p_num", "pds_3_p_num")]))
@@ -504,43 +482,21 @@ xtabs(~df_caregiver$pubertdev_valid_for_adrenal+df_caregiver$sex)
 df_caregiver$pubertdev_adrenalAvg_p <- df_caregiver$pubertdevadrenalss_p/df_caregiver$pubertdev_adrenal_Qcount_p
 df_caregiver$pubertdev_adrenalAvg_p[df_caregiver$pubertdev_valid_for_adrenal==0] <- NA
 
-##Plot the data
-Avg_adrenal=ggplot(df_caregiver,aes(x=pubertdev_adrenalAvg_p,group=sex,fill=sex))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-
-df_caregiver$pubertdev_gonadAvg_p_all<-coalesce(df_caregiver$pubertdev_femalegonadAvg_p,df_caregiver$pubertdev_malegonadAvg_p)
-
-AdrenalAvg=ggplot2.histogram(data=df_caregiver, xName='pubertdev_adrenalAvg_p' ,binwidth=0.5,
-    groupName='sex', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
-
-ggsave(AdrenalAvg,  file="AdrenalAvg.tiff", width = 12, height = 8, units = "in",
-  dpi = 300)
-
-GonadalAvg=ggplot2.histogram(data=df_caregiver, xName='pubertdev_gonadAvg_p_all' ,binwidth=0.5,
-    groupName='sex', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
-
-ggsave(GonadalAvg,  file="GonadalAvg.tiff", width = 12, height = 8, units = "in",
-  dpi = 300)
-
-ggplot2.histogram(data=df_caregiver, xName='pubertdev_adrenalAvg_p',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
-
-ggplot2.histogram(data=df_caregiver, xName='pubertdev_gonadAvg_p_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
 
 ```
 
 ```{r}
 ##Create CAREGIVER PDS dataset for covariates in other projects
-PDSCaregivervars <- c("src_subject_id", "sex", "eventname", "demo_prim_p", "interview_age", "pubertal_sex_p", "pubertdev_Avg_p_all","pds_p_ss_cat_all", "pubertdev_gonadAvg_p_all", "pubertdev_adrenalAvg_p","pds_1_p","pds_2_p", "pds_3_p", "pds_m4_p", "pds_m5_p", "pds_f4_p", "pds_f5b_p", "pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_m4_p_num", "pds_m5_p_num", "pds_f4_p_num", "pds_f5b_p_num")
-PDSCaregiver <- df_caregiver[PDSCaregivervars]
-saveRDS(PDSCaregiver, "PDS_caregiver_clean.rds")
+# PDSCaregivervars <- c("src_subject_id", "sex", "eventname", "interview_age", "sex", "pubertdev_Avg_p_all","pds_p_ss_cat_all", "pubertdev_gonadAvg_p_all", "pubertdev_adrenalAvg_p","pds_1_p","pds_2_p", "pds_3_p", "pds_m4_p", "pds_m5_p", "pds_f4_p", "pds_f5b_p", "pds_1_p_num","pds_2_p_num", "pds_3_p_num", "pds_m4_p_num", "pds_m5_p_num", "pds_f4_p_num", "pds_f5b_p_num")
+# PDSCaregiver <- df_caregiver[PDSCaregivervars]
+# #saveRDS(PDSCaregiver, "PDS_caregiver_clean.rds")
 ```
 
 ###CHILD SELF-REPORT -- CLEAN, VALIDATED, AND PREPARE FINAL SAMPLE
 ```{r}
 ##Remove previous variables and datasets to reduce mistakes
-rm(list=ls())
-df<-readRDS("df_puberty.rds")
+# rm(list=ls())
+# df<-readRDS("df_puberty.rds")
 
 ##Let's create a caregiver PDS set to clean 
 youthvars <- c("src_subject_id", "eventname", "interview_age", "sex", "race.ethnicity.5level",
@@ -567,31 +523,31 @@ df_youth <- df[youthvars]
 
 ##STEP 1: Clean mis-match of data -- sex = sex at birth/sex matching
 ```{r}
-##Remove 6 people with blank sex
-df_youth<- df_youth[-which(is.na(df_youth$sex)), ]
-df_youth %>% dplyr::count(sex)
-
-### Check some more sex/sex matching
-
-#PDS vs. sex check
-##Who has a PDS sex variable of "NA" and remove
-
-df_youth %>%
-dplyr::count(pds_sex_y) ##20
-df_youth=df_youth[-c(which(is.na(df_youth$pds_sex_y))),]
-
-table(df_youth$sex,df_youth$pds_sex_y) ##Mismatch 63 
-
-##Remove mismatches
-df_youth <- df_youth[-c(which(df_youth$sex == "M" & df_youth$pds_sex_y == "Female"), which(df_youth$sex == "F" & df_youth$pds_sex_y == "Male")),]
-
-##Check this worked and rerun descriptives
-table(df_youth$sex,df_youth$pds_sex_y) #N=5628 F and N=6158 M
-
-describeBy(df_youth, group=df_youth$sex)
-
-##Final sample for PDS youth reporting #N=5628 F and N=6158 M
-table(df_youth$sex,df_youth$pds_sex_y) 
+# ##Remove 6 people with blank sex
+# # df_youth<- df_youth[-which(is.na(df_youth$sex)), ]
+# # df_youth %>% dplyr::count(sex)
+# 
+# ### Check some more sex/sex matching
+# 
+# #PDS vs. sex check
+# ##Who has a PDS sex variable of "NA" and remove
+# 
+# df_youth %>%
+# dplyr::count(pds_sex_y) ##20
+# df_youth=df_youth[-c(which(is.na(df_youth$pds_sex_y))),]
+# 
+# table(df_youth$sex,df_youth$pds_sex_y) ##Mismatch 63 
+# 
+# ##Remove mismatches
+# df_youth <- df_youth[-c(which(df_youth$sex == "M" & df_youth$pds_sex_y == "Female"), which(df_youth$sex == "F" & df_youth$pds_sex_y == "Male")),]
+# 
+# ##Check this worked and rerun descriptives
+# table(df_youth$sex,df_youth$pds_sex_y) #N=5628 F and N=6158 M
+# 
+# describeBy(df_youth, group=df_youth$sex_y)
+# 
+# ##Final sample for PDS youth reporting #N=5628 F and N=6158 M
+# table(df_youth$sex,df_youth$pds_sex_y) 
 
 ```
 
@@ -692,9 +648,9 @@ df_youth$pubertdev_females_Qcount <- rowSums(!is.na(df_youth[,c("pds_ht2_y_num",
 df_youth$pubertdev_females_Qcount[df_youth$sex=="Male"] <- NA
 
 #This will give total number of NAs in males per pubertdev column
-apply(subset(df_youth, sex=="M")[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num", "pds_m5_y_num")], 2, function(x) sum(is.na(x)))
+apply(subset(df_youth, sex=="Male")[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num", "pds_m5_y_num")], 2, function(x) sum(is.na(x)))
 #And total number of NAs in females per pubertdev column
-apply(subset(df_youth, sex=="F")[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_f4_2_y_num", "pds_f5_y_num")], 2, function(x) sum(is.na(x)))
+apply(subset(df_youth, sex=="Female")[,c("pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_f4_2_y_num", "pds_f5_y_num")], 2, function(x) sum(is.na(x)))
 
 #If more than 1 IDK/NA for males. Then code to not valid.
 df_youth$pubertdev_males_valid_for_avg<-NA
@@ -724,25 +680,6 @@ df_youth$pubertdev_femaleAvg[df_youth$pubertdev_females_valid_for_avg==0] <- NA
 #Make a single variable for PDS Average
 df_youth$pubertdev_Avg_all<-coalesce(df_youth$pubertdev_femaleAvg,df_youth$pubertdev_maleAvg)
 
-##Plot the data
-M_Avg=ggplot(subset(df_youth, sex=="Male"),aes(x=pubertdev_maleAvg))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-F_Avg=ggplot(subset(df_youth, sex=="Female"),aes(x=pubertdev_femaleAvg))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-
-Both_Avg=ggplot(df_youth,aes(x=pubertdev_Avg_all,group=sex,fill=sex))+geom_histogram(na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
-
-
-##Fancy plots
-install.packages("devtools")
-library(devtools)
-install_github("kassambara/easyGgplot2")
-library(easyGgplot2)
-AvgPDS=ggplot2.histogram(data=df_youth, xName='pubertdev_Avg_all',binwidth=0.2,
-    groupName='sex', legendPosition="top",
-        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
-ggsave(AvgPDS,  file="AvgPDS_youth.tiff", width = 12, height = 8, units = "in",
-  dpi = 300)
-
-ggplot2.histogram(data=df_youth, xName='pubertdev_Avg_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.2)+theme_bw()
 
 ```
 
@@ -769,12 +706,6 @@ levels = c(1,2,3,4,5), labels=c("Pre", "Early", "Mid", "Late","Post"))
 
 xtabs(~df_youth$pds_y_ss_cat_all+df_youth$pds_sex_y)
 
-PubertyCategory=ggplot(subset(df_youth, !is.na(pds_y_ss_cat_all)),aes(x=factor(pds_y_ss_cat_all,levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex,fill=sex))+geom_histogram(stat="count",position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
-
-
-ggsave(PubertyCategory,  file="PubertyCategory_Youth.tiff", width = 12, height = 8, units = "in",
-  dpi = 300)
-
 ```
 
 
@@ -782,7 +713,11 @@ ggsave(PubertyCategory,  file="PubertyCategory_Youth.tiff", width = 12, height =
 ```{r}
 ##Shirtcliff 2009 method: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2727719/; In girls, growth spurt, breast development, and menarche are associated with gonadal hormonal signals. In boys, growth spurt, deepening of voice and facial hair growth are associated with gonadal hormones. For both sexes, pubic/body hair and skin changes are associated with adrenal hormones. Doesn't say if items were summed or averaged. To be consistent with Herting et al 2017, we will average.
 
+#NOT WORKING
 #Male Gonads
+
+str(df_youth)
+
 df_youth$pubertdev_malegonadss <-rowSums(df_youth[,c("pds_ht2_y_num", "pds_m4_y_num", "pds_m5_y_num")], na.rm=T)
 df_youth$pubertdev_malegonad_Qcount <- rowSums(!is.na(df_youth[,c("pds_ht2_y_num", "pds_m4_y_num", "pds_m5_y_num")]))
 df_youth$pubertdev_malegonad_Qcount[df_youth$pubertdev_malegonad_Qcount == 0] <- NA
@@ -790,7 +725,7 @@ df_youth$pubertdev_malegonad_Qcount[df_youth$sex=="Female"] <- NA
 
 #ANY IDK/NA for males in these 3 variables for gonad. Then code to not valid.
 df_youth$pubertdev_males_valid_for_gonad<-NA
-df_youth$pubertdev_males_valid_for_gonad<-ifelse(df_youth$sex=="M" & df_youth$pubertdev_malegonad_Qcount==3, 1, 0)
+df_youth$pubertdev_males_valid_for_gonad<-ifelse(df_youth$sex=="Male" & df_youth$pubertdev_malegonad_Qcount==3, 1, 0)
 
 ####RETAKE HERE. MALE YOUTH GONADAL NOT WORKING
 #Compute male gonad avg
@@ -837,6 +772,129 @@ xtabs(~df_youth$pubertdev_valid_for_adrenal+df_youth$pds_sex_y)
 #Compute adrenal avg
 df_youth$pubertdev_adrenalAvg <- df_youth$pubertdevadrenalss/df_youth$pubertdev_adrenal_Qcount
 df_youth$pubertdev_adrenalAvg[df_youth$pubertdev_valid_for_adrenal==0] <- NA
+```
+
+```{r}
+##Create YOUTH PDS dataset for covariates in other projects
+# PDSYouthvars <- c("src_subject_id", "sex", "eventname", "demo_prim_p", "interview_age", "pds_sex_y", "pubertdev_Avg_all","pds_y_ss_cat_all", "pubertdev_gonadAvg_all", "pubertdev_adrenalAvg","pds_ht2_y","pds_bdyhair_y", "pds_skin2_y", "pds_m4_y", "pds_m5_y", "pds_f4_2_y", "pds_f5_y", "pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num", "pds_m5_y_num", "pds_f4_2_y_num", "pds_f5_y_num")
+# PDSYouth <- df_youth[PDSYouthvars]
+# saveRDS(PDSYouth, "PDS_youth_clean.rds")
+```
+
+
+#Rename score variables in NDA way
+```{r}
+#Caregiver
+df_caregiver$PDS_gonadal_score<-df_caregiver$pubertdev_gonadAvg_p_all
+df_caregiver$PDS_adrenal_score<-df_caregiver$pubertdev_adrenalAvg_p
+df_caregiver$PDS_score <-df_caregiver$pubertdev_adrenalAvg_p
+df_caregiver$pds_ss_category<-df_caregiver$pds_p_ss_cat_all
+
+#Parental
+df_youth$PDS_y_gonadal_score<-df_youth$pubertdev_gonadAvg_all
+df_youth$PDS_y_adrenal_score<-df_youth$pubertdev_adrenalAvg
+df_youth$PDS_y_score <-df_youth$pubertdev_Avg_all
+df_youth$pds_y_ss_category<-df_youth$pds_y_ss_cat_all
+```
+
+
+```{r}
+#Merge scores with full data set: 
+
+all_PDS_measures <- merge(df_caregiver[, c("src_subject_id","eventname", "PDS_score","pds_ss_category","PDS_gonadal_score","PDS_adrenal_score")],df_youth[, c("src_subject_id","eventname", "PDS_y_score","pds_y_ss_category","PDS_y_gonadal_score","PDS_y_adrenal_score")], by = c("src_subject_id","eventname"))
+
+
+nda30 <- merge(nda30,all_PDS_measures)
+
+output_directory <- "C:/Users/lucia/GitHub/ABCD/derivatives"
+write.csv(nda30, paste(output_directory,"nda30.csv",sep="/"), row.names = FALSE)
+```
+
+#Caregiver baseline plots
+```{r}
+##Reduce to baseline data only N=11,883
+df_caregiver <- subset(df_caregiver,eventname=="baseline_year_1_arm_1")   #We are scoring all waves
+
+##Plot the data
+M_Avg=ggplot(subset(df_caregiver, sex=="Male"),aes(x=pubertdev_maleAvg_p))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+F_Avg=ggplot(subset(df_caregiver, sex=="Female"),aes(x=pubertdev_femaleAvg_p))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+
+Both_Avg=ggplot(df_caregiver,aes(x=pubertdev_Avg_p_all,group=sex,fill=sex))+geom_histogram(na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+
+
+##Fancy plots
+install.packages("devtools")
+library(devtools)
+install_github("kassambara/easyGgplot2")
+library(easyGgplot2)
+AvgPDS=ggplot2.histogram(data=df_caregiver, xName='pubertdev_Avg_p_all',binwidth=0.2,
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
+ggsave(AvgPDS,  file=here("output","AvgPDS.tiff"), width = 12, height = 8, units = "in",
+  dpi = 300)
+
+ggplot2.histogram(data=df_caregiver, xName='pubertdev_Avg_p_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.2)+theme_bw()
+
+
+PubertyCategory=ggplot(subset(df_caregiver, !is.na(pds_p_ss_cat_all)),aes(x=factor(pds_p_ss_cat_all,levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex,fill=sex))+geom_histogram(stat="count",position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
+PubertyCategory
+
+ggsave(PubertyCategory,  file=here("output","PubertyCategory.tiff"), width = 12, height = 8, units = "in",
+  dpi = 300)
+
+##Plot the data
+Avg_adrenal=ggplot(df_caregiver,aes(x=pubertdev_adrenalAvg_p,group=sex,fill=sex))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+
+
+AdrenalAvg=ggplot2.histogram(data=df_caregiver, xName='pubertdev_adrenalAvg_p' ,binwidth=0.5,
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
+
+ggsave(AdrenalAvg,  file=here("output","AdrenalAvg.tiff"), width = 12, height = 8, units = "in",
+  dpi = 300)
+
+GonadalAvg=ggplot2.histogram(data=df_caregiver, xName='pubertdev_gonadAvg_p_all' ,binwidth=0.5,
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
+
+ggsave(GonadalAvg,  file=here("output","GonadalAvg.tiff"), width = 12, height = 8, units = "in",
+  dpi = 300)
+
+ggplot2.histogram(data=df_caregiver, xName='pubertdev_adrenalAvg_p',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
+
+ggplot2.histogram(data=df_caregiver, xName='pubertdev_gonadAvg_p_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
+
+```
+
+#Youth baseline plots
+```{r}
+df_youth <- subset(df_youth,eventname=="baseline_year_1_arm_1")   #We are scoring all waves
+
+##Plot the data
+M_Avg_y=ggplot(subset(df_youth, sex=="Male"),aes(x=pubertdev_maleAvg))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+F_Avg_y=ggplot(subset(df_youth, sex=="Female"),aes(x=pubertdev_femaleAvg))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+
+Both_Avg_y=ggplot(df_youth,aes(x=pubertdev_Avg_all,group=sex,fill=sex))+geom_histogram(na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
+
+
+##Fancy plots
+install.packages("devtools")
+library(devtools)
+install_github("kassambara/easyGgplot2")
+library(easyGgplot2)
+AvgPDS_y=ggplot2.histogram(data=df_youth, xName='pubertdev_Avg_all',binwidth=0.2,
+    groupName='sex', legendPosition="top",
+        alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
+ggsave(AvgPDS,  file=here("output","AvgPDS_youth.tiff"), width = 12, height = 8, units = "in",
+  dpi = 300)
+
+ggplot2.histogram(data=df_youth, xName='pubertdev_Avg_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.2)+theme_bw()
+
+PubertyCategory_y=ggplot(subset(df_youth, !is.na(pds_y_ss_cat_all)),aes(x=factor(pds_y_ss_cat_all,levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex,fill=sex))+geom_histogram(stat="count",position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
+
+
+ggsave(PubertyCategory_y,  file=here("output","PubertyCategory_Youth.tiff"), width = 12, height = 8, units = "in",
+  dpi = 300)
 
 ##Plot the data
 Avg_adrenal=ggplot(df_youth,aes(x=pubertdev_adrenalAvg,group=sex,fill=sex))+geom_histogram(position="dodge",na.rm = TRUE,alpha=0.5,binwidth=0.25)+theme_bw()
@@ -845,25 +903,17 @@ AdrenalAvg=ggplot2.histogram(data=df_youth, xName='pubertdev_adrenalAvg' ,binwid
     groupName='sex', legendPosition="top",
         alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 
-ggsave(AdrenalAvg,  file="AdrenalAvg_Youth.tiff", width = 12, height = 8, units = "in",
+ggsave(AdrenalAvg,  file=here("output","AdrenalAvg_Youth.tiff"), width = 12, height = 8, units = "in",
   dpi = 300)
 
 GonadalAvg=ggplot2.histogram(data=df_youth, xName='pubertdev_gonadAvg_all' ,binwidth=0.5,
     groupName='sex', legendPosition="top",
         alpha=0.3, position="identity")+theme_bw()+theme(axis.text.x  = element_text(size=12), axis.text.y  = element_text(size=12))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(~sex)
 
-ggsave(GonadalAvg,  file="GonadalAvg_Youth.tiff", width = 12, height = 8, units = "in",
+ggsave(GonadalAvg,file=here("output","GonadalAvg_Youth.tiff"), width = 12, height = 8, units = "in",
   dpi = 300)
 
 ggplot2.histogram(data=df_youth, xName='pubertdev_adrenalAvg',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
 
 ggplot2.histogram(data=df_youth, xName='pubertdev_gonadAvg_all',addDensity=TRUE,groupName='sex', legendPosition="top",alpha=0.5,addMeanLine=TRUE, meanLineColor="white", meanLineSize=1.5, binwidth=.5)+theme_bw()
-
-```
-
-```{r}
-##Create YOUTH PDS dataset for covariates in other projects
-PDSYouthvars <- c("src_subject_id", "sex", "eventname", "demo_prim_p", "interview_age", "pds_sex_y", "pubertdev_Avg_all","pds_y_ss_cat_all", "pubertdev_gonadAvg_all", "pubertdev_adrenalAvg","pds_ht2_y","pds_bdyhair_y", "pds_skin2_y", "pds_m4_y", "pds_m5_y", "pds_f4_2_y", "pds_f5_y", "pds_ht2_y_num","pds_bdyhair_y_num", "pds_skin2_y_num", "pds_m4_y_num", "pds_m5_y_num", "pds_f4_2_y_num", "pds_f5_y_num")
-PDSYouth <- df_youth[PDSYouthvars]
-saveRDS(PDSYouth, "PDS_youth_clean.rds")
 ```
