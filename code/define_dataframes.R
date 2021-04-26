@@ -232,7 +232,7 @@ data_no_striatal_feed_outliers_males_prepubertal <- subset(MID_imaging_correct_m
 nrow(data_no_striatal_feed_outliers_males_prepubertal) # 1535.
 
 # No lateral OFC (lOFC) anticipation outliers.
-data_no_lOFC_ant_outliers <- subset(MID_imaging_correct, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 33)
+data_no_lOFC_ant_outliers <- subset(MID_imaging_correct, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3)
 nrow(data_no_lOFC_ant_outliers) # 4165.
 
 data_no_lOFC_ant_outliers_females <- subset(MID_imaging_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3)
