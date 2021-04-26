@@ -252,7 +252,7 @@ data_no_lOFC_ant_outliers_males_prepubertal <- subset(MID_imaging_correct_males,
 nrow(data_no_lOFC_ant_outliers_males_prepubertal) # 1520.
 
 # No medial OFC (mOFC) anticipation outliers.
-data_no_mOFC_ant_outliers <- subset(MID_imaging_correct, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 33)
+data_no_mOFC_ant_outliers <- subset(MID_imaging_correct, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3)
 nrow(data_no_mOFC_ant_outliers) # 4170.
 
 data_no_mOFC_ant_outliers_females <- subset(MID_imaging_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3)
