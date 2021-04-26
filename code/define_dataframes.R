@@ -19,7 +19,7 @@
 #           6. Hispanic. (demo_race_hispanic).
 
 
-nrow(fulldata) # 5934.
+nrow(fulldata) # 27321 (exploratory).
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
 data <- fulldata[,c("src_subject_id",
                     "interview_age",
@@ -44,13 +44,14 @@ data <- fulldata[,c("src_subject_id",
                     "cbcl_scr_syn_withdep_r",
                     "cbcl_scr_dsm5_depress_r",
                     "cbcl_scr_dsm5_anxdisord_r",
-                    "PDS_score_f",
-                    "PDS_score_m",
+                    #"PDS_score_f",
+                    #"PDS_score_m",
                     "PDS_score",
-                    "PDS_sum_f",
-                    "PDS_sum_m",
-                    "PDS_sum",
-                    "pds_p_ss_category",
+                    #"PDS_sum_f",
+                    #"PDS_sum_m",
+                    #"PDS_sum",
+                    #"pds_p_ss_category",
+                    "pds_ss_category",
                     "fam_history_q6d_depression",
                     "tfmri_ma_acdn_b_scs_aarh", # Accumbens reward vs. neutral anticipation.
                     "tfmri_ma_acdn_b_scs_aalh",
@@ -97,50 +98,41 @@ data <- fulldata[,c("src_subject_id",
 )]
 
 
+# NOTE: CHECK THAT PDS_SS_CATEGORY IS THE VARIABLE WE WANT. IS THIS PARENT REPORTED?
+
 data[c("src_subject_id","rel_family_id","eventname",
        "sex","demo_race_hispanic","site_id_l",
-       "mri_info_deviceserialnumber","race.eth.7level",
+       "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
        "high.educ","household.income","married.or.livingtogether",
-       "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")] <- lapply(data[c("src_subject_id","rel_family_id","eventname",
+       "pds_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")] <- lapply(data[c("src_subject_id","rel_family_id","eventname",
                                                                                                 "sex","demo_race_hispanic","site_id_l",
-                                                                                                "mri_info_deviceserialnumber","race.eth.7level",
+                                                                                                "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
                                                                                                 "high.educ","household.income","married.or.livingtogether",
-                                                                                                "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor) 
+                                                                                                "pds_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor)
 
-
-#data$src_subject_id <- as.factor(data$src_subject_id)
-#data$rel_family_id <- as.factor(data$rel_family_id)
-#data$eventname <- as.factor(data$eventname)
-#data$sex <- as.factor(data$sex)
-#data$demo_race_hispanic <- as.factor(data$demo_race_hispanic)
-#data$site_id_l <- as.factor(data$site_id_l)
-#data$mri_info_deviceserialnumber <- as.factor(data$mri_info_deviceserialnumber)
-#data$race.eth.7level <- as.factor(data$race.eth.7level)
-#data$high.educ <- as.factor(data$high.educ)
-#data$household.income <- as.factor(data$household.income)
-#data$married.or.livingtogether <- as.factor(data$married.or.livingtogether)
-#data$pds_p_ss_category <-as.factor(data$pds_p_ss_category)
-#data$tfmri_mid_beh_performflag <- as.factor(data$tfmri_mid_beh_performflag)
-#data$imgincl_mid_include <- as.factor(data$imgincl_mid_include)
-
-data$race.ethnicity.5level = data$race.eth.7level
-data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
-data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
+#data$race.ethnicity.5level = data$race.eth.7level
+#data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
+#data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
 
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
 data$hormone_scr_ert_mean_z <- scale(data$hormone_scr_ert_mean)
 
-nrow(data) # 5934.
+nrow(data) # 27321 (exploratory).
+
+# Use only data from baseline.
+data <- subset(data,eventname == "baseline_year_1_arm_1")
+nrow(data) # 5961 (exploratory).
 
 # Use data with only correct PDS scores.
+# This also removes any rows with NA values in PDS_score.
 PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_score goes from 1 to 4 (continuous).
-nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244.
+nrow(PDS_correct) # 5754 (exploratory).
 
-PDS_correct <- subset(PDS_correct, PDS_sum<30) # This shouldn't change anything but just in case there is somehow a participant with a PDS score less than 5 but a sum that is incorrect.
-nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244.
-PDS_correct <- PDS_correct %>% filter(sex!="") #remove 6 participants with no gender.
-nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244. Were these participants already removed from the dataframe?
+#PDS_correct <- subset(PDS_correct, PDS_sum < 30) # This shouldn't change anything but just in case there is somehow a participant with a PDS score less than 5 but a sum that is incorrect.
+#nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244.
+#PDS_correct <- PDS_correct %>% filter(sex!="") #remove 6 participants with no gender.
+#nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244. Were these participants already removed from the dataframe?
 
 # There are two people with a PDS category score of 5, which will bias the category estimates a lot, so we are removing them.
 PDS_correct$pds_p_ss_category <- as.factor(PDS_correct$pds_p_ss_category)
