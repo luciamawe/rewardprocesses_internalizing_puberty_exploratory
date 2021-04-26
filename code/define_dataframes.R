@@ -18,7 +18,6 @@
 #           5. Age. (interview_age).
 #           6. Hispanic. (demo_race_hispanic).
 
-
 nrow(fulldata) # 27321 (exploratory).
 # Because this is such a big data file, let's only keep the columns that we need for this analysis.
 data <- fulldata[,c("src_subject_id",
@@ -98,56 +97,76 @@ data <- fulldata[,c("src_subject_id",
 )]
 
 
-# NOTE: CHECK THAT PDS_SS_CATEGORY IS THE VARIABLE WE WANT. IS THIS PARENT REPORTED?
+# Note: pds_ss_category = pds_p_ss_category. Rename here.
+data <- rename(data, pds_p_ss_category = pds_ss_category)
 
 data[c("src_subject_id","rel_family_id","eventname",
        "sex","demo_race_hispanic","site_id_l",
        "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
        "high.educ","household.income","married.or.livingtogether",
-       "pds_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")] <- lapply(data[c("src_subject_id","rel_family_id","eventname",
+       "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")] <- lapply(data[c("src_subject_id","rel_family_id","eventname",
                                                                                                 "sex","demo_race_hispanic","site_id_l",
                                                                                                 "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
                                                                                                 "high.educ","household.income","married.or.livingtogether",
-                                                                                                "pds_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor)
+                                                                                                "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor)
 
 #data$race.ethnicity.5level = data$race.eth.7level
 #data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
 #data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
 
+# Exclude two participants who have multiple rows for baseline.
+data <- subset(data, src_subject_id != "NDAR_INV2ZA2LC3N" & src_subject_id != "NDAR_INVJ9GNXGK5")
+nrow(data) # 27298.
+
+# Use only data from baseline.
+data <- subset(data,eventname == "baseline_year_1_arm_1")
+nrow(data) # 5945 (exploratory).
+
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
 data$hormone_scr_ert_mean_z <- scale(data$hormone_scr_ert_mean)
 
-nrow(data) # 27321 (exploratory).
-
-# Use only data from baseline.
-data <- subset(data,eventname == "baseline_year_1_arm_1")
-nrow(data) # 5961 (exploratory).
-
 # Use data with only correct PDS scores.
 # This also removes any rows with NA values in PDS_score.
 PDS_correct <- subset(data, PDS_score < 5) #Be mindful that PDS category goes from 1 to 5, while PDS_score goes from 1 to 4 (continuous).
-nrow(PDS_correct) # 5754 (exploratory).
+nrow(PDS_correct) # 5738 (exploratory).
 
 #PDS_correct <- subset(PDS_correct, PDS_sum < 30) # This shouldn't change anything but just in case there is somehow a participant with a PDS score less than 5 but a sum that is incorrect.
 #nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244.
 #PDS_correct <- PDS_correct %>% filter(sex!="") #remove 6 participants with no gender.
 #nrow(PDS_correct) # Exploratory: 4224. Confirmatory: 4244. Were these participants already removed from the dataframe?
 
-# There are two people with a PDS category score of 5, which will bias the category estimates a lot, so we are removing them.
-PDS_correct$pds_p_ss_category <- as.factor(PDS_correct$pds_p_ss_category)
-PDS_correct <- subset(PDS_correct, pds_p_ss_category != "5")
-nrow(PDS_correct) # 4222.
+# There are two people with a PDS category score of 5 ("post"), which will bias the category estimates a lot, so we are removing them.
+# post_pubertal <- subset(PDS_correct, pds_p_ss_category == "Post")
+# nrow(post_pubertal) # Seven participants in exploratory.
+PDS_correct <- subset(PDS_correct, pds_p_ss_category != "Post")
+nrow(PDS_correct) # 5683.
 mean_PDS_score <- mean(PDS_correct$PDS_score)
 sd_PDS_score <- sd(PDS_correct$PDS_score)
 PDS_correct$PDS_score_z <- (PDS_correct$PDS_score-mean_PDS_score)/sd_PDS_score 
 
-# Exclude people ABCD says to exclude for MID task.
+# Exclude based on ABCD's recommendation for MID imaging, including only those with both usable task and imaging data here.
+# Start with neuroimaging flag (exclude people ABCD says to exclude based on MID imaging data).
+summary(PDS_correct$imgincl_mid_include)
+# 0    1      NA's
+# 1450 4191   42
+# nrow(MID_task_correct)
+# 1450 + 42 = 1492.
+
+MID_imaging_correct <- subset(PDS_correct, imgincl_mid_include ==1) 
+nrow(MID_imaging_correct) # 4191 (exploratory). So 1492 drop out after imaging parameters are taken into account.
+
+# Next, use behavioral task flag to also exclude people ABCD says to exclude based on MID task data.
+MID_imaging_correct <- subset(MID_imaging_correct, tfmri_mid_beh_performflag ==1)
+nrow(MID_imaging_correct) # 4191 (exploratory). So no extra people drop out based on this behavioral performance flag.
+# So this suggests that 'imgincl_mid_include' already takes into account the information from 'tfmri_mid_beh_performflag'.
+
+# Keep a version that is just the task (not based on neuroimaging) for our behavioral analyses.
 MID_task_correct <- subset(PDS_correct, tfmri_mid_beh_performflag ==1)
-nrow(MID_task_correct) # 3945 (exploratory).
-#summary(PDS_correct$tfmri_mid_beh_performflag)
+nrow(MID_task_correct) # 4656 (exploratory).
+#summary(PDS_correct$tfmri_mid_beh_performflag) # Note: There are many NA values, which result in removing a lot of participants.
 #  0    1     NA's 
-#  262 3945   15 
+#  363 4656  664 
 
 # MID Reaction Time Variable Creation  (including here, after MID_task_correct is created, so that when we scale, we are using the data frame that only includes the correct MID task data).
 ## Reaction time difference between large reward trials and neutral trials (Positive value indicates greater sensitivity to large reward than neutral trials).
@@ -159,34 +178,21 @@ MID_task_correct$rt_diff_large_small <- MID_task_correct$tfmri_mid_all_beh_small
 MID_task_correct$rt_diff_large_neutral_z <- scale(MID_task_correct$rt_diff_large_neutral)
 MID_task_correct$rt_diff_large_small_z <- scale(MID_task_correct$rt_diff_large_small)
 
-
-# Exclude based on ABCD's recommendation for MID imaging, including only those with both usable task and imaging data here.
-#summary(PDS_correct$imgincl_mid_include)
-#0    1      NA's 
-#517 3701    4 
-# nrow(MID_task_correct)
-MID_imaging_correct <- subset(MID_task_correct, imgincl_mid_include ==1) 
-nrow(MID_imaging_correct) # 3687 (exploratory). so 258 drop out after imaging parameters are taken into account.
-# Are there people excluded by task who are still included by imaging? If so, we want to exclude them for imaging as well (only want people who did task correctly in imaging analyses).
-
-# In confirmatory, goes from 4242 (PDS_correct) to 3959 (MID_correct).
-
 # Separate by sex.
 PDS_correct_females <- subset(PDS_correct, sex == "F")
 PDS_correct_males <- subset(PDS_correct, sex == "M")
-nrow(PDS_correct_females)  # 2058 (exploratory); 2059 (confirmatory).
-nrow(PDS_correct_males) # 2164 (exploratory); 2165 (confirmatory).
+nrow(PDS_correct_females)  # 2720 (exploratory).
+nrow(PDS_correct_males) # 2963 (exploratory).
 
 MID_task_correct_females <- subset(MID_task_correct, sex == "F")
 MID_task_correct_males <- subset(MID_task_correct, sex == "M")
-nrow(MID_task_correct_females)  # 1949 (exploratory).
-nrow(MID_task_correct_males) # 1996 (exploratory).
+nrow(MID_task_correct_females)  # 2274 (exploratory).
+nrow(MID_task_correct_males) # 2382 (exploratory).
 
 MID_imaging_correct_females <- subset(MID_imaging_correct, sex == "F")
 MID_imaging_correct_males <- subset(MID_imaging_correct, sex == "M")
-nrow(MID_imaging_correct_females)  # 1849 (exploratory).
-nrow(MID_imaging_correct_males) # 1838 (exploratory).
-
+nrow(MID_imaging_correct_females)  # 2073 (exploratory).
+nrow(MID_imaging_correct_males) # 2118 (exploratory).
 
 # Create different subsets of the data based on removing outliers for specific variables of interest.
 # For anything that is not related to the MID task, use PDS_correct.
@@ -195,113 +201,116 @@ nrow(MID_imaging_correct_males) # 1838 (exploratory).
 
 # No striatal anticipation outliers.
 data_no_striatal_ant_outliers <- subset(MID_imaging_correct, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
-nrow(data_no_striatal_ant_outliers) # 4169.
+nrow(data_no_striatal_ant_outliers) # 4146 (exploratory).
 
 data_no_striatal_ant_outliers_females <- subset(MID_imaging_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
-nrow(data_no_striatal_ant_outliers_females) # 2035.
+nrow(data_no_striatal_ant_outliers_females) # 2054 (exploratory).
 
 data_no_striatal_ant_outliers_males <- subset(MID_imaging_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3)
-nrow(data_no_striatal_ant_outliers_males) # 2134.
+nrow(data_no_striatal_ant_outliers_males) # 2092 (exploratory).
 
 # No striatal FEEDBACK outliers.
 data_no_striatal_feed_outliers <- subset(MID_imaging_correct, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3)
-nrow(data_no_striatal_feed_outliers) # 4181.
+nrow(data_no_striatal_feed_outliers) # 4142 (exploratory).
 
 data_no_striatal_feed_outliers_females <- subset(MID_imaging_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3)
-nrow(data_no_striatal_feed_outliers_females) # 2041.
+nrow(data_no_striatal_feed_outliers_females) # 2056 (exploratory).
 
 data_no_striatal_feed_outliers_males <- subset(MID_imaging_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3)
-nrow(data_no_striatal_feed_outliers_males) # 2140.
+nrow(data_no_striatal_feed_outliers_males) # 2086 (exploratory).
 
-data_no_striatal_feed_outliers_females_pubertal <- subset(MID_imaging_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3  & pds_p_ss_category != 1)
-nrow(data_no_striatal_feed_outliers_females_pubertal) # 1412.
-data_no_striatal_feed_outliers_males_pubertal <- subset(MID_imaging_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3  &  pds_p_ss_category != 1)
-nrow(data_no_striatal_feed_outliers_males_pubertal) # 605.
+# summary(MID_imaging_correct_females$pds_p_ss_category)
+# summary(MID_imaging_correct_males$pds_p_ss_category)
 
-data_no_striatal_feed_outliers_females_prepubertal <- subset(MID_imaging_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3   & pds_p_ss_category == 1)
-nrow(data_no_striatal_feed_outliers_females_prepubertal) # 629.
-data_no_striatal_feed_outliers_males_prepubertal <- subset(MID_imaging_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3   &  pds_p_ss_category == 1)
-nrow(data_no_striatal_feed_outliers_males_prepubertal) # 1535.
+data_no_striatal_feed_outliers_females_pubertal <- subset(MID_imaging_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3  & pds_p_ss_category != "Pre")
+nrow(data_no_striatal_feed_outliers_females_pubertal) # 1399 (exploratory).
+data_no_striatal_feed_outliers_males_pubertal <- subset(MID_imaging_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3  &  pds_p_ss_category != "Pre")
+nrow(data_no_striatal_feed_outliers_males_pubertal) # 611 (exploratory).
+
+data_no_striatal_feed_outliers_females_prepubertal <- subset(MID_imaging_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3   & pds_p_ss_category == "Pre")
+nrow(data_no_striatal_feed_outliers_females_prepubertal) # 657 (exploratory).
+data_no_striatal_feed_outliers_males_prepubertal <- subset(MID_imaging_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3   &  pds_p_ss_category == "Pre")
+nrow(data_no_striatal_feed_outliers_males_prepubertal) # 1475 (exploratory).
 
 # No lateral OFC (lOFC) anticipation outliers.
 data_no_lOFC_ant_outliers <- subset(MID_imaging_correct, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3)
-nrow(data_no_lOFC_ant_outliers) # 4165.
+nrow(data_no_lOFC_ant_outliers) # 4135 (exploratory).
 
 data_no_lOFC_ant_outliers_females <- subset(MID_imaging_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3)
-nrow(data_no_lOFC_ant_outliers_females) # 2025.
+nrow(data_no_lOFC_ant_outliers_females) # 2050 (exploratory).
 
 data_no_lOFC_ant_outliers_males <- subset(MID_imaging_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3)
-nrow(data_no_lOFC_ant_outliers_males) # 2105.
+nrow(data_no_lOFC_ant_outliers_males) # 2085 (exploratory).
 
-data_no_lOFC_ant_outliers_females_pubertal <- subset(MID_imaging_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & pds_p_ss_category != 1)
-nrow(data_no_lOFC_ant_outliers_females_pubertal) # 1400.
-data_no_lOFC_ant_outliers_males_pubertal <- subset(MID_imaging_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 &  pds_p_ss_category != 1)
-nrow(data_no_lOFC_ant_outliers_males_pubertal) # 585.
+data_no_lOFC_ant_outliers_females_pubertal <- subset(MID_imaging_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & pds_p_ss_category != "Pre")
+nrow(data_no_lOFC_ant_outliers_females_pubertal) # 2050 (exploratory).
+data_no_lOFC_ant_outliers_males_pubertal <- subset(MID_imaging_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 &  pds_p_ss_category != "Pre")
+nrow(data_no_lOFC_ant_outliers_males_pubertal) # 603 (exploratory).
 
-data_no_lOFC_ant_outliers_females_prepubertal <- subset(MID_imaging_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & pds_p_ss_category == 1)
-nrow(data_no_lOFC_ant_outliers_females_prepubertal) # 625.
-data_no_lOFC_ant_outliers_males_prepubertal <- subset(MID_imaging_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 &  pds_p_ss_category == 1)
-nrow(data_no_lOFC_ant_outliers_males_prepubertal) # 1520.
+data_no_lOFC_ant_outliers_females_prepubertal <- subset(MID_imaging_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & pds_p_ss_category == "Pre")
+nrow(data_no_lOFC_ant_outliers_females_prepubertal) # 658 (exploratory).
+data_no_lOFC_ant_outliers_males_prepubertal <- subset(MID_imaging_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 &  pds_p_ss_category == "Pre")
+nrow(data_no_lOFC_ant_outliers_males_prepubertal) # 1482 (exploratory).
 
 # No medial OFC (mOFC) anticipation outliers.
 data_no_mOFC_ant_outliers <- subset(MID_imaging_correct, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3)
-nrow(data_no_mOFC_ant_outliers) # 4170.
+nrow(data_no_mOFC_ant_outliers) # 4130 (exploratory).
 
 data_no_mOFC_ant_outliers_females <- subset(MID_imaging_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3)
-nrow(data_no_mOFC_ant_outliers_females) # 2028.
+nrow(data_no_mOFC_ant_outliers_females) # 2051 (exploratory).
 
 data_no_mOFC_ant_outliers_males <- subset(MID_imaging_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3)
-nrow(data_no_mOFC_ant_outliers_males) # 2116.
+nrow(data_no_mOFC_ant_outliers_males) # 2079 (exploratory).
 
-data_no_mOFC_ant_outliers_females_pubertal <- subset(MID_imaging_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & pds_p_ss_category != 1)
-nrow(data_no_mOFC_ant_outliers_females_pubertal) # 1405.
-data_no_mOFC_ant_outliers_males_pubertal <- subset(MID_imaging_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 &  pds_p_ss_category != 1)
-nrow(data_no_mOFC_ant_outliers_males_pubertal) # 593.
+data_no_mOFC_ant_outliers_females_pubertal <- subset(MID_imaging_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & pds_p_ss_category != "Pre")
+nrow(data_no_mOFC_ant_outliers_females_pubertal) # 1392 (exploratory).
+data_no_mOFC_ant_outliers_males_pubertal <- subset(MID_imaging_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 &  pds_p_ss_category != "Pre")
+nrow(data_no_mOFC_ant_outliers_males_pubertal) # 607 (exploratory).
 
-data_no_mOFC_ant_outliers_females_prepubertal <- subset(MID_imaging_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & pds_p_ss_category == 1)
-nrow(data_no_mOFC_ant_outliers_females_prepubertal) # 623.
-data_no_mOFC_ant_outliers_males_prepubertal <- subset(MID_imaging_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 &  pds_p_ss_category == 1)
-nrow(data_no_mOFC_ant_outliers_males_prepubertal) # 1523.
+data_no_mOFC_ant_outliers_females_prepubertal <- subset(MID_imaging_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & pds_p_ss_category == "Pre")
+nrow(data_no_mOFC_ant_outliers_females_prepubertal) # 659 (exploratory).
+data_no_mOFC_ant_outliers_males_prepubertal <- subset(MID_imaging_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 &  pds_p_ss_category == "Pre")
+nrow(data_no_mOFC_ant_outliers_males_prepubertal) # 1472 (exploratory).
 
 # No lateral OFC (lOFC) FEEDBACK outliers.
 data_no_lOFC_feed_outliers <- subset(MID_imaging_correct, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3)
-nrow(data_no_lOFC_feed_outliers) # 4156.
+nrow(data_no_lOFC_feed_outliers) # 4147 (exploratory).
 
 data_no_lOFC_feed_outliers_females <- subset(MID_imaging_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3)
-nrow(data_no_lOFC_feed_outliers_females) # 2302.
+nrow(data_no_lOFC_feed_outliers_females) # 2052 (exploratory).
 
 data_no_lOFC_feed_outliers_males <- subset(MID_imaging_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3)
-nrow(data_no_lOFC_feed_outliers_males) # 2124.
+nrow(data_no_lOFC_feed_outliers_males) # 2095 (exploratory).
 
-data_no_lOFC_feed_outliers_females_pubertal <- subset(MID_imaging_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & pds_p_ss_category != 1)
-nrow(data_no_lOFC_feed_outliers_females_pubertal) # 1406.
-data_no_lOFC_feed_outliers_males_pubertal <- subset(MID_imaging_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category != 1)
-nrow(data_no_lOFC_feed_outliers_males_pubertal) # 596.
+data_no_lOFC_feed_outliers_females_pubertal <- subset(MID_imaging_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & pds_p_ss_category != "Pre")
+nrow(data_no_lOFC_feed_outliers_females_pubertal) # 1391 (exploratory).
+data_no_lOFC_feed_outliers_males_pubertal <- subset(MID_imaging_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category != "Pre")
+nrow(data_no_lOFC_feed_outliers_males_pubertal) # 609 (exploratory).
 
-data_no_lOFC_feed_outliers_females_prepubertal <- subset(MID_imaging_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & pds_p_ss_category == 1)
-nrow(data_no_lOFC_feed_outliers_females_prepubertal) # 626.
-data_no_lOFC_feed_outliers_males_prepubertal <- subset(MID_imaging_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category == 1)
-nrow(data_no_lOFC_feed_outliers_males_prepubertal) # 1528.
+data_no_lOFC_feed_outliers_females_prepubertal <- subset(MID_imaging_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & pds_p_ss_category == "Pre")
+nrow(data_no_lOFC_feed_outliers_females_prepubertal) # 661 (exploratory).
+data_no_lOFC_feed_outliers_males_prepubertal <- subset(MID_imaging_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category == "Pre")
+nrow(data_no_lOFC_feed_outliers_males_prepubertal) # 1486 (exploratory).
 
 # No medial OFC (mOFC) FEEDBACK outliers.
 data_no_mOFC_feed_outliers <- subset(MID_imaging_correct, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3)
-nrow(data_no_mOFC_feed_outliers) #4157.
+nrow(data_no_mOFC_feed_outliers) # 4146 (exploratory).
 
 data_no_mOFC_feed_outliers_females <- subset(MID_imaging_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3)
-nrow(data_no_mOFC_feed_outliers_females) # 2034.
+nrow(data_no_mOFC_feed_outliers_females) # 2053 (exploratory).
 
 data_no_mOFC_feed_outliers_males <- subset(MID_imaging_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3)
-nrow(data_no_mOFC_feed_outliers_males) # 2123.
+nrow(data_no_mOFC_feed_outliers_males) # 2093 (exploratory).
 
-data_no_mOFC_feed_outliers_females_pubertal <- subset(MID_imaging_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & pds_p_ss_category != 1)
-nrow(data_no_mOFC_feed_outliers_females_pubertal) # 1408.
-data_no_mOFC_feed_outliers_males_pubertal <- subset(MID_imaging_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category != 1)
-nrow(data_no_mOFC_feed_outliers_males_pubertal) # 596.
+data_no_mOFC_feed_outliers_females_pubertal <- subset(MID_imaging_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & pds_p_ss_category != "Pre")
+nrow(data_no_mOFC_feed_outliers_females_pubertal) # 1392 (exploratory).
+data_no_mOFC_feed_outliers_males_pubertal <- subset(MID_imaging_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category != "Pre")
+nrow(data_no_mOFC_feed_outliers_males_pubertal) # 613 (exploratory).
 
-data_no_mOFC_feed_outliers_females_prepubertal <- subset(MID_imaging_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & pds_p_ss_category == 1)
-nrow(data_no_mOFC_feed_outliers_females_prepubertal) # 626.
-data_no_mOFC_feed_outliers_males_prepubertal <- subset(MID_imaging_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category == 1)
-nrow(data_no_mOFC_feed_outliers_males_prepubertal) # 1527.
+data_no_mOFC_feed_outliers_females_prepubertal <- subset(MID_imaging_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & pds_p_ss_category == "Pre")
+nrow(data_no_mOFC_feed_outliers_females_prepubertal) # 661 (exploratory).
+data_no_mOFC_feed_outliers_males_prepubertal <- subset(MID_imaging_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 &  pds_p_ss_category == "Pre")
+nrow(data_no_mOFC_feed_outliers_males_prepubertal) # 1480 (exploratory).
 
 # No testosterone outliers.
 data_no_test_outliers <- subset(PDS_correct, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
@@ -314,11 +323,11 @@ sd_bisbas <- sd(PDS_correct$bisbas_ss_basm_rr, na.rm=TRUE)
 PDS_correct$bisbas_ss_basm_rr_z <- (PDS_correct$bisbas_ss_basm_rr-mean_bisbas)/sd_bisbas
 
 data_no_bisbas_outliers <- subset(PDS_correct, bisbas_ss_basm_rr_z > -3 & bisbas_ss_basm_rr_z < 3)
-nrow(data_no_bisbas_outliers) # 4204.
+nrow(data_no_bisbas_outliers) # 5654 (exploratory).
 data_no_bisbas_outliers_females <- subset(data_no_bisbas_outliers, sex == "F")
-nrow(data_no_bisbas_outliers_females) # 2049.
+nrow(data_no_bisbas_outliers_females) # 2709 (exploratory).
 data_no_bisbas_outliers_males <- subset(data_no_bisbas_outliers, sex == "M")
-nrow(data_no_bisbas_outliers_males) # 2155.
+nrow(data_no_bisbas_outliers_males) # 2945 (exploratory).
 
 # No striatal anticipation or testosterone outliers.
 data_no_striatal_ant_test_outliers <- subset(data_no_striatal_ant_outliers, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
@@ -366,46 +375,46 @@ data_no_RT_test_outliers_males <- subset(data_no_RT_MID_outliers_males, hormone_
 #### Separate reward regions for anticipation reward vs neutral. #### 
 # No accumbens outliers.
 data_no_accumbens_ant_outliers_females <- subset(MID_imaging_correct_females, accumbens_rvsn_ant_z > -3 & accumbens_rvsn_ant_z < 3)
-nrow(data_no_accumbens_ant_outliers_females) # 2030
+nrow(data_no_accumbens_ant_outliers_females)
 data_no_accumbens_ant_outliers_males <- subset(MID_imaging_correct_males, accumbens_rvsn_ant_z > -3 & accumbens_rvsn_ant_z < 3)
-nrow(data_no_accumbens_ant_outliers_males) # 2123
+nrow(data_no_accumbens_ant_outliers_males)
 
 # No caudate outliers.
 data_no_caudate_ant_outliers_females <- subset(MID_imaging_correct_females, caudate_rvsn_ant_z > -3 & caudate_rvsn_ant_z < 3)
-nrow(data_no_caudate_ant_outliers_females) # 2039
+nrow(data_no_caudate_ant_outliers_females) 
 data_no_caudate_ant_outliers_males <- subset(MID_imaging_correct_males, caudate_rvsn_ant_z > -3 & caudate_rvsn_ant_z < 3)
-nrow(data_no_caudate_ant_outliers_males) # 2137
+nrow(data_no_caudate_ant_outliers_males)
 
 # No putamen outliers.
 data_no_putamen_ant_outliers_females <- subset(MID_imaging_correct_females, putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3)
-nrow(data_no_putamen_ant_outliers_females) # 2037
+nrow(data_no_putamen_ant_outliers_females)
 data_no_putamen_ant_outliers_males <- subset(MID_imaging_correct_males, putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3)
-nrow(data_no_putamen_ant_outliers_males) # 2139
+nrow(data_no_putamen_ant_outliers_males)
 
 #### Separate reward regions for feedback positive vs negative.####
 # No accumbens outliers.
 data_no_accumbens_feed_outliers <- subset(MID_imaging_correct, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3) 
-nrow(data_no_accumbens_feed_outliers) # 4163
+nrow(data_no_accumbens_feed_outliers)
 data_no_accumbens_feed_outliers_females <- subset(MID_imaging_correct_females, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3)
-nrow(data_no_accumbens_feed_outliers_females) # 2033.
+nrow(data_no_accumbens_feed_outliers_females)
 data_no_accumbens_feed_outliers_males <- subset(MID_imaging_correct_males, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3)
-nrow(data_no_accumbens_feed_outliers_males) # 2130
+nrow(data_no_accumbens_feed_outliers_males)
 
 # No caudate outliers.
 data_no_caudate_feed_outliers <- subset(MID_imaging_correct, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3) 
-nrow(data_no_caudate_feed_outliers) # 4188
+nrow(data_no_caudate_feed_outliers)
 data_no_caudate_feed_outliers_females <- subset(MID_imaging_correct_females, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3)
-nrow(data_no_caudate_feed_outliers_females) # 2043
+nrow(data_no_caudate_feed_outliers_females)
 data_no_caudate_feed_outliers_males <- subset(MID_imaging_correct_males, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3)
-nrow(data_no_caudate_feed_outliers_males) # 2145
+nrow(data_no_caudate_feed_outliers_males)
 
 # No putamen outliers.
 data_no_putamen_feed_outliers <- subset(MID_imaging_correct, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3) 
-nrow(data_no_putamen_feed_outliers) # 4190
+nrow(data_no_putamen_feed_outliers) 
 data_no_putamen_feed_outliers_females <- subset(MID_imaging_correct_females, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3)
-nrow(data_no_putamen_feed_outliers_females) # 2044
+nrow(data_no_putamen_feed_outliers_females)
 data_no_putamen_feed_outliers_males <- subset(MID_imaging_correct_males, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3)
-nrow(data_no_putamen_feed_outliers_males) # 2146
+nrow(data_no_putamen_feed_outliers_males)
 
 
 #### Note: We are including all CBCL values (as long as they are in a reasonable range, i.e., possible given the scale). Not excluding CBCL outliers. #### 
@@ -431,14 +440,14 @@ nrow(data_no_putamen_feed_outliers_males) # 2146
 # data_no_CBCL_striatal_ant_outliers_males <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 # nrow(data_no_CBCL_striatal_ant_outliers_males) # 2095.
 # 
-# data_no_CBCL_striatal_ant_outliers_females_pubertal <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != 1)
+# data_no_CBCL_striatal_ant_outliers_females_pubertal <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_striatal_ant_outliers_females_pubertal) #1380
-# data_no_CBCL_striatal_ant_outliers_males_pubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != 1)
+# data_no_CBCL_striatal_ant_outliers_males_pubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_striatal_ant_outliers_males_pubertal) #583
 # 
-# data_no_CBCL_striatal_ant_outliers_females_prepubertal <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == 1)
+# data_no_CBCL_striatal_ant_outliers_females_prepubertal <- subset(PDS_correct_females, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_striatal_ant_outliers_females_prepubertal) #1380
-# data_no_CBCL_striatal_ant_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
+# data_no_CBCL_striatal_ant_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_striatal_ant_outliers_males_prepubertal) #583
 # 
 # 
@@ -452,14 +461,14 @@ nrow(data_no_putamen_feed_outliers_males) # 2146
 # data_no_CBCL_striatal_feed_outliers_males <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 # nrow(data_no_CBCL_striatal_feed_outliers_males) # 2101.
 # 
-# data_no_CBCL_striatal_feed_outliers_females_pubertal <- subset(PDS_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != 1)
+# data_no_CBCL_striatal_feed_outliers_females_pubertal <- subset(PDS_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_striatal_feed_outliers_females_pubertal) #1385
-# data_no_CBCL_striatal_feed_outliers_males_pubertal <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != 1)
+# data_no_CBCL_striatal_feed_outliers_males_pubertal <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_striatal_feed_outliers_males_pubertal) #586
 # 
-# data_no_CBCL_striatal_feed_outliers_females_prepubertal <- subset(PDS_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == 1)
+# data_no_CBCL_striatal_feed_outliers_females_prepubertal <- subset(PDS_correct_females, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_striatal_feed_outliers_females_prepubertal) #623
-# data_no_CBCL_striatal_feed_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
+# data_no_CBCL_striatal_feed_outliers_males_prepubertal <- subset(PDS_correct_males, striatum_posvsneg_feedback_z > -3 & striatum_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_striatal_feed_outliers_males_prepubertal) #1515
 # 
 # 
@@ -473,14 +482,14 @@ nrow(data_no_putamen_feed_outliers_males) # 2146
 # data_no_CBCL_lOFC_ant_outliers_males <- subset(PDS_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 # nrow(data_no_CBCL_lOFC_ant_outliers_males) # 2069.
 # 
-# data_no_CBCL_lOFC_ant_outliers_females_pubertal <- subset(PDS_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != 1)
+# data_no_CBCL_lOFC_ant_outliers_females_pubertal <- subset(PDS_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_lOFC_ant_outliers_females_pubertal) #1373
-# data_no_CBCL_lOFC_ant_outliers_males_pubertal <- subset(PDS_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != 1)
+# data_no_CBCL_lOFC_ant_outliers_males_pubertal <- subset(PDS_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_lOFC_ant_outliers_males_pubertal) #568
 # 
-# data_no_CBCL_lOFC_ant_outliers_females_prepubertal <- subset(PDS_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == 1)
+# data_no_CBCL_lOFC_ant_outliers_females_prepubertal <- subset(PDS_correct_females, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_lOFC_ant_outliers_females_prepubertal) #619
-# data_no_CBCL_lOFC_ant_outliers_males_prepubertal <- subset(PDS_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
+# data_no_CBCL_lOFC_ant_outliers_males_prepubertal <- subset(PDS_correct_males, lOFC_rvsn_ant_z > -3 & lOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_lOFC_ant_outliers_males_prepubertal) #1501
 # 
 # # No CBCL or or medial OFC (mOFC) anticipation outliers.
@@ -493,14 +502,14 @@ nrow(data_no_putamen_feed_outliers_males) # 2146
 # data_no_CBCL_mOFC_ant_outliers_males <- subset(PDS_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 # nrow(data_no_CBCL_mOFC_ant_outliers_males) # 2079.
 # 
-# data_no_CBCL_mOFC_ant_outliers_females_pubertal <- subset(PDS_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != 1)
+# data_no_CBCL_mOFC_ant_outliers_females_pubertal <- subset(PDS_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_mOFC_ant_outliers_females_pubertal) # 1378.
-# data_no_CBCL_mOFC_ant_outliers_males_pubertal <- subset(PDS_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != 1)
+# data_no_CBCL_mOFC_ant_outliers_males_pubertal <- subset(PDS_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_mOFC_ant_outliers_males_pubertal) # 575.
 # 
-# data_no_CBCL_mOFC_ant_outliers_females_prepubertal <- subset(PDS_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == 1)
+# data_no_CBCL_mOFC_ant_outliers_females_prepubertal <- subset(PDS_correct_females, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_mOFC_ant_outliers_females_prepubertal) # 617.
-# data_no_CBCL_mOFC_ant_outliers_males_prepubertal <- subset(PDS_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
+# data_no_CBCL_mOFC_ant_outliers_males_prepubertal <- subset(PDS_correct_males, mOFC_rvsn_ant_z > -3 & mOFC_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_mOFC_ant_outliers_males_prepubertal) # 1504.
 
 # No CBCL or lateral OFC (lOFC) FEEDBACK outliers.
@@ -513,14 +522,14 @@ nrow(data_no_putamen_feed_outliers_males) # 2146
 # data_no_CBCL_lOFC_feed_outliers_males <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 # nrow(data_no_CBCL_lOFC_feed_outliers_males) # 2087.
 # 
-# data_no_CBCL_lOFC_feed_outliers_females_pubertal <- subset(PDS_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != 1)
+# data_no_CBCL_lOFC_feed_outliers_females_pubertal <- subset(PDS_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_lOFC_feed_outliers_females_pubertal) #1379
-# data_no_CBCL_lOFC_feed_outliers_males_pubertal <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != 1)
+# data_no_CBCL_lOFC_feed_outliers_males_pubertal <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_lOFC_feed_outliers_males_pubertal) #579
 # 
-# data_no_CBCL_lOFC_feed_outliers_females_prepubertal <- subset(PDS_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == 1)
+# data_no_CBCL_lOFC_feed_outliers_females_prepubertal <- subset(PDS_correct_females, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_lOFC_feed_outliers_females_prepubertal) #620
-# data_no_CBCL_lOFC_feed_outliers_males_prepubertal <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
+# data_no_CBCL_lOFC_feed_outliers_males_prepubertal <- subset(PDS_correct_males, lOFC_posvsneg_feedback_z > -3 & lOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_lOFC_feed_outliers_males_prepubertal) #1508
 # 
 # # No CBCL or medial OFC (mOFC) FEEDBACK outliers.
@@ -533,14 +542,14 @@ nrow(data_no_putamen_feed_outliers_males) # 2146
 # data_no_CBCL_mOFC_feed_outliers_males <- subset(PDS_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3)
 # nrow(data_no_CBCL_mOFC_feed_outliers_males) # 2086.
 # 
-# data_no_CBCL_mOFC_feed_outliers_females_pubertal <- subset(PDS_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != 1)
+# data_no_CBCL_mOFC_feed_outliers_females_pubertal <- subset(PDS_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_mOFC_feed_outliers_females_pubertal) # 1381.
-# data_no_CBCL_mOFC_feed_outliers_males_pubertal <- subset(PDS_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != 1)
+# data_no_CBCL_mOFC_feed_outliers_males_pubertal <- subset(PDS_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category != "Pre")
 # nrow(data_no_CBCL_mOFC_feed_outliers_males_pubertal) # 579.
 # 
-# data_no_CBCL_mOFC_feed_outliers_females_prepubertal <- subset(PDS_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == 1)
+# data_no_CBCL_mOFC_feed_outliers_females_prepubertal <- subset(PDS_correct_females, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_mOFC_feed_outliers_females_prepubertal) # 620.
-# data_no_CBCL_mOFC_feed_outliers_males_prepubertal <- subset(PDS_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == 1)
+# data_no_CBCL_mOFC_feed_outliers_males_prepubertal <- subset(PDS_correct_males, mOFC_posvsneg_feedback_z > -3 & mOFC_posvsneg_feedback_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 &  pds_p_ss_category == "Pre")
 # nrow(data_no_CBCL_mOFC_feed_outliers_males_prepubertal) # 1507.
 # 
 # # No CBCL or testosterone outliers.
