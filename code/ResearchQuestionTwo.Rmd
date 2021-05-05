@@ -60,17 +60,17 @@ source(script_path)
 # Are there general gender differences in CBCL scores?
 ```{r CBCLDescriptives, echo = FALSE}
 # Use data with only correct PDS scores, excluding CBCL outliers.
-dataformodel <- data_no_CBCL_outliers
-females <- data_no_CBCL_outliers_females
-males <- data_no_CBCL_outliers_males
-
-# Get an idea of the sample.
-mean(dataformodel$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.633976.
-mean(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.635062.
-mean(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.632941.
-min(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 0.0.
-min(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 0.0.
-t.test(males$cbcl_scr_syn_internal_r,females$cbcl_scr_syn_internal_r) # Not significant.
+# dataformodel <- data_no_CBCL_outliers
+# females <- data_no_CBCL_outliers_females
+# males <- data_no_CBCL_outliers_males
+# 
+# # Get an idea of the sample.
+# mean(dataformodel$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.633976.
+# mean(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.635062.
+# mean(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 4.632941.
+# min(females$cbcl_scr_syn_internal_r,na.rm= TRUE) # 0.0.
+# min(males$cbcl_scr_syn_internal_r,na.rm= TRUE) # 0.0.
+# t.test(males$cbcl_scr_syn_internal_r,females$cbcl_scr_syn_internal_r) # Not significant.
 
 ```
 ## All CBCL data
