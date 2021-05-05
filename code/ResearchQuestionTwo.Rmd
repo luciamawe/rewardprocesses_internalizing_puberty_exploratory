@@ -169,16 +169,16 @@ t.test(males$cbcl_scr_dsm5_depress_t,females$cbcl_scr_dsm5_depress_t) # SIGNIFIC
 
 # Plot data.
 ## CBCL internalizing factor ~ Pubertal stage
-```{r Confirmatory2, echo = FALSE}
-# Excluding CBCL outliers.
-dataformodel <- data_no_CBCL_outliers
-
-ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_subject_id, color=sex, fill = sex)) +
-  geom_point(size = 4, alpha = 0.8,position = position_jitterdodge()) +
-  scale_color_manual(values = c("#7BACAB", "gray40"), labels = c("Female", "Male"), name = "Sex") +
-  scale_fill_manual(values = c("#7BACAB", "gray40"), labels = c("Female", "Male"), name = "Sex") +
-  ylab("CBCL Internalizing") +
-  xlab("PDS Score")
+ ```{r Confirmatory2, echo = FALSE}
+# # Excluding CBCL outliers.
+# dataformodel <- data_no_CBCL_outliers
+# 
+# ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_subject_id, color=sex, fill = sex)) +
+#   geom_point(size = 4, alpha = 0.8,position = position_jitterdodge()) +
+#   scale_color_manual(values = c("#7BACAB", "gray40"), labels = c("Female", "Male"), name = "Sex") +
+#   scale_fill_manual(values = c("#7BACAB", "gray40"), labels = c("Female", "Male"), name = "Sex") +
+#   ylab("CBCL Internalizing") +
+#   xlab("PDS Score")
 
 ```
 
@@ -202,35 +202,35 @@ ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_s
 ## Model: CBCL internalizing factor ~ Pubertal stage
 ## Females and males modeled separately.
 ```{r Confirmatory2, echo = FALSE}
-# Excluding CBCL outliers.
-dataformodel <- data_no_CBCL_outliers_females
-
-# Females.
-confirmatory2_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = dataformodel, 
-                      random = ~ (1 | site_id_l/rel_family_id))
-
-summary(confirmatory2_females$gam) # PDS p < 0.001; R squared = 0.0388.
-
-# Males.
-dataformodel <- data_no_CBCL_outliers_males
-confirmatory2_males <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = dataformodel, 
-                      random = ~ (1 | site_id_l/rel_family_id))
-          
-summary(confirmatory2_males$gam) # PDS p < 0.001; R squared = 0.024.
+# # Excluding CBCL outliers.
+# dataformodel <- data_no_CBCL_outliers_females
+# 
+# # Females.
+# confirmatory2_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic, 
+#                       data = dataformodel, 
+#                       random = ~ (1 | site_id_l/rel_family_id))
+# 
+# summary(confirmatory2_females$gam) # PDS p < 0.001; R squared = 0.0388.
+# 
+# # Males.
+# dataformodel <- data_no_CBCL_outliers_males
+# confirmatory2_males <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic, 
+#                       data = dataformodel, 
+#                       random = ~ (1 | site_id_l/rel_family_id))
+#           
+# summary(confirmatory2_males$gam) # PDS p < 0.001; R squared = 0.024.
 
 ```
 
@@ -386,31 +386,31 @@ summary(confirmatory2_males$gam)
 # What about PDS category (instead of continuous)?
 ## Females and males modeled separately.
 ```{r Confirmatory2_category, echo = FALSE}
-# Females.
-dataformodel <- data_no_CBCL_outliers_females
-confirmatory2_category_females <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = dataformodel, 
-                      random = ~ (1 | site_id_l/rel_family_id))
-summary(confirmatory2_category_females$gam) # PDS category 2: p < 0.001, PDS category 3: p < 0.001, PDS category 4 = 0.03; R squared = 0.406.
-
-# Males.
-dataformodel <- data_no_CBCL_outliers_males
-confirmatory2_category_males <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = dataformodel, 
-                      random = ~ (1 | site_id_l/rel_family_id))
-summary(confirmatory2_category_males$gam) # PDS category 2: p = 0.1859, PDS category 3: p < 0.001, PDS category 4 = 0.10; R squared = 00275.
+# # Females.
+# dataformodel <- data_no_CBCL_outliers_females
+# confirmatory2_category_females <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic, 
+#                       data = dataformodel, 
+#                       random = ~ (1 | site_id_l/rel_family_id))
+# summary(confirmatory2_category_females$gam) # PDS category 2: p < 0.001, PDS category 3: p < 0.001, PDS category 4 = 0.03; R squared = 0.406.
+# 
+# # Males.
+# dataformodel <- data_no_CBCL_outliers_males
+# confirmatory2_category_males <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic, 
+#                       data = dataformodel, 
+#                       random = ~ (1 | site_id_l/rel_family_id))
+# summary(confirmatory2_category_males$gam) # PDS category 2: p = 0.1859, PDS category 3: p < 0.001, PDS category 4 = 0.10; R squared = 00275.
 ```
 
 ## All CBCL: Females and males modeled separately.
@@ -536,56 +536,56 @@ summary(confirmatory2_category_males$gam)
 ## Females and males modeled separately.
 ```{r Confirmatory2_quadratic, echo = FALSE}
 
-# Create quadratic PDS score variable.
-data_no_CBCL_outliers_females$PDS_score_squared <- (data_no_CBCL_outliers_females$PDS_score)^2
-data_no_CBCL_outliers_males$PDS_score_squared <- (data_no_CBCL_outliers_males$PDS_score)^2
-
-# Females.
-dataformodel <- data_no_CBCL_outliers_females
-confirmatory2_quadratic_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = dataformodel, 
-                      random = ~ (1 | site_id_l/rel_family_id))
-summary(confirmatory2_quadratic_females$gam)
-# Quadratic effect p = 0.08 (not significant); linear effect p = 0.00121.
-
-# Males.
-dataformodel <- data_no_CBCL_outliers_males
-confirmatory2_quadratic_males <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = dataformodel, 
-                      random = ~ (1 | site_id_l/rel_family_id))
-summary(confirmatory2_quadratic_males$gam)
-# Quadratic effect p = 0.18 (not significant); linear effect p = 0.0576.
-
-# So there is a significant linear effect, but not a significant quadratic effect, of PDS for both males and females.
-plot_model(confirmatory2_quadratic, type = "pred", terms = c("PDS_score")) # Can't figure out how to plot quadratic estimate from multilevel model.
-
-# Trying a simpler model first, just for plotting purposes.
-confirmatory2_quadratic_simple <-lm(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared, data = dataformodel)
-summary(confirmatory2_quadratic_simple)
-plotdata <-dataformodel
-plotdata$predicted <- fortify(confirmatory2_quadratic_simple)$.fitted # Add predicted values from model to the data to plot.
-
-# Just plot the model predictions (to make sure later graphs are correct when the predicted quadratic is added to original data).
-ggplot(plotdata,aes(x=PDS_score, y=predicted)) +
-      geom_point() +
-      ylim(min(dataformodel$cbcl_scr_syn_internal_r),max(dataformodel$cbcl_scr_syn_internal_r)) +
-      xlab("PDS Score") +
-      ylab("Model Predicted CBCL score") 
-# In the quadratic effect, it does not predict CBCL to be above 5.27? Why?
-max(predict(confirmatory2_quadratic_simple)) #5.271192
-min(predict(confirmatory2_quadratic_simple)) #3.98063
+# # Create quadratic PDS score variable.
+# data_no_CBCL_outliers_females$PDS_score_squared <- (data_no_CBCL_outliers_females$PDS_score)^2
+# data_no_CBCL_outliers_males$PDS_score_squared <- (data_no_CBCL_outliers_males$PDS_score)^2
+# 
+# # Females.
+# dataformodel <- data_no_CBCL_outliers_females
+# confirmatory2_quadratic_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic, 
+#                       data = dataformodel, 
+#                       random = ~ (1 | site_id_l/rel_family_id))
+# summary(confirmatory2_quadratic_females$gam)
+# # Quadratic effect p = 0.08 (not significant); linear effect p = 0.00121.
+# 
+# # Males.
+# dataformodel <- data_no_CBCL_outliers_males
+# confirmatory2_quadratic_males <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic, 
+#                       data = dataformodel, 
+#                       random = ~ (1 | site_id_l/rel_family_id))
+# summary(confirmatory2_quadratic_males$gam)
+# # Quadratic effect p = 0.18 (not significant); linear effect p = 0.0576.
+# 
+# # So there is a significant linear effect, but not a significant quadratic effect, of PDS for both males and females.
+# plot_model(confirmatory2_quadratic, type = "pred", terms = c("PDS_score")) # Can't figure out how to plot quadratic estimate from multilevel model.
+# 
+# # Trying a simpler model first, just for plotting purposes.
+# confirmatory2_quadratic_simple <-lm(cbcl_scr_syn_internal_r ~ PDS_score + PDS_score_squared, data = dataformodel)
+# summary(confirmatory2_quadratic_simple)
+# plotdata <-dataformodel
+# plotdata$predicted <- fortify(confirmatory2_quadratic_simple)$.fitted # Add predicted values from model to the data to plot.
+# 
+# # Just plot the model predictions (to make sure later graphs are correct when the predicted quadratic is added to original data).
+# ggplot(plotdata,aes(x=PDS_score, y=predicted)) +
+#       geom_point() +
+#       ylim(min(dataformodel$cbcl_scr_syn_internal_r),max(dataformodel$cbcl_scr_syn_internal_r)) +
+#       xlab("PDS Score") +
+#       ylab("Model Predicted CBCL score") 
+# # In the quadratic effect, it does not predict CBCL to be above 5.27? Why?
+# max(predict(confirmatory2_quadratic_simple)) #5.271192
+# min(predict(confirmatory2_quadratic_simple)) #3.98063
 ```
 #### Quick plots (Females)
 ```{r}
@@ -607,70 +607,70 @@ min(predict(confirmatory2_quadratic_simple)) #3.98063
 # Exploratory Hypothesis 2: We will investigate whether testosterone relates to internalizing symptoms and whether this relationship is present after controlling for PDS.
 ## Model A: CBCL internalizing factor ~ Testosterone
 ```{r Exploratory2A, echo = FALSE}
-# Get an idea of the sample.
-mean(data_no_CBCL_test_outliers$hormone_scr_ert_mean,na.rm= TRUE) # 34.33287.
-mean(data_no_CBCL_test_outliers_females$hormone_scr_ert_mean,na.rm= TRUE) # 36.38213.
-mean(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean,na.rm= TRUE) # 32.38652.
-range(data_no_CBCL_test_outliers_females$hormone_scr_ert_mean,na.rm= TRUE) # 5.0200 to 88.1075.
-range(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean,na.rm= TRUE) # 2.2725 to 89.5700.
-range(data_no_CBCL_test_outliers_females$hormone_scr_ert_mean_z,na.rm= TRUE) # -1.616918 to 2.834996 (z scores).
-range(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean_z,na.rm= TRUE) # -1.764131 to 2.913358 (z scores).
-t.test(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean,data_no_CBCL_test_outliers_females$hormone_scr_ert_mean)
-# average for males is 32.39, and average for females is 36.38; p < 0.001.
+# # Get an idea of the sample.
+# mean(data_no_CBCL_test_outliers$hormone_scr_ert_mean,na.rm= TRUE) # 34.33287.
+# mean(data_no_CBCL_test_outliers_females$hormone_scr_ert_mean,na.rm= TRUE) # 36.38213.
+# mean(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean,na.rm= TRUE) # 32.38652.
+# range(data_no_CBCL_test_outliers_females$hormone_scr_ert_mean,na.rm= TRUE) # 5.0200 to 88.1075.
+# range(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean,na.rm= TRUE) # 2.2725 to 89.5700.
+# range(data_no_CBCL_test_outliers_females$hormone_scr_ert_mean_z,na.rm= TRUE) # -1.616918 to 2.834996 (z scores).
+# range(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean_z,na.rm= TRUE) # -1.764131 to 2.913358 (z scores).
+# t.test(data_no_CBCL_test_outliers_males$hormone_scr_ert_mean,data_no_CBCL_test_outliers_females$hormone_scr_ert_mean)
+# # average for males is 32.39, and average for females is 36.38; p < 0.001.
 ```
 
 ```{r}
-dataformodel <- data_no_CBCL_test_outliers
-
-confirmatory2_testosterone_CBCL <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      #fam_history_q6d_depression + #added mother's depression
-                      data = dataformodel,
-                      random = ~(1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2_testosterone_CBCL$gam)
+# dataformodel <- data_no_CBCL_test_outliers
+# 
+# confirmatory2_testosterone_CBCL <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic,
+#                       #fam_history_q6d_depression + #added mother's depression
+#                       data = dataformodel,
+#                       random = ~(1 | site_id_l/rel_family_id))
+#                       
+# summary(confirmatory2_testosterone_CBCL$gam)
 ```
 
 
 #### Female.
 ```{r}
-dataformodel <- data_no_CBCL_test_outliers_females
-
-confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      #fam_history_q6d_depression + #added mother's depression
-                      data = dataformodel,
-                      random = ~ (1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2_testosterone_CBCL_female$gam)
+# dataformodel <- data_no_CBCL_test_outliers_females
+# 
+# confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic,
+#                       #fam_history_q6d_depression + #added mother's depression
+#                       data = dataformodel,
+#                       random = ~ (1 | site_id_l/rel_family_id))
+#                       
+# summary(confirmatory2_testosterone_CBCL_female$gam)
 ```
 
 #### Male.
 ```{r}
-dataformodel <- data_no_CBCL_test_outliers_males
-
-confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      #fam_history_q6d_depression + #added mother's depression
-                      data = dataformodel,
-                      random = ~ (1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2_testosterone_CBCL_male$gam)
+# dataformodel <- data_no_CBCL_test_outliers_males
+# 
+# confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic,
+#                       #fam_history_q6d_depression + #added mother's depression
+#                       data = dataformodel,
+#                       random = ~ (1 | site_id_l/rel_family_id))
+#                       
+# summary(confirmatory2_testosterone_CBCL_male$gam)
 ```
 
 
@@ -819,70 +819,70 @@ summary(confirmatory2_testosterone_CBCL_male$gam)
 #### Female.
 ```{r Exploratory2B, echo = FALSE}
 
-dataformodel <- data_no_CBCL_test_outliers_females
-
-confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      #fam_history_q6d_depression + #added mother's depression
-                      data = dataformodel,  
-                      random = ~ (1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2B_testosterone_CBCL_female$gam)
-
-# PDS category.
-
-dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category !="5")
-
-confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      #fam_history_q6d_depression + #added mother's depression
-                      data = dataformodel,  
-                      random = ~ (1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2B_testosterone_CBCL_female_category$gam)
+# dataformodel <- data_no_CBCL_test_outliers_females
+# 
+# confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic,
+#                       #fam_history_q6d_depression + #added mother's depression
+#                       data = dataformodel,  
+#                       random = ~ (1 | site_id_l/rel_family_id))
+#                       
+# summary(confirmatory2B_testosterone_CBCL_female$gam)
+# 
+# # PDS category.
+# 
+# dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3 & pds_p_ss_category !="5")
+# 
+# confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic,
+#                       #fam_history_q6d_depression + #added mother's depression
+#                       data = dataformodel,  
+#                       random = ~ (1 | site_id_l/rel_family_id))
+#                       
+# summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ```
 
 #### Male.
 ```{r}
-dataformodel <- data_no_CBCL_test_outliers_males
-  
-
-confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      #fam_history_q6d_depression + #added mother's depression
-                      data = dataformodel,
-                      random = ~ (1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2B_testosterone_CBCL_male$gam)
-
-# PDS category.
-confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
-                      race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic,
-                      #fam_history_q6d_depression + #added mother's depression
-                      data = dataformodel,
-                      random = ~ (1 | site_id_l/rel_family_id))
-                      
-summary(confirmatory2B_testosterone_CBCL_male_category$gam)
+# dataformodel <- data_no_CBCL_test_outliers_males
+#   
+# 
+# confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic,
+#                       #fam_history_q6d_depression + #added mother's depression
+#                       data = dataformodel,
+#                       random = ~ (1 | site_id_l/rel_family_id))
+#                       
+# summary(confirmatory2B_testosterone_CBCL_male$gam)
+# 
+# # PDS category.
+# confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
+#                       race.ethnicity.5level +
+#                       high.educ +
+#                       household.income +
+#                       married.or.livingtogether +
+#                       interview_age +
+#                       demo_race_hispanic,
+#                       #fam_history_q6d_depression + #added mother's depression
+#                       data = dataformodel,
+#                       random = ~ (1 | site_id_l/rel_family_id))
+#                       
+# summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 
 
