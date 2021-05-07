@@ -93,8 +93,28 @@ data <- fulldata[,c("src_subject_id",
                     "tfmri_mid_beh_performflag", # Exclude or include based on MID behavioral data (1 = good; 0 = exclude).
                     #  0    1 NA's 
                     # 288 4250 1397
-                    "imgincl_mid_include" # Exclude or include based on neuroimaging data (1 = good; 0 = exclude).
-)]
+                    "imgincl_mid_include", # Exclude or include based on neuroimaging data (1 = good; 0 = exclude).
+                    "hormone_sal_sex",
+                    "hormon_sal_notes_y___1",
+                    "hormon_sal_notes_y___2",
+                    "hormon_sal_notes_y___3",
+                    "hormon_sal_notes_y___4",
+                    "hormon_sal_notes_y___5",
+                    "hormon_sal_notes_y___6",
+                    "hormone_scr_dhea_rep1",
+                    "hormone_scr_dhea_rep2",
+                    "hormone_scr_dhea_rep1_nd",
+                    "hormone_scr_dhea_rep2_nd",
+                    "hormone_scr_ert_rep1",
+                    "hormone_scr_ert_rep2",
+                    "hormone_scr_ert_rep1_nd",
+                    "hormone_scr_ert_rep2_nd",
+                    "hormone_scr_hse_rep1",
+                    "hormone_scr_hse_rep2",
+                    "hormone_scr_hse_rep1_nd",
+                    "hormone_scr_hse_rep2_nd"
+                  
+                                        )]
 
 
 # Note: pds_ss_category = pds_p_ss_category. Rename here.
@@ -124,7 +144,83 @@ nrow(data) # 5945 (exploratory).
 
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
-data$hormone_scr_ert_mean_z <- scale(data$hormone_scr_ert_mean)
+
+#Lines 148 to 223 filter invalid testosterone values (Adapted from Herting script)
+
+#Exploratory
+#5 Female with misclassified Male tubes. 6 Male with misclassified Female tubes. 49 either had issues at saliva collection or had NA gender values.
+#Let's get rid of them. We go down from 5691 -> 5905 (-56)
+
+table(data$sex, data$hormone_sal_sex)
+
+data  <- data[-c(which(data$sex == "M" & data$hormone_sal_sex == 1), 
+             which(data$sex =="F" & data$hormone_hormone_sal_sex == 2),
+             which(data$hormone_sal_sex == 3),
+             which(data$hormone_sal_sex == 4),
+             which(data$hormone_sal_sex == 5),
+             which(is.na(data$sex)),
+             which(is.na(data$hormone_sal_sex))),]
+###################### NDA --- DEAP
+# hormone_sal_sex       1       Pink (female)
+# hormone_sal_sex       2       Blue (male)
+# hormone_sal_sex       3       Participant unable to complete
+# hormone_sal_sex       4       Participant/Parent refused
+# hormone_sal_sex       5       Not collected (other)      
+
+
+#Let's filter the data
+#The filter scheme is to check records for any RA saliva collection notes. If true, then flag the record. 
+#Then check flagged records and see if the Salimetrics value is out of range per hormone.
+#If yes, then change value to NA, else keep the existing values for each replicate.
+#Finally, average the two replicates into a new field.
+data$hormone_notes_ss <- as.numeric(data$hormon_sal_notes_y___2) + 
+  as.numeric(data$hormon_sal_notes_y___3) +
+  as.numeric(data$hormon_sal_notes_y___4) + 
+  as.numeric(data$hormon_sal_notes_y___5) + 
+  as.numeric(data$hormon_sal_notes_y___6)
+rownums <- which(data$hormone_notes_ss > 1)
+
+#Filter out wonky values
+#DHEA
+data$filtered_dhea <- NA
+data$filtered_dhea_rep1 <- as.numeric(data$hormone_scr_dhea_rep1)
+data$filtered_dhea_rep2 <- data$hormone_scr_dhea_rep2
+data$filtered_dhea[which(data$hormone_scr_dhea_rep1_nd == 1)] <- 0
+data$filtered_dhea[which(data$hormone_scr_dhea_rep2_nd == 1)] <- 0
+rownums_rep1 <- which(data$hormone_scr_dhea_rep1 < 5 | data$hormone_scr_dhea_rep1 > 1000)
+rownums_rep2 <- which(data$hormone_scr_dhea_rep2 < 5 | data$hormone_scr_dhea_rep2 > 1000)
+data$filtered_dhea_rep1[rownums[which(rownums %in% rownums_rep1)]] <- NA
+data$filtered_dhea_rep2[rownums[which(rownums %in% rownums_rep2)]] <- NA
+data$filtered_dhea <- apply(data[, c("filtered_dhea_rep1", "filtered_dhea_rep2")], 1, function(x) mean(x, na.rm=T))
+
+#Testosterone
+data$filtered_testosterone <- NA
+data$filtered_testosterone_rep1 <- data$hormone_scr_ert_rep1
+data$filtered_testosterone_rep2 <- data$hormone_scr_ert_rep2
+data$filtered_testosterone[which(data$hormone_scr_ert_rep1_nd == 1)] <- 0
+data$filtered_testosterone[which(data$hormone_scr_ert_rep2_nd == 1)] <- 0
+rownums_rep1 <- which(data$hormone_scr_ert_rep1 < 1 | data$hormone_scr_ert_rep1 > 600)
+rownums_rep2 <- which(data$hormone_scr_ert_rep2 < 1 | data$hormone_scr_ert_rep2 > 600)
+data$filtered_testosterone_rep1[rownums[which(rownums %in% rownums_rep1)]] <- NA
+data$filtered_testosterone_rep2[rownums[which(rownums %in% rownums_rep2)]] <- NA
+data$filtered_testosterone <- apply(data[, c("filtered_testosterone_rep1", "filtered_testosterone_rep2")], 1, function(x) mean(x, na.rm=T))
+
+#Estradiol
+data$filtered_estradiol <- NA
+data$filtered_estradiol_rep1 <- data$hormone_scr_hse_rep1
+data$filtered_estradiol_rep2 <- data$hormone_scr_hse_rep2
+data$filtered_estradiol[which(data$hormone_scr_hse_rep1_nd == 1)] <- 0
+data$filtered_estradiol[which(data$hormone_scr_hse_rep2_nd == 1)] <- 0
+rownums_rep1 <- which(data$hormone_scr_hse_rep1 < 0.1 | data$hormone_scr_hse_rep1 > 32)
+rownums_rep2 <- which(data$hormone_scr_hse_rep2 < 0.1 | data$hormone_scr_hse_rep2 > 32)
+data$filtered_estradiol_rep1[rownums[which(rownums %in% rownums_rep1)]] <- NA
+data$filtered_estradiol_rep2[rownums[which(rownums %in% rownums_rep2)]] <- NA
+data$filtered_estradiol <- apply(data[, c("filtered_estradiol_rep1", "filtered_estradiol_rep2")], 1, function(x) mean(x, na.rm=T))
+
+#Scale hormone data
+data$hormone_scr_ert_mean_z <- scale(data$filtered_testosterone)  #852 outliers in Total sample
+data$hormone_estradiol_z <- scale(data$filtered_estradiol) #996 outliers just to have
+data$hormone_dhea_z <- scale(data$filtered_dhea) #832 outliers  #just to have
 
 # Use data with only correct PDS scores.
 # This also removes any rows with NA values in PDS_score.
