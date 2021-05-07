@@ -1,0 +1,210 @@
+---
+title: "ABCD PDS Hormone Robust"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+
+  
+  #RUN THE GFA
+
+  MY <- list(pds,hormones)
+
+  mynorm <- normalizeData(MY, type="scaleFeatures")
+  
+  # Get the default options
+  opts <- getDefaultOpts()
+  opts$vrbose <- 0
+  # number of data for posterior vector:
+  opts$iter.saved = 100
+  startK = length(c(labels))
+  # Run the GFA:
+  
+
+  # File components:
+  myfile <- c("ABCD_GFA_")
+  #GFAtext <- c("pds_hormone_female.")
+  #dateext <- c("_02222020")
+  
+  
+  set.seed(123);
+  
+  #Seed for bmiz + SES + RACE for males
+  #set.seed(321);
+
+  res <- list()
+  for(i in 1:10){
+    print(i)
+    myall <- paste0(myfile,GFAtext,i,dateext,".RData",sep="")
+    print(myall)
+    
+    res[[i]] <- gfa(mynorm$train, K=startK, opts=opts)
+    
+    # Save as an interim variable
+    myres <- res[[i]]
+    
+    # Save the GFA results
+    # Write the result to a file
+    myall <- paste0(myfile,GFAtext,i,dateext,".RData",sep="")
+    save(myres, file=myall)
+  }
+  
+  myall <- paste0(myfile,GFAtext,"ALLRes10",dateext,".RData",sep="")
+  save(res, file=myall)
+ #load(myall)
+  #rob <- robustComponents(res)
+  #myall <- paste0(mydir,myfile,GFAtext,"Robust",dateext,".RData",sep="")
+  #save(rob, file=myall) 
+  
+block.names=c("pds","hormones")
+```
+
+```{r}
+ # repeated GFA outputs
+#Load res again if needed
+#res_rob <- list()
+#for(i in 1:10){
+#print(i)
+#myall <- paste0(myfile,GFAtext,i,dateext,".RData",sep="")
+#load(myall)
+#res_rob[[i]] <- res
+#}
+  
+ #myall <- paste0(myfile,GFAtext,"ALLRes10",dateext,".RData",sep="")
+
+pdf (paste0("ABCD_PDS_hormones_rGFA_females_y_analytics.pdf"))
+summ <- w_rob(res,corThr=0.9, matchThr=0.9,var.exp=TRUE, conf.level=0.95, heatmap.rep=TRUE, sparse=TRUE, forest=TRUE, block.names)
+
+dev.off()
+  # Save the Robust Assessment
+  myall <- paste0(myfile,GFAtext,"Robust10",dateext,".RData",sep="")
+  save(summ, file = myall)
+  #load(myall)
+ 
+  # Save my variance
+  myvariance <- rob.var.exp(res,summ$rob)
+  myall <- paste0(myfile,GFAtext,"Variance10",dateext,".RData",sep="")
+  save(myvariance, file = myall)
+  #load (myall)
+  
+  # Get Average and SEM as well as Cumulative variance explained
+  mean_variance <- apply(myvariance$ve.rep,1,mean)
+  sem_variance <- apply(myvariance$ve.rep,1,std.error)
+  cum_variance <- cumsum(mean_variance)
+  
+  myprint <- print(data.frame(mean_variance,sem_variance,cum_variance),digits = 2)
+  
+  kable(myprint, "html",caption = "Robust GFA: Variance Explained",digits=c(2,2,2)) %>% kable_styling(bootstrap_options = c( "hover", "condensed", "responsive"),font_size = 11)
+  
+```
+
+```{r}
+# Setting up Robust GFA for plotting 
+
+
+#labels<-names(my_df[,-c(1,10:14)])
+#Males
+#allblocklabels <- c("Height", "Body Hair", "Skin", "Voice", "Facial Hair", "Testosterone", "DHEA","bmiz","household income","highest parental education","White","Black","Hispanic","Asian")
+
+#allblocklabels <- c("Height", "Body Hair", "Skin", "Voice", "Facial Hair", "Testosterone", "DHEA")
+
+#Females
+#allblocklabels <- c("Height", "Body Hair", "Skin", "Breast", "Menstruation", "Testosterone", "DHEA","Estradiol","bmiz","household.income","high.edu","White","Black","Hispanic","Asian","Other")
+allblocklabels <- c("Height", "Body Hair", "Skin", "Breast", "Menstruation", "Testosterone", "DHEA","Estradiol")
+       
+GFAfactorlabels <- c("Latent Factor ")
+GFAselect <- colnames(summ$rob$indices)
+PlotNb = summ$rob$Krobust
+varacc <- rowMeans(myvariance$ve.rep)
+  
+myfactors <- paste(GFAfactorlabels, rep(1:length(GFAselect)), sep="")
+mytitles <- {}
+# setting up the blocks / views
+for(i in 1:length(GFAselect)){
+mytitles  <- cbind(mytitles,paste(GFAfactorlabels,i,": ",round(varacc[i],digits=2),"% Var.",sep=""))
+}
+GFAnumber <-0
+GFAvariables <- rep(c(allblocklabels), summ$rob$Krobust)
+GFAvarlabs <- rep(c(allblocklabels),
+                     summ$rob$Krobust)
+
+GFAgroups <- rep(c(rep("PDS",length(pds[1,])),rep("Hormone",length(hormones[1,]))),summ$rob$Krobust)
+#GFAgroups <- rep(c(rep("PDS",length(pds[1,])),rep("Hormone",length(hormones[1,])),"BMIz"),summ$rob$Krobust)
+#GFAgroups <- rep(c(rep("PDS",length(pds[1,])),rep("Hormone",length(hormones[1,])),"BMIz",rep("SES",length(SES[1,]))),summ$rob$Krobust)
+#GFAgroups <- rep(c(rep("PDS",length(pds[1,])),rep("Hormone",length(hormones[1,])),"BMIz",rep("SES",length(SES[1,])),rep("Race-Ethnicity",length(race_eth[1,]))),summ$rob$Krobust)
+
+#GFAgroups <- rep(c(rep("PDS",length(pds_res[1,])),rep("Hormone",length(hormone_res[1,]))),summ$rob$Krobust)
+                   
+myvalues <- array(0,c(length(allblocklabels)*summ$rob$Krobust,3))
+myvalues <- summ$w.ci.med[,c(3,4,5)]
+GFAlabels <- c("2.5% CI","Median","97.5% CI")
+colnames(myvalues)[1:3] <- c("CI025", "Median", "CI975")
+for(i in 1: summ$rob$Krobust){
+  for(j in 1: length(allblocklabels)){
+    GFAnumber[j+(i-1)*length(allblocklabels)] <- paste0(GFAfactorlabels,i)
+  }
+}
+myframe <-data.frame(GFAnumber,GFAgroups,GFAvarlabs,GFAvariables,myvalues)
+myframe$GFAvariables <- factor(myframe$GFAvariables, levels = c(allblocklabels))
+
+myGFA <- data.frame(summ$x.rob)
+colnames(myGFA) <- c(paste(GFAfactorlabels,1:summ$rob$Krobust,sep = ""))
+
+
+#robust_GFA<-data.frame(src_subject_id=all_df_complete$src_subject_id,RGFA1=myGFA$'Latent Factor 1',RGFA2=myGFA$'Latent Factor 2')
+
+
+```
+
+```{r}
+myframe$CI025<-myframe$CI025*(-1)
+ myframe$CI975<-myframe$CI975*(-1)  
+ myframe$Median<-myframe$Median*(-1)
+ 
+my_model<-subset(myframe,myframe$GFAnumber==myfactors[1]|myframe$GFAnumber==myfactors[2])
+
+my_matrix<-matrix(nrow=length(my_model$GFAnumber),ncol=3)
+colnames(my_matrix)<-c("GFA","variables","Model")
+
+my_matrix[,1]<-paste0(my_model$GFAnumber)
+my_matrix[,2]<-paste0(my_model$GFAvarlabs)
+my_matrix[,3]<-paste0(round(my_model$Median,3)," (",my_model$CI025,", ",my_model$CI975,")")
+
+my_table1<-data.frame(my_matrix)
+kable(my_table1) %>%
+  kable_styling()
+
+```
+
+```{r}
+
+# For males and females GFA2, need to multiple by (-1) to get PDS on the right and hormones on the left 
+for(i in 1:1)
+{
+ 
+myframe$CI025<-myframe$CI025*(-1)
+myframe$CI975<-myframe$CI975*(-1)  
+myframe$Median<-myframe$Median*(-1)
+
+
+my_plot<-ggplot(subset(myframe,GFAnumber==myfactors[i]), aes(GFAvariables, Median,ymin=CI025,ymax=CI975)) + geom_pointrange(shape=1,size=1,stroke=2,fatten = 1.5) + ggtitle(mytitles[i])  + geom_hline(yintercept = 0) + coord_flip()+theme_light()+ labs(color="Variable Groups")+theme(plot.background = element_blank())+xlab("")+ theme(title=element_text(size=16),axis.text.x= element_text(size=16),axis.text.y=element_text(size=16), axis.title.y= element_text(angle=90, size=16)) 
+
+filename=paste0("latentfactor",i,"_females_y.tiff")
+ggsave(my_plot,  file=paste0(filename), width = 7, height = 4, dpi = 300)
+
+}
+
+```
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

@@ -1,0 +1,1720 @@
+---
+title: "##Merge with baseline hormones that have been cleaned and run analyses"
+Created by: Megan M. Herting, PhD for CPP Puberty and Hormone Paper
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+rm(list=ls())
+options(scipen=999)
+library(dplyr)
+library(ggplot2)
+library(doBy)
+library(Hmisc)
+library(psych)
+library(sjPlot)
+```
+
+```{r}
+##Read in clean data
+caregiver=readRDS("PDS_caregiver_clean.rds")
+youth=readRDS("PDS_youth_clean.rds")
+hormone=readRDS("SalimetricsClean02_13_2020.RDS")
+bmi=readRDS("ABCD_BMIz_CPP_data.rds")
+str(caregiver)
+str(youth)
+str(hormone)
+str(bmi)
+
+myvars <- c("src_subject_id", "eventname", "abcd_site", "rel_family_id", "race_ethnicity", "high.educ", "household.income",  "filtered_dhea", "filtered_estradiol", "filtered_testosterone", "biospec_hormone_sal_sex", "biospec_hormone_sal_caff","biospec_hormone_sal_active", "biospec_hormone_TimeSinceMidnight", "biospec_hormone_TimeSinceWakeInMin", "biospec_hormone_CollectionDuration", "biospec_hormone_DurationToFreeze", "biospec_sal_collectAMPM")
+
+hormones <- hormone[myvars]
+
+##Merge clean data into df
+CY=merge(caregiver, youth, all=TRUE)
+str(CY)
+CYH=merge(CY, hormones, all=TRUE)
+str(CYH)
+df=merge(CYH, bmi, all=TRUE)
+
+df$biospec_hormone_sal_caff=as.factor(df$biospec_hormone_sal_caff)
+df$biospec_hormone_sal_active=as.factor(df$biospec_hormone_sal_active)
+
+table(df$pubertdev_sex, df$biospec_hormone_sal_sex) #all data match of self-report PDS sex and biological sex for sample
+table(df$pubertdev_sex_p, df$biospec_hormone_sal_sex) ##all data match of caregiver report and biological sample sex collection
+
+```
+
+```{r}
+
+##Make long format to plot parent and child on same plot
+library(reshape2)
+df_long=reshape(df, 
+  varying=list(c("pubertdev_Avg_p_all", "pubertdev_Avg_all"), c("pubertdev_ss_category_p_all", "pubertdev_ss_category_all"), c("pubertdev_gonadAvg_p_all", "pubertdev_gonadAvg_all"), c("pubertdev_adrenalAvg_p", "pubertdev_adrenalAvg"), c("pubertdev_1_p", "pubertdev_ht"), c("pubertdev_2_p", "pubertdev_bdyhair"), c("pubertdev_3_p", "pubertdev_skin"), c("pubertdev_m4_p", "pubertdev_m4"), c("pubertdev_m5_p", "pubertdev_m5"), c("pubertdev_f4_p", "pubertdev_f4"), c("pubertdev_f5b_p", "pubertdev_f5")), v.names=c("pubertdev_Avg", "pubertdev_cat", "pubertdev_gonadAvg", "pubertdev_adrenalAvg", "pubertdev_height", "pubertdev_bodyhair", "pubertdev_skin", "pubertdev_voice", "pubertdev_facialhair", "pubertdev_breast", "pubertdev_menses"), timevar = "report", times=c("caregiver", "youth"), direction="long", idvar = "src_subject_id" )
+head(df_long) 
+
+
+##Separate sex datasets
+df_m=subset(df, df$pubertdev_sex=="Male")
+df_f=subset(df, df$pubertdev_sex=="Female")
+
+##See who the caregiver is
+library(tigerstats)
+rowPerc(xtabs(~df_f$demo_prim_p))
+rowPerc(xtabs(~df_m$demo_prim_p))
+
+##See the breakdown by categories by sex
+describeBy(df_long$pubertdev_Avg, group=list(df_long$sex_at_birth, df_long$report))
+describeBy(df_long$pubertdev_gonadAvg, group=list(df_long$sex_at_birth, df_long$report))
+describeBy(df_long$pubertdev_adrenalAvg, group=list(df_long$sex_at_birth, df_long$report))
+rowPerc(xtabs(~df_f$pubertdev_ss_category_p_all))
+rowPerc(xtabs(~df_m$pubertdev_ss_category_p_all))
+rowPerc(xtabs(~df_f$pubertdev_ss_category_all))
+rowPerc(xtabs(~df_m$pubertdev_ss_category_all))
+
+##Plot combined Category
+farb=c("#F8766D", "#00BFC4")
+labels <- c(F = "Females", M = "Males")
+
+PubertyCategory=ggplot(subset(df_long, !is.na(pubertdev_cat) & !is.na(sex_at_birth)),aes(x=factor(pubertdev_cat,levels=c("Pre", "Early", "Mid", "Late","Post"))))+geom_histogram(binwidth=0.25, aes(fill = sex_at_birth, alpha = factor(report)), stat="count",na.rm = TRUE)+ scale_alpha_manual(values = c(1, .6))+geom_text(stat='count', aes(label=..count.., group=report), position="stack", vjust=1)+theme_bw()+theme(axis.text.x  = element_text(size=18), axis.text.y  = element_text(size=18))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(.~sex_at_birth,labeller=labeller(sex_at_birth = labels))+ scale_fill_manual(values=farb)+theme(strip.text.x = element_text(size=18))
+
+
+ggsave(PubertyCategory,  file="PubertyCategory_Both.tiff", width = 12, height = 8, units = "in",
+  dpi = 300)
+
+
+##PDS Avg
+PDSAverage=ggplot(subset(df_long, !is.na(pubertdev_Avg) & !is.na(sex_at_birth)),aes(x=as.numeric(pubertdev_Avg)))+geom_histogram(binwidth=0.5, aes(fill = sex_at_birth, alpha = factor(report)))+scale_alpha_manual(values = c(1, .6))+theme_bw()+theme(axis.text.x  = element_text(size=18), axis.text.y  = element_text(size=18))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(.~sex_at_birth,labeller=labeller(sex_at_birth = labels))+ scale_fill_manual(values=farb)+theme(strip.text.x = element_text(size=18))
+ggsave(PDSAverage,  file="PDSAverage_Both.tiff", width = 12, height = 8, units = "in",
+  dpi = 300)
+
+
+PDSAdrenal=ggplot(subset(df_long, !is.na(pubertdev_adrenalAvg) & !is.na(sex_at_birth)),aes(x=as.numeric(pubertdev_adrenalAvg)))+geom_histogram(binwidth=0.5, aes(fill = sex_at_birth, alpha = factor(report)))+scale_alpha_manual(values = c(1, .6))+theme_bw()+theme(axis.text.x  = element_text(size=18), axis.text.y  = element_text(size=18))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(.~sex_at_birth,labeller=labeller(sex_at_birth = labels))+ scale_fill_manual(values=farb)+theme(strip.text.x = element_text(size=18))
+ggsave(PDSAdrenal,  file="PDSAdrenal_Both.tiff", width = 12, height = 8, units = "in",
+  dpi = 300)
+
+
+PDSGonadal=ggplot(subset(df_long, !is.na(pubertdev_gonadAvg) & !is.na(sex_at_birth)),aes(x=as.numeric(pubertdev_gonadAvg)))+geom_histogram(binwidth=0.5, aes(fill = sex_at_birth, alpha = factor(report)))+scale_alpha_manual(values = c(1, .6))+theme_bw()+theme(axis.text.x  = element_text(size=18), axis.text.y  = element_text(size=18))+theme( axis.title.x=element_blank(), axis.title.y=element_blank())+facet_grid(.~sex_at_birth,labeller=labeller(sex_at_birth = labels))+ scale_fill_manual(values=farb)+theme(strip.text.x = element_text(size=18))
+ggsave(PDSGonadal,  file="PDSGondal_Both.tiff", width = 12, height = 8, units = "in",
+  dpi = 300)
+```
+
+##Plot summary scores by Caregivers
+```{r}
+##Fancy plots for Figure 2!
+install.packages("devtools")
+library(devtools)
+install_github("kassambara/easyGgplot2")
+library(easyGgplot2)
+
+PubertyCategory=ggplot(subset(df, !is.na(pubertdev_ss_category_p_all)),aes(x=factor(pubertdev_ss_category_p_all, levels=c("Pre", "Early", "Mid", "Late","Post")),group=sex_at_birth,fill=sex_at_birth))+
+    geom_histogram(stat="count",position="dodge",alpha=0.5,binwidth=0.25)+labs(y="Count")+theme_light()+geom_text(stat='count', aes(label=..count..), position=position_dodge(width=0.9), vjust=-.2)+theme( axis.title.x=element_blank())+scale_fill_discrete(name="Sex", breaks=c("F", "M"),labels=c("Females", "Males"))+theme(axis.text.x= element_text(size=16),axis.text.y=element_text(size=16), axis.title.y= element_text(angle=90, size=16), legend.text = element_text(size = 16), legend.title = element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())
+
+ggsave(PubertyCategory,  file="PubertyCategory.tiff", width = 7, height = 4, units = "in", dpi = 300)
+
+GonadalAvg=ggplot2.histogram(data=df, xName='pubertdev_gonadAvg_p_all' ,binwidth=0.5,
+    groupName='sex_at_birth', legendPosition="top",
+        alpha=0.3, position="identity", xtitle="Gonadal PDS", ytitle="Count")+theme_bw()+theme(axis.text.x  = element_text(size=16), axis.text.y  = element_text(size=16))+theme(axis.title.x=element_text(size=16))+scale_fill_discrete(name="Sex", breaks=c("F", "M"),labels=c("Females", "Males"))+theme(axis.text.x= element_text(size=16),axis.text.y=element_text(size=16), axis.title.y= element_text(angle=90, size=16), legend.text = element_text(size = 16), legend.title = element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())
+
+ggsave(GonadalAvg,  file="GonadalAvg.tiff", width = 7, height = 4, units = "in",
+  dpi = 300)
+
+AvgPDS=ggplot2.histogram(data=df, xName='pubertdev_Avg_p_all' ,binwidth=0.5,
+    groupName='sex_at_birth', legendPosition="top",
+        alpha=0.3, position="identity", xtitle="Average PDS", ytitle="Count")+theme_bw()+theme(axis.text.x  = element_text(size=16), axis.text.y  = element_text(size=16))+theme(axis.title.x=element_text(size=16))+scale_fill_discrete(name="Sex", breaks=c("F", "M"),labels=c("Females", "Males"))+theme(axis.text.x= element_text(size=16),axis.text.y=element_text(size=16), axis.title.y= element_text(angle=90, size=16), legend.text = element_text(size = 16), legend.title = element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())
+
+ggsave(AvgPDS,  file="AveragePDS.tiff", width = 7, height = 4, units = "in",
+  dpi = 300)
+
+AdrenalAvg=ggplot2.histogram(data=df, xName='pubertdev_adrenalAvg_p' ,binwidth=0.5,
+    groupName='sex_at_birth', legendPosition="top",
+        alpha=0.3, position="identity", xtitle="Adrenal PDS", ytitle="Count")+theme_bw()+theme(axis.text.x  = element_text(size=16), axis.text.y  = element_text(size=16))+theme(axis.title.x=element_text(size=16))+scale_fill_discrete(name="Sex", breaks=c("F", "M"),labels=c("Females", "Males"))+theme(axis.text.x= element_text(size=16),axis.text.y=element_text(size=16), axis.title.y= element_text(angle=90, size=16), legend.text = element_text(size = 16), legend.title = element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())
+
+
+ggsave(AdrenalAvg,  file="AdrenalAvg.tiff", width = 7, height = 4, units = "in",
+  dpi = 300)
+
+```
+
+#Compare parent-youth report for agreement for all caregivers
+```{r}
+##Make data frames by variable for girls
+df_f_ht=cbind(df_f$pubertdev_1_p_num, df_f$pubertdev_ht_num)
+df_f_bdyhair=cbind(df_f$pubertdev_2_p_num, df_f$pubertdev_bdyhair_num)
+df_f_skin=cbind(df_f$pubertdev_3_p_num, df_f$pubertdev_skin_num)
+df_f_br=cbind(df_f$pubertdev_f4_p_num, df_f$pubertdev_f4_num)
+df_f_per=cbind(df_f$pubertdev_f5b_p_num, df_f$pubertdev_f5_num)
+df_f_pdsavg=cbind(df_f$pubertdev_Avg_p_all, df_f$pubertdev_Avg_all)
+df_f_gonad=cbind(df_f$pubertdev_gonadAvg_p_all, df_f$pubertdev_gonadAvg_all)
+df_f_adrenal=cbind(df_f$pubertdev_adrenalAvg_p, df_f$pubertdev_adrenalAvg)
+df_f_pdscat=cbind(df_f$pubertdev_ss_category_p_all, df_f$pubertdev_ss_category_all)
+
+library(irr)
+library(rel)
+kappa2(df_f_ht, "squared")
+ckap(data = df_f_ht, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_f_bdyhair, "squared")
+ckap(data = df_f_bdyhair, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_f_skin, "squared")
+ckap(data = df_f_skin, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_f_br,"squared")
+ckap(data = df_f_br, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_f_per, "squared")
+ckap(data = df_f_per, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_f_pdsavg, "squared")
+ckap(data = df_f_pdsavg, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_f_gonad, "squared")
+ckap(data = df_f_gonad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_f_adrenal, "squared")
+ckap(data = df_f_adrenal, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_f_pdscat, "squared")
+ckap(data = df_f_pdscat, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+
+##Run a polychoric correlation 
+library(polycor)
+polychor(df_f$pubertdev_1_p_num, df_f$pubertdev_ht_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f$pubertdev_2_p_num, df_f$pubertdev_bdyhair_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f$pubertdev_3_p_num, df_f$pubertdev_skin_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f$pubertdev_f4_p_num, df_f$pubertdev_f4_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f$pubertdev_f5b_p_num, df_f$pubertdev_f5_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f$pubertdev_Avg_p_all, df_f$pubertdev_Avg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f$pubertdev_gonadAvg_p_all, df_f$pubertdev_gonadAvg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f$pubertdev_adrenalAvg_p, df_f$pubertdev_adrenalAvg, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f$pubertdev_ss_category_p_all, df_f$pubertdev_ss_category_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+
+##Make data frames by variable for boys
+df_m_ht=cbind(df_m$pubertdev_1_p_num, df_m$pubertdev_ht_num)
+df_m_bdyhair=cbind(df_m$pubertdev_2_p_num, df_m$pubertdev_bdyhair_num)
+df_m_skin=cbind(df_m$pubertdev_3_p_num, df_m$pubertdev_skin_num)
+df_m_4=cbind(df_m$pubertdev_m4_p_num, df_m$pubertdev_m4_num)
+df_m_5=cbind(df_m$pubertdev_m5_p_num, df_m$pubertdev_m5_num)
+df_m_pdsavg=cbind(df_m$pubertdev_Avg_p_all, df_m$pubertdev_Avg_all)
+df_m_gonad=cbind(df_m$pubertdev_gonadAvg_p_all, df_m$pubertdev_gonadAvg_all)
+df_m_adrenal=cbind(df_m$pubertdev_adrenalAvg_p, df_m$pubertdev_adrenalAvg)
+df_m_pdscat=cbind(df_m$pubertdev_ss_category_p_all, df_m$pubertdev_ss_category_all)
+
+kappa2(df_m_ht, "squared")
+ckap(data = df_m_ht, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_m_bdyhair, "squared")
+ckap(data = df_m_bdyhair, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_m_skin, "squared")
+ckap(data = df_m_skin, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_m_4, "squared")
+ckap(data = df_m_4, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_m_5, "squared")
+ckap(data = df_m_5, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_m_pdsavg, "squared")
+ckap(data = df_m_pdsavg, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_m_gonad, "squared")
+ckap(data = df_m_gonad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_m_adrenal, "squared")
+ckap(data = df_m_adrenal, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+kappa2(df_m_pdscat, "squared")
+ckap(data = df_m_pdscat, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+
+##Run a polychoric correlation 
+library(polycor)
+polychor(df_m$pubertdev_1_p_num, df_m$pubertdev_ht_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m$pubertdev_2_p_num, df_m$pubertdev_bdyhair_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m$pubertdev_3_p_num, df_m$pubertdev_skin_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m$pubertdev_m4_p_num, df_m$pubertdev_m4_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m$pubertdev_m5_p_num, df_m$pubertdev_m5_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m$pubertdev_Avg_p_all, df_m$pubertdev_Avg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m$pubertdev_gonadAvg_p_all, df_m$pubertdev_gonadAvg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m$pubertdev_adrenalAvg_p, df_m$pubertdev_adrenalAvg, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m$pubertdev_ss_category_p_all, df_m$pubertdev_ss_category_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+```
+
+
+##As supplement see if biological mother or father reporting for a given Youth sex makes a difference
+```{r}
+##Examine kappas in mothers and fathers separately in females
+df_f_biomom=subset(df_f, df$demo_prim_p=="Child's Biological Mother")
+df_f_biodad=subset(df_f, df$demo_prim_p=="Child's Biological Father")
+
+##Make data frames by variable for girls for biomom
+df_f_ht_biomom=cbind(df_f_biomom$pubertdev_1_p_num, df_f_biomom$pubertdev_ht_num)
+df_f_bdyhair_biomom=cbind(df_f_biomom$pubertdev_2_p_num, df_f_biomom$pubertdev_bdyhair_num)
+df_f_skin_biomom=cbind(df_f_biomom$pubertdev_3_p_num, df_f_biomom$pubertdev_skin_num)
+df_f_br_biomom=cbind(df_f_biomom$pubertdev_f4_p_num, df_f_biomom$pubertdev_f4_num)
+df_f_per_biomom=cbind(df_f_biomom$pubertdev_f5b_p_num, df_f_biomom$pubertdev_f5_num)
+df_f_pdsavg_biomom=cbind(df_f_biomom$pubertdev_Avg_p_all, df_f_biomom$pubertdev_Avg_all)
+df_f_gonad_biomom=cbind(df_f_biomom$pubertdev_gonadAvg_p_all, df_f_biomom$pubertdev_gonadAvg_all)
+df_f_adrenal_biomom=cbind(df_f_biomom$pubertdev_adrenalAvg_p, df_f_biomom$pubertdev_adrenalAvg)
+df_f_pdscat_biomom=cbind(df_f_biomom$pubertdev_ss_category_p_all, df_f_biomom$pubertdev_ss_category_all)
+
+library(irr)
+kappa2(df_f_ht_biomom, "squared")
+ckap(data = df_f_ht_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_bdyhair_biomom, "squared")
+ckap(data = df_f_bdyhair_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_skin_biomom, "squared")
+ckap(data = df_f_skin_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_br_biomom,"squared")
+ckap(data = df_f_br_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_per_biomom, "squared")
+ckap(data = df_f_per_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_pdsavg_biomom, "squared")
+ckap(data = df_f_pdsavg_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_gonad_biomom, "squared")
+ckap(data = df_f_gonad_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_adrenal_biomom, "squared")
+ckap(data = df_f_adrenal_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_pdscat_biomom, "squared")
+ckap(data = df_f_pdscat_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+##Run a polychoric correlation 
+library(polycor)
+polychor(df_f_biomom$pubertdev_1_p_num, df_f_biomom$pubertdev_ht_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biomom$pubertdev_2_p_num, df_f_biomom$pubertdev_bdyhair_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biomom$pubertdev_3_p_num, df_f_biomom$pubertdev_skin_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biomom$pubertdev_f4_p_num, df_f_biomom$pubertdev_f4_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biomom$pubertdev_f5b_p_num, df_f_biomom$pubertdev_f5_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biomom$pubertdev_Avg_p_all, df_f_biomom$pubertdev_Avg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biomom$pubertdev_gonadAvg_p_all, df_f_biomom$pubertdev_gonadAvg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biomom$pubertdev_adrenalAvg_p, df_f_biomom$pubertdev_adrenalAvg, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biomom$pubertdev_ss_category_p_all, df_f_biomom$pubertdev_ss_category_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+
+
+##Make data frames by variable for girls for biodad
+df_f_ht_biodad=cbind(df_f_biodad$pubertdev_1_p_num, df_f_biodad$pubertdev_ht_num)
+df_f_bdyhair_biodad=cbind(df_f_biodad$pubertdev_2_p_num, df_f_biodad$pubertdev_bdyhair_num)
+df_f_skin_biodad=cbind(df_f_biodad$pubertdev_3_p_num, df_f_biodad$pubertdev_skin_num)
+df_f_br_biodad=cbind(df_f_biodad$pubertdev_f4_p_num, df_f_biodad$pubertdev_f4_num)
+df_f_per_biodad=cbind(df_f_biodad$pubertdev_f5b_p_num, df_f_biodad$pubertdev_f5_num)
+df_f_pdsavg_biodad=cbind(df_f_biodad$pubertdev_Avg_p_all, df_f_biodad$pubertdev_Avg_all)
+df_f_gonad_biodad=cbind(df_f_biodad$pubertdev_gonadAvg_p_all, df_f_biodad$pubertdev_gonadAvg_all)
+df_f_adrenal_biodad=cbind(df_f_biodad$pubertdev_adrenalAvg_p, df_f_biodad$pubertdev_adrenalAvg)
+df_f_pdscat_biodad=cbind(df_f_biodad$pubertdev_ss_category_p_all, df_f_biodad$pubertdev_ss_category_all)
+
+library(irr)
+kappa2(df_f_ht_biodad, "squared")
+ckap(data = df_f_ht_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_bdyhair_biodad, "squared")
+ckap(data = df_f_bdyhair_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_skin_biodad, "squared")
+ckap(data = df_f_skin_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_br_biodad,"squared")
+ckap(data = df_f_br_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_per_biodad, "squared")
+ckap(data = df_f_per_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_pdsavg_biodad, "squared")
+ckap(data = df_f_pdsavg_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_gonad_biodad, "squared")
+ckap(data = df_f_gonad_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_adrenal_biodad, "squared")
+ckap(data = df_f_adrenal_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_f_pdscat_biodad, "squared")
+ckap(data = df_f_pdscat_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+##Run a polychoric correlation 
+library(polycor)
+polychor(df_f_biodad$pubertdev_1_p_num, df_f_biodad$pubertdev_ht_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biodad$pubertdev_2_p_num, df_f_biodad$pubertdev_bdyhair_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biodad$pubertdev_3_p_num, df_f_biodad$pubertdev_skin_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biodad$pubertdev_f4_p_num, df_f_biodad$pubertdev_f4_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biodad$pubertdev_f5b_p_num, df_f_biodad$pubertdev_f5_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biodad$pubertdev_Avg_p_all, df_f_biodad$pubertdev_Avg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biodad$pubertdev_gonadAvg_p_all, df_f_biodad$pubertdev_gonadAvg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biodad$pubertdev_adrenalAvg_p, df_f_biodad$pubertdev_adrenalAvg, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_f_biodad$pubertdev_ss_category_p_all, df_f_biodad$pubertdev_ss_category_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+
+```
+
+```{r}
+##Examine kappas in mothers and fathers separately in males
+df_m_biomom=subset(df_m, df$demo_prim_p=="Child's Biological Mother")
+df_m_biodad=subset(df_m, df$demo_prim_p=="Child's Biological Father")
+
+##Make data frames by variable for boys for biomom
+df_m_ht_biomom=cbind(df_m_biomom$pubertdev_1_p_num, df_m_biomom$pubertdev_ht_num)
+df_m_bdyhair_biomom=cbind(df_m_biomom$pubertdev_2_p_num, df_m_biomom$pubertdev_bdyhair_num)
+df_m_skin_biomom=cbind(df_m_biomom$pubertdev_3_p_num, df_m_biomom$pubertdev_skin_num)
+df_m_voice_biomom=cbind(df_m_biomom$pubertdev_m4_p_num, df_m_biomom$pubertdev_m4_num)
+df_m_facialhr_biomom=cbind(df_m_biomom$pubertdev_m5_p_num, df_m_biomom$pubertdev_m5_num)
+df_m_pdsavg_biomom=cbind(df_m_biomom$pubertdev_Avg_p_all, df_m_biomom$pubertdev_Avg_all)
+df_m_gonad_biomom=cbind(df_m_biomom$pubertdev_gonadAvg_p_all, df_m_biomom$pubertdev_gonadAvg_all)
+df_m_adrenal_biomom=cbind(df_m_biomom$pubertdev_adrenalAvg_p, df_m_biomom$pubertdev_adrenalAvg)
+df_m_pdscat_biomom=cbind(df_m_biomom$pubertdev_ss_category_p_all, df_m_biomom$pubertdev_ss_category_all)
+
+library(irr)
+kappa2(df_m_ht_biomom, "squared")
+ckap(data = df_m_ht_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_bdyhair_biomom, "squared")
+ckap(data = df_m_bdyhair_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_skin_biomom, "squared")
+ckap(data = df_m_skin_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_voice_biomom,"squared")
+ckap(data = df_m_voice_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_facialhr_biomom, "squared")
+ckap(data = df_m_facialhr_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_pdsavg_biomom, "squared")
+ckap(data = df_m_pdsavg_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_gonad_biomom, "squared")
+ckap(data = df_m_gonad_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_adrenal_biomom, "squared")
+ckap(data = df_m_adrenal_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_pdscat_biomom, "squared")
+ckap(data = df_m_pdscat_biomom, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+
+##Run a polychoric correlation 
+library(polycor)
+polychor(df_m_biomom$pubertdev_1_p_num, df_m_biomom$pubertdev_ht_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biomom$pubertdev_2_p_num, df_m_biomom$pubertdev_bdyhair_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biomom$pubertdev_3_p_num, df_m_biomom$pubertdev_skin_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biomom$pubertdev_m4_p_num, df_m_biomom$pubertdev_m4_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biomom$pubertdev_m5_p_num, df_m_biomom$pubertdev_m5_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biomom$pubertdev_Avg_p_all, df_m_biomom$pubertdev_Avg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biomom$pubertdev_gonadAvg_p_all, df_m_biomom$pubertdev_gonadAvg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biomom$pubertdev_adrenalAvg_p, df_m_biomom$pubertdev_adrenalAvg, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biomom$pubertdev_ss_category_p_all, df_m_biomom$pubertdev_ss_category_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+
+
+
+##Make data frames by variable for boys for biodad
+df_m_ht_biodad=cbind(df_m_biodad$pubertdev_1_p_num, df_m_biodad$pubertdev_ht_num)
+df_m_bdyhair_biodad=cbind(df_m_biodad$pubertdev_2_p_num, df_m_biodad$pubertdev_bdyhair_num)
+df_m_skin_biodad=cbind(df_m_biodad$pubertdev_3_p_num, df_m_biodad$pubertdev_skin_num)
+df_m_voice_biodad=cbind(df_m_biodad$pubertdev_m4_p_num, df_m_biodad$pubertdev_m4_num)
+df_m_facialhr_biodad=cbind(df_m_biodad$pubertdev_m5_p_num, df_m_biodad$pubertdev_m5_num)
+df_m_pdsavg_biodad=cbind(df_m_biodad$pubertdev_Avg_p_all, df_m_biodad$pubertdev_Avg_all)
+df_m_gonad_biodad=cbind(df_m_biodad$pubertdev_gonadAvg_p_all, df_m_biodad$pubertdev_gonadAvg_all)
+df_m_adrenal_biodad=cbind(df_m_biodad$pubertdev_adrenalAvg_p, df_m_biodad$pubertdev_adrenalAvg)
+df_m_pdscat_biodad=cbind(df_m_biodad$pubertdev_ss_category_p_all, df_m_biodad$pubertdev_ss_category_all)
+
+
+
+library(irr)
+kappa2(df_m_ht_biodad, "squared")
+ckap(data = df_m_ht_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_bdyhair_biodad, "squared")
+ckap(data = df_m_bdyhair_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_skin_biodad, "squared")
+ckap(data = df_m_skin_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_voice_biodad,"squared")
+ckap(data = df_m_voice_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_facialhr_biodad, "squared")
+ckap(data = df_m_facialhr_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_pdsavg_biodad, "squared")
+ckap(data = df_m_pdsavg_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_gonad_biodad, "squared")
+ckap(data = df_m_gonad_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_adrenal_biodad, "squared")
+ckap(data = df_m_adrenal_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+kappa2(df_m_pdscat_biodad, "squared")
+ckap(data = df_m_pdscat_biodad, weight = "quadratic", std.err = c("Fleiss"), conf.level = 0.95, R = 0)
+
+##Run a polychoric correlation 
+library(polycor)
+polychor(df_m_biodad$pubertdev_1_p_num, df_m_biodad$pubertdev_ht_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biodad$pubertdev_2_p_num, df_m_biodad$pubertdev_bdyhair_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biodad$pubertdev_3_p_num, df_m_biodad$pubertdev_skin_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biodad$pubertdev_m4_p_num, df_m_biodad$pubertdev_m4_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biodad$pubertdev_m5_p_num, df_m_biodad$pubertdev_m5_num, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biodad$pubertdev_Avg_p_all, df_m_biodad$pubertdev_Avg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biodad$pubertdev_gonadAvg_p_all, df_m_biodad$pubertdev_gonadAvg_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biodad$pubertdev_adrenalAvg_p, df_m_biodad$pubertdev_adrenalAvg, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+polychor(df_m_biodad$pubertdev_ss_category_p_all, df_m_biodad$pubertdev_ss_category_all, ML = TRUE, control = list(), std.err = TRUE, maxcor=.9999)
+
+```
+
+##Correlations between all pubertal metrics for males and females based on parent and then youth report
+```{r}
+##Pairwise polychoric for males 
+library(polycor)
+
+myvars=c("pubertdev_ht_num", "pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_m4_num", "pubertdev_m5_num", "pubertdev_Avg_all", "pubertdev_gonadAvg_all", "pubertdev_adrenalAvg", "pubertdev_ss_category_all", "filtered_dhea", "filtered_testosterone")
+
+df_males_rho<- df_m[myvars]
+hetcor_males=hetcor(df_males_rho, use="pairwise.complete.obs")
+
+myvars=c("pubertdev_1_p_num", "pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_m4_p_num", "pubertdev_m5_p_num", "pubertdev_Avg_p_all", "pubertdev_gonadAvg_p_all", "pubertdev_adrenalAvg_p", "pubertdev_ss_category_p_all", "filtered_dhea", "filtered_testosterone")
+
+df_males_rho_p<-df_m[myvars]
+hetcor_males_p=hetcor(df_males_rho_p, use="pairwise.complete.obs")
+
+##Now females
+myvars=c("pubertdev_ht_num", "pubertdev_bdyhair_num", "pubertdev_skin_num", "pubertdev_f4_num", "pubertdev_f5_num", "pubertdev_Avg_all", "pubertdev_gonadAvg_all", "pubertdev_adrenalAvg", "pubertdev_ss_category_all", "filtered_dhea", "filtered_testosterone", "filtered_estradiol")
+
+df_females_rho<- df_f[myvars]
+hetcor_females=hetcor(df_females_rho, use="pairwise.complete.obs")
+
+myvars=c("pubertdev_1_p_num", "pubertdev_2_p_num", "pubertdev_3_p_num", "pubertdev_f4_p_num", "pubertdev_f5b_p_num", "pubertdev_Avg_p_all", "pubertdev_gonadAvg_p_all", "pubertdev_adrenalAvg_p", "pubertdev_ss_category_p_all", "filtered_dhea", "filtered_testosterone", "filtered_estradiol")
+
+df_females_rho_p<-df_f[myvars]
+hetcor_females_p=hetcor(df_females_rho_p, use="pairwise.complete.obs")
+
+```
+
+##Create Pubertal Category and demographic frequencies for Table 4
+```{r}
+##Females only tables/analyses
+cat_nona_f<- subset(df_f,!is.na(df_f$pubertdev_ss_category_p_all))
+
+racetable2_f<- table(cat_nona_f$race_ethnicity, cat_nona_f$pubertdev_ss_category_p_all)
+racetable2_prop_f <-prop.table(racetable2_f,1) # gives you frequencies
+racechi_f<-chisq.test(racetable2_f)
+
+edutable3_f <- table(cat_nona_f$high.educ, cat_nona_f$pubertdev_ss_category_p_all)
+edutable3_prop_f <-prop.table(edutable3_f,1) # gives you frequencies
+educhi_f<-chisq.test(edutable3_f)
+
+incometable4_f <- table(cat_nona_f$household.income, cat_nona_f$pubertdev_ss_category_p_all)
+incometable4_prop_f <-prop.table(incometable4_f,1) # gives you frequencies
+incomechi_f<-chisq.test(incometable4_f)
+
+rbind(racetable2_prop_f,edutable3_prop_f, incometable4_prop_f)
+rbind(racechi_f, educhi_f, incomechi_f)
+
+weight_f <- table(cat_nona_f$bmipct_category, cat_nona_f$pubertdev_ss_category_p_all)
+bmipct_category_prop_f <-prop.table(weight_f,1) # gives you frequencies
+
+
+# for continuous 
+library(dplyr)
+agetable_f<-t(group_by(cat_nona_f, pubertdev_ss_category_p_all) %>%
+  summarise(
+    count = n(),
+    mean = mean(interview_age, na.rm = TRUE),
+    sd = sd(interview_age, na.rm = TRUE)
+  ))
+age_f.aov <- aov(interview_age ~ !is.na(pubertdev_ss_category_p_all), data = cat_nona_f)
+summary(age_f.aov) # gives you the anova
+
+
+ugly_table_f<-rbind(agetable_f, bmipct_category_prop_f, racetable2_prop_f,edutable3_prop_f, incometable4_prop_f)
+write.csv(ugly_table_f, file='demographic_PDScat_female.csv')
+
+```
+
+
+```{r}
+
+##Males only tables/analyses
+cat_nona_m<- subset(df_m,!is.na(df_m$pubertdev_ss_category_p_all))
+cat_nona_m$pubertdev_ss_category_p_all<-factor(cat_nona_m$pubertdev_ss_category_p_all, levels=c("Pre", "Early", "Mid", "Late","Post"))
+
+racetable2_m<- table(cat_nona_m$race_ethnicity, cat_nona_m$pubertdev_ss_category_p_all)
+racetable2_prop_m <-prop.table(racetable2_m,1) # gives you frequencies
+racechi_m<-chisq.test(racetable2_m)
+
+edutable3_m <- table(cat_nona_m$high.educ, cat_nona_m$pubertdev_ss_category_p_all)
+edutable3_prop_m <-prop.table(edutable3_m,1) # gives you frequencies
+educhi_m<-chisq.test(edutable3_m)
+
+incometable4_m <- table(cat_nona_m$household.income, cat_nona_m$pubertdev_ss_category_p_all)
+incometable4_prop_m <-prop.table(incometable4_m,1) # gives you frequencies
+incomechi_m<-chisq.test(incometable4_m)
+
+rbind(racetable2_prop_m,edutable3_prop_m, incometable4_prop_m)
+rbind(racechi_m, educhi_m, incomechi_m)
+
+weight_m <- table(cat_nona_m$bmipct_category, cat_nona_m$pubertdev_ss_category_p_all)
+bmipct_category_prop_m <-prop.table(weight_m,1) # gives you frequencies
+
+# for continuous 
+library(dplyr)
+agetable_m<-t(group_by(cat_nona_m, pubertdev_ss_category_p_all) %>%
+  summarise(
+    count = n(),
+    mean = mean(interview_age, na.rm = TRUE),
+    sd = sd(interview_age, na.rm = TRUE)
+  ))
+age_m.aov <- aov(interview_age ~ pubertdev_ss_category_p_all, data = cat_nona_m)
+summary(age_m.aov) # gives you the anova\
+
+ugly_table_m<-rbind(agetable_m,bmipct_category_prop_m, racetable2_prop_m,edutable3_prop_m, incometable4_prop_m)
+write.csv(ugly_table_m, file='demographic_PDScat_male.csv')
+
+```
+
+##Clean for missing data for GFA analyses as it can only handle complete cases
+```{r}
+##Remove missing data for GFA -- 
+#1. participants with PDS information 
+#2. Full information on covariates
+#3. Information on AT LEAST one hormone of interest
+
+##First parent report and hormones for girls
+# dataset with full information on PDS parent and hormone levels
+df_females.hormones.pds.parent.cov <- subset (df, 
+                             !is.na(src_subject_id) & 
+                             !is.na(abcd_site) & 
+                             !is.na(rel_family_id) &
+                             !is.na(interview_age) & 
+                             !is.na(pubertdev_sex) &
+                             !is.na(race_ethnicity) &
+                             !is.na(high.educ) & 
+                             !is.na(household.income) & 
+                             !is.na(bmipct_category) &
+                             !is.na(bmiz) &
+                             !is.na(pubertdev_1_p_num) & 
+                             !is.na(pubertdev_2_p_num) &
+                             !is.na(pubertdev_3_p_num) & 
+                             !is.na(pubertdev_f4_p_num) & 
+                             !is.na(pubertdev_f5b_p_num) &
+                             !is.na(filtered_dhea) &
+                             !is.na(filtered_estradiol) &
+                             !is.na(filtered_testosterone))
+
+saveRDS(df_females.hormones.pds.parent.cov, "df_females.hormones.pds.parent.rds")
+
+
+df_males.hormones.pds.parent.cov <- subset (df, 
+                             !is.na(src_subject_id) & 
+                             !is.na(abcd_site) & 
+                             !is.na(rel_family_id) &
+                             !is.na(interview_age) & 
+                             !is.na(pubertdev_sex) &
+                             !is.na(race_ethnicity) &
+                             !is.na(high.educ) & 
+                             !is.na(bmipct_category) &
+                             !is.na(bmiz) &
+                             !is.na(pubertdev_1_p_num) & 
+                             !is.na(pubertdev_2_p_num) &
+                             !is.na(pubertdev_3_p_num) & 
+                             !is.na(pubertdev_m4_p_num) & 
+                             !is.na(pubertdev_m5_p_num) &
+                             !is.na(filtered_dhea) &
+                             !is.na(filtered_testosterone))
+
+saveRDS(df_males.hormones.pds.parent.cov, "df_males.hormones.pds.parent.rds")
+
+##First self-report report and hormones for girls
+# dataset with full information on PDS youth and hormone levels
+
+df_females.hormones.pds.youth.cov <- subset (df, 
+                             !is.na(src_subject_id) & 
+                             !is.na(abcd_site) & 
+                             !is.na(rel_family_id) &
+                             !is.na(interview_age) & 
+                             !is.na(pubertdev_sex) &
+                             !is.na(race_ethnicity) &
+                             !is.na(high.educ) & 
+                             !is.na(household.income) & 
+                             !is.na(bmipct_category) & 
+                             !is.na(bmiz) &
+                             !is.na(pubertdev_ht_num) & 
+                             !is.na(pubertdev_bdyhair_num) &
+                             !is.na(pubertdev_skin_num) & 
+                             !is.na(pubertdev_f4_num) & 
+                             !is.na(pubertdev_f5_num) &
+                             !is.na(filtered_dhea) &
+                             !is.na(filtered_estradiol) &
+                             !is.na(filtered_testosterone))
+
+saveRDS(df_females.hormones.pds.youth.cov, "df_females.hormones.pds.youth.rds")
+
+df_males.hormones.pds.youth.cov <- subset (df, 
+                             !is.na(src_subject_id) & 
+                             !is.na(abcd_site) & 
+                             !is.na(rel_family_id) &
+                             !is.na(interview_age) & 
+                             !is.na(pubertdev_sex) &
+                             !is.na(race_ethnicity) &
+                             !is.na(high.educ) & 
+                             !is.na(household.income) & 
+                             !is.na(bmipct_category) &
+                             !is.na(bmiz) &
+                             !is.na(pubertdev_ht_num) & 
+                             !is.na(pubertdev_bdyhair_num) &
+                             !is.na(pubertdev_skin_num) & 
+                             !is.na(pubertdev_m4_num) & 
+                             !is.na(pubertdev_m5_num) &
+                             !is.na(filtered_dhea) &
+                             !is.na(filtered_testosterone))
+
+saveRDS(df_males.hormones.pds.youth.cov, "df_males.hormones.pds.youth.rds")
+
+```
+
+
+
+##Look at hormone levels and covariates
+```{r}
+#Get hormone levels 
+describeBy(df$filtered_dhea, group=df$pubertdev_sex, mat=TRUE)
+describeBy(df$filtered_testosterone, group=df$pubertdev_sex, mat=TRUE)
+describeBy(df$filtered_estradiol, group=df$pubertdev_sex, mat=TRUE)
+
+IQR(df_f$filtered_dhea, na.rm=TRUE)
+IQR(df_f$filtered_testosterone, na.rm=TRUE)
+IQR(df_f$filtered_estradiol, na.rm=TRUE)
+
+IQR(df_m$filtered_dhea, na.rm=TRUE)
+IQR(df_m$filtered_testosterone, na.rm=TRUE)
+
+
+##Females only tables/analyses for hormones
+xtabs(~df_females.hormones.pds.parent.cov$biospec_hormone_sal_caff)
+xtabs(~df_females.hormones.pds.parent.cov$biospec_hormone_sal_active)
+
+  describe(df_females.hormones.pds.parent.cov$biospec_hormone_TimeSinceMidnight)  
+    IQR(df_females.hormones.pds.parent.cov$biospec_hormone_TimeSinceMidnight, na.rm = TRUE)
+    
+    describe(df_females.hormones.pds.parent.cov$biospec_hormone_TimeSinceWakeInMin) 
+    IQR(df_females.hormones.pds.parent.cov$biospec_hormone_TimeSinceWakeInMin, na.rm = TRUE)
+    
+     describe(df_females.hormones.pds.parent.cov$biospec_hormone_CollectionDuration) 
+    IQR(df_females.hormones.pds.parent.cov$biospec_hormone_CollectionDuration, na.rm = TRUE)
+
+      describe(df_females.hormones.pds.parent.cov$biospec_hormone_DurationToFreeze) 
+    IQR(df_females.hormones.pds.parent.cov$biospec_hormone_DurationToFreeze, na.rm = TRUE)
+    
+
+##Hormones by pubertal category for new supplementary figure 4.
+
+estradioltable_f<-t(group_by(df_females.hormones.pds.parent.cov, pubertdev_ss_category_p_all) %>%
+  summarise(
+    count = n(),
+    mean = mean(filtered_estradiol, na.rm = TRUE),
+    sd = sd(filtered_estradiol, na.rm = TRUE)
+  ))
+estradiol_f.aov <- aov(filtered_estradiol ~ pubertdev_ss_category_p_all, data = df_females.hormones.pds.parent.cov)
+summary(estradiol_f.aov) # gives you the anova
+
+
+testtable_f<-t(group_by(df_females.hormones.pds.parent.cov, pubertdev_ss_category_p_all) %>%
+  summarise(
+    count = n(),
+    mean = mean(filtered_testosterone, na.rm = TRUE),
+    sd = sd(filtered_testosterone, na.rm = TRUE)
+  ))
+testosterone_f.aov <- aov(filtered_testosterone ~ pubertdev_ss_category_p_all, data = df_females.hormones.pds.parent.cov)
+summary(testosterone_f.aov) # gives you the anova
+
+
+dheatable_f<-t(group_by(df_females.hormones.pds.parent.cov, pubertdev_ss_category_p_all) %>%
+  summarise(
+    count = n(),
+    mean = mean(filtered_dhea, na.rm = TRUE),
+    sd = sd(filtered_dhea, na.rm = TRUE)
+  ))
+dhea_f.aov <- aov(filtered_dhea ~ pubertdev_ss_category_p_all, data = df_females.hormones.pds.parent.cov)
+summary(dhea_f.aov) # gives you the anova
+    
+##Males only tables/analyses for hormones
+xtabs(~df_males.hormones.pds.parent.cov$biospec_hormone_sal_caff)
+xtabs(~df_males.hormones.pds.parent.cov$biospec_hormone_sal_active)
+
+    describe(df_males.hormones.pds.parent.cov$biospec_hormone_TimeSinceMidnight)  
+    IQR(df_males.hormones.pds.parent.cov$biospec_hormone_TimeSinceMidnight, na.rm = TRUE)
+    
+    describe(df_males.hormones.pds.parent.cov$biospec_hormone_TimeSinceWakeInMin) 
+    IQR(df_males.hormones.pds.parent.cov$biospec_hormone_TimeSinceWakeInMin, na.rm = TRUE)
+    
+    describe(df_males.hormones.pds.parent.cov$biospec_hormone_CollectionDuration)  
+    IQR(df_males.hormones.pds.parent.cov$biospec_hormone_CollectionDuration, na.rm = TRUE)
+
+    describe(df_males.hormones.pds.parent.cov$biospec_hormone_DurationToFreeze)  
+    IQR(df_males.hormones.pds.parent.cov$biospec_hormone_DurationToFreeze, na.rm = TRUE)
+    
+    
+    
+  testtable_m<-t(group_by(df_males.hormones.pds.parent.cov, pubertdev_ss_category_p_all) %>%
+  summarise(
+    count = n(),
+    mean = mean(filtered_testosterone, na.rm = TRUE),
+    sd = sd(filtered_testosterone, na.rm = TRUE)
+  ))
+testosterone_m.aov <- aov(filtered_testosterone ~ pubertdev_ss_category_p_all, data = df_males.hormones.pds.parent.cov)
+summary(testosterone_m.aov) # gives you the anova
+
+
+dheatable_m<-t(group_by(df_males.hormones.pds.parent.cov, pubertdev_ss_category_p_all) %>%
+  summarise(
+    count = n(),
+    mean = mean(filtered_dhea, na.rm = TRUE),
+    sd = sd(filtered_dhea, na.rm = TRUE)
+  ))
+dhea_m.aov <- aov(filtered_dhea ~ pubertdev_ss_category_p_all, data = df_males.hormones.pds.parent.cov)
+summary(dhea_m.aov) # gives you the anova
+
+```
+
+##Plot hormones and PDS summary scores by caregiver
+```{r}
+##Plot female PDS/Hormones by caregiver
+library(ggplot2)
+
+##First Categories
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_ss_category_p_all, y = filtered_estradiol)) + geom_boxplot(outlier.shape = NA, fill='#F8766D')+labs(y=expression("Estradiol " ("pg"/ml))) + theme_light()
+estradiol=i+xlab("Pubertal Category")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_estradiol, c(0, 1)))
+ggsave("Category_Estradiol.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_ss_category_p_all, y = filtered_dhea)) + geom_boxplot(outlier.shape =NA, fill='#F8766D')+labs(y=expression("DHEA " ("pg"/ml))) + theme_light()+scale_y_continuous(breaks = c(0, 100, 200, 300, 400, 500, 600))
+dhea=i+xlab("Pubertal Category")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())
+ggsave("Category_DHEA_females.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_ss_category_p_all, y = filtered_testosterone)) + geom_boxplot(outlier.shape=NA, fill='#F8766D')+labs(y=expression("Testosterone " ("pg"/ml))) + theme_light()+scale_y_continuous(breaks = c(0, 50, 100, 150, 200))
+testosterone=i+xlab("Pubertal Category")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())
+ggsave("Category_Testosterone_females.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+
+##Next Estradiol
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_Avg_p_all, y = filtered_estradiol)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("Estradiol " ("pg"/ml))) + theme_light()
+estradiol=i+xlab("PDS Average")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_estradiol, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("PDSAvg_Estradiol.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_gonadAvg_p_all, y = filtered_estradiol)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("Estradiol " ("pg"/ml))) + theme_light()
+estradiol=i+xlab("Gonadal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_estradiol, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Gonadal_Estradiol.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_adrenalAvg_p, y = filtered_estradiol)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("Estradiol " ("pg"/ml))) + theme_light()
+estradiol=i+xlab("Adrenal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_estradiol, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Adrenal_Estradiol.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+
+##Next Testosterone
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_Avg_p_all, y = filtered_testosterone)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("Testosterone " ("pg"/ml))) + theme_light()
+testosterone=i+xlab("PDS Average")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_testosterone, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("PDSAvg_Testosterone.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_gonadAvg_p_all, y = filtered_testosterone)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("Testosterone " ("pg"/ml))) + theme_light()
+testosterone=i+xlab("Gonadal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_testosterone, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Gonadal_Testosterone.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_adrenalAvg_p, y = filtered_testosterone)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("Testosterone " ("pg"/ml))) + theme_light()
+testosterone=i+xlab("Adrenal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_testosterone, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Adrenal_Testosterone.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+
+##Next DHEA
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_Avg_p_all, y = filtered_dhea)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("DHEA " ("pg"/ml))) + theme_light()
+dhea=i+xlab("PDS Average")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_dhea, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("PDSAvg_DHEA.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_gonadAvg_p_all, y = filtered_dhea)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("DHEA " ("pg"/ml))) + theme_light()
+dhea=i+xlab("Gonadal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_dhea, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Gonadal_DHEA.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+
+i<-ggplot(df_females.hormones.pds.parent.cov, aes(x = pubertdev_adrenalAvg_p, y = filtered_dhea)) + geom_point(aes(colour=factor(df_females.hormones.pds.parent.cov$pubertdev_f5b_p)))+labs(y=expression("DHEA " ("pg"/ml))) + theme_light()
+dhea=i+xlab("Adrenal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_females.hormones.pds.parent.cov$filtered_dhea, c(0, 1)))+scale_colour_manual(values=c('#F8766D', '#9590FF'), labels = c("No Menarche", "Menarche")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Adrenal_DHEA.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+```
+
+```{r}
+##Now males plots for PDS/Hormone by parent report
+i<-ggplot(df_males.hormones.pds.parent.cov, aes(x = pubertdev_ss_category_p_all, y = filtered_dhea)) + geom_boxplot(outlier.shape =NA, fill='#00BFC4')+labs(y=expression("DHEA " ("pg"/ml))) + theme_light()+scale_y_continuous(breaks = c(0, 100, 200, 300, 400, 500, 600))
+dhea=i+xlab("Pubertal Category")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+theme(plot.background = element_blank(),panel.grid.major = element_blank())
+
+ggsave("Category_DHEA_males.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_males.hormones.pds.parent.cov, aes(x = pubertdev_ss_category_p_all, y = filtered_testosterone)) + geom_boxplot(outlier.shape=NA, fill='#00BFC4')+labs(y=expression("Testosterone " ("pg"/ml))) + theme_light()+scale_y_continuous(breaks = c(0, 50, 100, 150, 200))
+testosterone=i+xlab("Pubertal Category")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())
+
+ggsave("Category_Testosterone_males.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+
+##Next Testosterone
+i<-ggplot(df_males.hormones.pds.parent.cov, aes(x = pubertdev_Avg_p_all, y = filtered_testosterone)) + geom_point(aes(colour="#00BFC4"))+labs(y=expression("Testosterone " ("pg"/ml))) + theme_light()
+testosterone=i+xlab("PDS Average")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_males.hormones.pds.parent.cov$filtered_testosterone, c(0, 1)))+scale_colour_manual(values=c('#00BFC4'), labels = c("All Males Plot")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("PDSAvg_Testosterone_males.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_males.hormones.pds.parent.cov, aes(x = pubertdev_gonadAvg_p_all, y = filtered_testosterone)) + geom_point(aes(colour="#00BFC4"))+labs(y=expression("Testosterone " ("pg"/ml))) + theme_light()
+testosterone=i+xlab("Gonadal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_males.hormones.pds.parent.cov$filtered_testosterone, c(0, 1)))+scale_colour_manual(values=c('#00BFC4'), labels = c("All Males Plot")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Gonadal_Testosterone_males.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_males.hormones.pds.parent.cov, aes(x = pubertdev_adrenalAvg_p, y = filtered_testosterone)) + geom_point(aes(colour="#00BFC4"))+labs(y=expression("Testosterone " ("pg"/ml))) + theme_light()
+testosterone=i+xlab("Adrenal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_males.hormones.pds.parent.cov$filtered_testosterone, c(0, 1)))+scale_colour_manual(values=c('#00BFC4'), labels = c("All Males Plot")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Adrenal_Testosterone_males.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+##Next DHEA
+i<-ggplot(df_males.hormones.pds.parent.cov, aes(x = pubertdev_Avg_p_all, y = filtered_dhea)) + geom_point(aes(colour="#00BFC4"))+labs(y=expression("DHEA " ("pg"/ml))) + theme_light()
+dhea=i+xlab("PDS Average")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_males.hormones.pds.parent.cov$filtered_dhea, c(0, 1)))+scale_colour_manual(values=c('#00BFC4'), labels = c("All Males Plot")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("PDSAvg_DHEA_males.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_males.hormones.pds.parent.cov, aes(x = pubertdev_gonadAvg_p_all, y = filtered_dhea)) + geom_point(aes(colour="#00BFC4"))+labs(y=expression("DHEA " ("pg"/ml))) + theme_light()
+dhea=i+xlab("Gonadal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+scale_y_continuous(limits = quantile(df_males.hormones.pds.parent.cov$filtered_dhea, c(0, 1)))+scale_colour_manual(values=c('#00BFC4'), labels = c("All Males Plot")) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")
+ggsave("Gonadal_DHEA_males.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+i<-ggplot(df_males.hormones.pds.parent.cov, aes(x = pubertdev_adrenalAvg_p, y = filtered_dhea)) + geom_point(aes(colour="#00BFC4"))+labs(y=expression("DHEA " ("pg"/ml))) + theme_light()
+dhea=i+xlab("Adrenal Score")+theme(axis.text.x= element_text(size=16),axis.text.y= element_text(size=16), axis.title.x = element_text(size = 16), axis.title.y= element_text(angle=90, size=16), legend.text=element_text(size=16))+theme(plot.background = element_blank(),panel.grid.major = element_blank())+scale_x_continuous(limits =c (1,4))+theme(plot.background = element_blank(),panel.grid.major = element_blank()) + theme(legend.title = element_blank())+geom_smooth(method = lm, formula = y ~ splines::bs(x, 3), color="black")+scale_colour_manual(values=c('#00BFC4'))
+ggsave("Adrenal_DHEA_males.tiff", plot = last_plot(), units="in", width=5, height=4, dpi=300)
+
+```
+
+```{r}
+###Predict puberty by demographics but first relevel variables
+library(emmeans)
+library(sjPlot)
+library(lsmeans)
+library(mgcv)
+library(gamm4)
+df$interview_age_108<-df$interview_age-108
+df$pubertdev_sex_p <- factor(df$pubertdev_sex_p, levels = c("Male","Female"), labels=c("Male","Female"))
+df$high.educ <- factor(df$high.educ, levels = c("< HS Diploma","HS Diploma/GED", "Some College", "Bachelor", "Post Graduate Degree"),labels=c("< HS Diploma","HS Diploma/GED", "Some College", "Bachelor","Graduate Degree"))
+
+formula.random = "~1|abcd_site/rel_family_id"
+
+df$pubertdev_sex_p<- relevel(df$pubertdev_sex_p, ref="Male")
+df$bmipct_category<-relevel(df$bmipct_category, ref="Healthy Weight")
+df$race_ethnicity<-relevel(df$race_ethnicity, ref="Hispanic")
+df$high.educ<-relevel(df$high.educ, ref="HS Diploma/GED")
+df$household.income<-relevel(df$household.income, ref="[>=50K & <100K]")
+
+
+
+##Make up a dataset for plotting
+age=seq(min(108),max(131), length.out=400)
+sex=c("Male","Female")
+weight="Healthy Weight"
+race="Hispanic"
+edu="HS Diploma/GED"
+income="[>=50K & <100K]"
+caffeine=0
+active=0
+midnight=772.3
+wake=345.44
+collect=6.98
+freeze=2.62
+
+
+dataplot=expand.grid(interview_age=age, pubertdev_sex_p=sex, bmipct_category=weight, race_ethnicity=race, high.educ=edu, household.income=income, biospec_hormone_sal_caff=caffeine, biospec_hormone_sal_active=active, biospec_hormone_TimeSinceMidnight=midnight,biospec_hormone_TimeSinceWakeInMin=wake,biospec_hormone_CollectionDuration=collect,biospec_hormone_DurationToFreeze=2.62)
+
+
+model1intx=lme(pubertdev_Avg_p_all~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+lsmeans(model1intx, pairwise~"pubertdev_sex_p*interview_age_108", adjust="tukey")
+
+model1_race<-lsmeans(model1intx, pairwise~"pubertdev_sex_p*race_ethnicity", adjust="tukey")
+model1_bmi<-lsmeans(model1intx, pairwise~"pubertdev_sex_p*bmipct_category", adjust="tukey")
+model1_edu<-lsmeans(model1intx, pairwise~"pubertdev_sex_p*high.educ", adjust="tukey")
+model1_income<-lsmeans(model1intx, pairwise~"pubertdev_sex_p*household.income", adjust="tukey")
+
+PDS_MainEffects=rbind(data.frame(model1_race$contrasts), data.frame(model1_bmi$contrasts), data.frame(model1_edu$contrasts), data.frame(model1_income$contrasts))
+
+write.table(PDS_MainEffects, file = "model1_maineffects.csv", append = FALSE, quote = TRUE,
+            row.names = FALSE, col.names = TRUE)
+
+# To convert from lsmeans output (d <- lsmeans(paramaters))
+d_race <- summary(model1_race)$lsmeans[c("pubertdev_sex_p", "race_ethnicity","lsmean", "SE")]
+d_bmi <- summary(model1_bmi)$lsmeans[c("pubertdev_sex_p", "bmipct_category","lsmean", "SE")]
+d_edu <- summary(model1_edu)$lsmeans[c("pubertdev_sex_p", "high.educ","lsmean", "SE")]
+d_income <- summary(model1_income)$lsmeans[c("pubertdev_sex_p", "household.income","lsmean", "SE")]
+
+d_edu$high.educ = factor(d_edu$high.educ, c("< HS Diploma","HS Diploma/GED", "Some College", "Bachelor", "Graduate Degree"))
+d_income$household.income <- factor(d_income$household.income,c("[<50K]","[>=50K & <100K]","[>=100K]"), labels=c("Low","Middle", "High"))
+d_bmi$bmipct_category <- factor(d_bmi$bmipct_category,c("Underweight","Healthy Weight","Overweight", "Obese"), labels=c("Underweight","Healthy Weight","Overweight", "Obese"))
+
+library(ggplot2)
+p=ggplot(d_race,aes(x=race_ethnicity, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='PDS Average')
+race_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 2.5)
+
+ggsave("PDS_Race_ModelLMEASNS.tiff", plot = race_p, units="in", width=6, height=4, dpi=300)
+
+p=ggplot(d_bmi,aes(x=bmipct_category, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='PDS Average')
+bmi_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16), legend.position = "none")+ylim(0, 2.5)
+
+ggsave("PDS_BMI_ModelLMEASNS.tiff", plot = bmi_p, units="in", width=6, height=4, dpi=300)
+
+p=ggplot(d_edu,aes(x=high.educ, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='PDS Average')
+edu_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16), legend.position = "none")+ylim(0, 2.5)
+
+ggsave("PDS_EDU_ModelLMEASNS.tiff", plot = edu_p, units="in", width=6, height=4, dpi=300)
+
+
+p=ggplot(d_income,aes(x=household.income, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='PDS Average')
+income_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16), legend.position = "none")+ylim(0, 2.5)
+
+ggsave("PDS_INCOME_ModelLMEASNS.tiff", plot = income_p, units="in", width=6, height=4, dpi=300)
+
+library(gridExtra)
+
+grid.arrange(
+  arrangeGrob(cowplot::plot_grid(bmi_p, race_p, edu_p, income_p, align = "h", ncol=4)))
+
+#test nonlinear age
+library(gamm4)
+model1intxgam=gamm4(pubertdev_Avg_p_all~s(interview_age_108, by=pubertdev_sex_p) +pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income,random=~(1|abcd_site/rel_family_id), data= df, na.action=na.omit)
+
+summary(model1intxgam$gam)
+plot.gam(model1intxgam$gam) ##Effects linear (edf of 1 and 1)
+
+
+set_theme(
+  base = theme_classic(), 
+  legend.size = 1
+)
+
+
+p=plot_model(model1intx, type = "int", colors="bw", dot.size = 3, line.size = 1, title = "", value.offset=.2, dodge =.5,legend.title = "", axis.lim=c(1,4))
+p1=p[[1]]+ labs(x = "", y="Average PDS",title="")
+p2=p[[2]]+ labs(x = "",y="Average PDS",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p3=p[[3]]+ labs(x = "", y="Average PDS",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p4=p[[4]]+ labs(x = "", y="Average PDS",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p5=p[[5]]+ labs(x = "", y="Average PDS",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+
+
+ggsave("PDS_Age_ModelIntx.tiff", plot = p1, units="in", width=5, height=4, dpi=300)
+ggsave("PDS_Weight_ModelIntx.tiff", plot = p2, units="in", width=5, height=4, dpi=300)
+ggsave("PDS_Race_ModelIntx.tiff", plot = p3, units="in", width=5, height=4, dpi=300)
+ggsave("PDS_Educ_ModelIntx.tiff", plot = p4, units="in", width=5, height=4, dpi=300)
+ggsave("PDS_Income_ModelIntx.tiff", plot = p5, units="in", width=5, height=4, dpi=300)
+
+model2intx=lme(pubertdev_gonadAvg_p_all~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+lsmeans(model2intx, pairwise~"pubertdev_sex_p*interview_age_108", adjust="tukey")
+lsmeans(model2intx, pairwise~"pubertdev_sex_p*race_ethnicity", adjust="tukey")
+lsmeans(model2intx, pairwise~"pubertdev_sex_p*bmipct_category", adjust="tukey")
+lsmeans(model2intx, pairwise~"pubertdev_sex_p*high.educ", adjust="tukey")
+lsmeans(model2intx, pairwise~"pubertdev_sex_p*household.income", adjust="tukey")
+
+#test nonlinear age
+model2intxgam=gamm4(pubertdev_gonadAvg_p_all~s(interview_age_108, by=pubertdev_sex_p) +pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income,random=~(1|abcd_site/rel_family_id), data= df, na.action=na.omit)
+
+summary(model2intxgam$gam)
+plot.gam(model2intxgam$gam)
+
+#get_model_data(model2intx, "int")
+
+p=plot_model(model2intx, type = "int", colors="bw", dot.size = 3, line.size = 1, title = "", value.offset=.2, dodge =.5,legend.title = "", axis.lim=c(1,4))
+p1=p[[1]]+ labs(x = "", y="Gondal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p2=p[[2]]+ labs(x = "", y="Gondal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p3=p[[3]]+ labs(x = "", y="Gondal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p4=p[[4]]+ labs(x = "", y="Gonadal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p5=p[[5]]+ labs(x = "", y="Gonadal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+
+ggsave("GonadPDS_Age_ModelIntx.tiff", plot = p1, units="in", width=5, height=4, dpi=300)
+ggsave("GonadPDS_Weight_ModelIntx.tiff", plot = p2, units="in", width=5, height=4, dpi=300)
+ggsave("GonadPDS_Race_ModelIntx.tiff", plot = p3, units="in", width=5, height=4, dpi=300)
+ggsave("GonadPDS_Educ_ModelIntx.tiff", plot = p4, units="in", width=5, height=4, dpi=300)
+ggsave("GonadPDS_Income_ModelIntx.tiff", plot = p5, units="in", width=5, height=4, dpi=300)
+
+
+model3intx=lme(pubertdev_adrenalAvg_p~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+lsmeans(model3intx, pairwise~"pubertdev_sex_p*interview_age_108", adjust="tukey")
+lsmeans(model3intx, pairwise~"pubertdev_sex_p*race_ethnicity", adjust="tukey")
+lsmeans(model3intx, pairwise~"pubertdev_sex_p*bmipct_category", adjust="tukey")
+lsmeans(model3intx, pairwise~"pubertdev_sex_p*high.educ", adjust="tukey")
+lsmeans(model3intx, pairwise~"pubertdev_sex_p*household.income", adjust="tukey")
+
+
+#test nonlinear age
+model3intxgam=gamm4(pubertdev_adrenalAvg_p~s(interview_age_108, by=pubertdev_sex_p) +pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income,random=~(1|abcd_site/rel_family_id), data= df, na.action=na.omit)
+
+summary(model3intxgam$gam) #edf of 1 and 1.4
+plot.gam(model3intxgam$gam)
+
+
+#get_model_data(model3intx, "int")
+
+p=plot_model(model3intx, type = "int", colors="bw", dot.size = 3, line.size = 1, title = "", value.offset=.2, dodge =.5,legend.title = "", axis.lim=c(1,3))
+p1=p[[1]]+ labs(x = "", y="Adrenal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p2=p[[2]]+ labs(x = "", y="Adrenal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p3=p[[3]]+ labs(x = "", y="Adrenal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p4=p[[4]]+ labs(x = "", y="Adrenal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p5=p[[5]]+ labs(x = "", y="Adrenal Score",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+
+ggsave("AdrenalPDS_Age_ModelIntx.tiff", plot = p1, units="in", width=5, height=4, dpi=300)
+ggsave("AdrenalPDS_Weight_ModelIntx.tiff", plot = p2, units="in", width=5, height=4, dpi=300)
+ggsave("AdrenalPDS_Race_ModelIntx.tiff", plot = p3, units="in", width=5, height=4, dpi=300)
+ggsave("AdrenalPDS_Educ_ModelIntx.tiff", plot = p4, units="in", width=5, height=4, dpi=300)
+ggsave("AdrenalPDS_Income_ModelIntx.tiff", plot = p5, units="in", width=5, height=4, dpi=300)
+
+
+tab_model(model1intx, model2intx, model3intx, show.icc = FALSE, show.intercept=FALSE, show.r2 = TRUE, digits=3, collapse.ci =FALSE)
+
+
+
+model4intx_midnight=lme(filtered_dhea~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+# Double check same result using a different time factor of data collection --> they are 
+#model4intx_wake=lme(filtered_dhea~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+#Model deemed to be inappropriate due to multi-colinearity 
+#model4intx=lme(filtered_dhea~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+lsmeans(model4intx_midnight, pairwise~"pubertdev_sex_p*interview_age_108", adjust="tukey")
+model4_race<-lsmeans(model4intx_midnight, pairwise~"pubertdev_sex_p*race_ethnicity", adjust="tukey")
+model4_bmi<-lsmeans(model4intx_midnight, pairwise~"pubertdev_sex_p*bmipct_category", adjust="tukey")
+model4_edu<-lsmeans(model4intx_midnight, pairwise~"pubertdev_sex_p*high.educ", adjust="tukey")
+model4_income<-lsmeans(model4intx_midnight, pairwise~"pubertdev_sex_p*household.income", adjust="tukey")
+
+
+DHEA_MainEffects=rbind(data.frame(model4_bmi$contrasts), data.frame(model4_race$contrasts), data.frame(model4_edu$contrasts), data.frame(model4_income$contrasts))
+
+write.table(DHEA_MainEffects, file = "model4_maineffects.csv", append = FALSE, quote = TRUE,
+            row.names = FALSE, col.names = TRUE)
+
+
+# To convert from lsmeans output (d <- lsmeans(paramaters))
+d_race <- summary(model4_race)$lsmeans[c("pubertdev_sex_p", "race_ethnicity","lsmean", "SE")]
+d_bmi <- summary(model4_bmi)$lsmeans[c("pubertdev_sex_p", "bmipct_category","lsmean", "SE")]
+d_edu <- summary(model4_edu)$lsmeans[c("pubertdev_sex_p", "high.educ","lsmean", "SE")]
+d_income <- summary(model4_income)$lsmeans[c("pubertdev_sex_p", "household.income","lsmean", "SE")]
+
+d_edu$high.educ = factor(d_edu$high.educ, c("< HS Diploma","HS Diploma/GED", "Some College", "Bachelor", "Graduate Degree"))
+d_income$household.income <- factor(d_income$household.income,c("[<50K]","[>=50K & <100K]","[>=100K]"), labels=c("Low","Middle", "High"))
+d_bmi$bmipct_category <- factor(d_bmi$bmipct_category,c("Underweight","Healthy Weight","Overweight", "Obese"), labels=c("Underweight","Healthy Weight","Overweight", "Obese"))
+
+library(ggplot2)
+p=ggplot(d_race,aes(x=race_ethnicity, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='DHEA (pg/mL)')
+race_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 120)
+
+ggsave("DHEA_Race_ModelLMEASNS.tiff", plot = race_p, units="in", width=6, height=4, dpi=300)
+
+p=ggplot(d_bmi,aes(x=bmipct_category, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='DHEA (pg/mL)')
+bmi_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 120)
+
+ggsave("DHEA_BMI_ModelLMEASNS.tiff", plot = bmi_p, units="in", width=6, height=4, dpi=300)
+
+p=ggplot(d_edu,aes(x=high.educ, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='DHEA (pg/mL)')
+edu_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 120)
+
+ggsave("DHEA_EDU_ModelLMEASNS.tiff", plot = edu_p, units="in", width=6, height=4, dpi=300)
+
+
+p=ggplot(d_income,aes(x=household.income, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='DHEA (pg/mL)')
+income_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 120)
+
+ggsave("DHEA_INCOME_ModelLMEASNS.tiff", plot = income_p, units="in", width=6, height=4, dpi=300)
+
+
+grid.arrange(
+  arrangeGrob(cowplot::plot_grid(bmi_p, race_p, edu_p, income_p, align = "h", ncol=4)))
+
+
+
+#test nonlinear age
+
+
+model4intxgam=gamm4(filtered_dhea~s(interview_age_108, by=pubertdev_sex_p) +pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=~(1|abcd_site/rel_family_id), data= df, na.action=na.omit)
+
+
+##See notes above about these 2 models.
+#model4intxgam_wake=gamm4(filtered_dhea~s(interview_age_108, by=pubertdev_sex_p) +pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=~(1|abcd_site/rel_family_id), data= df, na.action=na.omit)
+
+#model4intxgam=gamm4(filtered_dhea~s(interview_age_108, by=pubertdev_sex_p) +pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=~(1|abcd_site/rel_family_id), data= df, na.action=na.omit)
+
+##Create plotting version
+library(mgcViz)
+model4intxgam2=gamm4V(filtered_dhea~s(interview_age_108, by=pubertdev_sex_p) +pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=~(1|abcd_site/rel_family_id), data= df)
+
+library(phia)
+
+
+summary(model4intxgam$gam) #edf of 1 for male, but slightly non-linear for female = 1.74
+plot.gam(model4intxgam$gam)
+
+
+#get_model_data(model4intx, "int")
+p=plot_model(model4intx_midnight, type = "int", colors="bw", dot.size = 3, line.size = 1, title = "", value.offset=.2, dodge =.5,legend.title = "")
+p1=p[[1]]+ labs(x = "", y="DHEA (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p2=p[[2]]+ labs(x = "", y="DHEA (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p3=p[[3]]+ labs(x = "", y="DHEA (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p4=p[[4]]+ labs(x = "", y="DHEA (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p5=p[[5]]+ labs(x = "", y="DHEA (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+
+ggsave("DHEA_Age_ModelIntx.tiff", plot = p1, units="in", width=5, height=4, dpi=300)
+ggsave("DHEA_Weight_ModelIntx.tiff", plot = p2, units="in", width=5, height=4, dpi=300)
+ggsave("DHEA_Race_ModelIntx.tiff", plot = p3, units="in", width=5, height=4, dpi=300)
+ggsave("DHEA_Educ_ModelIntx.tiff", plot = p4, units="in", width=5, height=4, dpi=300)
+ggsave("DHEA_Income_ModelIntx.tiff", plot = p5, units="in", width=5, height=4, dpi=300)
+
+
+model5intx_midnight=lme(filtered_testosterone~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+
+##See notes above about these two models
+#model5intx=lme(filtered_testosterone~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+#model5intx_wake=lme(filtered_testosterone~pubertdev_sex_p*interview_age_108+pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+
+lsmeans(model5intx_midnight, pairwise~"pubertdev_sex_p*interview_age_108", adjust="tukey")
+model5_race<-lsmeans(model5intx_midnight, pairwise~"pubertdev_sex_p*race_ethnicity", adjust="tukey")
+model5_bmi<-lsmeans(model5intx_midnight, pairwise~"pubertdev_sex_p*bmipct_category", adjust="tukey")
+model5_edu<-lsmeans(model5intx_midnight, pairwise~"pubertdev_sex_p*high.educ", adjust="tukey")
+model5_income<-lsmeans(model5intx_midnight, pairwise~"pubertdev_sex_p*household.income", adjust="tukey")
+
+Testosterone_MainEffects=rbind(data.frame(model5_bmi$contrasts), data.frame(model5_race$contrasts), data.frame(model5_edu$contrasts), data.frame(model5_income$contrasts))
+
+write.table(Testosterone_MainEffects, file = "model5_maineffects.csv", append = FALSE, quote = TRUE,
+            row.names = FALSE, col.names = TRUE)
+
+
+
+# To convert from lsmeans output (d <- lsmeans(paramaters))
+d_race <-summary(model5_race)$lsmeans[c("pubertdev_sex_p", "race_ethnicity","lsmean", "SE")]
+d_bmi<- summary(model5_bmi)$lsmeans[c("pubertdev_sex_p", "bmipct_category","lsmean", "SE")]
+d_edu <-summary(model5_edu)$lsmeans[c("pubertdev_sex_p", "high.educ","lsmean", "SE")]
+d_income <- summary(model5_income)$lsmeans[c("pubertdev_sex_p", "household.income","lsmean", "SE")]
+
+d_edu$high.educ = factor(d_edu$high.educ, c("< HS Diploma","HS Diploma/GED", "Some College", "Bachelor", "Graduate Degree"))
+d_income$household.income <- factor(d_income$household.income,c("[<50K]","[>=50K & <100K]","[>=100K]"), labels=c("Low","Middle", "High"))
+d_bmi$bmipct_category <- factor(d_bmi$bmipct_category,c("Underweight","Healthy Weight","Overweight", "Obese"), labels=c("Underweight","Healthy Weight","Overweight", "Obese"))
+
+library(ggplot2)
+p=ggplot(d_race,aes(x=race_ethnicity, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='Testosterone (pg/mL)')
+race_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 50)
+
+ggsave("Test_Race_ModelLMEASNS.tiff", plot = race_p, units="in", width=6, height=4, dpi=300)
+
+p=ggplot(d_bmi,aes(x=bmipct_category, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='Testosterone (pg/mL)')
+bmi_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 50)
+
+ggsave("Test_BMI_ModelLMEASNS.tiff", plot = bmi_p, units="in", width=6, height=4, dpi=300)
+
+p=ggplot(d_edu,aes(x=high.educ, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='Testosterone (pg/mL)')
+edu_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 50)
+
+ggsave("Test_EDU_ModelLMEASNS.tiff", plot = edu_p, units="in", width=6, height=4, dpi=300)
+
+
+p=ggplot(d_income,aes(x=household.income, y=lsmean, fill=pubertdev_sex_p))+geom_bar(stat='identity',position='dodge')+scale_fill_manual(values =c("#00BFC4",'#F8766D'))+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+facet_wrap(~pubertdev_sex_p)+labs(y='Testosterone (pg/mL)')
+income_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 50)
+
+ggsave("Test_INCOME_ModelLMEASNS.tiff", plot = income_p, units="in", width=6, height=4, dpi=300)
+
+
+grid.arrange(
+  arrangeGrob(cowplot::plot_grid(bmi_p, race_p, edu_p, income_p, align = "h", ncol=4)))
+
+model5intxgam=gamm4(filtered_testosterone~s(interview_age_108, by=pubertdev_sex_p) +pubertdev_sex_p*bmipct_category+pubertdev_sex_p*race_ethnicity+pubertdev_sex_p*high.educ+pubertdev_sex_p*household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=~(1|abcd_site/rel_family_id), data= df, na.action=na.omit)
+
+summary(model5intxgam$gam) #edf of 1 for male, 1.33 for females
+plot.gam(model5intxgam$gam)
+
+
+#get_model_data(model5intx, "int")
+
+p=plot_model(model5intx_midnight, type = "int", colors="bw", dot.size = 3, line.size = 1, title = "", value.offset=.2, dodge =.5,legend.title = "", axis.lim=c(20,60))
+p1=p[[1]]+ labs(x = "", y="Testosterone (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p2=p[[2]]+ labs(x = "", y="Testosterone (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p3=p[[3]]+ labs(x = "", y="Testosterone (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p4=p[[4]]+ labs(x = "", y="Testosterone (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p5=p[[5]]+ labs(x = "", y="Testosterone (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+
+#Plot non-ingteraction
+p=plot_model(model5intx_midnight, type = "pred", colors="bw", dot.size = 3, line.size = 1, title = "", grid.breaks(Male, female), value.offset=.2, dodge =.5)
+p6=p$high.educ+ labs(x = "", y="Testosterone (pg/mL)",title="")
+
+ggsave("Test_Age_ModelIntx.tiff", plot = p1,  units="in", width=5, height=4, dpi=300)
+ggsave("Test_Weight_ModelIntx.tiff", plot = p2,  units="in", width=5, height=4, dpi=300)
+ggsave("Test_Race_ModelIntx.tiff", plot = p3,  units="in", width=5, height=4, dpi=300)
+ggsave("Test_Educ_ModelIntx.tiff", plot = p4,  units="in", width=5, height=4, dpi=300)
+ggsave("Test_Income_ModelIntx.tiff", plot = p5,  units="in", width=5, height=4, dpi=300)
+
+
+
+model6_midnight=lme(filtered_estradiol~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+#See notes above regarding these models
+#model6_waking=lme(filtered_estradiol~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+#model6=lme(filtered_estradiol~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df, na.action=na.omit)
+
+model6_race <-lsmeans(model6_midnight, pairwise~"race_ethnicity", adjust="tukey")
+model6_bmi <- lsmeans(model6_midnight, pairwise~"bmipct_category", adjust="tukey")
+model6_edu<-lsmeans(model6_midnight, pairwise~"high.educ", adjust="tukey")
+model6_income<-lsmeans(model6_midnight, pairwise~"household.income", adjust="tukey")
+
+Estradiol_MainEffects=rbind(data.frame(model6_bmi$contrasts), data.frame(model6_race$contrasts), data.frame(model6_edu$contrasts), data.frame(model6_income$contrasts))
+
+write.table(Estradiol_MainEffects, file = "model6_maineffects.csv", append = FALSE, quote = TRUE,
+            row.names = FALSE, col.names = TRUE)
+
+
+
+
+# To convert from lsmeans output (d <- lsmeans(paramaters))
+d_race <-summary(model6_race)$lsmeans[c("race_ethnicity","lsmean", "SE")]
+d_bmi<- summary(model6_bmi)$lsmeans[c("bmipct_category","lsmean", "SE")]
+d_edu <-summary(model6_edu)$lsmeans[c("high.educ","lsmean", "SE")]
+d_income <- summary(model6_income)$lsmeans[c("household.income","lsmean", "SE")]
+
+d_edu$high.educ = factor(d_edu$high.educ, c("< HS Diploma","HS Diploma/GED", "Some College", "Bachelor", "Graduate Degree"))
+d_income$household.income <- factor(d_income$household.income,c("[<50K]","[>=50K & <100K]","[>=100K]"), labels=c("Low","Middle", "High"))
+d_bmi$bmipct_category <- factor(d_bmi$bmipct_category,c("Underweight","Healthy Weight","Overweight", "Obese"), labels=c("Underweight","Healthy Weight","Overweight", "Obese"))
+
+library(ggplot2)
+p=ggplot(d_race,aes(x=race_ethnicity, y=lsmean))+geom_bar(stat='identity',position='dodge', fill='#F8766D')+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+labs(y='Estradiol (pg/mL)')
+race_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 2)
+
+ggsave("Estradiol_Race_ModelLMEASNS.tiff", plot = race_p, units="in", width=6, height=4, dpi=300)
+
+p=ggplot(d_bmi,aes(x=bmipct_category, y=lsmean, fill='#F8766D'))+geom_bar(stat='identity',position='dodge')+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+labs(y='Estradiol (pg/mL)')
+bmi_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 2)
+
+ggsave("Estradiol_BMI_ModelLMEASNS.tiff", plot = bmi_p, units="in", width=6, height=4, dpi=300)
+
+p=ggplot(d_edu,aes(x=high.educ, y=lsmean, fill='#F8766D'))+geom_bar(stat='identity',position='dodge')+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+labs(y='Estradiol (pg/mL)')
+edu_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 2)
+
+ggsave("Estradiol_EDU_ModelLMEASNS.tiff", plot = edu_p, units="in", width=6, height=4, dpi=300)
+
+
+p=ggplot(d_income,aes(x=household.income, y=lsmean, fill='#F8766D'))+geom_bar(stat='identity',position='dodge')+geom_errorbar(aes(ymin=lsmean-SE, ymax=lsmean+SE))+labs(y='Estradiol (pg/mL)')
+income_p=p+theme(axis.text.x=element_text(size=16, angle=45, hjust = 1), axis.text.y= element_text(size=16),legend.title=element_blank(),axis.title.x=element_blank(), strip.text.x = element_text(size = 16), axis.title.y=element_text(size=16),legend.position = "none")+ylim(0, 2)
+
+ggsave("Estradiol_INCOME_ModelLMEASNS.tiff", plot = income_p, units="in", width=6, height=4, dpi=300)
+
+grid.arrange(
+  arrangeGrob(cowplot::plot_grid(bmi_p, race_p, edu_p, income_p, align = "h", ncol=5, rel_widths = c(0.07, 0.07, 0.07, 0.07))))
+
+model6gam=gamm4(filtered_estradiol~s(interview_age_108)+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=~(1|abcd_site/rel_family_id), data= df, na.action=na.omit)
+
+
+summary(model6gam$gam) #edf of 1 for female
+plot.gam(model6gam$gam)
+
+#get_model_data(model6intx, "int")
+
+p=plot_model(model6_midnight, type = "pred", colors="bw", dot.size = 3, line.size = 1, title = "", value.offset=.2, dodge =.1)
+p1=p$bmipct_category+labs(x = "", y="Estradiol (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p2=p$race_ethnicity+ labs(x = "", y="Estradiol (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p3=p$high.educ+ labs(x = "", y="Estradiol (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+p4=p$household.income+ labs(x = "", y="Estradiol (pg/mL)",title="")+font_size(axis_title.x = 16, axis_title.y = 16, labels.x=16)+theme(legend.title = element_blank())
+
+ggsave("Estradiol_Weight_ModelIntx.tiff", plot = p2,  units="in", width=5, height=4, dpi=300)
+ggsave("Estradiol_Race_ModelIntx.tiff", plot = p3,  units="in", width=5, height=4, dpi=300)
+ggsave("Estradiol_Educ_ModelIntx.tiff", plot = p4,  units="in", width=5, height=4, dpi=300)
+ggsave("Estradiol_Income_ModelIntx.tiff", plot = p5,  units="in", width=5, height=4, dpi=300)
+
+
+tab_model(model4intxgam$mer, model5intxgam$mer, model6gam$mer, show.intercept=FALSE, show.r2 = TRUE, digits=7, collapse.ci =FALSE)
+
+```
+
+##Import in GFAs and determine if they differ by sociodemographic factors
+```{r}
+
+GFA_females<-read.csv("ABCD_rGFA_pds_hormones_females.csv", sep=",")
+GFA_males<-read.csv("ABCD_rGFA_pds_hormones_males.csv", sep=",")
+
+# for continuous 
+library(dplyr)
+
+GFA_males$RGFA1_2_Ratio=GFA_males$RGFA1/GFA_males$RGFA2
+GFA_males$RGFA1_2_Ratio_log=log(GFA_males$RGFA1_2_Ratio, 10) #-3 to 3
+
+GFA_females$RGFA1_2_Ratio=GFA_females$RGFA1/GFA_females$RGFA2
+GFA_females$RGFA1_2_Ratio_log=log(GFA_females$RGFA1_2_Ratio, 10) #-3 to 3
+
+df_m_gfa=merge(df_m, GFA_males, by="src_subject_id", all=TRUE)
+df_f_gfa=merge(df_f, GFA_females, by="src_subject_id", all=TRUE)
+df_all_gfa=merge(df_m_gfa, df_f_gfa, all=TRUE)
+
+
+##Understand what RGFA1 and RGFA2 are telling us
+pubertyvars_f<-df_f_gfa[,c('pubertdev_Avg_all','filtered_dhea','filtered_testosterone','filtered_estradiol','RGFA1','RGFA2', 'RGFA1_2_Ratio_log')]
+library(GGally)
+ggpairs(pubertyvars_f)
+
+pubertyvars_m<-df_m_gfa[,c('pubertdev_Avg_all','filtered_dhea','filtered_testosterone','RGFA1','RGFA2', 'RGFA1_2_Ratio_log')]
+library(GGally)
+ggpairs(pubertyvars_m)
+
+df_f_gfa$RGFA2_group[df_f_gfa$RGFA2>0] <- "Positive"
+df_f_gfa$RGFA2_group[df_f_gfa$RGFA2<0] <- "Negative"
+describeBy(df_f_gfa, group=df_f_gfa$RGFA2_group)
+t.test(df_f_gfa$pubertdev_Avg_p_all~df_f_gfa$RGFA2_group)
+t.test(df_f_gfa$interview_age~df_f_gfa$RGFA2_group)
+t.test(df_f_gfa$filtered_dhea~df_f_gfa$RGFA2_group)
+t.test(df_f_gfa$filtered_testosterone~df_f_gfa$RGFA2_group)
+t.test(df_f_gfa$filtered_estradiol~df_f_gfa$RGFA2_group)
+xtabs(~df_f_gfa$RGFA2_group+df_f_gfa$race_ethnicity)
+
+racetable_gfa<- table(df_f_gfa$RGFA2_group, df_f_gfa$race_ethnicity)
+racetable_gfa_prop <-prop.table(racetable_gfa,1) # gives you frequencies
+chisq.test(racetable_gfa)
+
+bmitable_gfa<- table(df_f_gfa$RGFA2_group, df_f_gfa$bmipct_category)
+bmitable_gfa_prop <-prop.table(bmitable_gfa,1) # gives you frequencies
+chisq.test(bmitable_gfa)
+
+edutable_gfa<- table(df_f_gfa$RGFA2_group, df_f_gfa$high.educ)
+edutable_gfa_prop <-prop.table(edutable_gfa,1) # gives you frequencies
+chisq.test(edutable_gfa)
+
+incometable_gfa<- table(df_f_gfa$RGFA2_group, df_f_gfa$household.income)
+incometable_gfa_prop <-prop.table(incometable_gfa,1) # gives you frequencies
+chisq.test(incometable_gfa)
+
+
+##Look at males
+df_m_gfa$RGFA2_group[df_m_gfa$RGFA2>0] <- "Positive"
+df_m_gfa$RGFA2_group[df_m_gfa$RGFA2<0] <- "Negative"
+describeBy(df_m_gfa, group=df_m_gfa$RGFA2_group)
+t.test(df_m_gfa$pubertdev_Avg_p_all~df_m_gfa$RGFA2_group)
+t.test(df_m_gfa$interview_age~df_m_gfa$RGFA2_group)
+t.test(df_m_gfa$filtered_dhea~df_m_gfa$RGFA2_group)
+t.test(df_m_gfa$filtered_testosterone~df_m_gfa$RGFA2_group)
+
+racetable_gfa<- table(df_m_gfa$RGFA2_group, df_m_gfa$race_ethnicity)
+racetable_gfa_prop <-prop.table(racetable_gfa,1) # gives you frequencies
+chisq.test(racetable_gfa)
+
+bmitable_gfa<- table(df_m_gfa$RGFA2_group, df_m_gfa$bmipct_category)
+bmitable_gfa_prop <-prop.table(bmitable_gfa,1) # gives you frequencies
+chisq.test(bmitable_gfa)
+
+edutable_gfa<- table(df_m_gfa$RGFA2_group, df_m_gfa$high.educ)
+edutable_gfa_prop <-prop.table(edutable_gfa,1) # gives you frequencies
+chisq.test(edutable_gfa)
+
+incometable_gfa<- table(df_m_gfa$RGFA2_group, df_m_gfa$household.income)
+incometable_gfa_prop <-prop.table(incometable_gfa,1) # gives you frequencies
+chisq.test(incometable_gfa)
+
+
+
+library(nlme)
+##Predict puberty by demographics
+formula.random = "~1|abcd_site/rel_family_id"
+
+##Compare models for girls
+
+model1_f=lme(pubertdev_Avg_p_all~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income,random=as.formula(formula.random), data= df_f_gfa, na.action=na.omit)
+
+model1_f_Frame <- data.frame(Variable = c("age", "Underweight", "Overweight", "Obese", "Hispanic", "Black", "Asian", "Other/Multi-race", "< HS Diploma", "Some College", "Bachelor", "Professional Degree", "Below 50k","Above 100k"),
+Coefficient = summary(model1_f)$tTable[2:15, 1],
+SE = summary(model1_f)$tTable[2:15, 2],
+modelName = "PDS Average")
+
+model2_f=lme(pubertdev_gonadAvg_p_all~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income,random=as.formula(formula.random), data= df_f_gfa, na.action=na.omit)
+
+model2_f_Frame <- data.frame(Variable = c("age", "Underweight", "Overweight", "Obese", "Hispanic", "Black", "Asian", "Other/Multi-race", "< HS Diploma", "Some College", "Bachelor", "Professional Degree", "Below 50k","Above 100k"),
+Coefficient = summary(model2_f)$tTable[2:15, 1],
+SE = summary(model2_f)$tTable[2:15, 2],
+modelName = "Gondadal Average")
+
+model3_f=lme(pubertdev_adrenalAvg_p~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income,random=as.formula(formula.random), data= df_f_gfa, na.action=na.omit)
+
+model3_f_Frame <- data.frame(Variable = c("age", "Underweight", "Overweight", "Obese", "Hispanic", "Black", "Asian", "Other/Multi-race", "< HS Diploma", "Some College", "Bachelor", "Professional Degree", "Below 50k","Above 100k"),
+Coefficient = summary(model3_f)$tTable[2:15, 1],
+SE = summary(model3_f)$tTable[2:15, 2],
+modelName = "Adrenal Average")
+
+model4_f=lme(filtered_dhea~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df_f_gfa, na.action=na.omit)
+
+model4_f_Frame <- data.frame(Variable = c("age", "Underweight", "Overweight", "Obese", "Hispanic", "Black", "Asian", "Other/Multi-race", "< HS Diploma", "Some College", "Bachelor", "Professional Degree", "Below 50k","Above 100k", "Caff","PhysicalActivity", "TimeMidnight", "TimeWaking", "CollectionDuration", "DurationFreezer"),
+Coefficient = summary(model4_f)$tTable[2:21, 1],
+SE = summary(model4_f)$tTable[2:21, 2],
+modelName = "DHEA")
+
+model5_f=lme(filtered_testosterone~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df_f_gfa, na.action=na.omit)
+
+model5_f_Frame <- data.frame(Variable = c("age", "Underweight", "Overweight", "Obese", "Hispanic", "Black", "Asian", "Other/Multi-race", "< HS Diploma", "Some College", "Bachelor", "Professional Degree", "Below 50k","Above 100k", "Caff","PhysicalActivity", "TimeMidnight", "TimeWaking", "CollectionDuration", "DurationFreezer"),
+Coefficient = summary(model5_f)$tTable[2:21, 1],
+SE = summary(model5_f)$tTable[2:21, 2],
+modelName = "Testosterone")
+
+model6_f=lme(filtered_estradiol~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df_f_gfa, na.action=na.omit)
+
+model6_f_Frame <- data.frame(Variable = c("age", "Underweight", "Overweight", "Obese", "Hispanic", "Black", "Asian", "Other/Multi-race", "< HS Diploma", "Some College", "Bachelor", "Professional Degree", "Below 50k","Above 100k", "Caff","PhysicalActivity", "TimeMidnight", "TimeWaking", "CollectionDuration", "DurationFreezer"),
+Coefficient = summary(model6_f)$tTable[2:21, 1],
+SE = summary(model6_f)$tTable[2:21, 2],
+modelName = "Estradiol")
+
+model7_f=lme(RGFA1~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df_f_gfa, na.action=na.omit)
+
+model7_f_Frame <- data.frame(Variable = c("age", "Underweight", "Overweight", "Obese", "Hispanic", "Black", "Asian", "Other/Multi-race", "< HS Diploma", "Some College", "Bachelor", "Professional Degree", "Below 50k","Above 100k", "Caff","PhysicalActivity", "TimeMidnight", "TimeWaking", "CollectionDuration", "DurationFreezer"),
+Coefficient = summary(model7_f)$tTable[2:21, 1],
+SE = summary(model7_f)$tTable[2:21, 2],
+modelName = "GFA Factor 1")
+
+model8_f=lme(RGFA2~interview_age_108+bmipct_category+race_ethnicity+high.educ+household.income+biospec_hormone_sal_caff+biospec_hormone_sal_active+biospec_hormone_TimeSinceMidnight+biospec_hormone_TimeSinceWakeInMin+biospec_hormone_CollectionDuration+biospec_hormone_DurationToFreeze,random=as.formula(formula.random), data= df_f_gfa, na.action=na.omit)
+
+model8_f_Frame <- data.frame(Variable = c("age", "Underweight", "Overweight", "Obese", "Hispanic", "Black", "Asian", "Other/Multi-race", "< HS Diploma", "Some College", "Bachelor", "Professional Degree", "Below 50k","Above 100k", "Caff","PhysicalActivity", "TimeMidnight", "TimeWaking", "CollectionDuration", "DurationFreezer"),
+Coefficient = summary(model8_f)$tTable[2:21, 1],
+SE = summary(model8_f)$tTable[2:21, 2],
+modelName = "GFA Factor 2")
+
+
+allModelFrame1 <- data.frame(rbind(model1_f_Frame, model2_f_Frame, model3_f_Frame, model4_f_Frame, model5_f_Frame, model6_f_Frame, model7_f_Frame, model8_f_Frame))  # etc.
+allModelFrame1$Variable<-factor(allModelFrame1$Variable, levels= c("Caff","PhysicalActivity", "TimeMidnight", "TimeWaking", "CollectionDuration", "DurationFreezer","Above 100k", "Below 50k","Professional Degree" ,"Bachelor","Some College","< HS Diploma","Other/Multi-race", "Asian", "Black", "Hispanic", "Obese", "Overweight", "Underweight", "age"))
+
+# Specify the width of your confidence intervals
+interval1 <- -qnorm((1-0.9)/2)  # 90% multiplier
+interval2 <- -qnorm((1-0.95)/2)  # 95% multiplier
+
+# Plot
+zp1 <- ggplot(allModelFrame1, aes(colour=="black"))
+zp1 <- zp1 + geom_hline(yintercept = 0, colour = gray(1/2), lty = 2)
+zp1 <- zp1 + geom_linerange(aes(x=factor(allModelFrame1$Variable, levels= c("Caff","PhysicalActivity", "TimeMidnight", "TimeWaking", "CollectionDuration", "DurationFreezer","Above 100k", "Below 50k","Professional Degree" ,"Bachelor","Some College","< HS Diploma","Other/Multi-race", "Asian", "Black", "Hispanic", "Obese", "Overweight", "Underweight", "age")), ymin = Coefficient - SE*interval1,
+                                ymax = Coefficient + SE*interval1),
+                            lwd = 1, position = position_dodge(width = 1/2))
+
+zp1 <- zp1 + geom_pointrange(aes(x=factor(allModelFrame1$Variable, levels= c("Caff","PhysicalActivity", "TimeMidnight", "TimeWaking", "CollectionDuration", "DurationFreezer","Above 100k", "Below 50k","Professional Degree" ,"Bachelor","Some College","< HS Diploma","Other/Multi-race", "Asian", "Black", "Hispanic", "Obese", "Overweight", "Underweight", "age")), y = Coefficient, ymin = Coefficient - SE*interval2,
+                                 ymax = Coefficient + SE*interval2),
+                             lwd = 1/2, position = position_dodge(width = 1/2),
+                             shape = 21, fill = "WHITE")
+zp1 <- zp1 + coord_flip() + theme_bw()
+zp1 <- zp1 + ggtitle("Comparing several models")
+print(zp1)  # The trick to these is position_dodge().
+zp1<- zp1 + facet_grid(.~modelName, scales ="free")
+
+
+##Summary variables and plots
+library(Rmisc)
+##Prepare nested puberty data
+pubertyvars<-df_f_gfa[,c('src_subject_id','interview_age_108', 'race_ethnicity', 'high.educ', 'household.income', 'bmipct_category', 'pubertdev_ss_category_all', 'pubertdev_Avg_all', 'filtered_dhea','filtered_testosterone','filtered_estradiol','RGFA1','RGFA2')]
+
+puberty_long=reshape(pubertyvars, varying=list(c('RGFA1','RGFA2')), idvar='src_subject_id', timevar="Factors", times=c('RGFA1','RGFA2'), v.names="metric", direction="long")
+row.names(puberty_long) <- NULL
+
+puberty=summarySE(puberty_long, measurevar="metric", groupvars=c("race_ethnicity", "Factors"), na.rm=TRUE)
+
+pubertyplot=ggplot(data=puberty, aes(x=Factors, y=metric))+geom_bar(stat="identity", position="dodge")+geom_errorbar(aes(ymin=metric-se, ymax=metric+se), position="dodge")+facet_grid(~race_ethnicity)
+
+
+GFA1=summarySE(df_f_gfa, measurevar="RGFA1", groupvars="race_ethnicity", na.rm=TRUE)
+GFA1plot=ggplot(data=GFA1, aes(x=race_ethnicity, y=RGFA1))+geom_bar(stat="identity", position="dodge")+geom_errorbar(aes(ymin=RGFA1-se, ymax=RGFA1+se), position="dodge")
+
+
+
+
+##Prepare nested puberty data
+pubertyvars<-df_m_gfa[,c('src_subject_id','sex_at_birth','interview_age_108', 'race_ethnicity', 'high.educ', 'household.income', 'bmipct_category', 'pubertdev_ss_category_all', 'pubertdev_Avg_all', 'filtered_dhea','filtered_testosterone','RGFA1','RGFA2')]
+
+puberty_long=reshape(pubertyvars, varying=list(c('RGFA1','RGFA2')), idvar='src_subject_id', timevar="Factors", times=c('RGFA1','RGFA2'), v.names="metric", direction="long")
+row.names(puberty_long) <- NULL
+
+pubertyplot=ggplot(data=puberty, aes(x=Factors, y=metric))+geom_bar(stat="identity", position="dodge")+geom_errorbar(aes(ymin=metric-se, ymax=metric+se), position="dodge")+facet_grid(~race_ethnicity)
+
+
+
+pubertyvars<-df_all_gfa[,c('src_subject_id','interview_age_108', "pubertdev_sex_p",'race_ethnicity', 'high.educ', 'household.income', 'bmipct_category', 'pubertdev_ss_category_all', 'pubertdev_Avg_all', 'filtered_dhea','filtered_testosterone','filtered_estradiol','RGFA1','RGFA2')]
+
+puberty_long=reshape(pubertyvars, varying=list(c('RGFA1','RGFA2')), idvar='src_subject_id', timevar="Factors", times=c('RGFA1','RGFA2'), v.names="metric", direction="long")
+row.names(puberty_long) <- NULL
+
+puberty_long_test<-puberty_long[!is.na(puberty_long$metric),]
+
+puberty=summarySE(puberty_long_test, measurevar="metric", groupvars=c("race_ethnicity", "Factors", "pubertdev_sex_p"), na.rm=TRUE)
+
+
+pubertyplot=ggplot(data=puberty, aes(x=Factors, y=metric))+geom_bar(stat="identity", position="dodge")+geom_errorbar(aes(ymin=metric-se, ymax=metric+se), position="dodge")+facet_grid(pubertdev_sex_p~race_ethnicity)
+
+
+puberty=summarySE(puberty_long_test, measurevar="metric", groupvars=c("bmipct_category", "Factors", "pubertdev_sex_p"), na.rm=TRUE)
+puberty=head(puberty,-2)
+
+pubertyplot=ggplot(data=puberty, aes(x=Factors, y=metric))+geom_bar(stat="identity", position="dodge")+geom_errorbar(aes(ymin=metric-se, ymax=metric+se), position="dodge")+facet_grid(pubertdev_sex_p~bmipct_category)
+
+
+puberty=summarySE(puberty_long_test, measurevar="metric", groupvars=c("high.educ", "Factors", "pubertdev_sex_p"), na.rm=TRUE)
+
+pubertyplot=ggplot(data=puberty, aes(x=Factors, y=metric))+geom_bar(stat="identity", position="dodge")+geom_errorbar(aes(ymin=metric-se, ymax=metric+se), position="dodge")+facet_grid(pubertdev_sex_p~high.educ)
+
+
+puberty=summarySE(puberty_long_test, measurevar="metric", groupvars=c("household.income", "Factors", "pubertdev_sex_p"), na.rm=TRUE)
+puberty=head(puberty,-2)
+
+pubertyplot=ggplot(data=puberty, aes(x=Factors, y=metric))+geom_bar(stat="identity", position="dodge")+geom_errorbar(aes(ymin=metric-se, ymax=metric+se), position="dodge")+facet_grid(pubertdev_sex_p~household.income)
+
+
+
+
+
+###########
+library(ggpubr)
+# Grouped Scatter plot with marginal density plots
+df_f_gfa$pubertdev_Avg_p_all_factor=round(df_f_gfa$pubertdev_Avg_p_all)
+df_f_gfa$pubertdev_Avg_p_all_factor=as.factor(df_f_gfa$pubertdev_Avg_p_all_factor)
+
+df_f_gfa_small<-df_f_gfa[!is.na(df_f_gfa$RGFA1),]
+df_f_gfa_small$testosterone_quartile <- with(df_f_gfa_small, cut(filtered_testosterone, 
+                                breaks=quantile(filtered_testosterone, probs=seq(0,1, by=0.25), na.rm=TRUE), 
+                                include.lowest=TRUE))
+
+df_f_gfa_small$dhea_quartile <- with(df_f_gfa_small, cut(filtered_dhea, 
+                                breaks=quantile(filtered_dhea, probs=seq(0,1, by=0.25), na.rm=TRUE), 
+                                include.lowest=TRUE))
+
+df_f_gfa_small$estradiol_quartile <- with(df_f_gfa_small, cut(filtered_estradiol, 
+                                breaks=quantile(filtered_estradiol, probs=seq(0,1, by=0.25), na.rm=TRUE), 
+                                include.lowest=TRUE))
+
+df_f_gfa_small$testosterone_quartile<-factor(df_f_gfa_small$testosterone_quartile, levels=c( "[2.86,23.2]", "(23.2,33.1]", "(33.1,45.1]", "(45.1,205]"), labels=c("2.86-23.2", "23.2-33.1", "33.1-45.1", "45.1-205"))
+
+df_f_gfa_small$dhea_quartile<-factor(df_f_gfa_small$dhea_quartile, levels=c( "[2.26,36.6]", "(36.6,63.9]", "(63.9,99.3]", "(99.3,513]"), labels=c("2.26-36.6", "36.6-63.9", "63.9-99.3", "99.3-513"))
+
+df_f_gfa_small$estradiol_quartile<-factor(df_f_gfa_small$estradiol_quartile, levels=c( "[0.04,0.81]", "(0.81,1.12]", "(1.12,1.51]", "(1.51,6.42]"), labels=c("0.04-0.81", "0.81-1.12", "1.12-1.51", "1.51-6.42"))
+
+p_f_t=ggscatterhist(
+  df_f_gfa_small, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "testosterone_quartile", size = 2, alpha = 0.1, shape="pubertdev_Avg_p_all_factor",
+ margin.params = list(fill = "testosterone_quartile", color = "black", size = 0.2),  mean.point = TRUE, xlab="GFA Factor 1", ylab="GFA Factor 2", ggtheme = theme_bw())
+
+p_f_t
+
+
+p_f_d=ggscatterhist(
+  df_f_gfa_small, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "dhea_quartile", size = 2, alpha = 0.1, shape="pubertdev_Avg_p_all_factor",
+ margin.params = list(fill = "dhea_quartile", color = "black", size = 0.2),  mean.point = TRUE, xlab="GFA Factor 1", ylab="GFA Factor 2", ggtheme = theme_bw())
+
+p_f_d
+
+
+p_f_e=ggscatterhist(
+  df_f_gfa_small, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "estradiol_quartile", size = 2, alpha = 0.1, shape="pubertdev_Avg_p_all_factor",
+ margin.params = list(fill = "estradiol_quartile", color = "black", size = 0.2),  mean.point = TRUE, xlab="GFA Factor 1", ylab="GFA Factor 2", ggtheme = theme_bw())
+
+p_f_e
+
+
+#BOYS:
+  
+# Grouped Scatter plot with marginal density plots
+df_m_gfa$pubertdev_Avg_p_all_factor=round(df_m_gfa$pubertdev_Avg_p_all)
+df_m_gfa$pubertdev_Avg_p_all_factor=as.factor(df_m_gfa$pubertdev_Avg_p_all_factor)
+df_m_gfa_small<-df_m_gfa[!is.na(df_m_gfa$RGFA1),]
+
+df_m_gfa_small$testosterone_quartile <- with(df_m_gfa_small, cut(filtered_testosterone, 
+                                breaks=quantile(filtered_testosterone, probs=seq(0,1, by=0.25), na.rm=TRUE), 
+                                include.lowest=TRUE))
+
+df_m_gfa_small$dhea_quartile <- with(df_m_gfa_small, cut(filtered_dhea, 
+                                breaks=quantile(filtered_dhea, probs=seq(0,1, by=0.25), na.rm=TRUE), 
+                                include.lowest=TRUE))
+
+
+
+df_m_gfa_small$testosterone_quartile<-factor(df_m_gfa_small$testosterone_quartile, levels=c( "[2.58,20.5]", "(20.5,29.7]", "(29.7,42.3]", "(42.3,224]"), labels=c("2.58-20.5", "20.5-29.7", "29.7-42.3", "42.3-224"))
+
+df_m_gfa_small$dhea_quartile<-factor(df_m_gfa_small$dhea_quartile, levels=c( "[1.37,25.9]", "(25.9,46.9]", "(46.9,76.2]", "(76.2,339]"), labels=c("1.37-25.9", "25.9-46.9", "46.9-76.2", "76.2-339"))
+
+p_m_t=ggscatterhist(
+  df_m_gfa_small, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "testosterone_quartile", size = 2, alpha = 0.1, shape="pubertdev_Avg_p_all_factor",
+ margin.params = list(fill = "testosterone_quartile", color = "black", size = 0.2),  mean.point = TRUE, xlab="GFA Factor 1", ylab="GFA Factor 2", ggtheme = theme_bw())
+
+p_m_t
+
+
+p_m_d=ggscatterhist(
+  df_m_gfa_small, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "dhea_quartile", size = 2, alpha = 0.1, shape="pubertdev_Avg_p_all_factor",
+ margin.params = list(fill = "dhea_quartile", color = "black", size = 0.2),  mean.point = TRUE, xlab="GFA Factor 1", ylab="GFA Factor 2", ggtheme = theme_bw())
+
+
+p_m_d
+
+
+
+
+
+######Race and ethnicity
+
+
+
+
+####
+df_f_gfa_race<-df_f_gfa_small[!is.na(df_f_gfa_small$race_ethnicity),]
+
+p_f_race=ggscatterhist(df_f_gfa_small, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "race_ethnicity", size = 2, alpha = 0.1, shape="race_ethnicity",
+ margin.params = list(fill = "race_ethnicity", color = "black", size = 0.2),  mean.point = TRUE, xlab="GFA Factor 1", ylab="GFA Factor 2", ggtheme = theme_bw())
+
+ggsave("Race_GFA_females.tiff", plot = p_f_race, units="in", width=6, height=4, dpi=300)
+
+df_m_gfa_race<-df_m_gfa_small[!is.na(df_m_gfa_small$race_ethnicity),]
+
+p_m_race=ggscatterhist(df_m_gfa_small, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "race_ethnicity", size = 2, alpha = 0.1, shape="race_ethnicity",
+ margin.params = list(fill = "race_ethnicity", color = "black", size = 0.2),  mean.point = TRUE, xlab="GFA Factor 1", ylab="GFA Factor 2", ggtheme = theme_bw())
+
+
+ggsave("Race_GFA_males.tiff", plot = p_m_race, units="in", width=6, height=4, dpi=300)
+
+
+##Now obesity
+df_f_gfa_bmi<-df_f_gfa_small[!is.na(df_f_gfa_small$bmipct_category),]
+p_f_bmi=ggscatterhist(
+  df_f_gfa_bmi, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "bmipct_category", size = 2, alpha = 0.1, shape="bmipct_category",
+ margin.params = list(fill = "bmipct_category", color = "black", size = 0.2),mean.point = TRUE, ggtheme = theme_bw(),xlab="GFA Factor 1", ylab="GFA Factor 2")
+
+ggsave("BMI_GFA_females.tiff", plot = p_f_bmi, units="in", width=6, height=4, dpi=300)
+
+df_m_gfa_bmi<-df_m_gfa_small[!is.na(df_m_gfa_small$bmipct_category),]
+p_m_bmi=ggscatterhist(
+  df_m_gfa_bmi, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "bmipct_category", size = 2, alpha = 0.1, shape="bmipct_category",
+ margin.params = list(fill = "bmipct_category", color = "black", size = 0.2),mean.point = TRUE, ggtheme = theme_bw(),xlab="GFA Factor 1", ylab="GFA Factor 2")
+
+ggsave("BMI_GFA_males.tiff", plot = p_m_bmi, units="in", width=6, height=4, dpi=300)
+
+
+##Now education
+df_f_gfa_edu<-df_f_gfa_small[!is.na(df_f_gfa_small$high.educ),]
+df_f_gfa_edu$high.educ = factor(df_f_gfa_edu$high.educ, c("< HS Diploma","HS Diploma/GED", "Some College", "Bachelor", "Post Graduate Degree"))
+
+p_f_edu=ggscatterhist(df_f_gfa_edu, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "high.educ", size = 2, alpha = 0.1, shape="high.educ",
+ margin.params = list(fill = "high.educ", color = "black", size = 0.2),mean.point = TRUE, ggtheme = theme_bw(),xlab="GFA Factor 1", ylab="GFA Factor 2")
+
+ggsave("EDU_GFA_females.tiff", plot = p_f_edu, units="in", width=6, height=4, dpi=300)
+
+df_m_gfa_edu<-df_m_gfa_small[!is.na(df_m_gfa_small$high.educ),]
+df_m_gfa_edu$high.educ = factor(df_m_gfa_edu$high.educ, c("< HS Diploma","HS Diploma/GED", "Some College", "Bachelor", "Post Graduate Degree"))
+p_m_edu=ggscatterhist(
+  df_m_gfa_edu, x = "RGFA1", y = "RGFA2", legend="right",
+  color = "high.educ", size = 2, alpha = 0.1, shape="high.educ",
+ margin.params = list(fill = "high.educ", color = "black", size = 0.2),mean.point = TRUE, ggtheme = theme_bw(),xlab="GFA Factor 1", ylab="GFA Factor 2")
+
+ggsave("EDU_GFA_males.tiff", plot = p_m_edu, units="in", width=6, height=4, dpi=300)
+
+##Now Income
+df_f_gfa_income<-df_f_gfa_small[!is.na(df_f_gfa_small$household.income),]
+df_f_gfa_income$household.income = factor(df_f_gfa_income$household.income, c("[<50K]","[>=50K & <100K]","[>=100K]"), labels=c("Low","Middle", "High"))
+
+p_f_income=ggscatterhist(
+  df_f_gfa_income,  x = "RGFA1", y = "RGFA2", legend="right",
+  color = "household.income", size = 2, alpha = 0.1, shape="household.income",
+ margin.params = list(fill = "household.income", color = "black", size = 0.2),mean.point = TRUE, ggtheme = theme_bw(),xlab="GFA Factor 1", ylab="GFA Factor 2")
+
+ggsave("INCOME_GFA_females.tiff", plot = p_f_income, units="in", width=6, height=4, dpi=300)
+
+df_m_gfa_income<-df_m_gfa_small[!is.na(df_m_gfa_small$household.income),]
+df_m_gfa_income$household.income = factor(df_m_gfa_income$household.income, c("[<50K]","[>=50K & <100K]","[>=100K]"), labels=c("Low","Middle", "High"))
+p_m_income=ggscatterhist(
+  df_m_gfa_income,  x = "RGFA1", y = "RGFA2", legend="right",
+  color = "household.income", size = 2, alpha = 0.1, shape="household.income",
+ margin.params = list(fill = "household.income", color = "black", size = 0.2),mean.point = TRUE, ggtheme = theme_bw(),xlab="GFA Factor 1", ylab="GFA Factor 2")
+
+
+ggsave("INCOME_GFA_males.tiff", plot = p_m_income, units="in", width=6, height=4, dpi=300)
+
+```
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

@@ -1,0 +1,90 @@
+---
+title: "##Export BMI data and use CDC to estimate weight status and BMIz"
+Created by: Megan M. Herting, PhD for CPP Puberty and Hormone Paper
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+##Read in 2.0.1 data
+df<-readRDS("df_pubertyCPP.rds")
+
+##Clean Height/Weight to use CDC to calculate BMI percentile
+#df$anthro_height_calc #In inches
+#df$anthro_weight_calc #In lbs
+
+
+library(psych)
+library(tidyverse)
+describeBy(df$anthro_bmi_calc) ##Note everyone in normal range (!Yay!)
+
+df$anthro_height_calc_cm=df$anthro_height_calc/0.39370
+df$anthro_weight_calc_kg=df$anthro_weight_calc/2.2046
+
+
+CDC_BMI_vars <- c("src_subject_id", "interview_age", "sex_at_birth", "anthro_height_calc_cm", "anthro_weight_calc_kg")
+CDC_BMI <- df[CDC_BMI_vars]
+CDC_BMI <- subset (CDC_BMI, 
+                   !is.na(src_subject_id) & 
+                     !is.na(interview_age) & 
+                     !is.na(sex_at_birth) &
+                     !is.na(anthro_height_calc_cm) &
+                     !is.na(anthro_weight_calc_kg))
+
+CDC_BMI$sex<-NA
+CDC_BMI$sex[CDC_BMI$sex_at_birth=="F"]<-2
+CDC_BMI$sex[CDC_BMI$sex_at_birth=="M"]<-1
+CDC_BMI$agemos<-CDC_BMI$interview_age
+CDC_BMI$height<-CDC_BMI$anthro_height_calc_cm
+CDC_BMI$weight<-CDC_BMI$anthro_weight_calc_kg
+
+CDC_BMI_SASvars <- c("src_subject_id", "agemos", "sex", "height", "weight")
+CDC_BMI_SAS <- CDC_BMI[CDC_BMI_SASvars]
+write.csv(CDC_BMI_SAS, file = "CDC_BMI_SAS_INPUT.csv")
+
+##Run CDC_BMI through CDC growth chart algorithm in SAS and import results
+
+BMIz=read.csv('CDC_BMI_ABCD_outdata.csv')
+myvars <- c("src_subject_id", "waz", "wapct", "haz", "hapct", "bmi", "bmiz", "bmipct", "X_bivbmi", "bmipct95", "bmidif95")
+
+BMIz=BMIz[myvars]
+
+##Check if implausible BMI's < -4 or > 8*
+xtabs(~BMIz$X_bivbmi) ##23 are extreme small BMI and 5 are extremely large BMI -- set vital data to NA
+BMIz$bmi[BMIz$bmiz == 1 ] <- NA
+BMIz$bmiz[BMIz$bmiz == 1 ] <- NA
+BMIz$bmipct[BMIz$bmiz == 1] <- NA
+BMIz$bmidif95[BMIz$bmiz == 1 ] <- NA
+BMIz$bmi[bmiz == -1] <- NA
+BMIz$bmiz[bmiz == -1] <- NA
+BMIz$bmipct[bmiz == -1] <- NA
+BMIz$bmidif95[bmiz == -1] <- NA
+
+##Check if any severe obese child exists in dataset:
+which(BMIz$bmidif95>100) 
+
+#Catergorize overweight and obesity
+BMIz$bmipct_category[BMIz$bmipct<5] <- "Underweight"
+BMIz$bmipct_category[BMIz$bmipct>=5 & BMIz$bmipct<85 ] <- "Healthy Weight"
+BMIz$bmipct_category[BMIz$bmipct>=85 & BMIz$bmipct<95 ] <- "Overweight"
+BMIz$bmipct_category[BMIz$bmipct>=95] <- "Obese" 
+
+BMIz$bmipct_category<-factor(BMIz$bmipct_category, levels=c("Underweight", "Healthy Weight", "Overweight", "Obese"))
+xtabs(~BMIz$bmipct_category)
+
+
+myvars_small <- c("src_subject_id", "bmi", "bmiz", "bmipct", "bmipct_category")
+BMIz_small=BMIz[myvars_small]
+
+write_rds(BMIz_small, "ABCD_BMIz_CPP_data.rds")
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

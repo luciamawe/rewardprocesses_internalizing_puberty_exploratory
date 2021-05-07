@@ -1,0 +1,298 @@
+---
+title: "ABCD Puberty GFA"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+library(ggplot2)
+library(gamm4)
+library(GFA)
+library(Hmisc)
+library(ggcorrplot)
+library(scales)
+library(tidyr)
+library(dplyr)
+library (plotrix)
+library (knitr)
+library (kableExtra)
+library (keep)
+```
+
+
+```{r}
+
+df_pds_horm_m_p<-readRDS("df_males.hormones.pds.parent.rds")
+df_pds_horm_m_y<-readRDS("df_males.hormones.pds.youth.rds")
+df_pds_horm_f_p<-readRDS("df_females.hormones.pds.parent.rds")
+df_pds_horm_f_y<-readRDS("df_females.hormones.pds.youth.rds")
+
+
+df_pds_horm_m_p %>%
+  summarize_all(funs(sum(!is.na(.))))
+
+df_pds_horm_m_y %>%
+  summarize_all(funs(sum(!is.na(.))))
+
+df_pds_horm_f_p %>%
+  summarize_all(funs(sum(!is.na(.))))
+
+df_pds_horm_f_y %>%
+  summarize_all(funs(sum(!is.na(.))))
+
+```
+
+```{r}
+#males parent  
+demo_vars<-data.frame(src_subject_id=df_pds_horm_m_p$src_subject_id, age=df_pds_horm_m_p$interview_age_108,sex=df_pds_horm_m_p$sex_at_birth,site=df_pds_horm_m_p$abcd_site,family=df_pds_horm_m_p$rel_family_id,household.income=as.numeric(df_pds_horm_m_p$household.income), high.educ=as.numeric(df_pds_horm_m_p$high.educ),race_ethnicity=df_pds_horm_m_p$race_ethnicity,bmiz=df_pds_horm_m_p$bmiz)
+
+my_df<-data.frame(src_subject_id=df_pds_horm_m_p$src_subject_id,height=df_pds_horm_m_p$pubertdev_1_p_num,body_hair=df_pds_horm_m_p$pubertdev_2_p_num,skin=df_pds_horm_m_p$pubertdev_3_p_num,voice=df_pds_horm_m_p$pubertdev_m4_p_num,facial_hair=df_pds_horm_m_p$pubertdev_m5_p_num,testosterone=df_pds_horm_m_p$filtered_testosterone,dhea=df_pds_horm_m_p$filtered_dhea)
+
+my_df_demo<-merge(demo_vars,my_df,by="src_subject_id")
+
+my_df_demo$white_nh[my_df_demo$race_ethnicity=="White"]<-1
+my_df_demo$white_nh[my_df_demo$race_ethnicity!="White"]<-0
+my_df_demo$black[my_df_demo$race_ethnicity=="Black"]<-1
+my_df_demo$black[my_df_demo$race_ethnicity!="Black"]<-0
+my_df_demo$Hispanic[my_df_demo$race_ethnicity=="Hispanic"]<-1
+my_df_demo$Hispanic[my_df_demo$race_ethnicity!="Hispanic"]<-0
+my_df_demo$Asian[my_df_demo$race_ethnicity=="Asian"]<-1
+my_df_demo$Asian[my_df_demo$race_ethnicity!="Asian"]<-0
+my_df_demo$other[my_df_demo$race_ethnicity=="Other"]<-1
+my_df_demo$other[my_df_demo$race_ethnicity!="Other"]<-0
+
+
+#cormat<-round(cor(my_df[,-c(1)],method=c("spearman"),use="pairwise.complete.obs"),2)
+#head(cormat)
+#ggcorrplot(cormat, hc.order = TRUE, type = "lower",title="ABCD 2.0 Pubertal-Hormone males - P ",lab = TRUE,lab_size = 2,colors = c("blue", "white", "red"))
+
+
+complete_df<-complete.cases(my_df_demo)
+all_df_complete<-my_df_demo[complete_df==TRUE,]
+
+############################################################
+# Complete sample
+############################################################
+SES<-as.matrix(cbind(all_df_complete[,c(6:7)]))
+race_eth<-as.matrix(cbind(all_df_complete[,17:20]))
+bmiz<-as.matrix(cbind(all_df_complete[,9]))
+
+pds<-as.matrix(cbind(all_df_complete[,10:14]))
+hormones<-as.matrix(cbind(all_df_complete[,15:16]))
+
+labels<-c(names(my_df_demo[,c(10:16)]),"bmiz",colnames(SES),colnames(race_eth))
+
+###############################################################
+#Run this code to pre-residualize on covariates and run GFA
+pds_res<-matrix(nrow=length(all_df_complete[,1]),ncol=5)
+myrow=1 
+colnames(pds_res)<-names(all_df_complete[,10:14])
+for (var in names(all_df_complete[,10:14])){
+  my_res<-lme(as.formula(paste0(var,"~","age+bmiz+household.income+high.educ+race_ethnicity+site")), random=~1|family, data= all_df_complete)
+ pds_res[,myrow]<-resid(my_res,type="response",level=0)
+ myrow<-myrow+1
+}
+
+hormone_res<-matrix(nrow=length(all_df_complete[,1]),ncol=2)
+myrow=1 
+colnames(hormone_res)<-names(all_df_complete[,15:16])
+for (var in names(all_df_complete[,15:16])){
+  my_res<-lme(as.formula(paste0(var,"~","age+bmiz+household.income+high.educ+race_ethnicity+site")), random=~1|family, data= all_df_complete)
+ hormone_res[,myrow]<-resid(my_res,type="response",level=0)
+ myrow<-myrow+1
+  }
+
+#Residualized labels
+labels<-names(my_df_demo[,c(10:16)])
+
+ ############################################################
+#Split half 
+############################################################
+set.seed(123)
+smp_siz = floor(0.50*nrow(all_df_complete))
+train_ind_males_parent = sample(seq_len(nrow(all_df_complete)),size = smp_siz) 
+train_males_parent=all_df_complete[train_ind_males_parent,]
+test_males_parent=all_df_complete[-train_ind_males_parent,] 
+
+pds_train<-as.matrix(cbind(train_males_parent[,10:14]))
+hormones_train<-as.matrix(cbind(train_males_parent[,15:16]))
+
+pds_test<-as.matrix(cbind(test_males_parent[,10:14]))
+hormones_test<-as.matrix(cbind(test_males_parent[,15:16]))
+
+#Edit to match variables
+labels<-names(my_df_demo[,c(10:16)])
+
+
+
+```
+
+
+```{r}
+#females parent  
+
+demo_vars<-data.frame(src_subject_id=df_pds_horm_f_p$src_subject_id, age=df_pds_horm_f_p$interview_age,sex=df_pds_horm_f_p$sex_at_birth,race_ethnicity=df_pds_horm_f_p$race_ethnicity,site=df_pds_horm_f_p$abcd_site,family=df_pds_horm_f_p$rel_family_id,household.income=as.numeric(df_pds_horm_f_p$household.income),high.educ=as.numeric(df_pds_horm_f_p$high.educ),bmiz=as.numeric(df_pds_horm_f_p$bmiz))
+
+my_df<-data.frame(src_subject_id=df_pds_horm_f_p$src_subject_id,height=df_pds_horm_f_p$pubertdev_1_p_num,body_hair=df_pds_horm_f_p$pubertdev_2_p_num,skin=df_pds_horm_f_p$pubertdev_3_p_num,breast=df_pds_horm_f_p$pubertdev_f4_p_num,menstruation=df_pds_horm_f_p$pubertdev_f5b_p_num,testosterone=df_pds_horm_f_p$filtered_testosterone,dhea=df_pds_horm_f_p$filtered_dhea,estradiol=df_pds_horm_f_p$filtered_estradiol)
+
+my_df_demo<-merge(demo_vars,my_df,by="src_subject_id")
+
+my_df_demo$white_nh[my_df_demo$race_ethnicity=="White"]<-1
+my_df_demo$white_nh[my_df_demo$race_ethnicity!="White"]<-0
+my_df_demo$black[my_df_demo$race_ethnicity=="Black"]<-1
+my_df_demo$black[my_df_demo$race_ethnicity!="Black"]<-0
+my_df_demo$Hispanic[my_df_demo$race_ethnicity=="Hispanic"]<-1
+my_df_demo$Hispanic[my_df_demo$race_ethnicity!="Hispanic"]<-0
+my_df_demo$Asian[my_df_demo$race_ethnicity=="Asian"]<-1
+my_df_demo$Asian[my_df_demo$race_ethnicity!="Asian"]<-0
+my_df_demo$other[my_df_demo$race_ethnicity=="Other"]<-1
+my_df_demo$other[my_df_demo$race_ethnicity!="Other"]<-0
+
+
+#cormat<-round(cor(my_df[,-c(1)],method=c("spearman"),use="pairwise.complete.obs"),2)
+#head(cormat)
+#ggcorrplot(cormat, hc.order = TRUE, type = "lower",title="ABCD 2.0 Pubertal-Hormone females - P ",lab = #TRUE,lab_size = 2,colors = c("blue", "white", "red"))
+
+complete_df<-complete.cases(my_df_demo)
+all_df_complete<-my_df_demo[complete_df==TRUE,]
+
+############################################################
+# Full sample
+############################################################
+SES<-as.matrix(cbind(all_df_complete[,c(7:8)]))
+race_eth<-as.matrix(cbind(all_df_complete[,18:22]))
+bmiz<-as.matrix(cbind(all_df_complete[,9]))
+
+pds<-as.matrix(cbind(all_df_complete[,10:14]))
+hormones<-as.matrix(cbind(all_df_complete[,15:17]))
+
+labels<-c(names(all_df_complete[,10:17]),"bmiz",names(all_df_complete[,7:8]),names(all_df_complete[,18:22]))
+
+############################################################
+#Run this code to pre-residualize on covariates and run GFA
+complete_df<-complete.cases(my_df_demo)
+all_df_complete<-my_df_demo[complete_df==TRUE,]
+
+pds_res<-matrix(nrow=length(all_df_complete[,1]),ncol=5)
+myrow=1 
+colnames(pds_res)<-names(all_df_complete[,10:14])
+for (var in names(all_df_complete[,10:14])){
+  my_res<-lme(as.formula(paste0(var,"~","age+bmiz+household.income+high.educ+race_ethnicity+site")), random=~1|family, data= all_df_complete)
+ pds_res[,myrow]<-resid(my_res,type="response",level=0)
+ myrow<-myrow+1
+}
+
+hormone_res<-matrix(nrow=length(all_df_complete[,1]),ncol=3)
+myrow=1 
+colnames(hormone_res)<-names(all_df_complete[,15:17])
+for (var in names(all_df_complete[,15:17])){
+  my_res<-lme(as.formula(paste0(var,"~","age+bmiz+household.income+high.educ+race_ethnicity+site")), random=~1|family, data= all_df_complete)
+ hormone_res[,myrow]<-resid(my_res,type="response",level=0)
+ myrow<-myrow+1
+  }
+
+#Residualized labels
+labels<-names(my_df_demo[,c(10:17)])
+
+
+###########split half 
+set.seed(123)
+smp_siz = floor(0.50*nrow(all_df_complete))
+train_ind_females_parent = sample(seq_len(nrow(all_df_complete)),size = smp_siz) 
+train_females_parent=all_df_complete[train_ind_females_parent,]
+test_females_parent=all_df_complete[-train_ind_females_parent,] 
+
+pds_train<-as.matrix(cbind(train_females_parent[,10:14]))
+hormones_train<-as.matrix(cbind(train_females_parent[,15:17]))
+
+pds_test<-as.matrix(cbind(test_females_parent[,10:14]))
+hormones_test<-as.matrix(cbind(test_females_parent[,15:17]))
+
+#Edit to match variables
+labels<-names(all_df_complete[10:17])
+
+print("Train Sample females")
+train_females_parent %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+    facet_wrap(~ key, scales = "free") +
+    geom_histogram()
+
+print("Test Sample females")
+test_females_parent %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+    facet_wrap(~ key, scales = "free") +
+    geom_histogram()
+
+all_df_complete %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+    facet_wrap(~ key, scales = "free") +
+    geom_histogram()
+
+```
+
+```{r}
+#males youth  
+#Spearman correlations 
+
+my_df<-data.frame(src_subject_id=df_pds_horm_m_y$src_subject_id,height=df_pds_horm_m_y$pubertdev_ht_num,body_hair=df_pds_horm_m_y$pubertdev_bdyhair_num,skin=df_pds_horm_m_y$pubertdev_skin_num,voice=df_pds_horm_m_y$pubertdev_m4_num,facial_hair=df_pds_horm_m_y$pubertdev_m5_num,testosterone=df_pds_horm_m_y$filtered_testosterone,dhea=df_pds_horm_m_y$filtered_dhea)
+
+#cormat<-round(cor(my_df[,-c(1)],method=c("spearman"),use="pairwise.complete.obs"),2)
+#head(cormat)
+#ggcorrplot(cormat, hc.order = TRUE, type = "lower",title="ABCD 2.0 Pubertal-Hormone males - Y ",lab = TRUE,lab_size = 2,colors = c("blue", "white", "red"))
+
+complete_df<-complete.cases(my_df)
+all_df_complete<-my_df[complete_df==TRUE,]
+
+pds<-as.matrix(cbind(all_df_complete[,2:6]))
+hormones<-as.matrix(cbind(all_df_complete[,7:8]))
+
+labels<-names(my_df[,-c(1)])
+
+all_df_complete %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+    facet_wrap(~ key, scales = "free") +
+    geom_histogram()
+
+```
+
+```{r}
+#females youth  
+#Spearman correlations 
+
+my_df<-data.frame(src_subject_id=df_pds_horm_f_y$src_subject_id,
+  height=df_pds_horm_f_y$pubertdev_ht_num,body_hair= df_pds_horm_f_y$pubertdev_bdyhair_num
+  ,skin=df_pds_horm_f_y$pubertdev_skin_num,breast=df_pds_horm_f_y$pubertdev_f4_num,menstruation=df_pds_horm_f_y$pubertdev_f5_num,testosterone=df_pds_horm_f_y$filtered_testosterone,dhea=df_pds_horm_f_y$filtered_dhea,estradiol=df_pds_horm_f_y$filtered_estradiol )
+
+#cormat<-round(cor(my_df[,-c(1)],method=c("spearman"),use="pairwise.complete.obs"),2)
+#head(cormat)
+#ggcorrplot(cormat, hc.order = TRUE, type = "lower",title="ABCD 2.0 Pubertal-Hormone females - Y ",lab = TRUE,lab_size = 2,colors = c("blue", "white", "red"))
+
+complete_df<-complete.cases(my_df)
+all_df_complete<-my_df[complete_df==TRUE,]
+
+pds<-as.matrix(cbind(all_df_complete[,2:6]))
+hormones<-as.matrix(cbind(all_df_complete[,7:9]))
+
+
+#labels<-names(my_df[,-c(1)])
+labels<-names(my_df[,-c(1)])
+
+all_df_complete %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+    facet_wrap(~ key, scales = "free") +
+    geom_histogram()
+```
+
