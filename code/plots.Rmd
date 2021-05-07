@@ -15,7 +15,7 @@ library(gamm4.test)
 library(ggstatsplot)
 library(glue)
 library(ggeffects)
-library(clubSandwich) # For robust standard errors.
+#library(clubSandwich) # For robust standard errors.
 ```
 
 ```{r LoadData, echo = FALSE}
@@ -27,10 +27,10 @@ phase_folder = "exploratory"  # select the appropriate folder.
 
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
-file_name <- glue("nda20_{phase_folder}.csv")
+file_name <- glue("nda30_{phase_folder}.csv")
 
 fulldata <- read.csv(file.path(data_folder,file_name))
-nrow(fulldata) # 5935.
+nrow(fulldata) # 27321.
 
 # Call function to define all of the dataframes.
 script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
@@ -39,15 +39,25 @@ source(script_path)
 ```
 
 ```{r settheme, echo = FALSE}
-nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
-         plot.title = element_blank(),
-         axis.title.x= element_text(size=18, vjust=-0.3),
-         axis.title.y= element_text(size=18, vjust=1.5),
-         axis.text.x= element_text(size=28, colour="black"),
-         axis.text.y= element_text(size=28, colour="black"),
-         strip.text = element_text(size=24, face="bold"),
-         panel.background = element_blank(),
-         axis.line = element_line(colour = "black"))
+
+#font_add_google("Montserrat", "Montserrat")
+# font_paths()
+# font_files()  
+# font_add("Avenir", "Avenir.ttc")
+# font_families()
+# showtext_auto()
+
+nsh_theme <- theme(text = element_text(family = "Avenir"),        
+                   title= element_text(size=26, vjust=2, face="bold"),
+                   #plot.title = element_blank(),
+                   plot.subtitle = element_text(color="gray40", size=18, face="bold.italic"),
+                   axis.title.x= element_text(size=18, vjust=-0.3),
+                   axis.title.y= element_text(size=18, vjust=1.5),
+                   axis.text.x= element_text(size=28, colour="black"),
+                   axis.text.y= element_text(size=28, colour="black"),
+                   strip.text = element_text(size=24, face="bold"),
+                   panel.background = element_blank(),
+                   axis.line = element_line(colour = "black"))
 
 ```
 
@@ -65,19 +75,24 @@ ggplot(PDS_correct, aes(x=PDS_score,fill = sex)) +
   geom_vline(data=pds_plot_data, aes(xintercept=pds.mean), color = "black", # Add group averages.
                linetype="dashed", size=1) +
   scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+   labs(title = "Distribution of PDS Scores",
+      subtitle = "Sample 1") +
   xlab("PDS Score (Continuous)") + 
   ylab("Density") +
   nsh_theme
 
 # PDS categorical plot.
+# Make it a factor so that it plots it in the correct order (pre, early, mid, late, post).
+PDS_correct$pds_p_ss_category<- factor(PDS_correct$pds_p_ss_category,levels = c("Pre","Early","Mid","Late","Post"))
+
 ggplot(PDS_correct, aes(x=pds_p_ss_category,fill = sex, stat="count")) + 
   geom_bar(alpha=0.86,position=position_dodge()) +
-  #facet_wrap(~sex) +
   scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  labs(title = "Distribution of PDS Categories",
+      subtitle = "Sample 1") +
   xlab("PDS Stage (Categorical)") + 
   ylab("Count") +
   nsh_theme
-
 
 ```
 
@@ -92,6 +107,8 @@ ggplot(PDS_correct, aes(x=cbcl_scr_syn_internal_r,fill = sex)) +
   geom_vline(data=cbcl_plot_data, aes(xintercept=cbcl.mean), color = "black", # Add group averages.
                linetype="dashed", size=1) +
   scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  labs(title = "Distribution of CBCL Scores",
+      subtitle = "Sample 1") +
   xlab("CBCL Score") + 
   ylab("Density") +
   nsh_theme
@@ -107,6 +124,8 @@ ggplot(aes(y = cbcl_scr_syn_internal_r, x = pds_p_ss_category, fill = sex), data
   #geom_violin(alpha=0.78) +
   scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
   # scale_color_manual(values = c("#395B50", "#92B6B1"), name="Sex") + # If want outlines and outlier points to have same color as boxes.
+  labs(title = "CBCL Scores by PDS Stages",
+      subtitle = "Sample 1") +
   xlab("PDS Stage") + 
   ylab("CBCL Internalizing Score") + 
   nsh_theme
@@ -115,6 +134,8 @@ ggplot(aes(y = cbcl_scr_syn_internal_r, x = pds_p_ss_category, fill = sex), data
 ggplot(aes(y = cbcl_scr_syn_internal_r_z, x = pds_p_ss_category, fill = sex), data = PDS_correct) + 
   geom_boxplot(alpha=0.78) +
   scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  labs(title = "Distribution of PDS Categories",
+      subtitle = "Sample 1") +
   xlab("PDS Stage") + 
   ylab("CBCL Internalizing Score") +
   nsh_theme  
