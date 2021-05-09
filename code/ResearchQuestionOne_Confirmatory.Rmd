@@ -37,7 +37,7 @@ phase_folder = "confirmatory"  # select the appropiate folder.
 
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
-file_name <- "nda20_confirmatory.csv" # specify file name here. 
+file_name <- "nda30_confirmatory.csv" # specify file name here. 
 
 fulldata <- read.csv(file.path(data_folder,file_name))
 length(fulldata$src_subject_id) # 5935.
