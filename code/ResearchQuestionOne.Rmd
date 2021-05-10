@@ -317,7 +317,7 @@ modelE_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean_z
 summary(modelE_lg_small_RT_males$gam)
 ```
 
-## Model F: BIS-BAS-RR ~ Testosterone
+
 ```{r Exploratory1D, echo = FALSE}
 ## Model A: Striatal activation (anticipation stage) ~ Testosterone
 # Females.
@@ -332,7 +332,9 @@ modelA_females <- gamm4(striatum_rvsn_ant_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelA_females$gam)
+```
 
+```{r}
 # Males.
 dataformodel <- data_no_striatal_ant_test_outliers_males # No striatal anticipation or testosterone outliers.
 modelA_males <- gamm4(striatum_rvsn_ant_z ~ hormone_scr_ert_mean_z +
@@ -345,7 +347,9 @@ modelA_males <- gamm4(striatum_rvsn_ant_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelA_males$gam)
+```
 
+```{r}
 ## Model B: Striatal activation (feedback stage) ~ Testosterone
 # Females.
 dataformodel <- data_no_striatal_feed_test_outliers_females # No striatal feedback or testosterone outliers.
@@ -359,7 +363,9 @@ modelB_females <- gamm4(striatum_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelB_females$gam)
+```
 
+```{r}
 # Males.
 dataformodel <- data_no_striatal_feed_test_outliers_males # No striatal feedback or testosterone outliers.
 modelB_males <- gamm4(striatum_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
@@ -372,7 +378,9 @@ modelB_males <- gamm4(striatum_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelB_males$gam)
+```
 
+```{r}
 ## Model C: OFC activation (anticipation stage) ~ Testosterone
 
 # Females (lateral OFC; lOFC).
@@ -387,7 +395,9 @@ modelC_females_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelC_females_lOFC$gam)
+```
 
+```{r}
 # Males (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_ant_test_outliers_males
 modelC_males_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z +
@@ -400,7 +410,9 @@ modelC_males_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelC_males_lOFC$gam)
+```
 
+```{r}
 # Females (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_ant_test_outliers_females
 modelC_females_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z +
@@ -413,7 +425,9 @@ modelC_females_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelC_females_mOFC$gam)
+```
 
+```{r}
 # Males (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_ant_test_outliers_males
 modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z +
@@ -426,7 +440,9 @@ modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelC_males_mOFC$gam)
+```
 
+```{r}
 ## Model D: OFC activation (feedback stage) ~ Testosterone
 
 # Females (lateral OFC; lOFC).
@@ -441,7 +457,9 @@ modelD_females_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelD_females_lOFC$gam)
+```
 
+```{r}
 # Males (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_feed_test_outliers_males
 modelD_males_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
@@ -454,7 +472,9 @@ modelD_males_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelD_males_lOFC$gam)
+```
 
+```{r}
 # Females (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_feed_test_outliers_females
 modelD_females_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
@@ -467,7 +487,9 @@ modelD_females_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelD_females_mOFC$gam)
+```
 
+```{r}
 # Males (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_feed_test_outliers_males
 modelD_males_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
@@ -480,14 +502,18 @@ modelD_males_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z +
                       random = ~ (1 | site_id_l/rel_family_id),
                       data = dataformodel)
 summary(modelD_males_mOFC$gam)
+```
 
+```{r}
 
 #NOTE: COME BACK TO THIS WHEN TESTOSTERONE VARIABLE IS READY.
 ## Model E: MID Reaction Time ~ Testosterone
 #modelE_females
 
 #modelE_males
+```
 
+```{r}
 ## Model F: BIS-BAS-RR ~ Testosterone
 dataformodel <- data_no_bisbas_test_outliers_females
 modelF_females <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean_z +
