@@ -128,7 +128,7 @@ data[c("src_subject_id","rel_family_id","eventname",
                                                                                                 "sex","demo_race_hispanic","site_id_l",
                                                                                                 "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
                                                                                                 "high.educ","household.income","married.or.livingtogether",
-                                                                                                "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor)
+                                                                                              "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor)
 
 #data$race.ethnicity.5level = data$race.eth.7level
 #data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
@@ -149,7 +149,7 @@ data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
 
 #Exploratory
 #5 Female with misclassified Male tubes. 6 Male with misclassified Female tubes. 49 either had issues at saliva collection or had NA gender values.
-#Let's get rid of them. We go down from 5691 -> 5905 (-56)
+#Let's get rid of them. We go down from  5905 -> 5691 (-56)
 
 table(data$sex, data$hormone_sal_sex)
 
@@ -511,6 +511,26 @@ data_no_putamen_feed_outliers_females <- subset(MID_imaging_correct_females, put
 nrow(data_no_putamen_feed_outliers_females)
 data_no_putamen_feed_outliers_males <- subset(MID_imaging_correct_males, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3)
 nrow(data_no_putamen_feed_outliers_males)
+
+#No reward and no testosterone outliers
+#### Separate reward regions for anticipation reward vs neutral. #### 
+# No accumbens outliers.
+data_no_accumbens_ant_no_test_outliers_females <- subset(MID_imaging_correct_females, accumbens_rvsn_ant_z > -3 & accumbens_rvsn_ant_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 )
+nrow(data_no_accumbens_ant_no_test_outliers_females)  #1915
+data_no_accumbens_ant_no_test_outliers_males <- subset(MID_imaging_correct_males, accumbens_rvsn_ant_z > -3 & accumbens_rvsn_ant_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 )
+nrow(data_no_accumbens_ant_no_test_outliers_males)
+
+# No caudate outliers.
+data_no_caudate_ant_no_test_outliers_females <- subset(MID_imaging_correct_females, caudate_rvsn_ant_z > -3 & caudate_rvsn_ant_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 )
+nrow(data_no_caudate_ant_no_test_outliers_females) #1914
+data_no_caudate_ant_no_test_outliers_males <- subset(MID_imaging_correct_males, caudate_rvsn_ant_z > -3 & caudate_rvsn_ant_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_caudate_ant_no_test_outliers_males) #1912
+
+# No putamen outliers.
+data_no_putamen_ant_no_test_outliers_females <- subset(MID_imaging_correct_females, putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_putamen_ant_no_test_outliers_females) #2041 -- > 1912
+data_no_putamen_ant_no_test_outliers_males <- subset(MID_imaging_correct_males, putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_putamen_ant_no_test_outliers_males) #1912
 
 
 #### Note: We are including all CBCL values (as long as they are in a reasonable range, i.e., possible given the scale). Not excluding CBCL outliers. #### 
