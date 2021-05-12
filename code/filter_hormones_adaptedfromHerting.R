@@ -11,10 +11,15 @@ nda30 <- read.table(file.path(data_folder,file_name),header=T, sep=",",as.is=TRU
 data <- nda30
 data <- data %>% filter(eventname=="baseline_year_1_arm_1")
 
+
+length(data$hormone_scr_dhea_mean[!is.na(data$hormone_scr_dhea_mean)])  #5493
+length(data$hormone_scr_ert_mean[!is.na(data$hormone_scr_ert_mean)])  #5531
+length(data$hormone_scr_hse_mean[!is.na(data$hormone_scr_hse_mean)])  #2570
+
 ##Check to see if 'sex' and 'hormone_sal_sex' data matches.
 ###Exploratory
 #5 Female with misclassified Male tubes. 6 Male with misclassified Female tubes. 49 either had issues at saliva collection or had NA gender values.
-#Let's get rid of them. We go down from 5691 -> 5905 (-56)
+#Let's get rid of them. 
 
 table(data$sex, data$hormone_sal_sex)
 
@@ -26,6 +31,10 @@ data  <- data[-c(which(data$sex == "M" & data$hormone_sal_sex == 1),
              which(is.na(data$sex)),
              which(is.na(data$hormone_sal_sex))),]
 
+
+length(data$hormone_scr_dhea_mean[!is.na(data$hormone_scr_dhea_mean)])  #5489
+length(data$hormone_scr_ert_mean[!is.na(data$hormone_scr_ert_mean)])  #5527
+length(data$hormone_scr_hse_mean[!is.na(data$hormone_scr_hse_mean)])  #2566
 
 ###################### NDA --- DEAP
 # hormone_sal_sex       1       Pink (female)
@@ -47,6 +56,7 @@ data$hormone_notes_ss <- as.numeric(data$hormon_sal_notes_y___2) +
                        as.numeric(data$hormon_sal_notes_y___5) + 
                        as.numeric(data$hormon_sal_notes_y___6)
 rownums <- which(data$hormone_notes_ss > 1)
+length(rownums) #182
 
 #DHEA
 data$filtered_dhea <- NA
@@ -84,19 +94,32 @@ data$filtered_estradiol_rep1[rownums[which(rownums %in% rownums_rep1)]] <- NA
 data$filtered_estradiol_rep2[rownums[which(rownums %in% rownums_rep2)]] <- NA
 data$filtered_estradiol <- apply(data[, c("filtered_estradiol_rep1", "filtered_estradiol_rep2")], 1, function(x) mean(x, na.rm=T))
 
+#Count 
+length(data$filtered_dhea[!is.na(data$filtered_dhea)])  #5493    #5518
+length(data$filtered_testosterone[!is.na(data$filtered_testosterone)])  #5531     #5534
+length(data$filtered_estradiol[!is.na(data$filtered_estradiol)])  #2570     #2603
+
 #Filter
+data$filtered_dhea_z <- scale(data$filtered_dhea)
+dhea_outliers <- subset(data, filtered_dhea_z > -3 & filtered_dhea_z < 3)
+
 data$filtered_testosterone_z <- scale(data$filtered_testosterone)
 test_outliers <- subset(data, filtered_testosterone_z > -3 & filtered_testosterone_z < 3)
 
 data$filtered_estradiol_z <- scale(data$filtered_estradiol)
-estradiol_outliers <- subset(data, filtered_estradiol_z > -3 & filtered_estradiol_z < 3)
+estr_outliers <- subset(data, filtered_estradiol_z > -3 & filtered_estradiol_z < 3)
 
-data$filtered_dhea_z <- scale(data$filtered_dhea)
-dhea_outliers <- subset(data, filtered_dhea_z > -3 & filtered_dhea_z < 3)
+#Count again
+length(dhea_outliers$filtered_dhea[!is.na(dhea_outliers$filtered_dhea)])  #5422
+length(test_outliers$filtered_testosterone[!is.na(test_outliers$filtered_dhea)])  #5431
+length(estr_outliers$filtered_estradiol[!is.na(estr_outliers$filtered_estradiol)])  #2583
+
 
 #Explore Testosterone
 boxplot(data$filtered_testosterone)
 boxplot(data$hormone_scr_ert_mean)
+
+sum(is.na(data$filtered_testosterone))
 
 boxplot(data$hormone_sal_sex,data$filtered_testosterone, ylim = c(0,500))
 boxplot(data$hormone_scr_ert_mean~data$sex,ylim = c(0,50))
@@ -111,8 +134,13 @@ boxplot(test_outliers$filtered_testosterone)
 
 boxplot(data$filtered_testosterone_z)
 
+
+boxplot(data$filtered_testosterone~data$sex)
 boxplot(test_outliers$filtered_testosterone~test_outliers$sex)
 boxplot(data$filtered_testosterone~data$sex,ylim = c(0,600))
+
+boxplot(data$filtered_testosterone~data$site_id_l)
+length(data$hormone_scr_ert_mean[!is.na(data$hormone_scr_ert_mean)])
 
 summary(data$filtered_testosterone)
 summary(data$hormone_scr_ert_mean)
