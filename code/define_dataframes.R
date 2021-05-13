@@ -490,27 +490,27 @@ nrow(data_no_putamen_ant_outliers_males)
 #### Separate reward regions for feedback positive vs negative.####
 # No accumbens outliers.
 data_no_accumbens_feed_outliers <- subset(MID_imaging_correct, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3) 
-nrow(data_no_accumbens_feed_outliers)
+nrow(data_no_accumbens_feed_outliers)  #4111
 data_no_accumbens_feed_outliers_females <- subset(MID_imaging_correct_females, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3)
-nrow(data_no_accumbens_feed_outliers_females)
+nrow(data_no_accumbens_feed_outliers_females)  #2050
 data_no_accumbens_feed_outliers_males <- subset(MID_imaging_correct_males, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3)
-nrow(data_no_accumbens_feed_outliers_males)
+nrow(data_no_accumbens_feed_outliers_males)    #2061
 
 # No caudate outliers.
 data_no_caudate_feed_outliers <- subset(MID_imaging_correct, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3) 
-nrow(data_no_caudate_feed_outliers)
+nrow(data_no_caudate_feed_outliers) #4107
 data_no_caudate_feed_outliers_females <- subset(MID_imaging_correct_females, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3)
-nrow(data_no_caudate_feed_outliers_females)
+nrow(data_no_caudate_feed_outliers_females)  #2042
 data_no_caudate_feed_outliers_males <- subset(MID_imaging_correct_males, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3)
-nrow(data_no_caudate_feed_outliers_males)
+nrow(data_no_caudate_feed_outliers_males)  #2065
 
 # No putamen outliers.
 data_no_putamen_feed_outliers <- subset(MID_imaging_correct, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3) 
-nrow(data_no_putamen_feed_outliers) 
+nrow(data_no_putamen_feed_outliers) #4110
 data_no_putamen_feed_outliers_females <- subset(MID_imaging_correct_females, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3)
-nrow(data_no_putamen_feed_outliers_females)
+nrow(data_no_putamen_feed_outliers_females)  #2042
 data_no_putamen_feed_outliers_males <- subset(MID_imaging_correct_males, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3)
-nrow(data_no_putamen_feed_outliers_males)
+nrow(data_no_putamen_feed_outliers_males)  #2068
 
 #No reward and no testosterone outliers
 #### Separate reward regions for anticipation reward vs neutral. #### 
@@ -531,6 +531,33 @@ data_no_putamen_ant_no_test_outliers_females <- subset(MID_imaging_correct_femal
 nrow(data_no_putamen_ant_no_test_outliers_females) #2041 -- > 1912
 data_no_putamen_ant_no_test_outliers_males <- subset(MID_imaging_correct_males, putamen_rvsn_ant_z > -3 & putamen_rvsn_ant_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 nrow(data_no_putamen_ant_no_test_outliers_males) #1912
+
+#No reward and no testosterone outliers
+#### Separate reward regions for feedback pos vs neg. #### 
+# No accumbens outliers.
+data_no_accumbens_feed__no_test_outliers <- subset(MID_imaging_correct, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3) 
+nrow(data_no_accumbens_feed_no_test_outliers) #3827
+data_no_accumbens_feed_no_test_outliers_females <- subset(MID_imaging_correct_females, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_accumbens_feed_no_test_outliers_females) #1918
+data_no_accumbens_feed_no_test_outliers_males <- subset(MID_imaging_correct_males, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_accumbens_feed_no_test_outliers_males) #1909
+
+# No caudate outliers.
+data_no_caudate_feed_no_test_outliers <- subset(MID_imaging_correct, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3) 
+nrow(data_no_caudate_feed_no_test_outliers) #3823
+data_no_caudate_feed_no_test_outliers_females <- subset(MID_imaging_correct_females, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_caudate_feed_no_test_outliers_females)  #1910
+data_no_caudate_feed_no_test_outliers_males <- subset(MID_imaging_correct_males, caudate_posvsneg_feedback_z > -3 & caudate_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_caudate_feed_no_test_outliers_males) #1913
+
+# No putamen outliers.
+data_no_putamen_feed_no_test_outliers <- subset(MID_imaging_correct, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3) 
+nrow(data_no_putamen_feed_no_test_outliers) #Total 4110    #Exploratory 3838
+data_no_putamen_feed_no_test_outliers_females <- subset(MID_imaging_correct_females, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_putamen_feed_no_test_outliers_females)   #Exploratory 1911
+data_no_putamen_feed_outliers_no_test_males <- subset(MID_imaging_correct_males, putamen_posvsneg_feedback_z > -3 & putamen_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
+nrow(data_no_putamen_feed_outliers_no_test_males)   #Exploratory 1917
+
 
 
 #### Note: We are including all CBCL values (as long as they are in a reasonable range, i.e., possible given the scale). Not excluding CBCL outliers. #### 
