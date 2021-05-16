@@ -289,7 +289,7 @@ confirmatory2_females <- gamm4(cbcl_scr_syn_anxdep_r ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id))
 
 summary(confirmatory2_females$gam)
-coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
+#coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
 # beta = 0.35; t = 1.71; p = 0.10.
 
 # Males.
@@ -326,7 +326,7 @@ confirmatory2_females <- gamm4(cbcl_scr_syn_withdep_r ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id))
 
 summary(confirmatory2_females$gam)
-coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
+#coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
 # beta = 0.46; t = 5.66; p <0.001.
 
 # Males.
@@ -363,7 +363,7 @@ confirmatory2_females <- gamm4(cbcl_scr_dsm5_depress_r ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id))
 
 summary(confirmatory2_females$gam)
-coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
+#coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
 # beta = 0.34; t = 2.85; p = 0.01.
 
 # Males.
