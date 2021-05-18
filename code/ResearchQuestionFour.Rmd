@@ -37,7 +37,7 @@ library(ggstatsplot)
 data_dir = ((dirname(here()))) 
 
 phase_folder = "exploratory"  # select the appropiate folder.
-#phase_folder = "confirmatory"  # select the appropiate folder.
+# phase_folder = "confirmatory"  # select the appropiate folder.
 
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
@@ -141,7 +141,7 @@ confirmatory4_accumbens_ant_males <- gamm4(cbcl_scr_syn_internal_r ~
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(confirmatory4_accumbens_ant_males$gam)
-plot_model(confirmatory4_accumbens_ant_males,type = "int", show.data = TRUE) #Interaction plot
+# plot_model(confirmatory4_accumbens_ant_males,type = "int", show.data = TRUE) #Interaction plot
 ```
 
 ##Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
@@ -1122,29 +1122,16 @@ summary(exploratory4e_bisbas_allCBCL_males$gam )
 
 
 ## Model F: CBCL internalizing factor ~ Testosterone*MID Reaction Time
-##LUCIA RETAKE HERE
+##Females 
+```{r ExploratoryFa, echo = FALSE}
+#FEMALES
+dataformodel <- data_no_RT_test_outliers_females
 
-
-
-
-
-
-
-
-
-###Depression only
-```{r Exploratory4Accumbens_Males, echo = FALSE}
-#Accumbens feedback, maleS
-
-dataformodel <- data_no_accumbens_feed_outliers_males
-
-#cbcl_scr_dsm5_depress_r ~
-#cbcl_scr_syn_internal_r ~
-
-exploratory4a_accumbens_feedback_males <- gamm4(
-                           cbcl_scr_dsm5_depress_r ~
-                            PDS_score*
-                            accumbens_rvsn_ant_z+
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratoryFa_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            rt_diff_large_neutral_z+
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -1152,25 +1139,18 @@ exploratory4a_accumbens_feedback_males <- gamm4(
                             household.income +
                             married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4a_accumbens_feedback_males$gam)
 
-
-coef_test(exploratory4a_accumbens_feedback_males$mer, vcov = "CR2", coeffs = "all")
+summary(exploratoryFa_lg_neutral_RT_females$gam)
 ```
 
-###Anxiety only
-```{r Exploratory4Accumbens_Males, echo = FALSE}
-#Accumbens feedback, maleS
+```{r ExploratoryFb, echo = FALSE}
+#LARGE REWARD VS. SMALL REWARD POSITIVE
 
-dataformodel <- data_no_accumbens_feed_outliers_males
+dataformodel <- data_no_RT_test_outliers_females
 
-#cbcl_scr_dsm5_depress_r ~
-#cbcl_scr_syn_internal_r ~
-
-exploratory4a_accumbens_feedback_males <- gamm4(
-                            cbcl_scr_dsm5_depress_r ~
+exploratoryFb_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score*
-                            accumbens_rvsn_ant_z+
+                            rt_diff_large_small_z+
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -1178,9 +1158,51 @@ exploratory4a_accumbens_feedback_males <- gamm4(
                             household.income +
                             married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4a_accumbens_feedback_males$gam)
 
-
-coef_test(exploratory4a_accumbens_feedback_males$mer, vcov = "CR2", coeffs = "all")
-# beta = -0.35; t= -0.64; p = 0.53.
+summary(exploratoryFb_lg_small_RT_females$gam)
 ```
+
+
+
+
+##Males 
+```{r ExploratoryFa, echo = FALSE}
+dataformodel <- data_no_RT_test_outliers_males
+
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratoryFa_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            rt_diff_large_neutral_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFa_lg_neutral_RT_males$gam)
+```
+
+
+
+```{r ExploratoryFb, echo = FALSE}
+#LARGE REWARD VS. SMALL REWARD POSITIVE
+
+dataformodel <- data_no_RT_test_outliers_males
+
+exploratoryFb_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            rt_diff_large_small_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFb_lg_small_RT_males$gam)
+```
+
