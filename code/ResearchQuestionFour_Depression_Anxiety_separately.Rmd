@@ -1,0 +1,615 @@
+---
+title: "Research Question 4 EXTRA: Do neural and self-reported responses to reward moderate the relationship between pubertal development and depression and anxiety symptoms separately?"
+date: "May 2021"
+output:
+  html_document: default
+  pdf_document: default
+authors: LMW 
+---
+``` {r loadPackages, echo = FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gamm4)
+library(dplyr)
+library(sjPlot)
+library(here)
+library(jtools)
+library(interactions)
+library(gamm4.test)
+library(ggstatsplot)
+```
+
+```{r LoadData, echo = FALSE}
+
+# Elizabeth.
+# Data: Desktop⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code: Desktop⁩ ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code⁩
+
+# Lucia.
+# Data:  Github⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Github ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# Natalie.
+# Data:  Desktop ▸ ABCD⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Desktop ▸ ABCD ⁩▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# LMW alternative to read in the data.
+
+data_dir = ((dirname(here()))) 
+
+phase_folder = "exploratory"  # select the appropiate folder.
+# phase_folder = "confirmatory"  # select the appropiate folder.
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+
+file_name <- "nda30_exploratory.csv" # specify file name here. 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+#length(fulldata$src_subject_id) # 5934.
+
+# Call function to define all of the dataframes.
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
+source(script_path)
+```
+
+#Depression only - ANTICIPATION
+##Females
+###Accumbens
+```{r Depression_Confirmatory_Accumbens_Females, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_accumbens_depression_anticipation_females <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_accumbens_depression_anticipation_females$gam)
+```
+
+###Cauduate
+```{r Depression_Confirmatory_Caudate_Females, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_caudate_depression_anticipation_females <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            caudate_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_caudate_depression_anticipation_females$gam)
+```
+
+###Putamen
+```{r Depression_Confirmatory_putamen_Females, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_putamen_depression_anticipation_females <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_putamen_depression_anticipation_females$gam)
+```
+
+###Males
+```{r Depression_Confirmatory_Accumbens_males, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_accumbens_depression_anticipation_males <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_accumbens_depression_anticipation_males$gam)
+```
+
+###Cauduate
+```{r Depression_Confirmatory_Caudate_males, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_caudate_depression_anticipation_males <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            caudate_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_caudate_depression_anticipation_males$gam)
+```
+
+
+###Putamen
+```{r Depression_Confirmatory_putamen_males, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_putamen_depression_anticipation_males <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_putamen_depression_anticipation_males$gam)
+```
+
+
+
+#Anxiety only  - ANTICIPATION
+##Females
+###Accumbens
+```{r anxiety_Confirmatory_Accumbens_Females, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_accumbens_anxiety_anticipation_females <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_accumbens_anxiety_anticipation_females$gam)
+```
+
+###Cauduate
+```{r anxiety_Confirmatory_Caudate_Females, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_caudate_anxiety_anticipation_females <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            caudate_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_caudate_anxiety_anticipation_females$gam)
+```
+
+###Putamen
+```{r anxiety_Confirmatory_putamen_Females, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_putamen_anxiety_anticipation_females <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_putamen_anxiety_anticipation_females$gam)
+```
+
+###Males
+```{r anxiety_Confirmatory_Accumbens_males, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_accumbens_anxiety_anticipation_males <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_accumbens_anxiety_anticipation_males$gam)
+```
+
+###Caudate
+```{r anxiety_Confirmatory_Caudate_males, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_outliers_males
+
+confirmatory_caudate_anxiety_anticipation_males <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            caudate_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_caudate_anxiety_anticipation_males$gam)
+```
+
+
+###Putamen
+```{r anxiety_Confirmatory_putamen_males, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_putamen_anxiety_anticipation_males <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_putamen_anxiety_anticipation_males$gam)
+```
+
+
+#Depression only - FEEDBACK
+##Females
+###Accumbens
+```{r Depression_Confirmatory_Accumbens_Females, echo = FALSE}
+
+dataformodel <- data_no_accumbens_feed_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_accumbens_depression_feedback_females <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            accumbens_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_accumbens_depression_feedback_females$gam)
+```
+
+###Cauduate
+```{r Depression_Confirmatory_Caudate_Females, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_caudate_depression_feedback_females <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            caudate_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_caudate_depression_feedback_females$gam)
+```
+
+###Putamen
+```{r Depression_Confirmatory_putamen_Females, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_putamen_depression_feedback_females <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            putamen_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_putamen_depression_feedback_females$gam)
+```
+
+###Males
+```{r Depression_Confirmatory_Accumbens_males, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_accumbens_depression_feedback_males <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            accumbens_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_accumbens_depression_feedback_males$gam)
+```
+
+###Cauduate
+```{r Depression_Confirmatory_Caudate_males, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_caudate_depression_feedback_males <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            caudate_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_caudate_depression_feedback_males$gam)
+```
+
+
+###Putamen
+```{r Depression_Confirmatory_putamen_males, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_putamen_depression_feedback_males <- gamm4(
+                            cbcl_scr_dsm5_depress_r ~
+                            PDS_score*
+                            putamen_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_putamen_depression_feedback_males$gam)
+```
+
+
+
+#Anxiety only
+##Females
+###Accumbens
+```{r anxiety_Confirmatory_Accumbens_Females, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_accumbens_anxiety_feedback_females <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            accumbens_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_accumbens_anxiety_feedback_females$gam)
+```
+
+###Caudate
+```{r anxiety_Confirmatory_Caudate_Females, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_caudate_anxiety_feedback_females <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            caudate_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_caudate_anxiety_feedback_females$gam)
+```
+
+###Putamen
+```{r anxiety_Confirmatory_putamen_Females, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_outliers_females
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_putamen_anxiety_feedback_females <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            putamen_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_putamen_anxiety_feedback_females$gam)
+```
+
+###Males
+```{r anxiety_Confirmatory_Accumbens_males, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_accumbens_anxiety_feedback_males <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            accumbens_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_accumbens_anxiety_feedback_males$gam)
+```
+
+###Cauduate
+```{r anxiety_Confirmatory_Caudate_males, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_outliers_males
+
+confirmatory_caudate_anxiety_feedback_males <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            caudate_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_caudate_anxiety_feedback_males$gam)
+```
+
+
+###Putamen
+```{r anxiety_Confirmatory_putamen_males, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_outliers_males
+
+#cbcl_scr_dsm5_depress_r ~
+#cbcl_scr_syn_internal_r ~
+
+confirmatory_putamen_anxiety_feedback_males <- gamm4(
+                            cbcl_scr_dsm5_anxdisord_r ~
+                            PDS_score*
+                            putamen_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory_putamen_anxiety_feedback_males$gam)
+```
