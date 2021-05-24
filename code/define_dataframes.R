@@ -119,6 +119,8 @@ data <- fulldata[,c("src_subject_id",
 
 # Note: pds_ss_category = pds_p_ss_category. Rename here.
 data <- rename(data, pds_p_ss_category = pds_ss_category)
+#Releveling so that "Pre" is the reference group for PDS category:
+data$pds_p_ss_category <- relevel(data$pds_p_ss_category, ref="Pre")
 
 data[c("src_subject_id","rel_family_id","eventname",
        "sex","demo_race_hispanic","site_id_l",
