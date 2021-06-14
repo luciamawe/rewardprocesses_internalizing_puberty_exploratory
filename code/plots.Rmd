@@ -68,18 +68,28 @@ nsh_theme <- theme(text = element_text(family = "Avenir"),
 
 library(plyr)
 pds_plot_data <- plyr::ddply(PDS_correct, "sex", summarise, pds.mean=mean(PDS_score,na.rm=TRUE))
+
 # PDS continuous plot.
 ggplot(PDS_correct, aes(x=PDS_score,fill = sex)) + 
-  geom_density(adjust = 1.5,alpha=0.86) +
+  #geom_density(adjust = 2,alpha=0.86) +
+  geom_density(alpha=0.86) + # This looks weird; add more tick marks? Note: In males, goes down to zero (is this because girls have only 0 and 4 as options for the fifth question?)
   facet_grid(sex ~ .) +
   geom_vline(data=pds_plot_data, aes(xintercept=pds.mean), color = "black", # Add group averages.
                linetype="dashed", size=1) +
-  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  #scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  #scale_fill_manual(values = c("#9CB7B5", "#A3B9C9"), name="Sex") + # option 1.
+  #scale_fill_manual(values = c("#9CB7B5", "#ABDAE1"), name="Sex") + # option 2.
+  #scale_fill_manual(values = c("#789A92", "#ABDAE1"), name="Sex") + # option 3.
+  #scale_fill_manual(values = c("#A09CB0", "#ABDAE1"), name="Sex") + # option 4.
+  #scale_fill_manual(values = c("#9CB7B5", "#B37F76"), name="Sex") + # option 5.
+  #scale_fill_manual(values = c("#A3B9C9", "#ABDAE1"), name="Sex") + # option 6.
+  scale_fill_manual(values = c("#9CB7B5", "#A3C0E1"), name="Sex") + # option 7.
    labs(title = "Distribution of PDS Scores",
       subtitle = "Sample 1") +
   xlab("PDS Score (Continuous)") + 
   ylab("Density") +
   nsh_theme
+
 
 # PDS categorical plot.
 # Make it a factor so that it plots it in the correct order (pre, early, mid, late, post).
@@ -87,12 +97,25 @@ PDS_correct$pds_p_ss_category<- factor(PDS_correct$pds_p_ss_category,levels = c(
 
 ggplot(PDS_correct, aes(x=pds_p_ss_category,fill = sex, stat="count")) + 
   geom_bar(alpha=0.86,position=position_dodge()) +
-  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  #scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  #scale_fill_manual(values = c("#9CB7B5", "#A3B9C9"), name="Sex") + # option 1.
+  #scale_fill_manual(values = c("#9CB7B5", "#ABDAE1"), name="Sex") + # option 2.
+  #scale_fill_manual(values = c("#789A92", "#ABDAE1"), name="Sex") + # option 3.
+  #scale_fill_manual(values = c("#A09CB0", "#ABDAE1"), name="Sex") + # option 4.
+  #scale_fill_manual(values = c("#9CB7B5", "#B37F76"), name="Sex") + # option 5.
+  #scale_fill_manual(values = c("#A3B9C9", "#ABDAE1"), name="Sex") + # option 6.
+  scale_fill_manual(values = c("#9CB7B5", "#A3C0E1"), name="Sex") + # option 7.
   labs(title = "Distribution of PDS Categories",
       subtitle = "Sample 1") +
   xlab("PDS Stage (Categorical)") + 
   ylab("Count") +
   nsh_theme
+
+# Not able to use ggstatsplot library currently.
+#ggstatsplot::ggbetweenstats(
+#  data = PDS_correct,
+#  x =  sex,
+#  y =  pds_p_ss_category)
 
 ```
 
@@ -118,16 +141,24 @@ ggplot(PDS_correct, aes(x=cbcl_scr_syn_internal_r,fill = sex)) +
 ```{r PDS_CBCL_Boxplots, echo = FALSE}
 # Plot PDS category and CBCL for this sample, colored by gender group.
 
+# First, calculate average CBCL scores for each PDS stage by gender group.
+
 ggplot(aes(y = cbcl_scr_syn_internal_r, x = pds_p_ss_category, fill = sex), data = PDS_correct) + 
-  geom_boxplot(alpha=0.86) +
+  #geom_boxplot() +
   #geom_boxplot(alpha=0.78, varwidth = TRUE) + # Make boxplot widths proportional to the square root of the samples sizes.
-  #geom_violin(alpha=0.78) +
-  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
-  # scale_color_manual(values = c("#395B50", "#92B6B1"), name="Sex") + # If want outlines and outlier points to have same color as boxes.
+  geom_violin(alpha=0.78,trim = FALSE) +
+  #geom_dotplot(binaxis='x', stackdir='center', dotsize=0.2) + # Add points within their respective violin plot (not sure how to group by sex as well).
+  #geom_jitter(height = 0, width = 0.1, aes(color = sex)) +
+  #scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  #scale_fill_manual(values = c("#A09CB0", "#ABDAE1"), name="Sex") + # option four.
+  scale_fill_manual(values = c("#9CB7B5", "#A3C0E1"), name="Sex") + # option seven.
+  #scale_color_manual(values =c("#A09CB0", "#ABDAE1"), name="Sex") + # If want outlines and outlier points to have same color as boxes.
   labs(title = "CBCL Scores by PDS Stages",
       subtitle = "Sample 1") +
   xlab("PDS Stage") + 
   ylab("CBCL Internalizing Score") + 
+  #stat_summary(fun.data = "mean_cl_boot", geom = "crossbar",
+  #            color="gray40") + # Not sure how to group by sex as well.
   nsh_theme
 
 # With z scores instead.
