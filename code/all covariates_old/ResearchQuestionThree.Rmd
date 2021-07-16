@@ -1,0 +1,590 @@
+---
+title: "Research Question 3: Do neural, behavioral, and self-reported responsivity to reward relate to internalizing symptoms?"
+author: "Natalie Saragosa-Harris"
+date: " December 2020"
+output:
+  html_document:
+    toc: true
+  pdf_document:
+    toc: true
+---
+---
+``` {r loadPackages, echo = FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gamm4)
+library(dplyr)
+library(sjPlot)
+library(here)
+```
+
+```{r LoadData, echo = FALSE}
+
+# Elizabeth.
+# Data: Desktop⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code: Desktop⁩ ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code⁩
+
+# Lucia.
+# Data:  Github⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Github ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# Natalie.
+# Data:  Desktop ▸ ABCD⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Desktop ▸ ABCD ⁩▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# LMW alternative to read in the data.
+
+data_dir = ((dirname(here()))) 
+
+phase_folder = "exploratory"  # select the appropriate folder.
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+
+file_name <- "nda30_exploratory.csv" # specify file name here. 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+#nrow(fulldata) # 27321.
+
+# Call function to define all of the dataframes.
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
+source(script_path)
+
+```
+
+```{r settheme, echo = FALSE}
+nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
+         plot.title = element_blank(),
+         axis.title.x= element_text(size=18, vjust=-0.3),
+         axis.title.y= element_text(size=18, vjust=1.5),
+         axis.text.x= element_text(size=18, colour="black"),
+         axis.text.y= element_text(size=18, colour="black"),
+         strip.text = element_text(size=24, face="bold"),
+         panel.background = element_blank(),
+         axis.line = element_line(colour = "black"))
+
+```
+
+# Confirmatory Hypothesis 3: We hypothesize that striatal and orbitofrontal cortex activity during the reward anticipation and feedback stages of the MID task will be negatively associated with internalizing symptoms (Forbes et al., 2010; Ubl et al., 2015; Luking et al., 2016).
+
+## Model A: CBCL internalizing factor ~ Striatal activity (anticipation stage - All reward v. neutral)
+### Females.
+```{r Confirmatory3AFemale, echo = FALSE}
+#dataformodel <- data_no_CBCL_striatal_ant_outliers_females # Not excluding CBCL outliers.
+dataformodel <- data_no_striatal_ant_outliers_females 
+
+confirmatory3A_females <- gamm4(cbcl_scr_syn_internal_r ~ striatum_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_females$gam)
+
+
+```
+### Males.
+```{r Confirmatory3AMale, echo = FALSE}
+dataformodel <- data_no_striatal_ant_outliers_males
+confirmatory3A_males <- gamm4(cbcl_scr_syn_internal_r ~ striatum_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_males$gam)
+
+```
+
+## Model A: CBCL internalizing factor ~ Nucleus Accumbens activity (anticipation stage - All reward v. neutral)
+### Females.
+```{r Confirmatory3AFemaleAccumbens, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_outliers_females
+
+confirmatory3A_nacc_females <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_nacc_females$gam)
+
+
+```
+### Males.
+```{r Confirmatory3AMaleAccumbens, echo = FALSE}
+dataformodel <- data_no_accumbens_ant_outliers_males
+
+confirmatory3A_nacc_males <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_nacc_males$gam)
+
+```
+
+## Model A: CBCL internalizing factor ~ Caudate activity (anticipation stage - All reward v. neutral)
+### Females.
+```{r Confirmatory3AFemaleCaudate, echo = FALSE}
+dataformodel <- data_no_caudate_ant_outliers_females
+
+confirmatory3A_caud_females <- gamm4(cbcl_scr_syn_internal_r ~ caudate_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_caud_females$gam)
+
+
+```
+### Males.
+```{r Confirmatory3AMaleCaudate, echo = FALSE}
+dataformodel <- data_no_caudate_ant_outliers_males
+
+confirmatory3A_caud_males <- gamm4(cbcl_scr_syn_internal_r ~ caudate_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_caud_males$gam)
+
+
+```
+
+## Model A: CBCL internalizing factor ~ Putamen activity (anticipation stage - All reward v. neutral)
+### Females.
+```{r Confirmatory3AFemalePutamen, echo = FALSE}
+dataformodel <- data_no_putamen_ant_outliers_females
+
+confirmatory3A_putamen_females <- gamm4(cbcl_scr_syn_internal_r ~ putamen_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_putamen_females$gam)
+
+
+```
+### Males.
+```{r Confirmatory3AMalePutamen, echo = FALSE}
+dataformodel <- data_no_putamen_ant_outliers_males
+
+confirmatory3A_putamen_males <- gamm4(cbcl_scr_syn_internal_r ~ putamen_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3A_putamen_males$gam)
+
+```
+
+## Model B: CBCL internalizing factor ~ Average striatal activity (feedback stage)
+### Females.
+```{r Confirmatory3BFemale, echo = FALSE}
+dataformodel <- data_no_striatal_feed_outliers_females
+
+confirmatory3B_females <- gamm4(cbcl_scr_syn_internal_r ~ striatum_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3B_females$gam)
+```
+### Males.
+```{r Confirmatory3BMale, echo = FALSE}
+dataformodel <- data_no_striatal_feed_outliers_males
+
+confirmatory3B_males <- gamm4(cbcl_scr_syn_internal_r ~ striatum_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3B_males$gam)
+```
+## Model B: CBCL internalizing factor ~ Accumbens activity (feedback stage)
+### Females.
+```{r Confirmatory3BFemaleAccumbens, echo = FALSE}
+dataformodel <- data_no_accumbens_feed_outliers_females
+
+confirmatory3B_accumbens_females <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3B_accumbens_females$gam)
+
+```
+### Males.
+```{r Confirmatory3BMaleAccumbens, echo = FALSE}
+dataformodel <- data_no_accumbens_feed_outliers_males
+
+confirmatory3B_accumbens_males <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3B_accumbens_males$gam)
+```
+
+## Model B: CBCL internalizing factor ~ Caudate activity (feedback stage)
+### Females.
+```{r Confirmatory3BFemaleCaudate, echo = FALSE}
+dataformodel <- data_no_caudate_feed_outliers_females
+
+confirmatory3B_caudate_females <- gamm4(cbcl_scr_syn_internal_r ~ caudate_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3B_caudate_females$gam)
+
+```
+### Males.
+```{r Confirmatory3BMaleCaudate, echo = FALSE}
+dataformodel <- data_no_caudate_feed_outliers_males
+
+confirmatory3B_caudate_males <- gamm4(cbcl_scr_syn_internal_r ~ caudate_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3B_caudate_males$gam)
+```
+
+## Model B: CBCL internalizing factor ~ Putamen activity (feedback stage)
+### Females.
+```{r Confirmatory3BFemalePutamen, echo = FALSE}
+dataformodel <- data_no_putamen_feed_outliers_females
+
+confirmatory3B_putamen_females <- gamm4(cbcl_scr_syn_internal_r ~ putamen_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3B_putamen_females$gam)
+
+```
+### Males.
+```{r Confirmatory3BMalePutamen, echo = FALSE}
+dataformodel <- data_no_putamen_feed_outliers_males
+
+confirmatory3B_putamen_males <- gamm4(cbcl_scr_syn_internal_r ~ putamen_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3B_putamen_males$gam)
+```
+
+## Model C: CBCL internalizing factor ~ Orbitofrontal cortex activity (anticipation stage)
+### Females.
+```{r Confirmatory3CFemale, echo = FALSE}
+# Lateral OFC.
+dataformodel <- data_no_lOFC_ant_outliers_females
+confirmatory3C_lOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(confirmatory3C_lOFC_females$gam)
+
+# Medial OFC.
+dataformodel <- data_no_mOFC_ant_outliers_females
+confirmatory3C_mOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+summary(confirmatory3C_mOFC_females$gam)
+```
+### Males.
+```{r Confirmatory3CMale, echo = FALSE}
+# Lateral OFC.
+dataformodel <- data_no_lOFC_ant_outliers_males
+confirmatory3C_lOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3C_lOFC_males$gam)
+
+# Medial OFC.
+dataformodel <- data_no_mOFC_ant_outliers_males
+confirmatory3C_mOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_rvsn_ant_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3C_mOFC_males$gam)
+```
+
+## Model D: CBCL internalizing factor ~ Orbitofrontal cortex activity (feedback stage)
+### Females.
+```{r Confirmatory3DFemale, echo = FALSE}
+# Lateral OFC.
+dataformodel <- data_no_lOFC_feed_outliers_females
+
+confirmatory3D_lOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3D_lOFC_females$gam)
+
+# Medial OFC.
+dataformodel <- data_no_mOFC_feed_outliers_females
+confirmatory3D_mOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3D_mOFC_females$gam)
+
+```
+### Males.
+```{r Confirmatory3DMale, echo = FALSE}
+# Lateral OFC.
+dataformodel <- data_no_lOFC_feed_outliers_males
+
+confirmatory3D_lOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3D_lOFC_males$gam)
+
+
+# Medial OFC.
+dataformodel <- data_no_mOFC_feed_outliers_males
+confirmatory3D_mOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_posvsneg_feedback_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(confirmatory3D_mOFC_males$gam)
+```
+
+# Exploratory Hypothesis 3A: We hypothesize that self-reported reward responsiveness (BAS - RR) will be negatively associated with internalizing symptoms.
+## Model: CBCL internalizing factor ~ BIS-BAS-RR
+### Females.
+```{r Exploratory3AFemale, echo = FALSE}
+dataformodel <- data_no_bisbas_outliers_females
+
+exploratory3A_females <- gamm4(cbcl_scr_syn_internal_r ~ bisbas_ss_basm_rr +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3A_females$gam)
+
+```
+### Males.
+```{r Exploratory3AMale, echo = FALSE}
+dataformodel <- data_no_bisbas_outliers_males
+
+exploratory3A_males <- gamm4(cbcl_scr_syn_internal_r ~ bisbas_ss_basm_rr +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3A_males$gam)
+
+```
+
+# Exploratory Hypothesis 3B: We hypothesize that behavioral reward responsiveness (i.e., MID Reaction Time reward vs. neutral trials) will be associated with internalizing symptoms, such that individuals with higher internalizing symptoms will have slower reaction times in response to reward.
+# Model: CBCL internalizing factor ~ MID Reaction Time (reward vs. neutral trials)
+### Females.
+```{r Exploratory3BFemale, echo = FALSE}
+
+# Large reward vs. neutral trial reaction time.
+dataformodel <- data_no_RT_MID_outliers_females
+
+exploratory3B_females_largereward_neutral <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_neutral_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3B_females_largereward_neutral$gam)
+
+# Large reward vs. small reward trial reaction time.
+dataformodel <- data_no_RT_MID_outliers_females
+
+exploratory3B_females_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_small_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3B_females_largesmallreward$gam)
+
+```
+### Males.
+```{r Exploratory3BMale, echo = FALSE}
+
+# Large reward vs. neutral trial reaction time.
+dataformodel <- data_no_RT_MID_outliers_males
+
+exploratory3B_males_largereward_neutral <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_neutral_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3B_males_largereward_neutral$gam)
+
+# Large reward vs. small reward trial reaction time.
+dataformodel <- data_no_RT_MID_outliers_males
+
+exploratory3B_males_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_small_z +
+                      race.ethnicity.5level +
+                      high.educ +
+                      household.income +
+                      married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(exploratory3B_males_largesmallreward$gam)
+```
+
+# Exploratory Hypothesis 3C: For any models within Hypothesis 3 that are significant using the CBCL internalizing scale, we will then investigate whether a more specific CBCL subscale (i.e., anxious/depressive, withdrawn/depressive, or the DSM-based affective scale) is a better fit to our models. 
+
