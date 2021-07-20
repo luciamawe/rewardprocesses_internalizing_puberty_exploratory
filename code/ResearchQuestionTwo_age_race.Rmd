@@ -242,9 +242,9 @@ dataformodel <- PDS_correct_females
 # Females.
 confirmatory2_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -257,9 +257,9 @@ dataformodel <- PDS_correct_males
 
 confirmatory2_males <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -277,9 +277,9 @@ dataformodel <- PDS_correct_females
 # Females.
 confirmatory2_females <- gamm4(cbcl_scr_syn_anxdep_r ~ PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -296,9 +296,9 @@ dataformodel <- PDS_correct_males
 
 confirmatory2_males <- gamm4(cbcl_scr_syn_anxdep_r ~ PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -316,9 +316,9 @@ dataformodel <- PDS_correct_females
 # Females.
 confirmatory2_females <- gamm4(cbcl_scr_syn_withdep_r ~ PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -333,9 +333,9 @@ dataformodel <- PDS_correct_males
 
 confirmatory2_males <- gamm4(cbcl_scr_syn_withdep_r ~ PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -353,9 +353,9 @@ dataformodel <- PDS_correct_females
 # Females.
 confirmatory2_females <- gamm4(cbcl_scr_dsm5_depress_r ~ PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -371,9 +371,9 @@ dataformodel <- PDS_correct_males
 
 confirmatory2_males <- gamm4(cbcl_scr_dsm5_depress_r ~ PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -419,9 +419,9 @@ summary(confirmatory2_males$gam)
 dataformodel <- PDS_correct_females
 confirmatory2_category_females <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -432,9 +432,9 @@ summary(confirmatory2_category_females$gam)
 dataformodel <- PDS_correct_males
 confirmatory2_category_males <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -449,9 +449,9 @@ summary(confirmatory2_category_males$gam)
 dataformodel <- PDS_correct_females
 confirmatory2_category_females <- gamm4(cbcl_scr_syn_anxdep_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -462,9 +462,9 @@ summary(confirmatory2_category_females$gam)
 dataformodel <- PDS_correct_males
 confirmatory2_category_males <- gamm4(cbcl_scr_syn_anxdep_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -478,9 +478,9 @@ summary(confirmatory2_category_males$gam)
 dataformodel <- PDS_correct_females
 confirmatory2_category_females <- gamm4(cbcl_scr_syn_withdep_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -491,9 +491,9 @@ summary(confirmatory2_category_females$gam)
 dataformodel <- PDS_correct_males
 confirmatory2_category_males <- gamm4(cbcl_scr_syn_withdep_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -508,9 +508,9 @@ summary(confirmatory2_category_males$gam)
 dataformodel <- PDS_correct_females
 confirmatory2_category_females <- gamm4(cbcl_scr_dsm5_depress_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -521,9 +521,9 @@ summary(confirmatory2_category_females$gam)
 dataformodel <- PDS_correct_males
 confirmatory2_category_males <- gamm4(cbcl_scr_dsm5_depress_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -681,9 +681,9 @@ dataformodel <- data_no_test_outliers_females
 
 confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -698,9 +698,9 @@ dataformodel <- data_no_test_outliers_males
 
 confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -716,9 +716,9 @@ dataformodel <- data_no_test_outliers_females
 
 confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -733,9 +733,9 @@ dataformodel <- data_no_test_outliers_males
 
 confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -751,9 +751,9 @@ dataformodel <- data_no_test_outliers_females
 
 confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -768,9 +768,9 @@ dataformodel <- data_no_test_outliers_males
 
 confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -786,9 +786,9 @@ dataformodel <- data_no_test_outliers_females
 
 confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -803,9 +803,9 @@ dataformodel <- data_no_test_outliers_males
 
 confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean_z +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -893,9 +893,9 @@ dataformodel <- data_no_test_outliers_females
 
 confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -910,9 +910,9 @@ dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormon
 
 confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -928,9 +928,9 @@ dataformodel <- data_no_test_outliers_males
 
 confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -942,9 +942,9 @@ summary(confirmatory2B_testosterone_CBCL_male$gam)
 # PDS category.
 confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -961,9 +961,9 @@ dataformodel <- data_no_test_outliers_females
 
 confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -978,9 +978,9 @@ dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormon
 
 confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -996,9 +996,9 @@ dataformodel <- data_no_test_outliers_males
   
 confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1011,9 +1011,9 @@ summary(confirmatory2B_testosterone_CBCL_male$gam)
 # PDS category.
 confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1030,9 +1030,9 @@ dataformodel <- data_no_test_outliers_females
 
 confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1047,9 +1047,9 @@ dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormon
 
 confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1066,9 +1066,9 @@ dataformodel <- data_no_test_outliers_males
 
 confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1080,9 +1080,9 @@ summary(confirmatory2B_testosterone_CBCL_male$gam)
 # PDS category.
 confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1099,9 +1099,9 @@ dataformodel <- data_no_test_outliers_females
 
 confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1116,9 +1116,9 @@ dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormon
 
 confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1135,9 +1135,9 @@ dataformodel <- data_no_test_outliers_males
 
 confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean_z + PDS_score +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1149,9 +1149,9 @@ summary(confirmatory2B_testosterone_CBCL_male$gam)
 # PDS category.
 confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic,
                       #fam_history_q6d_depression + #added mother's depression
@@ -1202,9 +1202,9 @@ dataformodel <- PDS_correct_females
 # Females.
 cbcl_cat_pds_females <- gamm4(PDS_score ~ cbcl_scr_syn_internal_cat+
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
@@ -1221,9 +1221,9 @@ dataformodel <- PDS_correct_males
 
 cbcl_cat_pds_males <- gamm4(PDS_score ~ cbcl_scr_syn_internal_cat+
                       race.ethnicity.5level +
-                      high.educ +
-                      household.income +
-                      married.or.livingtogether +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = dataformodel, 
