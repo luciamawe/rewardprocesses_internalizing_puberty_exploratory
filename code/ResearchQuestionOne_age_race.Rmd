@@ -1,0 +1,553 @@
+---
+title: "Research Question 1: Does pubertal development relate to neural and behavioral responses to reward?"
+date: "July 2021"
+output:
+  html_document: default
+  pdf_document: default
+authors: Natalie Saragosa-Harris 
+---
+``` {r loadPackages, echo = FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gamm4)
+library(dplyr)
+library(sjPlot)
+library(here)
+```
+
+```{r LoadData, echo = FALSE}
+
+# Elizabeth.
+# Data: Desktop⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code: Desktop⁩ ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code⁩
+
+# Lucia.
+# Data:  Github⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Github ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# Natalie.
+# Data:  Desktop ▸ ABCD⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Desktop ▸ ABCD ⁩▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# LMW alternative to read in the data.
+
+data_dir = ((dirname(here()))) 
+
+phase_folder = "exploratory"  # select the appropriate folder.
+#phase_folder = "confirmatory"  # select the appropriate folder.
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+
+file_name <- "nda30_exploratory.csv" # specify file name here. 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+nrow(fulldata) # 27321 (exploratory). When call the define_dataframes script, will keep only the baseline data.
+
+# Call function to define all of the dataframes.
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
+source(script_path)
+
+
+min(PDS_correct$interview_age)
+max(PDS_correct$interview_age)
+mean(PDS_correct$interview_age)
+nrow(PDS_correct) # 5631 (exploratory).
+female_subset <- subset(data, sex=="F")
+male_subset <- subset(data, sex=="M")
+
+#Full data females N=2840
+#PDS_correct females N=2058
+
+#Full data males N=3094
+#PDS_correct males N=2164
+
+# List of covariates that are no longer included in these models.
+# Note: only include race and ethnicity as covariates when PDS is a predictor *and* CBCL is the outcome in the model.
+#race.ethnicity.5level
+#demo_race_hispanic
+#high.educ
+#household.income
+#married.or.livingtogether
+
+```
+
+```{r settheme, echo = FALSE}
+nsh_theme <- theme(title= element_text(size=26, vjust=2, face="bold"),
+         plot.title = element_blank(),
+         axis.title.x= element_text(size=18, vjust=-0.3),
+         axis.title.y= element_text(size=18, vjust=1.5),
+         axis.text.x= element_text(size=18, colour="black"),
+         axis.text.y= element_text(size=18, colour="black"),
+         strip.text = element_text(size=24, face="bold"),
+         panel.background = element_blank(),
+         axis.line = element_line(colour = "black"))
+
+```
+
+# Confirmatory Hypothesis 1: We hypothesize that pubertal stage will be associated with neural response to reward during a monetary incentive delay task (Braams et al., 2015). In particular, we expect heightened striatal activation during reward anticipation for more advanced pubertal stages.
+## Model: Striatal activation (anticipation stage) ~ Pubertal stage
+
+#### Females.
+```{r Confirmatory1Female_Striatum, echo = FALSE}
+dataformodel <- data_no_striatal_ant_outliers_females
+
+# Note: only include race and ethnicity as covariates when PDS is a predictor *and* CBCL is the outcome in the model.
+confirmatory1_females <- gamm4(striatum_rvsn_ant_z ~ PDS_score + interview_age,
+                               #race.ethnicity.5level +
+                               #demo_race_hispanic,
+                               #high.educ +
+                               #household.income +
+                               #married.or.livingtogether
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(confirmatory1_females$gam)
+
+#plot.gam(confirmatory1_females$gam,residuals=TRUE,all.terms=TRUE)
+#plot_model(confirmatory1_females$mer,type = "pred", terms = "PDS_score", show.data = FALSE)
+#plot_model(confirmatory1_females$mer,type = "est", show.data = FALSE) # forest plot.
+```
+
+#### Males.
+```{r Confirmatory1Male_Striatum, echo = FALSE}
+dataformodel <- data_no_striatal_ant_outliers_males
+
+confirmatory1_males<- gamm4(striatum_rvsn_ant_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+summary(confirmatory1_males$gam)
+library(stargazer)
+stargazer(confirmatory1_males$mer)
+#plot_model(confirmatory1_males,type = "pred", terms = "PDS_score", show.data = FALSE)
+#plot_model(confirmatory1_males,type = "est", show.data = FALSE) # forest plot.
+```
+
+# Exploratory Hypothesis 1A: We will explore whether striatal activation during reward feedback is related to pubertal stage.
+## Model: Striatal activation (feedback stage) ~ Pubertal stage
+## Females.
+```{r Exploratory1AFemales, echo = FALSE}
+dataformodel <- data_no_striatal_feed_outliers_females
+
+exploratory1A_females <- gamm4(striatum_posvsneg_feedback_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1A_females$gam)
+
+```
+
+## Males.
+```{r Exploratory1AMales, echo = FALSE}
+dataformodel <- data_no_striatal_feed_outliers_males
+
+exploratory1A_males <- gamm4(striatum_posvsneg_feedback_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1A_males$gam)
+
+```
+# Exploratory Hypothesis 1B: We hypothesize that more advanced pubertal stages will be associated with greater self-reported reward responsiveness (BAS - RR) (Harden et al. 2018).
+## Model: BIS-BAS-RR ~ Pubertal stage
+# Females.
+```{r Exploratory1BFemales, echo = FALSE}
+dataformodel <- data_no_bisbas_outliers_females
+
+exploratory1B_females <- gamm4(bisbas_ss_basm_rr_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1B_females$gam)
+
+```
+# Males.
+```{r Exploratory1BMales, echo = FALSE}
+dataformodel <- data_no_bisbas_outliers_males
+
+exploratory1B_males <- gamm4(bisbas_ss_basm_rr_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1B_males$gam)
+
+```
+# Exploratory Hypothesis 1C: We hypothesize that greater pubertal stage will be associated with greater behavioral reactivity to reward (i.e., reaction time on reward vs. neutral trials).
+## Model: Reaction Time ~ Pubertal Stage
+
+# Females.
+```{r Exploratory1CFemales, echo = FALSE}
+dataformodel <- data_no_RT_MID_outliers_females
+
+# Large reward vs. neutral positive.
+exploratory1C_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1C_lg_neutral_RT_females$gam)
+
+
+# Large reward vs. small positive.
+exploratory1C_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1C_lg_small_RT_females$gam)
+```
+
+# Males..
+```{r Exploratory1CMales, echo = FALSE}
+dataformodel <- data_no_RT_MID_outliers_males
+
+# Large reward vs. neutral positive.
+exploratory1C_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1C_lg_neutral_RT_males$gam)
+
+
+# Large reward vs. small positive.
+exploratory1C_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1C_lg_small_RT_males$gam)
+```
+# Exploratory Hypothesis 1D: We hypothesize that testosterone will be positively associated with our indicators of reward (neural activity, behavioral reaction time, and self-reported reward responsiveness).
+## Model A: Striatal activation (anticipation stage) ~ Testosterone
+## Model B: Striatal activation (feedback stage) ~ Testosterone
+## Model C: OFC activation (anticipation stage) ~ Testosterone
+## Model D: OFC activation (feedback stage) ~ Testosterone
+## Model E: MID Reaction Time ~ Testosterone
+```{r Exploratory1D, echo = FALSE}
+## Model E: MID Reaction Time ~ Testosterone
+# Females: large reward vs. neutral.
+dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
+modelE_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelE_lg_neutral_RT_females$gam)
+
+# Females: large reward vs. small reward.
+dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
+modelE_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelE_lg_small_RT_females$gam)
+```
+
+
+```{r}
+# Males: large reward vs. neutral.
+dataformodel <- data_no_RT_test_outliers_males # No MID RT difference score or testosterone outliers.
+
+modelE_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelE_lg_neutral_RT_males$gam)
+
+# Males: large reward vs. small reward.
+modelE_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelE_lg_small_RT_males$gam)
+```
+
+
+```{r Exploratory1D_A, echo = FALSE}
+## Model A: Striatal activation (anticipation stage) ~ Testosterone
+# Females.
+dataformodel <- data_no_striatal_ant_test_outliers_females # No striatal anticipation or testosterone outliers.
+modelA_females <- gamm4(striatum_rvsn_ant_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelA_females$gam)
+
+# Males.
+dataformodel <- data_no_striatal_ant_test_outliers_males # No striatal anticipation or testosterone outliers.
+modelA_males <- gamm4(striatum_rvsn_ant_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelA_males$gam)
+```
+
+```{r Exploratory1D_B, echo = FALSE}
+## Model B: Striatal activation (feedback stage) ~ Testosterone
+# Females.
+dataformodel <- data_no_striatal_feed_test_outliers_females # No striatal feedback or testosterone outliers.
+modelB_females <- gamm4(striatum_posvsneg_feedback_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelB_females$gam)
+
+# Males.
+dataformodel <- data_no_striatal_feed_test_outliers_males # No striatal feedback or testosterone outliers.
+modelB_males <- gamm4(striatum_posvsneg_feedback_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelB_males$gam)
+```
+
+```{r Exploratory1D_C, echo = FALSE}
+## Model C: OFC activation (anticipation stage) ~ Testosterone
+
+# Females (lateral OFC; lOFC).
+dataformodel <- data_no_lOFC_ant_test_outliers_females
+modelC_females_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelC_females_lOFC$gam)
+
+# Males (lateral OFC; lOFC).
+dataformodel <- data_no_lOFC_ant_test_outliers_males
+modelC_males_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelC_males_lOFC$gam)
+
+# Females (medial OFC; mOFC).
+dataformodel <- data_no_mOFC_ant_test_outliers_females
+modelC_females_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelC_females_mOFC$gam)
+
+# Males (medial OFC; mOFC).
+dataformodel <- data_no_mOFC_ant_test_outliers_males
+modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelC_males_mOFC$gam)
+```
+
+```{r Exploratory1D_D, echo = FALSE}
+## Model D: OFC activation (feedback stage) ~ Testosterone
+
+# Females (lateral OFC; lOFC).
+dataformodel <- data_no_lOFC_feed_test_outliers_females
+modelD_females_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelD_females_lOFC$gam)
+
+# Males (lateral OFC; lOFC).
+dataformodel <- data_no_lOFC_feed_test_outliers_males
+modelD_males_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelD_males_lOFC$gam)
+
+# Females (medial OFC; mOFC).
+dataformodel <- data_no_mOFC_feed_test_outliers_females
+modelD_females_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelD_females_mOFC$gam)
+
+# Males (medial OFC; mOFC).
+dataformodel <- data_no_mOFC_feed_test_outliers_males
+modelD_males_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelD_males_mOFC$gam)
+```
+
+```{r Exploratory1D_E, echo = FALSE}
+
+#NOTE: COME BACK TO THIS WHEN TESTOSTERONE VARIABLE IS READY.
+## Model E: MID Reaction Time ~ Testosterone
+#modelE_females
+
+#modelE_males
+```
+
+```{r Exploratory1D_F, echo = FALSE}
+## Model F: BIS-BAS-RR ~ Testosterone
+dataformodel <- data_no_bisbas_test_outliers_females
+modelF_females <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelF_females$gam)
+
+dataformodel <- data_no_bisbas_test_outliers_males
+modelF_males <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean_z + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(modelF_males$gam)
+```
+
+# Confirmatory Hypothesis 1 SEPARATE REGIONS
+
+## Model: Striatal activation (anticipation stage) ~ Pubertal stage
+
+#### Caudate Anticipation Females.
+```{r Confirmatory1Female_Caudate, echo = FALSE}
+dataformodel <- data_no_caudate_ant_outliers_females 
+
+confirmatory1_caudate_females <- gamm4(caudate_rvsn_ant_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(confirmatory1_caudate_females$gam)
+
+# None of these plots are working?
+#plot.gam(confirmatory1_females$gam,residuals=TRUE,all.terms=TRUE)
+#plot_model(confirmatory1_females$mer,type = "pred", terms = "PDS_score", show.data = FALSE)
+#plot_model(confirmatory1_females$mer,type = "est", show.data = FALSE) # forest plot.
+```
+
+#### Caudate Anticipation Males
+```{r Confirmatory1Male, echo = FALSE}
+dataformodel <- data_no_striatal_ant_outliers_males
+
+confirmatory1_caudate_males<- gamm4(caudate_rvsn_ant_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(confirmatory1_caudate_males$gam)
+
+#plot_model(confirmatory1_males,type = "pred", terms = "PDS_score", show.data = FALSE)
+#plot_model(confirmatory1_males,type = "est", show.data = FALSE) # forest plot.
+```
+
+#### Putamen Anticipation Females.
+```{r Confirmatory1Female_Putamen, echo = FALSE}
+dataformodel <- data_no_putamen_ant_outliers_females 
+
+confirmatory1_putamen_females <- gamm4(putamen_rvsn_ant_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(confirmatory1_putamen_females$gam)
+
+# None of these plots are working?
+#plot.gam(confirmatory1_females$gam,residuals=TRUE,all.terms=TRUE)
+#plot_model(confirmatory1_females$mer,type = "pred", terms = "PDS_score", show.data = FALSE)
+#plot_model(confirmatory1_females$mer,type = "est", show.data = FALSE) # forest plot.
+```
+
+#### Putamen Anticipation Males.
+```{r Confirmatory1Male_Putamen, echo = FALSE}
+dataformodel <- data_no_putamen_ant_outliers_males 
+
+confirmatory1_putamen_males <- gamm4(putamen_rvsn_ant_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(confirmatory1_putamen_males$gam)
+
+```
+
+#### Accumbens Anticipation Females.
+```{r Confirmatory1Female_Accumbens, echo = FALSE}
+dataformodel <- data_no_accumbens_ant_outliers_females 
+
+confirmatory1_accumbens_females <- gamm4(accumbens_rvsn_ant_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(confirmatory1_accumbens_females$gam)
+
+```
+
+#### Accumbens Anticipation Males.
+```{r Confirmatory1Male_Accumbens, echo = FALSE}
+dataformodel <- data_no_accumbens_ant_outliers_males 
+
+confirmatory1_accumbens_males <- gamm4(accumbens_rvsn_ant_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(confirmatory1_accumbens_males$gam)
+
+```
+
+# Exploratory Hypothesis 1A: SEPARATE REGIONS
+## Model: Striatal activation (feedback stage) ~ Pubertal stage
+
+#### Caudate Feedback Females.
+```{r Exploratory1A_Caudate_Females, echo = FALSE}
+dataformodel <- data_no_caudate_feed_outliers_females
+
+exploratory1A_caudate_females <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1A_caudate_females$gam)
+
+```
+#### Caudate Feedback Males.
+```{r Exploratory1A_Caudate_Males, echo = FALSE}
+dataformodel <- data_no_caudate_feed_outliers_males
+
+exploratory1A_caudate_males <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1A_caudate_males$gam)
+
+```
+
+#### Putamen Feedback Females.
+```{r Exploratory1A_Putamen_Females, echo = FALSE}
+dataformodel <- data_no_putamen_feed_outliers_females
+
+exploratory1A_putamen_females <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1A_putamen_females$gam)
+
+```
+
+#### Putamen Feedback Males.
+```{r Exploratory1A_Putamen_males, echo = FALSE}
+dataformodel <- data_no_putamen_feed_outliers_males
+
+exploratory1A_putamen_males <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1A_putamen_males$gam)
+
+```
+#### Accumbens Feedback Females.
+```{r Exploratory1A_Accumbens_Females, echo = FALSE}
+dataformodel <- data_no_accumbens_feed_outliers_females
+
+exploratory1A_accumbens_females <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1A_accumbens_females$gam)
+
+```
+
+#### Accumbens Feedback Males.
+```{r Exploratory1A_Accumbens_Males, echo = FALSE}
+dataformodel <- data_no_accumbens_feed_outliers_males
+
+exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score + interview_age,
+                               random = ~ (1 | site_id_l/rel_family_id),
+                               data = dataformodel)
+
+summary(exploratory1A_accumbens_males$gam)
+
+```

@@ -1,0 +1,1208 @@
+---
+title: "Research Question 4: Do neural and self-reported responses to reward moderate the relationship between pubertal development and internalizing symptoms?"
+date: "August 2020"
+output:
+  html_document: default
+  pdf_document: default
+authors: Natalie Saragosa-Harris 
+---
+``` {r loadPackages, echo = FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gamm4)
+library(dplyr)
+library(sjPlot)
+library(here)
+library(jtools)
+library(interactions)
+library(gamm4.test)
+library(ggstatsplot)
+```
+
+```{r LoadData, echo = FALSE}
+
+# Elizabeth.
+# Data: Desktop⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code: Desktop⁩ ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code⁩
+
+# Lucia.
+# Data:  Github⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Github ▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# Natalie.
+# Data:  Desktop ▸ ABCD⁩ ▸ ⁨ABCD⁩ ▸ ⁨derivatives⁩ ▸ ⁨exploratory⁩
+# Code:  Desktop ▸ ABCD ⁩▸ ⁨rewardprocesses_internalizing_puberty_exploratory⁩ ▸ ⁨code
+
+# LMW alternative to read in the data.
+
+data_dir = ((dirname(here()))) 
+
+#phase_folder = "exploratory"  # select the appropiate folder.
+phase_folder = "confirmatory"  # select the appropiate folder.
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+
+file_name <- "nda30_confirmatory.csv" # specify file name here. 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+#length(fulldata$src_subject_id) # 5934.
+
+# Call function to define all of the dataframes.
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
+source(script_path)
+```
+
+# Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
+##  Model: CBCL internalizing factor ~ PDS*Striatal activity (anticipation stage)
+### Females
+```{r Confirmatory4Striatal_Females, echo = FALSE}
+# Not excluding outliers in CBCL 
+# Splitting by sex
+# FEMALES
+
+dataformodel <- data_no_striatal_ant_outliers_females
+
+confirmatory4_compositestriatum_allCBCL_femalesonly <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            striatum_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(confirmatory4_compositestriatum_allCBCL_femalesonly$gam)
+```
+
+### Males
+```{r Confirmatory4Striatal_Males, echo = FALSE}
+# not  Excluding outliers in CBCL 
+# Splitting by sex
+# MALES
+
+dataformodel <- data_no_striatal_ant_outliers_males
+
+confirmatory4_compositestriatum_allCBCL_malesonly <- 
+  gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            striatum_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_compositestriatum_allCBCL_malesonly$gam)
+```
+
+##Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage)
+### Females
+```{r Confirmatory4Accumbens_Females, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_accumbens_ant_outliers_females  #Specify data subset here
+
+confirmatory4_accumbens_ant_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_accumbens_ant_females$gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+### Males
+```{r Confirmatory4Accumbens_Males, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_accumbens_ant_outliers_males  #Specify data subset here
+
+confirmatory4_accumbens_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            accumbens_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_accumbens_ant_males$gam)
+# plot_model(confirmatory4_accumbens_ant_males,type = "int", show.data = TRUE) #Interaction plot
+```
+
+##Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
+### Females
+```{r Confirmatory4Caudate_Females, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_caudate_ant_outliers_females  #Specify data subset here
+
+confirmatory4_caudate_ant_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            caudate_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_caudate_ant_females$gam)
+#plot_model(confirmatory4_caudate_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+### Males
+```{r Confirmatory4Caudate_Males, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_caudate_ant_outliers_males  #Specify data subset here
+
+confirmatory4_caudate_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            caudate_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_caudate_ant_males$gam)
+#plot_model(confirmatory4_caudate_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+
+##Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage)
+### Females
+```{r Confirmatory4Putamen_Females, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_putamen_ant_outliers_females  #Specify data subset here
+
+confirmatory4_putamen_ant_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_putamen_ant_females$gam)
+#plot_model(confirmatory4_caudate_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+### Males
+```{r Confirmatory4Putamen_males, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_putamen_ant_outliers_males  #Specify data subset here
+
+confirmatory4_putamen_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            putamen_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4_putamen_ant_males$gam)
+#plot_model(confirmatory4_caudate_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+
+
+```{r}
+#Excluding outliers in CBCL 
+#PDS category 
+
+confirmatory4_compositestriatum_excludingoutliers_cat <- lmer(cbcl_scr_syn_internal_r ~                                       pds_p_ss_category*striatum_rvsn_ant_z +
+                            race.eth.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age+
+                            fam_history_q6d_depression + #added mother's depression
+                            (1 | site_id_l/rel_family_id),
+                            data = subset(PDS_correct, 
+                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+
+summary(confirmatory4_compositestriatum_excludingoutliers_cat)
+
+plot_model(confirmatory4_compositestriatum_excludingoutliers_cat,type = "int", show.data = FALSE) #Interaction plot
+
+plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "est", show.data = FALSE) #Forest plot
+
+p <- plot_model(confirmatory4_compositestriatum_excludingoutliers_cat,
+                type = "pred", # To specify values for striatal response, have to use "pred" instead.
+                terms = c("pds_p_ss_category","striatum_rvsn_ant_z [-2.0,0,2.0]"),
+                show.data = TRUE, jitter = 0.1, line.size = 2) +
+                ylab("Internalizing Score") +
+                xlab("PDS category") +
+                labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
+                scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
+                theme(title= element_text(size=20, vjust=2, face="bold"),
+                plot.title = element_blank(),
+                axis.title.x= element_text(size=18, vjust=-0.3),
+                axis.title.y= element_text(size=18, vjust=1.5),
+                axis.text.x= element_text(size=18, colour="black"),
+                axis.text.y= element_text(size=18, colour="black"),
+                legend.title=element_text(size=12, colour = "black"),
+                legend.position = c(.80, .80),
+                # legend.position="none",
+                strip.text = element_text(size=18, face="bold"),
+                panel.background = element_blank(),
+                axis.line = element_line(colour = "black"))
+p 
+                   
+file.name = (here("output","question4_exploratory_excludingCBCLoutliers_PDScat.tiff"))
+#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+```
+
+
+
+# Exploratory Hypothesis 4A: We will investigate whether striatal responses to reward during reward feedback moderates the effect of pubertal stage on internalizing symptoms. 
+## Model: CBCL internalizing factor ~ PDS*Striatal activity (feedback stage) Females
+### Females
+```{r Exploratory4AStriatal_Females, echo = FALSE}
+#Composite striatum score, FEMALES
+
+dataformodel <- data_no_striatal_feed_outliers_females
+
+exploratory4a_compositestriatum_feedback_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            striatum_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_compositestriatum_feedback_allCBCL_females$gam )
+```
+### Males
+```{r Exploratory4AStriatal_Males, echo = FALSE}
+#Composite striatum score, MALES
+
+dataformodel <- data_no_striatal_feed_outliers_males
+
+exploratory4a_compositestriatum_feedback_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            striatum_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_compositestriatum_feedback_allCBCL_males$gam )
+```
+
+
+##  Model: CBCL internalizing factor ~ PDS*accumbens activity 
+###Females
+```{r Exploratory4AAccumbens_Females, echo = FALSE}
+# Accumbens feedback, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_accumbens_feed_outliers_females
+
+exploratory4a_accumbens_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            accumbens_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_accumbens_feedback_females$gam )
+```
+###Males
+```{r Exploratory4AAccumbens_Males, echo = FALSE}
+#Accumbens feedback, males
+
+dataformodel <- data_no_accumbens_feed_outliers_males
+
+exploratory4a_accumbens_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            accumbens_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_accumbens_feedback_males$gam )
+```
+
+##  Model: CBCL internalizing factor ~ PDS*caudate activity 
+###Females
+```{r Exploratory4ACaudate_Females, echo = FALSE}
+# Caudate feedback, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_caudate_feed_outliers_females
+
+exploratory4a_caudate_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            caudate_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_caudate_feedback_females$gam )
+```
+
+###Males
+```{r Exploratory4ACaudate_Males, echo = FALSE}
+#Caudate feedback", maleS
+
+dataformodel <- data_no_caudate_feed_outliers_males
+
+exploratory4a_caudate_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            caudate_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_caudate_feedback_males$gam )
+```
+
+##  Model: CBCL internalizing factor ~ PDS*putamen activity 
+###Females
+```{r Exploratory4APutamen_Females, echo = FALSE}
+# Putamen feedback, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+dataformodel <- data_no_putamen_feed_outliers_females
+
+exploratory4a_putamen_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            putamen_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_putamen_feedback_females$gam )
+```
+
+###Males
+```{r Exploratory4APutamen_Males, echo = FALSE}
+#Putamen feedback", maleS
+
+dataformodel <- data_no_putamen_feed_outliers_males
+
+exploratory4a_putamen_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            putamen_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4a_putamen_feedback_males$gam )
+```
+
+
+# Exploratory Hypothesis 4B: We will investigate whether OFC activation during reward anticipation and feedback moderates the relationship between pubertal stage and internalizing symptoms.
+## Model A: CBCL internalizing factor ~ PDS*OFC activity (anticipation stage)
+### Females
+```{r Exploratory4BOFC_ant_females, echo = FALSE}
+#OFC anticipation, FEMALES
+
+dataformodel <- data_no_lOFC_ant_outliers_females
+
+exploratory4b_OFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            lOFC_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4b_OFC_ant_allCBCL_females$gam )
+```
+
+### Males
+```{r Exploratory4BOFC_ant_males, echo = FALSE}
+#OFC anticipation, MALES
+
+dataformodel <- data_no_lOFC_ant_outliers_males
+
+exploratory4b_OFC_ant_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            lOFC_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4b_OFC_ant_allCBCL_males$gam )
+```
+
+## Model B: CBCL internalizing factor ~ PDS*OFC activity (feedback stage)
+### Females
+```{r Exploratory4BOFC_feed_females, echo = FALSE}
+#OFC anticipation, FEMALES
+
+dataformodel <- data_no_lOFC_feed_outliers_females
+
+exploratory4b_OFC_feed_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            lOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4b_OFC_feed_allCBCL_females$gam )
+```
+
+### Males
+```{r Exploratory4BOFC_feed_males, echo = FALSE}
+#OFC feedback, MALES
+
+dataformodel <- data_no_lOFC_feed_outliers_males
+
+exploratory4b_OFC_feed_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score_z*
+                            lOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4b_OFC_feed_allCBCL_males$gam )
+```
+
+# Exploratory Hypothesis 4C: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by self-reported reward responsiveness. We predict that advanced puberty will be associated with higher internalizing in individuals who report lower reward responsiveness on the BIS-BAS questionnaire.
+
+## Model: CBCL internalizing factor ~ PDS*BIS-BAS
+### Females
+```{r Exploratory4C, echo = FALSE}
+#FEMALES
+dataformodel <- data_no_bisbas_outliers_females
+
+exploratory4c_bisbas_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            bisbas_ss_basm_rr+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4c_bisbas_allCBCL_females$gam )
+```
+
+### Males
+```{r Exploratory4C, echo = FALSE}
+dataformodel <- data_no_bisbas_outliers_males
+
+exploratory4c_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            bisbas_ss_basm_rr+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4c_bisbas_allCBCL_males$gam )
+```
+
+# Exploratory Hypothesis 4D: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by behavioral reward responsiveness (i.e., MID reaction time). We predict that advanced puberty will be associated with higher internalizing in individuals who demonstrate lower behavioral reward responsiveness.
+## Model: CBCL internalizing factor ~ PDS*MID reaction time
+### Females
+```{r Exploratory4D, echo = FALSE}
+#FEMALES
+dataformodel <- data_no_RT_MID_outliers_females
+
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratory4c_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            rt_diff_large_neutral_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_lg_neutral_RT_females$gam)
+```
+
+```{r Exploratory4D, echo = FALSE}
+#LARGE REWARD VS. SMALL REWARD POSITIVE
+exploratory4c_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            rt_diff_large_small_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_lg_small_RT_females$gam)
+```
+###Males
+```{r}
+dataformodel <- data_no_RT_MID_outliers_males
+
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratory4c_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            rt_diff_large_neutral_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_lg_neutral_RT_males$gam)
+```
+
+```{r}
+#LARGE REWARD VS. SMALL REWARD POSITIVE
+exploratory4c_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            rt_diff_large_small_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_lg_small_RT_males$gam)
+```
+
+# Exploratory Hypothesis 4E: We will investigate whether testosterone, and its relationship with reward, relates to internalizing symptoms, while controlling for PDS.
+## Model A: CBCL internalizing factor ~ Testosterone*Striatal activity (anticipation stage) + PDS
+### Females
+```{r}
+dataformodel <- data_no_striatal_ant_test_outliers_females
+
+confirmatory4Ea_striatum_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            striatum_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_striatum_allCBCL_test_females$gam)
+```
+
+### Males
+```{r}
+dataformodel <- data_no_striatal_ant_test_outliers_males
+
+exploratory4Ea_striatum_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            striatum_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4Ea_striatum_allCBCL_test_males$gam)
+```
+
+## Model B: CBCL internalizing factor ~ Testosterone*Striatal activity (feedback stage) + PDS
+### Females
+```{r}
+dataformodel <- data_no_striatal_feed_outliers_females
+
+exploratory4Ea_striatum_feedback_allCBCL_test_females  <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            striatum_posvsneg_feedback_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4Ea_striatum_feedback_allCBCL_test_females$gam )
+```
+### Males
+```{r}
+dataformodel <- data_no_striatal_feed_outliers_males
+
+exploratory4Ea_striatum_feedback_allCBCL_test_males  <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            striatum_posvsneg_feedback_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4Ea_striatum_feedback_allCBCL_test_males$gam )
+```
+
+
+##Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage) + testosterone
+### Females
+```{r Exploratory4e_Accumbens_Anticipation_Testosterones_Females, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_no_test_outliers_females  #Specify data subset here
+
+confirmatory4Ea_accumbens_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            accumbens_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_accumbens_test_females $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+### Males
+```{r r Exploratory4e_Accumbens_Anticipation_Testosterones_Males, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_no_test_outliers_males  #Specify data subset here
+
+confirmatory4Ea_accumbens_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            accumbens_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_accumbens_test_males $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+##Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage) + testosterone
+### Females
+```{r Exploratory4e_Caudate_Anticipation_Testosterones_Females, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_caudate_ant_no_test_outliers_females  #Specify data subset here
+
+confirmatory4Ea_caudate_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            caudate_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_caudate_test_females $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+### Males
+```{r r Exploratory4e_Caudate_Anticipation_Testosterones_Males, echo = FALSE}
+# Composite striatum score, exlcuding outliers.
+# No CBCL exclusions
+# With covariates
+
+dataformodel <- data_no_caudate_ant_no_test_outliers_males  #Specify data subset here
+
+confirmatory4Ea_caudate_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            caudate_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_caudate_test_males $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+##Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage) + testosterone
+### Females
+```{r Exploratory4e_Putamen_Anticipation_Testosterones_Females, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_no_test_outliers_females  #Specify data subset here
+
+confirmatory4Ea_putamen_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            putamen_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_putamen_test_females $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+### Males
+```{r Exploratory4e_Putamen_Anticipation_Testosterones_Males, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_no_test_outliers_males  #Specify data subset here
+
+confirmatory4Ea_putamen_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            putamen_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_putamen_test_males $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Exploratory Hypothesis 4EB: We will investigate whether testosterone, and its relationship with reward, relates to internalizing symptoms, while controlling for PDS.
+
+##Model: CBCL internalizing factor ~ PDS*accumbens activity (feedback stage) + testosterone
+### Females
+```{r Exploratory4eb_Accumbens_Feedback_Testosterones_Females, echo = FALSE}
+
+dataformodel <- data_no_accumbens_feed_no_test_outliers_females  #Specify data subset here
+
+exploratory4Eb_accumbens_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            accumbens_posvsneg_feedback_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4Eb_accumbens_test_feed_females$gam)
+
+```
+### Males
+```{r Exploratory4eb_Accumbens_Feedback_Testosterones_Males, echo = FALSE}
+
+dataformodel <- data_no_accumbens_feed_no_test_outliers_males  #Specify data subset here
+
+exploratory4Eb_accumbens_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            accumbens_posvsneg_feedback_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4Eb_accumbens_test_feed_males$gam)
+```
+
+##Model: CBCL internalizing factor ~ PDS*caudate activity (Feedback stage) + testosterone
+### Females
+```{r Exploratory4eb_Caudate_Feedback_Testosterones_Females, echo = FALSE}
+dataformodel <- data_no_caudate_feed_no_test_outliers_females #Specify data subset here
+
+confirmatory4Eb_caudate_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            caudate_posvsneg_feedback_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Eb_caudate_test_feed_females$gam)
+```
+
+### Males
+```{r r Exploratory4eb_Caudate_Feedback_Testosterones_Males, echo = FALSE}
+
+dataformodel <- data_no_caudate_feed_no_test_outliers_males #Specify data subset here
+
+confirmatory4Eb_caudate_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            caudate_posvsneg_feedback_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Eb_caudate_test_feed_males$gam)
+```
+
+##Model: CBCL internalizing factor ~ PDS*putamen activity (Feedback stage) + testosterone
+### Females
+```{r Exploratory4eb_Putamen_Feedback_Testosterones_Females, echo = FALSE}
+dataformodel <- data_no_putamen_feed_no_test_outliers_females #Specify data subset here
+
+confirmatory4Eb_putamen_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            putamen_posvsneg_feedback_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Eb_putamen_test_feed_females$gam)
+
+```
+
+### Males
+```{r Exploratory4eb_Putamen_Feedback_Testosterones_Males, echo = FALSE}
+
+dataformodel <- data_no_putamen_feed_outliers_no_test_males #Specify data subset here
+
+confirmatory4Eb_putamen_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            putamen_posvsneg_feedback_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Eb_putamen_test_feed_males$gam)
+```
+
+## Model C: CBCL internalizing factor ~ Testosterone*OFC activity (anticipation stage) + PDS
+### Females
+```{r}
+dataformodel <- data_no_lOFC_ant_test_outliers_females 
+
+exploratory4c_OFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            lOFC_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_OFC_ant_allCBCL_test_females$gam )
+```
+### Males
+```{r}
+dataformodel <- data_no_lOFC_ant_test_outliers_males 
+
+exploratory4c_OFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                           PDS_score+
+                            hormone_scr_ert_mean*  
+                            lOFC_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_OFC_ant_allCBCL_test_males$gam )
+```
+
+## Model D: CBCL internalizing factor ~ Testosterone*OFC activity (feedback stage) + PDS
+### Females
+```{r Exploratory4DOFC_feed_females, echo = FALSE}
+#OFC feedback, FEMALES
+
+dataformodel <- data_no_lOFC_feed_test_outliers_females 
+
+exploratory4d_OFC_feed_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean* 
+                            lOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_OFC_feed_allCBCL_test_females$gam )
+```
+
+
+### Males
+```{r Exploratory4DOFC_feed_males, echo = FALSE}
+#OFC feedback, MALES
+
+dataformodel <- data_no_lOFC_feed_test_outliers_males 
+
+exploratory4d_OFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean* 
+                            lOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_OFC_feed_allCBCL_test_males$gam )
+```
+
+
+
+
+## Model E: CBCL internalizing factor ~ Testosterone*BIS-BAS RR
+### Females
+```{r Exploratory4e, echo = FALSE}
+#FEMALES
+dataformodel <- data_no_bisbas_test_outliers_females 
+
+exploratory4e_bisbas_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            bisbas_ss_basm_rr+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4e_bisbas_allCBCL_females$gam )
+```
+
+
+
+## Model E: CBCL internalizing factor ~ Testosterone*BIS-BAS RR
+### Females
+```{r Exploratory4e, echo = FALSE}
+
+dataformodel <- data_no_bisbas_test_outliers_males 
+
+exploratory4e_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            bisbas_ss_basm_rr+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4e_bisbas_allCBCL_males$gam )
+```
+
+
+## Model F: CBCL internalizing factor ~ Testosterone*MID Reaction Time
+##Females 
+```{r ExploratoryFa, echo = FALSE}
+#FEMALES
+dataformodel <- data_no_RT_test_outliers_females
+
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratoryFa_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            rt_diff_large_neutral_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFa_lg_neutral_RT_females$gam)
+```
+
+```{r ExploratoryFb, echo = FALSE}
+#LARGE REWARD VS. SMALL REWARD POSITIVE
+
+dataformodel <- data_no_RT_test_outliers_females
+
+exploratoryFb_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            rt_diff_large_small_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFb_lg_small_RT_females$gam)
+```
+
+
+
+
+##Males 
+```{r ExploratoryFa, echo = FALSE}
+dataformodel <- data_no_RT_test_outliers_males
+
+#LARGE REWARD VS. NEUTRAL POSITIVE
+exploratoryFa_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*
+                            rt_diff_large_neutral_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFa_lg_neutral_RT_males$gam)
+```
+
+
+
+```{r ExploratoryFb, echo = FALSE}
+#LARGE REWARD VS. SMALL REWARD POSITIVE
+
+dataformodel <- data_no_RT_test_outliers_males
+
+exploratoryFb_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            rt_diff_large_small_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            high.educ +
+                            household.income +
+                            married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFb_lg_small_RT_males$gam)
+```
+
