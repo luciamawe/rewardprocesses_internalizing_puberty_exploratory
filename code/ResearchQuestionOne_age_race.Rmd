@@ -193,7 +193,7 @@ exploratory1C_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ PDS_score + i
 summary(exploratory1C_lg_small_RT_females$gam)
 ```
 
-# Males..
+# Males.
 ```{r Exploratory1CMales, echo = FALSE}
 dataformodel <- data_no_RT_MID_outliers_males
 

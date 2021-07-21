@@ -112,15 +112,11 @@ data <- fulldata[,c("src_subject_id",
                     "hormone_scr_hse_rep1",
                     "hormone_scr_hse_rep2",
                     "hormone_scr_hse_rep1_nd",
-                    "hormone_scr_hse_rep2_nd"
-                  
-                                        )]
+                    "hormone_scr_hse_rep2_nd")]
 
 
 # Note: pds_ss_category = pds_p_ss_category. Rename here.
 data <- rename(data, pds_p_ss_category = pds_ss_category)
-#Releveling so that "Pre" is the reference group for PDS category:
-data$pds_p_ss_category <- relevel(data$pds_p_ss_category, ref="Pre")
 
 data[c("src_subject_id","rel_family_id","eventname",
        "sex","demo_race_hispanic","site_id_l",
@@ -131,6 +127,9 @@ data[c("src_subject_id","rel_family_id","eventname",
                                                                                                 "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
                                                                                                 "high.educ","household.income","married.or.livingtogether",
                                                                                               "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor)
+
+# Releveling so that "Pre" is the reference group for PDS category.
+data$pds_p_ss_category <- relevel(data$pds_p_ss_category, ref="Pre")
 
 #data$race.ethnicity.5level = data$race.eth.7level
 #data$race.ethnicity.5level[(data$race.eth.7level == "AIAN" | data$race.eth.7level == "NHPI")] = "Other"
@@ -147,11 +146,11 @@ nrow(data) # 5945 (exploratory).
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
 
-#Lines 148 to 223 filter invalid testosterone values (Adapted from Herting script)
+# Lines 148 to 223 filter invalid testosterone values (Adapted from Herting script).
 
-#Exploratory
-#5 Female with misclassified Male tubes. 6 Male with misclassified Female tubes. 49 either had issues at saliva collection or had NA gender values.
-#Let's get rid of them. We go down from  5905 -> 5691 (-56)
+# Exploratory.
+# 5 Female with misclassified Male tubes. 6 Male with misclassified Female tubes. 49 either had issues at saliva collection or had NA gender values.
+# Let's get rid of them. We go down from  5905 -> 5691 (-56).
 
 table(data$sex, data$hormone_sal_sex)
 
@@ -162,6 +161,7 @@ data  <- data[-c(which(data$sex == "M" & data$hormone_sal_sex == 1),
              which(data$hormone_sal_sex == 5),
              which(is.na(data$sex)),
              which(is.na(data$hormone_sal_sex))),]
+
 ###################### NDA --- DEAP
 # hormone_sal_sex       1       Pink (female)
 # hormone_sal_sex       2       Blue (male)
