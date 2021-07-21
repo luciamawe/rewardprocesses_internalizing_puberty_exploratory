@@ -67,9 +67,9 @@ confirmatory4_compositestriatum_allCBCL_femalesonly <- gamm4(cbcl_scr_syn_intern
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(confirmatory4_compositestriatum_allCBCL_femalesonly$gam)
 ```
@@ -89,9 +89,9 @@ confirmatory4_compositestriatum_allCBCL_malesonly <-
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                           #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(confirmatory4_compositestriatum_allCBCL_malesonly$gam)
@@ -111,9 +111,9 @@ confirmatory4_accumbens_ant_females <- gamm4(cbcl_scr_syn_internal_r ~
                             accumbens_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -134,9 +134,9 @@ confirmatory4_accumbens_ant_males <- gamm4(cbcl_scr_syn_internal_r ~
                             accumbens_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -158,9 +158,9 @@ confirmatory4_caudate_ant_females <- gamm4(cbcl_scr_syn_internal_r ~
                             caudate_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -181,9 +181,9 @@ confirmatory4_caudate_ant_males <- gamm4(cbcl_scr_syn_internal_r ~
                             caudate_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -206,9 +206,9 @@ confirmatory4_putamen_ant_females <- gamm4(cbcl_scr_syn_internal_r ~
                             putamen_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -229,9 +229,9 @@ confirmatory4_putamen_ant_males <- gamm4(cbcl_scr_syn_internal_r ~
                             putamen_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -248,9 +248,9 @@ summary(confirmatory4_putamen_ant_males$gam)
 confirmatory4_compositestriatum_excludingoutliers_cat <- lmer(cbcl_scr_syn_internal_r ~                                       pds_p_ss_category*striatum_rvsn_ant_z +
                             race.eth.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age+
                             fam_history_q6d_depression + #added mother's depression
                             (1 | site_id_l/rel_family_id),
@@ -305,9 +305,9 @@ exploratory4a_compositestriatum_feedback_allCBCL_females <- gamm4(cbcl_scr_syn_i
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_compositestriatum_feedback_allCBCL_females$gam )
 ```
@@ -323,9 +323,9 @@ exploratory4a_compositestriatum_feedback_allCBCL_males <- gamm4(cbcl_scr_syn_int
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_compositestriatum_feedback_allCBCL_males$gam )
 ```
@@ -346,9 +346,9 @@ exploratory4a_accumbens_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_accumbens_feedback_females$gam )
 ```
@@ -364,9 +364,9 @@ exploratory4a_accumbens_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_accumbens_feedback_males$gam )
 ```
@@ -386,9 +386,9 @@ exploratory4a_caudate_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_caudate_feedback_females$gam )
 ```
@@ -405,9 +405,9 @@ exploratory4a_caudate_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_caudate_feedback_males$gam )
 ```
@@ -426,9 +426,9 @@ exploratory4a_putamen_feedback_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_putamen_feedback_females$gam )
 ```
@@ -445,9 +445,9 @@ exploratory4a_putamen_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4a_putamen_feedback_males$gam )
 ```
@@ -467,9 +467,9 @@ exploratory4b_OFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4b_OFC_ant_allCBCL_females$gam )
@@ -487,9 +487,9 @@ exploratory4b_OFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4b_OFC_ant_allCBCL_females$gam )
@@ -508,9 +508,9 @@ exploratory4b_OFC_feed_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4b_OFC_feed_allCBCL_females$gam )
@@ -528,9 +528,9 @@ exploratory4b_OFC_feed_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4b_OFC_feed_allCBCL_males$gam )
@@ -550,9 +550,9 @@ exploratory4c_bisbas_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4c_bisbas_allCBCL_females$gam )
 ```
@@ -567,9 +567,9 @@ exploratory4c_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4c_bisbas_allCBCL_males$gam )
 ```
@@ -588,9 +588,9 @@ exploratory4c_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4c_lg_neutral_RT_females$gam)
@@ -604,9 +604,9 @@ exploratory4c_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4c_lg_small_RT_females$gam)
@@ -622,9 +622,9 @@ exploratory4c_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4c_lg_neutral_RT_males$gam)
@@ -638,9 +638,9 @@ exploratory4c_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4c_lg_small_RT_males$gam)
@@ -659,9 +659,9 @@ confirmatory4Ea_striatum_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(confirmatory4Ea_striatum_allCBCL_test_females$gam)
@@ -678,9 +678,9 @@ exploratory4Ea_striatum_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4Ea_striatum_allCBCL_test_males$gam)
@@ -697,9 +697,9 @@ exploratory4Ea_striatum_feedback_allCBCL_test_females  <- gamm4(cbcl_scr_syn_int
                             striatum_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4Ea_striatum_feedback_allCBCL_test_females$gam )
@@ -714,9 +714,9 @@ exploratory4Ea_striatum_feedback_allCBCL_test_males  <- gamm4(cbcl_scr_syn_inter
                             striatum_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4Ea_striatum_feedback_allCBCL_test_males$gam )
@@ -735,9 +735,9 @@ confirmatory4Ea_accumbens_test_females <- gamm4(cbcl_scr_syn_internal_r ~
                             accumbens_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -755,9 +755,9 @@ confirmatory4Ea_accumbens_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             accumbens_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -780,9 +780,9 @@ confirmatory4Ea_caudate_test_females <- gamm4(cbcl_scr_syn_internal_r ~
                             caudate_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -804,9 +804,9 @@ confirmatory4Ea_caudate_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             caudate_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -826,9 +826,9 @@ confirmatory4Ea_putamen_test_females <- gamm4(cbcl_scr_syn_internal_r ~
                             putamen_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -847,9 +847,9 @@ confirmatory4Ea_putamen_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             putamen_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -883,9 +883,9 @@ exploratory4Eb_accumbens_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~
                             accumbens_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -903,9 +903,9 @@ exploratory4Eb_accumbens_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~
                             accumbens_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -923,9 +923,9 @@ confirmatory4Eb_caudate_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~
                             caudate_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -943,9 +943,9 @@ confirmatory4Eb_caudate_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~
                             caudate_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -963,9 +963,9 @@ confirmatory4Eb_putamen_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~
                             putamen_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -984,9 +984,9 @@ confirmatory4Eb_putamen_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~
                             putamen_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
@@ -1005,9 +1005,9 @@ exploratory4c_OFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4c_OFC_ant_allCBCL_test_females$gam )
@@ -1023,9 +1023,9 @@ exploratory4c_OFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4c_OFC_ant_allCBCL_test_males$gam )
@@ -1045,9 +1045,9 @@ exploratory4d_OFC_feed_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4d_OFC_feed_allCBCL_test_females$gam )
@@ -1067,9 +1067,9 @@ exploratory4d_OFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4d_OFC_feed_allCBCL_test_males$gam )
@@ -1091,9 +1091,9 @@ exploratory4e_bisbas_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4e_bisbas_allCBCL_females$gam )
 ```
@@ -1113,9 +1113,9 @@ exploratory4e_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 summary(exploratory4e_bisbas_allCBCL_males$gam )
 ```
@@ -1135,9 +1135,9 @@ exploratoryFa_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratoryFa_lg_neutral_RT_females$gam)
@@ -1154,9 +1154,9 @@ exploratoryFb_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratoryFb_lg_small_RT_females$gam)
@@ -1177,9 +1177,9 @@ exploratoryFa_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratoryFa_lg_neutral_RT_males$gam)
@@ -1198,9 +1198,9 @@ exploratoryFb_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
-                            high.educ +
-                            household.income +
-                            married.or.livingtogether +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratoryFb_lg_small_RT_males$gam)
