@@ -245,48 +245,48 @@ summary(confirmatory4_putamen_ant_males$gam)
 #Excluding outliers in CBCL 
 #PDS category 
 
-confirmatory4_compositestriatum_excludingoutliers_cat <- lmer(cbcl_scr_syn_internal_r ~                                       pds_p_ss_category*striatum_rvsn_ant_z +
-                            race.eth.5level +
-                            demo_race_hispanic +
-                            #high.educ +
-                            #household.income +
-                            #married.or.livingtogether +
-                            interview_age+
-                            fam_history_q6d_depression + #added mother's depression
-                            (1 | site_id_l/rel_family_id),
-                            data = subset(PDS_correct, 
-                                          striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
-
-summary(confirmatory4_compositestriatum_excludingoutliers_cat)
-
-plot_model(confirmatory4_compositestriatum_excludingoutliers_cat,type = "int", show.data = FALSE) #Interaction plot
-
-plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "est", show.data = FALSE) #Forest plot
-
-p <- plot_model(confirmatory4_compositestriatum_excludingoutliers_cat,
-                type = "pred", # To specify values for striatal response, have to use "pred" instead.
-                terms = c("pds_p_ss_category","striatum_rvsn_ant_z [-2.0,0,2.0]"),
-                show.data = TRUE, jitter = 0.1, line.size = 2) +
-                ylab("Internalizing Score") +
-                xlab("PDS category") +
-                labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
-                scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
-                theme(title= element_text(size=20, vjust=2, face="bold"),
-                plot.title = element_blank(),
-                axis.title.x= element_text(size=18, vjust=-0.3),
-                axis.title.y= element_text(size=18, vjust=1.5),
-                axis.text.x= element_text(size=18, colour="black"),
-                axis.text.y= element_text(size=18, colour="black"),
-                legend.title=element_text(size=12, colour = "black"),
-                legend.position = c(.80, .80),
-                # legend.position="none",
-                strip.text = element_text(size=18, face="bold"),
-                panel.background = element_blank(),
-                axis.line = element_line(colour = "black"))
-p 
-                   
-file.name = (here("output","question4_exploratory_excludingCBCLoutliers_PDScat.tiff"))
-#ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
+# confirmatory4_compositestriatum_excludingoutliers_cat <- lmer(cbcl_scr_syn_internal_r ~                                       pds_p_ss_category*striatum_rvsn_ant_z +
+#                             race.eth.5level +
+#                             demo_race_hispanic +
+#                             #high.educ +
+#                             #household.income +
+#                             #married.or.livingtogether +
+#                             interview_age+
+#                             fam_history_q6d_depression + #added mother's depression
+#                             (1 | site_id_l/rel_family_id),
+#                             data = subset(PDS_correct, 
+#                                           striatum_rvsn_ant_z > -3 & striatum_rvsn_ant_z < 3 & cbcl_scr_syn_internal_r_z > -3 & cbcl_scr_syn_internal_r_z < 3))
+# 
+# summary(confirmatory4_compositestriatum_excludingoutliers_cat)
+# 
+# plot_model(confirmatory4_compositestriatum_excludingoutliers_cat,type = "int", show.data = FALSE) #Interaction plot
+# 
+# plot_model(confirmatory4_compositestriatum_excludingoutliers,type = "est", show.data = FALSE) #Forest plot
+# 
+# p <- plot_model(confirmatory4_compositestriatum_excludingoutliers_cat,
+#                 type = "pred", # To specify values for striatal response, have to use "pred" instead.
+#                 terms = c("pds_p_ss_category","striatum_rvsn_ant_z [-2.0,0,2.0]"),
+#                 show.data = TRUE, jitter = 0.1, line.size = 2) +
+#                 ylab("Internalizing Score") +
+#                 xlab("PDS category") +
+#                 labs(colour = "MID Striatal activity z-score \n (reward anticipation vs neutral)")+
+#                 scale_y_continuous(breaks = seq(0, 45, by = 10), limits = c(0,45)) +
+#                 theme(title= element_text(size=20, vjust=2, face="bold"),
+#                 plot.title = element_blank(),
+#                 axis.title.x= element_text(size=18, vjust=-0.3),
+#                 axis.title.y= element_text(size=18, vjust=1.5),
+#                 axis.text.x= element_text(size=18, colour="black"),
+#                 axis.text.y= element_text(size=18, colour="black"),
+#                 legend.title=element_text(size=12, colour = "black"),
+#                 legend.position = c(.80, .80),
+#                 # legend.position="none",
+#                 strip.text = element_text(size=18, face="bold"),
+#                 panel.background = element_blank(),
+#                 axis.line = element_line(colour = "black"))
+# p 
+#                    
+# file.name = (here("output","question4_exploratory_excludingCBCLoutliers_PDScat.tiff"))
+# #ggsave(file.name,plot = last_plot(), dpi = 150, device = "tiff")
 ```
 
 
@@ -477,12 +477,12 @@ summary(exploratory4b_OFC_ant_allCBCL_females$gam )
 
 ### Males
 ```{r Exploratory4BOFC_ant_males, echo = FALSE}
-#OFC anticipation, FEMALES
+#OFC anticipation, MALES
 
 dataformodel <- data_no_lOFC_ant_outliers_males
 
 exploratory4b_OFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
-                            PDS_score_z*
+                            PDS_score*
                             lOFC_rvsn_ant_z+
                             #sex+
                             race.ethnicity.5level +
@@ -498,7 +498,7 @@ summary(exploratory4b_OFC_ant_allCBCL_females$gam )
 ## Model B: CBCL internalizing factor ~ PDS*OFC activity (feedback stage)
 ### Females
 ```{r Exploratory4BOFC_feed_females, echo = FALSE}
-#OFC anticipation, FEMALES
+#OFC feedback, FEMALES
 
 dataformodel <- data_no_lOFC_feed_outliers_females
 
@@ -523,7 +523,7 @@ summary(exploratory4b_OFC_feed_allCBCL_females$gam )
 dataformodel <- data_no_lOFC_feed_outliers_males
 
 exploratory4b_OFC_feed_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
-                            PDS_score_z*
+                            PDS_score*
                             lOFC_posvsneg_feedback_z+
                             #sex+
                             race.ethnicity.5level +
@@ -617,7 +617,7 @@ dataformodel <- data_no_RT_MID_outliers_males
 
 #LARGE REWARD VS. NEUTRAL POSITIVE
 exploratory4c_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
-                            PDS_score_z*
+                            PDS_score*
                             rt_diff_large_neutral_z+
                             #sex+
                             race.ethnicity.5level +
@@ -1101,7 +1101,7 @@ summary(exploratory4e_bisbas_allCBCL_females$gam )
 
 
 ## Model E: CBCL internalizing factor ~ Testosterone*BIS-BAS RR
-### Females
+### Males
 ```{r Exploratory4e, echo = FALSE}
 
 dataformodel <- data_no_bisbas_test_outliers_males 
@@ -1149,7 +1149,8 @@ summary(exploratoryFa_lg_neutral_RT_females$gam)
 dataformodel <- data_no_RT_test_outliers_females
 
 exploratoryFb_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
-                            PDS_score*
+                            PDS_score+
+                            hormone_scr_ert_mean*
                             rt_diff_large_small_z+
                             #sex+
                             race.ethnicity.5level +
