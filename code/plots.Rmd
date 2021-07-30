@@ -215,6 +215,9 @@ describe(mer_predictions)
 describe(gam_predictions)
 describe(mer_predictions2)
 
+
+# Need to try a couple example subjects and using coef (or just their beta estimates?), get their predicted values manually?
+
 # Females, sample 2.
 PDS_correct_females_sample2
 # Males, sample 1.
