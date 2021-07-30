@@ -15,26 +15,65 @@ library(gamm4.test)
 library(ggstatsplot)
 library(glue)
 library(ggeffects)
-#library(clubSandwich) # For robust standard errors.
+#library(broom.mixed) # For getting predictions from mixed models.
+library(lme4)
 ```
 
 ```{r LoadData, echo = FALSE}
 
+# We need to create all of the data frames for the exploratory and confirmatory samples.
+# Previously, we had only used one at a time, so they had the same dataframe names (from define_dataframes script),
+# but now we need to use and plot both of them so we need to give them their own variables.
+# This is not the best way to do this, but it is the most similar to how we defined the data in the scripts.
+
 data_dir = ((dirname(here()))) 
 
+# First, let's load the exploratory data and assign unique names to the dataframes we will use for plotting results from the exploratory data.
 phase_folder = "exploratory"  # select the appropriate folder.
-# phase_folder = "confirmatory"
-
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
-
 file_name <- glue("nda30_{phase_folder}.csv")
-
 fulldata <- read.csv(file.path(data_folder,file_name))
 nrow(fulldata) # 27321.
 
 # Call function to define all of the dataframes.
 script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
 source(script_path)
+
+# Now that the data frames are all created, let's save them with a suffix indicating if it is from exploratory (sample 1) or confirmatory (sample 2) so that we can load both samples at the same time. We only need to do this for the data frames we need to use for our plots.
+# CBCL ~ PDS stage (this corresponds to the model from the section named 'Confirmatory2_category', starting at line 417, in Research Question Two). This model just uses PDS_correct (separated by gender).
+# BIS/BAS interaction for both samples for girls and boys (this corresponds to the model from the section named 'x' in Research Question Four).This model uses the dataframe data_no_bisbas_outliers (separated by gender).
+
+PDS_correct_females_sample1 <- PDS_correct_females
+PDS_correct_males_sample1 <- PDS_correct_males
+data_no_bisbas_outliers_females_sample1 <- data_no_bisbas_outliers_females
+data_no_bisbas_outliers_males_sample1 <- data_no_bisbas_outliers_males
+
+# For each of the four dataframes, add a column to indicate which sample it is (will be necessary for plotting).
+PDS_correct_females_sample1$sample = "sample1"
+PDS_correct_males_sample1$sample = "sample1"
+data_no_bisbas_outliers_females_sample1$sample = "sample1"
+data_no_bisbas_outliers_males_sample1$sample = "sample1"
+
+# Do the same process, but with the confirmatory sample.
+
+phase_folder = "confirmatory" # select the appropriate folder.
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+file_name <- glue("nda30_{phase_folder}.csv")
+fulldata <- read.csv(file.path(data_folder,file_name))
+nrow(fulldata) # 27331.
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
+source(script_path)
+
+PDS_correct_females_sample2 <- PDS_correct_females
+PDS_correct_males_sample2 <- PDS_correct_males
+data_no_bisbas_outliers_females_sample2 <- data_no_bisbas_outliers_females
+data_no_bisbas_outliers_males_sample2 <- data_no_bisbas_outliers_males
+
+PDS_correct_females_sample2$sample = "sample2"
+PDS_correct_males_sample2$sample = "sample2"
+data_no_bisbas_outliers_females_sample2$sample = "sample2"
+data_no_bisbas_outliers_males_sample2$sample = "sample2"
+
 
 ```
 
@@ -58,6 +97,135 @@ nsh_theme <- theme(text = element_text(family = "Avenir"),
                    strip.text = element_text(size=24, face="bold"),
                    panel.background = element_blank(),
                    axis.line = element_line(colour = "black"))
+
+```
+
+```{r PDS_CBCL_Boxplots_ModelPredictions, echo = FALSE}
+# Step one.  First, create dataframes that do not have any NA values in the columns used in the model.
+# Step two. Then run model for each of the four groups (sample 1 and sample 2, females and males).
+# Step three. Save estimates (for each participant?) from the models and combine the dataframes with the predicted values into one dataframe.
+# Step four. Plot.
+
+##### Step one: create dataframes that do not have any NA values in the columns used in the model. #####
+
+# Note: The NA values are automatically removed in the model. However, I need this data frame to not have NAs in order to merge the predicted values (the dataframe and the predicted values need to have the same amount of observations). So only keep rows with complete cases for the variables in the model.
+# Do this for each of the four dataframes.
+
+# Females, sample 1.
+PDS_correct_females_sample1 <- PDS_correct_females_sample1[complete.cases(PDS_correct_females_sample1[ ,c("cbcl_scr_syn_internal_r",
+                                                                         "pds_p_ss_category",
+                                                                         "race.ethnicity.5level",
+                                                                         "interview_age",
+                                                                         "demo_race_hispanic",
+                                                                         "site_id_l",
+                                                                         "rel_family_id")]),]
+nrow(PDS_correct_females_sample1) # 2640.
+
+# Females, sample 2.
+PDS_correct_females_sample2 <- PDS_correct_females_sample2[complete.cases(PDS_correct_females_sample2[ ,c("cbcl_scr_syn_internal_r",
+                                                                         "pds_p_ss_category",
+                                                                         "race.ethnicity.5level",
+                                                                         "interview_age",
+                                                                         "demo_race_hispanic",
+                                                                         "site_id_l",
+                                                                         "rel_family_id")]),]
+nrow(PDS_correct_females_sample2) # 2620.
+
+# Males, sample 1.
+PDS_correct_males_sample1 <- PDS_correct_males_sample1[complete.cases(PDS_correct_males_sample1[ ,c("cbcl_scr_syn_internal_r",
+                                                                         "pds_p_ss_category",
+                                                                         "race.ethnicity.5level",
+                                                                         "interview_age",
+                                                                         "demo_race_hispanic",
+                                                                         "site_id_l",
+                                                                         "rel_family_id")]),]
+nrow(PDS_correct_males_sample1) # 2863.
+
+# Males, sample 2.
+PDS_correct_males_sample2 <- PDS_correct_males_sample2[complete.cases(PDS_correct_males_sample2[ ,c("cbcl_scr_syn_internal_r",
+                                                                         "pds_p_ss_category",
+                                                                         "race.ethnicity.5level",
+                                                                         "interview_age",
+                                                                         "demo_race_hispanic",
+                                                                         "site_id_l",
+                                                                         "rel_family_id")]),]
+nrow(PDS_correct_males_sample2) # 2845.
+
+
+
+##### Step two: run the model for each sample and each gender (named 'confirmatory2_category_females' and confirmatory2_category_males' in research question two script). #####
+
+# Females, sample 1.
+pds_stage_cbcl_females_sample1 <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = PDS_correct_females_sample1, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(pds_stage_cbcl_females_sample1$gam) #  n = 2640.
+summary(pds_stage_cbcl_females_sample1$mer) # Should be the same.
+
+# Females, sample 2.
+pds_stage_cbcl_females_sample1 <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      #high.educ +
+                      #household.income +
+                      #married.or.livingtogether +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = PDS_correct_females_sample1, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(pds_stage_cbcl_females_sample1$gam) #  n = 2640.
+summary(pds_stage_cbcl_females_sample1$mer) # Should be the same.
+#ggpredict(pds_stage_cbcl_females_sample1,terms = "pds_p_ss_category")
+
+##### Step three: Save estimates from each of the models. #####
+
+# I need to double check this but I think this gets the model estimated values for each participant (observation).
+# fortify.merMod(pds_stage_cbcl_females_sample1$mer)$.fitted # 2640.
+# Use broom package instead?
+#PDS_correct_females_sample1$cbcl_int_predicted <- fortify.merMod(pds_stage_cbcl_females_sample1$mer)$.fitted
+# Save the model predicted values to the dataframe.
+
+# Females, sample 1.
+PDS_correct_females_sample1$cbcl_int_predicted <- predict(pds_stage_cbcl_females_sample1$mer)
+# I can't figure out why these are giving me different predicted values.
+mer_predictions <- predict(pds_stage_cbcl_females_sample1$mer)
+head(mer_predictions)
+gam_predictions <- predict(pds_stage_cbcl_females_sample1$gam)
+head(gam_predictions)
+# this is the same as predict(model$gam).
+gam_predictions2 <- predict.gam(pds_stage_cbcl_females_sample1$gam)
+head(gam_predictions2)
+mer_predictions2 <- predict_merMod(pds_stage_cbcl_females_sample1$mer) # Why are these predicted values negative? Maybe because many of the values are around zero?
+head(mer_predictions2)
+# Do the predicted values seem to be in a reasonable range?
+mean(PDS_correct_females_sample1$cbcl_scr_syn_internal_r) # 5.039015.
+mean(mer_predictions) # 5.039015. Exactly the same as sample mean?
+mean(gam_predictions) # 4.975863.
+mean(mer_predictions2) # 5.102168.
+# Need to try a couple example subjects and using coef (or just their beta estimates?), get their predicted values manually?
+
+library(Hmisc)
+describe(PDS_correct_females_sample1$cbcl_scr_syn_internal_r)
+describe(mer_predictions)
+describe(gam_predictions)
+describe(mer_predictions2)
+
+# Females, sample 2.
+PDS_correct_females_sample2
+# Males, sample 1.
+PDS_correct_males_sample1
+# Males, sample 2.
+PDS_correct_males_sample2
+
+# Now, combine the four dataframes that have the predicted values in them.
+
+##### Step three: Plot. #####
+
 
 ```
 
