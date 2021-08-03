@@ -48,11 +48,23 @@ PDS_correct_males_sample1 <- PDS_correct_males
 data_no_bisbas_outliers_females_sample1 <- data_no_bisbas_outliers_females
 data_no_bisbas_outliers_males_sample1 <- data_no_bisbas_outliers_males
 
-# For each of the four dataframes, add a column to indicate which sample it is (will be necessary for plotting).
-PDS_correct_females_sample1$sample = "sample1"
-PDS_correct_males_sample1$sample = "sample1"
-data_no_bisbas_outliers_females_sample1$sample = "sample1"
-data_no_bisbas_outliers_males_sample1$sample = "sample1"
+# For each of the four dataframes, add a column to indicate which sample it is and a column that has their sample and gender in the variable (will be necessary for plotting). Would be better to do this before define_dataframes but it would give an error since we are only creating these columns now, so just doing here instead.
+PDS_correct_females_sample1 <- PDS_correct_females_sample1 %>%
+            mutate(sample = as.factor("sample1"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
+PDS_correct_males_sample1 <- PDS_correct_males_sample1 %>%
+            mutate(sample = as.factor("sample1"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
+data_no_bisbas_outliers_females_sample1 <- data_no_bisbas_outliers_females_sample1 %>%
+            mutate(sample = as.factor("sample1"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
+data_no_bisbas_outliers_males_sample1 <- data_no_bisbas_outliers_males_sample1 %>%
+            mutate(sample = as.factor("sample1"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
 
 # Do the same process, but with the confirmatory sample.
 
@@ -69,10 +81,21 @@ PDS_correct_males_sample2 <- PDS_correct_males
 data_no_bisbas_outliers_females_sample2 <- data_no_bisbas_outliers_females
 data_no_bisbas_outliers_males_sample2 <- data_no_bisbas_outliers_males
 
-PDS_correct_females_sample2$sample = "sample2"
-PDS_correct_males_sample2$sample = "sample2"
-data_no_bisbas_outliers_females_sample2$sample = "sample2"
-data_no_bisbas_outliers_males_sample2$sample = "sample2"
+PDS_correct_females_sample2 <- PDS_correct_females_sample2 %>%
+            mutate(sample = as.factor("sample2"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
+PDS_correct_males_sample2 <- PDS_correct_males_sample2 %>%
+            mutate(sample = as.factor("sample2"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
+data_no_bisbas_outliers_females_sample2 <- data_no_bisbas_outliers_females_sample2 %>%
+            mutate(sample = as.factor("sample2"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
+data_no_bisbas_outliers_males_sample2 <- data_no_bisbas_outliers_males_sample2 %>%
+            mutate(sample = as.factor("sample2"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
 
 
 ```
@@ -98,6 +121,14 @@ nsh_theme <- theme(text = element_text(family = "Avenir"),
                    panel.background = element_blank(),
                    axis.line = element_line(colour = "black"))
 
+# light purple: C7CDFF
+# dark purple: 9D95CD
+# light blue: 33E1FF
+# dark blue: 378EF2
+# light green: 9CB7B5
+# dark green: 6B8A80
+
+
 ```
 
 ```{r PDS_CBCL_Boxplots_ModelPredictions, echo = FALSE}
@@ -111,46 +142,24 @@ nsh_theme <- theme(text = element_text(family = "Avenir"),
 # Note: The NA values are automatically removed in the model. However, I need this data frame to not have NAs in order to merge the predicted values (the dataframe and the predicted values need to have the same amount of observations). So only keep rows with complete cases for the variables in the model.
 # Do this for each of the four dataframes.
 
+model_variables = c("cbcl_scr_syn_internal_r","pds_p_ss_category","race.ethnicity.5level","interview_age",
+                    "demo_race_hispanic","site_id_l","rel_family_id")
+
 # Females, sample 1.
-PDS_correct_females_sample1 <- PDS_correct_females_sample1[complete.cases(PDS_correct_females_sample1[ ,c("cbcl_scr_syn_internal_r",
-                                                                         "pds_p_ss_category",
-                                                                         "race.ethnicity.5level",
-                                                                         "interview_age",
-                                                                         "demo_race_hispanic",
-                                                                         "site_id_l",
-                                                                         "rel_family_id")]),]
+PDS_correct_females_sample1 <- PDS_correct_females_sample1[complete.cases(PDS_correct_females_sample1[,model_variables]),]
 nrow(PDS_correct_females_sample1) # 2640.
 
 # Females, sample 2.
-PDS_correct_females_sample2 <- PDS_correct_females_sample2[complete.cases(PDS_correct_females_sample2[ ,c("cbcl_scr_syn_internal_r",
-                                                                         "pds_p_ss_category",
-                                                                         "race.ethnicity.5level",
-                                                                         "interview_age",
-                                                                         "demo_race_hispanic",
-                                                                         "site_id_l",
-                                                                         "rel_family_id")]),]
+PDS_correct_females_sample2 <- PDS_correct_females_sample2[complete.cases(PDS_correct_females_sample2[,model_variables]),]
 nrow(PDS_correct_females_sample2) # 2620.
 
 # Males, sample 1.
-PDS_correct_males_sample1 <- PDS_correct_males_sample1[complete.cases(PDS_correct_males_sample1[ ,c("cbcl_scr_syn_internal_r",
-                                                                         "pds_p_ss_category",
-                                                                         "race.ethnicity.5level",
-                                                                         "interview_age",
-                                                                         "demo_race_hispanic",
-                                                                         "site_id_l",
-                                                                         "rel_family_id")]),]
+PDS_correct_males_sample1 <- PDS_correct_males_sample1[complete.cases(PDS_correct_males_sample1[,model_variables]),]
 nrow(PDS_correct_males_sample1) # 2863.
 
 # Males, sample 2.
-PDS_correct_males_sample2 <- PDS_correct_males_sample2[complete.cases(PDS_correct_males_sample2[ ,c("cbcl_scr_syn_internal_r",
-                                                                         "pds_p_ss_category",
-                                                                         "race.ethnicity.5level",
-                                                                         "interview_age",
-                                                                         "demo_race_hispanic",
-                                                                         "site_id_l",
-                                                                         "rel_family_id")]),]
+PDS_correct_males_sample2 <- PDS_correct_males_sample2[complete.cases(PDS_correct_males_sample2[,model_variables]),]
 nrow(PDS_correct_males_sample2) # 2845.
-
 
 
 ##### Step two: run the model for each sample and each gender (named 'confirmatory2_category_females' and confirmatory2_category_males' in research question two script). #####
@@ -158,22 +167,6 @@ nrow(PDS_correct_males_sample2) # 2845.
 # Females, sample 1.
 pds_stage_cbcl_females_sample1 <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
                       race.ethnicity.5level +
-                      #high.educ +
-                      #household.income +
-                      #married.or.livingtogether +
-                      interview_age +
-                      demo_race_hispanic, 
-                      data = PDS_correct_females_sample1, 
-                      random = ~ (1 | site_id_l/rel_family_id))
-summary(pds_stage_cbcl_females_sample1$gam) #  n = 2640.
-summary(pds_stage_cbcl_females_sample1$mer) # Should be the same.
-
-# Females, sample 2.
-pds_stage_cbcl_females_sample1 <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
-                      race.ethnicity.5level +
-                      #high.educ +
-                      #household.income +
-                      #married.or.livingtogether +
                       interview_age +
                       demo_race_hispanic, 
                       data = PDS_correct_females_sample1, 
@@ -181,6 +174,33 @@ pds_stage_cbcl_females_sample1 <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_categ
 summary(pds_stage_cbcl_females_sample1$gam) #  n = 2640.
 summary(pds_stage_cbcl_females_sample1$mer) # Should be the same.
 #ggpredict(pds_stage_cbcl_females_sample1,terms = "pds_p_ss_category")
+
+# Females, sample 2.
+pds_stage_cbcl_females_sample2 <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = PDS_correct_females_sample2, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(pds_stage_cbcl_females_sample2$gam)
+
+# Males, sample 1.
+pds_stage_cbcl_males_sample1 <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = PDS_correct_males_sample1, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(pds_stage_cbcl_males_sample1$gam)
+
+# Males, sample 2.
+pds_stage_cbcl_males_sample2 <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
+                      race.ethnicity.5level +
+                      interview_age +
+                      demo_race_hispanic, 
+                      data = PDS_correct_males_sample2, 
+                      random = ~ (1 | site_id_l/rel_family_id))
+summary(pds_stage_cbcl_males_sample2$gam)
 
 ##### Step three: Save estimates from each of the models. #####
 
@@ -197,9 +217,12 @@ mer_predictions <- predict(pds_stage_cbcl_females_sample1$mer)
 head(mer_predictions)
 gam_predictions <- predict(pds_stage_cbcl_females_sample1$gam)
 head(gam_predictions)
-# this is the same as predict(model$gam).
-gam_predictions2 <- predict.gam(pds_stage_cbcl_females_sample1$gam)
+gam_predictions2 <- predict.gam(pds_stage_cbcl_females_sample1$gam) # this is the same as predict(model$gam).
 head(gam_predictions2)
+gam_predictions3 <- predict.gam(pds_stage_cbcl_females_sample1$gam,newdata=PDS_correct_females_sample1,se=T) # this is the same as predict(model$gam).
+head(gam_predictions3$fit) # this is also the same as predict(model$gam).
+head(gam_predictions3$se.fit) # standard error?
+
 mer_predictions2 <- predict_merMod(pds_stage_cbcl_females_sample1$mer) # Why are these predicted values negative? Maybe because many of the values are around zero?
 head(mer_predictions2)
 # Do the predicted values seem to be in a reasonable range?
@@ -225,10 +248,73 @@ PDS_correct_males_sample1
 # Males, sample 2.
 PDS_correct_males_sample2
 
+
+# For now, will just use what we get from predict(gam).
+PDS_correct_females_sample1$cbcl_int_predicted <- predict(pds_stage_cbcl_females_sample1$gam)
+PDS_correct_females_sample2$cbcl_int_predicted <- predict(pds_stage_cbcl_females_sample2$gam)
+PDS_correct_males_sample1$cbcl_int_predicted <- predict(pds_stage_cbcl_males_sample1$gam)
+PDS_correct_males_sample2$cbcl_int_predicted <- predict(pds_stage_cbcl_males_sample2$gam)
+
 # Now, combine the four dataframes that have the predicted values in them.
+plot_data <- rbind(PDS_correct_females_sample1,PDS_correct_females_sample2)
+plot_data <- rbind(plot_data,PDS_correct_males_sample1)
+plot_data <- rbind(plot_data,PDS_correct_males_sample2)
+#str(plot_data$sample_sex) # should have four levels.
 
 ##### Step three: Plot. #####
 
+# PDS categorical plot.
+# Make it a factor so that it plots it in the correct order (pre, early, mid, late, post).
+plot_data$pds_p_ss_category<- factor(plot_data$pds_p_ss_category,levels = c("Pre","Early","Mid","Late","Post"))
+#levels(plot_data$sample_sex) # Check order of levels.
+
+ggplot(aes(y = cbcl_int_predicted, x = pds_p_ss_category, fill = sample_sex), data = plot_data) + 
+  geom_boxplot() +
+  #ylim(0,max(plot_data$cbcl_scr_syn_internal_r)) +
+  ylim(0,15) +
+  #scale_fill_manual(values = c("#C7CDFF", "#9D95CD","#33E1FF", "#378EF2"), name="sample_sex") +
+  scale_fill_manual(values = c("#C7CDFF", "#9D95CD","#33E1FF", "#378EF2"), 
+                    name="sample_sex", 
+                    labels = c("Sample 1 Female","Sample 2 Female","Sample 1 Male","Sample 2 Male")) + # If want outlines and outlier points to have same color as boxes. (If not, then remove color = sample_sex in first line).
+  facet_grid(~sex) + # one on top of the other: (sex ~ .). next to each other, side by side: (~sex).
+  labs(title = "Model Predicted CBCL Scores by PDS Stages") +
+  xlab("PDS Stage") + 
+  ylab("Model Predicted CBCL Internalizing Score") + 
+  nsh_theme
+
+# Plotting actual CBCL scores (not model predictions).
+ggplot(aes(y = cbcl_scr_syn_internal_r, x = pds_p_ss_category, fill = sample_sex), data = plot_data) + 
+  geom_boxplot() +
+  scale_fill_manual(values = c("#C7CDFF", "#9D95CD","#9CB7B5", "#6B8A80"), 
+                    name="sample_sex", 
+                    labels = c("Sample 1 Female","Sample 2 Female","Sample 1 Male","Sample 2 Male")) + # If want outlines and outlier points to have same color as boxes. (If not, then remove color = sample_sex in first line).
+  facet_grid(~sex) + # one on top of the other: (sex ~ .). next to each other, side by side: (~sex).
+  labs(title = "Actual CBCL Scores by PDS Stages") +
+  xlab("PDS Stage") + 
+  ylab("Actual CBCL Internalizing Score") + 
+  nsh_theme
+
+# Plot residualized PDS instead? But this is by category?
+
+# Plotted by z scores instead?
+ggplot(aes(y = cbcl_scr_syn_internal_r_z, x = pds_p_ss_category, fill = sample_sex), data = plot_data) + 
+  geom_boxplot() +
+  scale_fill_manual(values = c("#C7CDFF", "#9D95CD","#9CB7B5", "#6B8A80"), 
+                    name="sample_sex", 
+                    labels = c("Sample 1 Female","Sample 2 Female","Sample 1 Male","Sample 2 Male")) +
+  #scale_color_manual(values = c("#C7CDFF", "#9D95CD","#33E1FF", "#378EF2"), name="sample_sex") + # If want outlines and outlier points to have same color as boxes. (If not, then remove color = sample_sex in first line).
+  facet_grid(~sex) + # one on top of the other: (sex ~ .). next to each other, side by side: (~sex).
+  labs(title = "Actual CBCL Z Scores by PDS Stages") +
+  xlab("PDS Stage") + 
+  ylab("Actual CBCL Internalizing Z Score") + 
+  nsh_theme
+
+# light purple: C7CDFF
+# dark purple: 9D95CD
+# light blue: 33E1FF
+# dark blue: 378EF2
+# light green: 9CB7B5
+# dark green: 6B8A80
 
 ```
 
