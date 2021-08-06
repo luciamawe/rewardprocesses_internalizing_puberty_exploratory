@@ -457,7 +457,7 @@ summary(exploratory4a_putamen_feedback_males$gam )
 ## Model A: CBCL internalizing factor ~ PDS*OFC activity (anticipation stage)
 ### Females
 ```{r Exploratory4BOFC_ant_females, echo = FALSE}
-#OFC anticipation, FEMALES
+#Lateral OFC anticipation, FEMALES
 
 dataformodel <- data_no_lOFC_ant_outliers_females
 
@@ -473,11 +473,29 @@ exploratory4b_OFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4b_OFC_ant_allCBCL_females$gam )
+
+
+#Medial OFC anticipation, FEMALES
+
+dataformodel <- data_no_mOFC_ant_outliers_females
+
+exploratory4b_mOFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            mOFC_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4b_mOFC_ant_allCBCL_females$gam )
 ```
 
 ### Males
 ```{r Exploratory4BOFC_ant_males, echo = FALSE}
-#OFC anticipation, MALES
+#Lateral OFC anticipation, MALES
 
 dataformodel <- data_no_lOFC_ant_outliers_males
 
@@ -493,12 +511,29 @@ exploratory4b_OFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4b_OFC_ant_allCBCL_females$gam )
+
+#Medial OFC anticipation, MALES
+
+dataformodel <- data_no_mOFC_ant_outliers_males
+
+exploratory4b_mOFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            mOFC_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4b_mOFC_ant_allCBCL_females$gam )
 ```
 
 ## Model B: CBCL internalizing factor ~ PDS*OFC activity (feedback stage)
 ### Females
 ```{r Exploratory4BOFC_feed_females, echo = FALSE}
-#OFC feedback, FEMALES
+#Lateral OFC feedback, FEMALES
 
 dataformodel <- data_no_lOFC_feed_outliers_females
 
@@ -514,11 +549,28 @@ exploratory4b_OFC_feed_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4b_OFC_feed_allCBCL_females$gam )
+
+
+#Medial OFC Feedback, FEMALES
+dataformodel <- data_no_mOFC_feed_outliers_females
+
+exploratory4b_mOFC_feed_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            mOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4b_mOFC_feed_allCBCL_females$gam )
 ```
 
 ### Males
 ```{r Exploratory4BOFC_feed_males, echo = FALSE}
-#OFC feedback, MALES
+#Lateral OFC feedback, MALES
 
 dataformodel <- data_no_lOFC_feed_outliers_males
 
@@ -534,6 +586,23 @@ exploratory4b_OFC_feed_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4b_OFC_feed_allCBCL_males$gam )
+
+#Medial OFC feedback, MALES
+
+dataformodel <- data_no_mOFC_feed_outliers_males
+
+exploratory4b_mOFC_feed_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            mOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4b_mOFC_feed_allCBCL_males$gam )
 ```
 
 # Exploratory Hypothesis 4C: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by self-reported reward responsiveness. We predict that advanced puberty will be associated with higher internalizing in individuals who report lower reward responsiveness on the BIS-BAS questionnaire.
@@ -996,6 +1065,8 @@ summary(confirmatory4Eb_putamen_test_feed_males$gam)
 ## Model C: CBCL internalizing factor ~ Testosterone*OFC activity (anticipation stage) + PDS
 ### Females
 ```{r}
+#Lateral OFC - FEMALES
+
 dataformodel <- data_no_lOFC_ant_test_outliers_females 
 
 exploratory4c_OFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
@@ -1011,9 +1082,28 @@ exploratory4c_OFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4c_OFC_ant_allCBCL_test_females$gam )
+
+
+#Medial OFC - FEMALES
+dataformodel <- data_no_mOFC_ant_test_outliers_females 
+
+exploratory4c_mOFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            mOFC_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_mOFC_ant_allCBCL_test_females$gam )
 ```
-### Females
+### Males
 ```{r}
+#Lateral OFC - MALES
 dataformodel <- data_no_lOFC_ant_test_outliers_males 
 
 exploratory4c_OFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
@@ -1029,12 +1119,30 @@ exploratory4c_OFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4c_OFC_ant_allCBCL_test_males$gam )
+
+
+#Medial OFC - MALES
+dataformodel <- data_no_mOFC_ant_test_outliers_males 
+
+exploratory4c_mOFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                           PDS_score+
+                            hormone_scr_ert_mean*  
+                            mOFC_rvsn_ant_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_mOFC_ant_allCBCL_test_males$gam )
 ```
 
 ## Model D: CBCL internalizing factor ~ Testosterone*OFC activity (feedback stage) + PDS
 ### Females
 ```{r Exploratory4DOFC_feed_females, echo = FALSE}
-#OFC feedback, FEMALES
+#Lateral OFC feedback, FEMALES
 
 dataformodel <- data_no_lOFC_feed_test_outliers_females 
 
@@ -1051,12 +1159,31 @@ exploratory4d_OFC_feed_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4d_OFC_feed_allCBCL_test_females$gam )
+
+
+#Medial OFC feedback, FEMALES
+
+dataformodel <- data_no_mOFC_feed_test_outliers_females 
+
+exploratory4d_mOFC_feed_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean* 
+                            mOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_mOFC_feed_allCBCL_test_females$gam )
 ```
 
 
 ### Males
 ```{r Exploratory4DOFC_feed_males, echo = FALSE}
-#OFC feedback, MALES
+#Lateral OFC feedback, MALES
 
 dataformodel <- data_no_lOFC_feed_test_outliers_males 
 
@@ -1073,6 +1200,26 @@ exploratory4d_OFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4d_OFC_feed_allCBCL_test_males$gam )
+
+
+#Medial OFC feedback, MALES
+
+dataformodel <- data_no_mOFC_feed_test_outliers_males 
+
+exploratory4d_mOFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean* 
+                            mOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_mOFC_feed_allCBCL_test_males$gam )
+
 ```
 
 
