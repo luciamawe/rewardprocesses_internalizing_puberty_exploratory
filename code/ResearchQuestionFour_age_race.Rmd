@@ -499,7 +499,7 @@ summary(exploratory4b_mOFC_ant_allCBCL_females$gam )
 
 dataformodel <- data_no_lOFC_ant_outliers_males
 
-exploratory4b_OFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+exploratory4b_OFC_ant_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score*
                             lOFC_rvsn_ant_z+
                             #sex+
@@ -510,13 +510,13 @@ exploratory4b_OFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
-summary(exploratory4b_OFC_ant_allCBCL_females$gam )
+summary(exploratory4b_OFC_ant_allCBCL_males$gam )
 
 #Medial OFC anticipation, MALES
 
 dataformodel <- data_no_mOFC_ant_outliers_males
 
-exploratory4b_mOFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+exploratory4b_mOFC_ant_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score*
                             mOFC_rvsn_ant_z+
                             #sex+
@@ -527,7 +527,7 @@ exploratory4b_mOFC_ant_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
-summary(exploratory4b_mOFC_ant_allCBCL_females$gam )
+summary(exploratory4b_mOFC_ant_allCBCL_males$gam )
 ```
 
 ## Model B: CBCL internalizing factor ~ PDS*OFC activity (feedback stage)
