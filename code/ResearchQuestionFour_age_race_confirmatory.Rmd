@@ -518,7 +518,7 @@ dataformodel <- data_no_mOFC_ant_outliers_males
 
 exploratory4b_mOFC_ant_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score*
-                            lOFC_rvsn_ant_z+
+                            mOFC_rvsn_ant_z+
                             #sex+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -1202,6 +1202,25 @@ exploratory4d_OFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
 summary(exploratory4d_OFC_feed_allCBCL_test_males$gam )
+
+
+#Medial OFC feedback, MALES
+
+dataformodel <- data_no_mOFC_feed_test_outliers_males 
+
+exploratory4d_mOFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean* 
+                            mOFC_posvsneg_feedback_z+
+                            #sex+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            #high.educ +
+                            #household.income +
+                            #married.or.livingtogether +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_mOFC_feed_allCBCL_test_males$gam )
 ```
 
 
