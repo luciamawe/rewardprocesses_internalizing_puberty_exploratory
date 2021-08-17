@@ -222,7 +222,7 @@ summary(confirmatory4_putamen_ant_females$gam)
 # No CBCL exclusions
 # With covariates
 
-dataformodel <- data_no_putamen_ant_outliers_males  #Specify data subset here
+dataformodel <- data_no_putamen_ant_outliers_males
 
 confirmatory4_putamen_ant_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score*
@@ -640,7 +640,25 @@ exploratory4c_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #household.income +
                             #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4c_bisbas_allCBCL_males$gam )
+summary(exploratory4c_bisbas_allCBCL_males$gam)
+
+# Plot (for sample 1).
+# Start by using z scored bis bas.
+exploratory4c_bisbas_allCBCL_males_bisbasz <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score*
+                            bisbas_ss_basm_rr_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4c_bisbas_allCBCL_males_bisbasz$gam)
+
+plot_model(exploratory4c_bisbas_allCBCL_males_bisbasz,
+                type = "pred", # To specify values bisbas, have to use "pred" instead.
+                terms = c("PDS_score","bisbas_ss_basm_rr_z[-2.0,0,2.0]"),colors = "Pastel1") +
+                ylab("Model predicted internalizing score") +
+                xlab("PDS Score") +
+                labs(colour = "BAS-RR Z-score") +
+                nsh_theme
 ```
 
 # Exploratory Hypothesis 4D: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by behavioral reward responsiveness (i.e., MID reaction time). We predict that advanced puberty will be associated with higher internalizing in individuals who demonstrate lower behavioral reward responsiveness.

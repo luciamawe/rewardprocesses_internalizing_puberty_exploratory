@@ -604,7 +604,7 @@ exploratory4b_mOFC_feed_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
-summary(exploratory4b_mOFC_feed_allCBCL_males$gam )
+summary(exploratory4b_mOFC_feed_allCBCL_males$gam)
 ```
 
 # Exploratory Hypothesis 4C: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by self-reported reward responsiveness. We predict that advanced puberty will be associated with higher internalizing in individuals who report lower reward responsiveness on the BIS-BAS questionnaire.
@@ -612,7 +612,7 @@ summary(exploratory4b_mOFC_feed_allCBCL_males$gam )
 ## Model: CBCL internalizing factor ~ PDS*BIS-BAS
 ### Females
 ```{r Exploratory4C, echo = FALSE}
-#FEMALES
+# Females.
 dataformodel <- data_no_bisbas_outliers_females
 
 exploratory4c_bisbas_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
@@ -625,7 +625,7 @@ exploratory4c_bisbas_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~
                             #household.income +
                             #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4c_bisbas_allCBCL_females$gam )
+summary(exploratory4c_bisbas_allCBCL_females$gam)
 ```
 
 ### Males
@@ -642,7 +642,7 @@ exploratory4c_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~
                             #household.income +
                             #married.or.livingtogether +
                             interview_age, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-summary(exploratory4c_bisbas_allCBCL_males$gam )
+summary(exploratory4c_bisbas_allCBCL_males$gam)
 ```
 
 # Exploratory Hypothesis 4D: We hypothesize that the association between advanced puberty and internalizing symptoms will be moderated by behavioral reward responsiveness (i.e., MID reaction time). We predict that advanced puberty will be associated with higher internalizing in individuals who demonstrate lower behavioral reward responsiveness.
