@@ -49,6 +49,7 @@ fulldata <- read.csv(file.path(data_folder,file_name))
 # Call function to define all of the dataframes.
 script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
 source(script_path)
+
 ```
 
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
