@@ -41,7 +41,7 @@ source(script_path)
 
 # Now that the data frames are all created, let's save them with a suffix indicating if it is from exploratory (sample 1) or confirmatory (sample 2) so that we can load both samples at the same time. We only need to do this for the data frames we need to use for our plots.
 # CBCL ~ PDS stage (this corresponds to the model from the section named 'Confirmatory2_category', starting at line 417, in Research Question Two). This model just uses PDS_correct (separated by gender).
-# BIS/BAS interaction for both samples for girls and boys (this corresponds to the model from the section named 'x' in Research Question Four).This model uses the dataframe data_no_bisbas_outliers (separated by gender).
+# BIS/BAS interaction for both samples for girls and boys (this corresponds to the model from the section named 'x' in Research Question Four). This model uses the dataframe data_no_bisbas_outliers (separated by gender).
 
 PDS_correct_females_sample1 <- PDS_correct_females
 PDS_correct_males_sample1 <- PDS_correct_males
@@ -64,7 +64,6 @@ data_no_bisbas_outliers_females_sample1 <- data_no_bisbas_outliers_females_sampl
 data_no_bisbas_outliers_males_sample1 <- data_no_bisbas_outliers_males_sample1 %>%
             mutate(sample = as.factor("sample1"),
                    sample_sex = as.factor(glue('{sample}_{sex}')))
-
 
 # Do the same process, but with the confirmatory sample.
 
