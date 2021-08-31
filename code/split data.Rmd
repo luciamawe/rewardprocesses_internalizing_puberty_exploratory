@@ -121,7 +121,7 @@ p.adjust(pvals, method = "BH")
 export_table <- createTable(table)
 export_table
 
-export2word(export_table, file = (here("output","split_data_exploratory_confirmatory_comparisons_newsplit.doc"))
+export2word(export_table, file = (here("output","split_data_exploratory_confirmatory_comparisons_newsplit.doc")))
 ```
 
 ```{r}
