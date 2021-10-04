@@ -794,7 +794,7 @@ summary(exploratory4Ea_striatum_feedback_allCBCL_test_males$gam )
 ```
 
 
-##Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage) + testosterone
+##Model: CBCL internalizing factor ~ PDS + accumbens activity (anticipation stage)*testosterone
 ### Females
 ```{r Exploratory4e_Accumbens_Anticipation_Testosterones_Females, echo = FALSE}
 
@@ -924,7 +924,7 @@ confirmatory4Ea_putamen_test_males <- gamm4(cbcl_scr_syn_internal_r ~
                             interview_age,
                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
 
-summary(confirmatory4Ea_putamen_test_males $gam)
+summary(confirmatory4Ea_putamen_test_males$gam)
 #plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
 ```
 

@@ -47,6 +47,7 @@ PDS_correct_females_sample1 <- PDS_correct_females
 PDS_correct_males_sample1 <- PDS_correct_males
 data_no_bisbas_outliers_females_sample1 <- data_no_bisbas_outliers_females
 data_no_bisbas_outliers_males_sample1 <- data_no_bisbas_outliers_males
+data_no_putamen_ant_no_test_outliers_males_sample1 <- data_no_putamen_ant_no_test_outliers_males
 
 # For each of the four dataframes, add a column to indicate which sample it is and a column that has their sample and gender in the variable (will be necessary for plotting). Would be better to do this before define_dataframes but it would give an error since we are only creating these columns now, so just doing here instead.
 PDS_correct_females_sample1 <- PDS_correct_females_sample1 %>%
@@ -65,6 +66,10 @@ data_no_bisbas_outliers_males_sample1 <- data_no_bisbas_outliers_males_sample1 %
             mutate(sample = as.factor("sample1"),
                    sample_sex = as.factor(glue('{sample}_{sex}')))
 
+data_no_putamen_ant_no_test_outliers_males_sample1 <- data_no_putamen_ant_no_test_outliers_males_sample1  %>%
+            mutate(sample = as.factor("sample1"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
 # Do the same process, but with the confirmatory sample.
 
 phase_folder = "confirmatory" # select the appropriate folder.
@@ -79,6 +84,7 @@ PDS_correct_females_sample2 <- PDS_correct_females
 PDS_correct_males_sample2 <- PDS_correct_males
 data_no_bisbas_outliers_females_sample2 <- data_no_bisbas_outliers_females
 data_no_bisbas_outliers_males_sample2 <- data_no_bisbas_outliers_males
+data_no_accumbens_ant_no_test_outliers_females_sample2 <- data_no_accumbens_ant_no_test_outliers_females
 
 PDS_correct_females_sample2 <- PDS_correct_females_sample2 %>%
             mutate(sample = as.factor("sample2"),
@@ -96,6 +102,24 @@ data_no_bisbas_outliers_males_sample2 <- data_no_bisbas_outliers_males_sample2 %
             mutate(sample = as.factor("sample2"),
                    sample_sex = as.factor(glue('{sample}_{sex}')))
 
+data_no_accumbens_ant_no_test_outliers_females_sample2 <- data_no_accumbens_ant_no_test_outliers_females_sample2 %>%
+            mutate(sample = as.factor("sample2"),
+                   sample_sex = as.factor(glue('{sample}_{sex}')))
+
+
+PDS_correct_sample1 <- rbind(PDS_correct_females_sample1,PDS_correct_males_sample1)
+PDS_correct_sample2 <- rbind(PDS_correct_females_sample2,PDS_correct_males_sample2)
+PDS_correct <- rbind(PDS_correct_sample1,PDS_correct_sample2)
+
+# PDS_correct_sample1.
+mean_bisbas_sample1 <- mean(PDS_correct_sample1$bisbas_ss_basm_rr, na.rm=TRUE)
+sd_bisbas_sample1 <- sd(PDS_correct_sample1$bisbas_ss_basm_rr, na.rm=TRUE)
+PDS_correct_sample1$bisbas_ss_basm_rr_z <- (PDS_correct_sample1$bisbas_ss_basm_rr-mean_bisbas_sample1)/sd_bisbas_sample1
+
+# PDS_correct_sample2.
+mean_bisbas_sample2 <- mean(PDS_correct_sample2$bisbas_ss_basm_rr, na.rm=TRUE)
+sd_bisbas_sample2 <- sd(PDS_correct_sample2$bisbas_ss_basm_rr, na.rm=TRUE)
+PDS_correct_sample2$bisbas_ss_basm_rr_z <- (PDS_correct_sample2$bisbas_ss_basm_rr-mean_bisbas_sample2)/sd_bisbas_sample2
 
 ```
 
@@ -391,6 +415,46 @@ ggplot(PDS_correct, aes(x=cbcl_scr_syn_internal_r,fill = sex)) +
   xlab("CBCL Score") + 
   ylab("Density") +
   nsh_theme
+
+```
+
+```{r BISBAS_Distributions, echo = FALSE}
+# Plot distributions of CBCL scores for this sample, colored by gender group.
+# First, calculate mean of each group (for plotting).
+bisbas_plot_data_sample1 <- plyr::ddply(PDS_correct_sample1, "sex", summarise, bisbas.mean=mean(bisbas_ss_basm_rr,na.rm=TRUE))
+bisbas_plot_data_sample2 <- plyr::ddply(PDS_correct_sample2, "sex", summarise, bisbas.mean=mean(bisbas_ss_basm_rr,na.rm=TRUE))
+
+#bisbas_ss_basm_rr_z
+# Sample 1.
+ggplot(PDS_correct_sample1, aes(x=bisbas_ss_basm_rr,fill = sex)) + 
+  geom_density(alpha=0.86) +
+  facet_grid(sex ~ .) +
+  geom_vline(data=bisbas_plot_data_sample1, aes(xintercept=bisbas.mean), color = "black", # Add group averages.
+               linetype="dashed", size=1) +
+  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  labs(title = "Distribution of BIS/BAS-RR Scores",
+      subtitle = "Sample 1") +
+  xlab("BIS/BAS-RR Score") + 
+  ylab("Density") +
+  nsh_theme
+
+ggplot(PDS_correct_sample1, aes(x=bisbas_ss_basm_rr_z,fill = sex)) + 
+  geom_density(alpha=0.86) +
+  facet_grid(sex ~ .) +
+  scale_fill_manual(values = c("#395B50", "#92B6B1"), name="Sex") +
+  labs(title = "Distribution of BIS/BAS-RR Z-Scores",
+      subtitle = "Sample 1") +
+  xlab("BIS/BAS-RR Z-Score") + 
+  ylab("Density") +
+  nsh_theme
+
+# Sample 1 outliers.
+nrow(subset(PDS_correct_sample1,bisbas_ss_basm_rr_z > 3)) # None.
+nrow(subset(PDS_correct_sample1,bisbas_ss_basm_rr_z < -3)) # 20 participants.
+
+# Sample 2.
+nrow(subset(PDS_correct_sample2,bisbas_ss_basm_rr_z > 3)) # None.
+nrow(subset(PDS_correct_sample2,bisbas_ss_basm_rr_z < -3)) # 15 participants.
 
 ```
 
@@ -736,4 +800,56 @@ plot_model(confirmatory4_caudate_ant_females,
                 labs(title = "PDS x Caudate anticipation interaction (sample 2 females)", colour = "Caudate anticipation z-score") +
                 nsh_theme
 
+```
+
+```{r CBCL_AccumbensbyTestosterone_Interaction}
+#Sample 2, confirmatory4Ea_accumbens_test_females.
+dataformodel <- data_no_accumbens_ant_no_test_outliers_females_sample2
+
+confirmatory4Ea_accumbens_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            accumbens_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_accumbens_test_females$gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE)
+
+
+plot_model(confirmatory4Ea_accumbens_test_females,
+                type = "pred", # To specify values bisbas, have to use "pred" instead.
+                terms = c("hormone_scr_ert_mean","accumbens_rvsn_ant_z[-2,0,2]"),colors = "Pastel1") + # Have to do this way because the z scored column is a matrix and have to index it.
+                ylab("Model predicted internalizing score") +
+                xlab("Testosterone") +
+                labs(title = "Testosterone x Accumbens anticipation interaction (sample 2 females)", colour = "Accumbens anticipation z-score") +
+                nsh_theme
+
+```
+
+```{r CBCL_PutamenbyTestosterone_Interaction}
+# Sample 1, confirmatory4Ea_putamen_test_males
+dataformodel <- data_no_putamen_ant_no_test_outliers_males_sample1 # Specify data subset here.
+
+confirmatory4Ea_putamen_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                            PDS_score+
+                            hormone_scr_ert_mean*  
+                            putamen_rvsn_ant_z+
+                            race.ethnicity.5level +
+                            demo_race_hispanic +
+                            interview_age,
+                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_putamen_test_males$gam)
+
+
+plot_model(confirmatory4Ea_putamen_test_males,
+                type = "pred", # To specify values bisbas, have to use "pred" instead.
+                terms = c("hormone_scr_ert_mean","putamen_rvsn_ant_z[-2,0,2]"),colors = "Pastel1") + # Have to do this way because the z scored column is a matrix and have to index it.
+                ylab("Model predicted internalizing score") +
+                xlab("Testosterone") +
+                labs(title = "Testosterone x Putamen anticipation interaction (sample 1 males)", colour = "Putamen anticipation z-score") +
+                nsh_theme
 ```
