@@ -165,11 +165,9 @@ t.test(males$cbcl_scr_dsm5_depress_t,females$cbcl_scr_dsm5_depress_t) # SIGNIFIC
 
 ```
 
-
-
 # Plot data.
 ## CBCL internalizing factor ~ Pubertal stage
- ```{r Confirmatory2, echo = FALSE}
+```{r Confirmatory2, echo = FALSE}
 # # Excluding CBCL outliers.
 # dataformodel <- data_no_CBCL_outliers
 # 
