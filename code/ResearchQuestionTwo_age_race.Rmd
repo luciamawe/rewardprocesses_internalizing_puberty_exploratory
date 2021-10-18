@@ -197,8 +197,6 @@ ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_s
 
 # Confirmatory Hypothesis 2: We hypothesize that advanced pubertal stage will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL) internalizing factor (Ullsperger & Nikolas, 2017).
 
-## Model A: CBCL internalizing factor ~ Pubertal stage
-
 ```{r Confirmatory2, echo = FALSE}
 # # Excluding CBCL outliers.
 # dataformodel <- data_no_CBCL_outliers_females
@@ -231,7 +229,7 @@ ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_s
 # summary(confirmatory2_males$gam) # PDS p < 0.001; R squared = 0.024.
 
 ```
-
+## Model A: CBCL internalizing factor ~ Pubertal stage
 ### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
