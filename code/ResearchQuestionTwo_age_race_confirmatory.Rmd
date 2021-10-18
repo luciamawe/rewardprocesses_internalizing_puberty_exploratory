@@ -199,8 +199,6 @@ ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_s
 
 # Confirmatory Hypothesis 2: We hypothesize that advanced pubertal stage will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL) internalizing factor (Ullsperger & Nikolas, 2017).
 
-## Model: CBCL internalizing factor ~ Pubertal stage
-## Females and males modeled separately.
 ```{r Confirmatory2, echo = FALSE}
 # # Excluding CBCL outliers.
 # dataformodel <- data_no_CBCL_outliers_females
@@ -234,7 +232,8 @@ ggplot(dataformodel, aes(x=PDS_score, y = cbcl_scr_syn_internal_r, group = src_s
 
 ```
 
-## All CBCL: Females and males modeled separately.
+## Model A: CBCL internalizing factor ~ Pubertal stage
+### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
@@ -251,7 +250,9 @@ confirmatory2_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id))
 
 summary(confirmatory2_females$gam)
-
+```
+### Males.
+```{r}
 # Males.
 dataformodel <- PDS_correct_males
 
@@ -269,7 +270,8 @@ summary(confirmatory2_males$gam)
 
 ```
 
-### Anxious-Depressed
+## Model B: CBCL Anxious-Depressed ~ Pubertal stage
+### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
@@ -289,8 +291,9 @@ summary(confirmatory2_females$gam)
 
 coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
 # beta =  0.42161; t= 2.56; p = 0.019.
-
-
+```
+### Males.
+```{r}
 # Males.
 dataformodel <- PDS_correct_males
 
@@ -308,7 +311,8 @@ summary(confirmatory2_males$gam)
 
 ```
 
-### Withdrawn-Depressed
+## Model C: CBCL Withdrawn-Depressed ~ Pubertal stage
+### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
@@ -327,7 +331,10 @@ confirmatory2_females <- gamm4(cbcl_scr_syn_withdep_r ~ PDS_score +
 summary(confirmatory2_females$gam)
 coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
 # beta = 0.38; t= 4.53; p < 0.001.
+```
 
+### Males.
+```{r}
 # Males.
 dataformodel <- PDS_correct_males
 
@@ -344,8 +351,8 @@ confirmatory2_males <- gamm4(cbcl_scr_syn_withdep_r ~ PDS_score +
 summary(confirmatory2_males$gam)
 
 ```
-
-### Depressed DSM-5
+## Model D: CBCL Depressed DSM-5 ~ Pubertal stage
+### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
@@ -365,7 +372,9 @@ summary(confirmatory2_females$gam)
 
 coef_test(confirmatory2_females$mer, vcov = "CR2", coeffs = "all")
 # beta = 0.32; t= 3.32; p = 0.004.
-
+```
+### Males.
+```{r}
 # Males.
 dataformodel <- PDS_correct_males
 
@@ -383,8 +392,8 @@ summary(confirmatory2_males$gam)
 
 ```
 
-# What about PDS category (instead of continuous)?
-## Females and males modeled separately.
+# Exploratory Hypothesis 2: We hypothesize that advanced pubertal stage (categorical) will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL)?
+
 ```{r Confirmatory2_category, echo = FALSE}
 # # Females.
 # dataformodel <- data_no_CBCL_outliers_females
@@ -413,7 +422,8 @@ summary(confirmatory2_males$gam)
 # summary(confirmatory2_category_males$gam) # PDS category 2: p = 0.1859, PDS category 3: p < 0.001, PDS category 4 = 0.10; R squared = 00275.
 ```
 
-## All CBCL: Females and males modeled separately.
+## Model A: CBCL internalizing factor ~ Pubertal category
+### Females.
 ```{r Confirmatory2_category, echo = FALSE}
 # Females.
 dataformodel <- PDS_correct_females
@@ -427,7 +437,9 @@ confirmatory2_category_females <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_categ
                       data = dataformodel, 
                       random = ~ (1 | site_id_l/rel_family_id))
 summary(confirmatory2_category_females$gam) 
-
+```
+### Males.
+```{r}
 # Males.
 dataformodel <- PDS_correct_males
 confirmatory2_category_males <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
@@ -442,8 +454,8 @@ confirmatory2_category_males <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_categor
 summary(confirmatory2_category_males$gam)
 ```
 
-
-### Anxious-Depressed
+## Model B: CBCL Anxious-Depressed ~ Pubertal category
+### Females. 
 ```{r Confirmatory2_category, echo = FALSE}
 # Females.
 dataformodel <- PDS_correct_females
@@ -457,7 +469,9 @@ confirmatory2_category_females <- gamm4(cbcl_scr_syn_anxdep_r ~ pds_p_ss_categor
                       data = dataformodel, 
                       random = ~ (1 | site_id_l/rel_family_id))
 summary(confirmatory2_category_females$gam) 
-
+```
+### Males.
+```{r}
 # Males.
 dataformodel <- PDS_correct_males
 confirmatory2_category_males <- gamm4(cbcl_scr_syn_anxdep_r ~ pds_p_ss_category +
@@ -472,7 +486,8 @@ confirmatory2_category_males <- gamm4(cbcl_scr_syn_anxdep_r ~ pds_p_ss_category 
 summary(confirmatory2_category_males$gam)
 ```
 
-### Withdrawn-Depressed
+## Model C: CBCL Withdrawn-Depressed ~ Pubertal category
+### Females.
 ```{r Confirmatory2_category, echo = FALSE}
 # Females.
 dataformodel <- PDS_correct_females
@@ -486,7 +501,9 @@ confirmatory2_category_females <- gamm4(cbcl_scr_syn_withdep_r ~ pds_p_ss_catego
                       data = dataformodel, 
                       random = ~ (1 | site_id_l/rel_family_id))
 summary(confirmatory2_category_females$gam) 
-
+```
+### Males.
+```{r}
 # Males.
 dataformodel <- PDS_correct_males
 confirmatory2_category_males <- gamm4(cbcl_scr_syn_withdep_r ~ pds_p_ss_category +
@@ -501,8 +518,8 @@ confirmatory2_category_males <- gamm4(cbcl_scr_syn_withdep_r ~ pds_p_ss_category
 summary(confirmatory2_category_males$gam)
 ```
 
-
-### Depressed DSM-5
+## Model D: CBCL Depressed DSM-5 ~ Pubertal category
+### Females.
 ```{r Confirmatory2_category, echo = FALSE}
 # Females.
 dataformodel <- PDS_correct_females
@@ -516,7 +533,9 @@ confirmatory2_category_females <- gamm4(cbcl_scr_dsm5_depress_r ~ pds_p_ss_categ
                       data = dataformodel, 
                       random = ~ (1 | site_id_l/rel_family_id))
 summary(confirmatory2_category_females$gam) 
-
+```
+### Males.
+```{r}
 # Males.
 dataformodel <- PDS_correct_males
 confirmatory2_category_males <- gamm4(cbcl_scr_dsm5_depress_r ~ pds_p_ss_category +
@@ -604,8 +623,8 @@ summary(confirmatory2_category_males$gam)
 ```
 
 
-# Exploratory Hypothesis 2: We will investigate whether testosterone relates to internalizing symptoms and whether this relationship is present after controlling for PDS.
-## Model A: CBCL internalizing factor ~ Testosterone
+# Exploratory Hypothesis 3: We will investigate whether testosterone relates to internalizing symptoms.
+
 ```{r Exploratory2A, echo = FALSE}
 # # Get an idea of the sample.
 # mean(data_no_CBCL_test_outliers$hormone_scr_ert_mean,na.rm= TRUE) # 34.33287.
@@ -637,7 +656,7 @@ summary(confirmatory2_category_males$gam)
 ```
 
 
-#### Female.
+
 ```{r}
 # dataformodel <- data_no_CBCL_test_outliers_females
 # 
@@ -655,7 +674,6 @@ summary(confirmatory2_category_males$gam)
 # summary(confirmatory2_testosterone_CBCL_female$gam)
 ```
 
-#### Male.
 ```{r}
 # dataformodel <- data_no_CBCL_test_outliers_males
 # 
@@ -673,9 +691,8 @@ summary(confirmatory2_category_males$gam)
 # summary(confirmatory2_testosterone_CBCL_male$gam)
 ```
 
-
-
-#### All CBCL: Females and males modeled separately.
+## Model A: CBCL internalizing factor ~ Testosterone
+### Females.
 ```{r}
 dataformodel <- data_no_test_outliers_females
 
@@ -692,7 +709,7 @@ confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormon
                       
 summary(confirmatory2_testosterone_CBCL_female$gam)
 ```
-
+### Males.
 ```{r}
 dataformodel <- data_no_test_outliers_males
 
@@ -710,7 +727,8 @@ confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_
 summary(confirmatory2_testosterone_CBCL_male$gam)
 ```
 
-##### Anxious-Depressed
+## Model B: CBCL Anxious-Depressed ~ Testosterone
+### Females.
 ```{r}
 dataformodel <- data_no_test_outliers_females
 
@@ -727,7 +745,7 @@ confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_
                       
 summary(confirmatory2_testosterone_CBCL_female$gam)
 ```
-
+### Males.
 ```{r}
 dataformodel <- data_no_test_outliers_males
 
@@ -745,7 +763,8 @@ confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_sc
 summary(confirmatory2_testosterone_CBCL_male$gam)
 ```
 
-##### Withdrawn-Depressed
+## Model C: CBCL Withdrawn-Depressed ~ Testosterone
+### Females.
 ```{r}
 dataformodel <- data_no_test_outliers_females
 
@@ -762,7 +781,7 @@ confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone
                       
 summary(confirmatory2_testosterone_CBCL_female$gam)
 ```
-
+### Males.
 ```{r}
 dataformodel <- data_no_test_outliers_males
 
@@ -780,7 +799,8 @@ confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_s
 summary(confirmatory2_testosterone_CBCL_male$gam)
 ```
 
-##### Depressed DSM-5
+## Model D: CBCL Depressed DSM-5 ~ Testosterone
+### Females.
 ```{r}
 dataformodel <- data_no_test_outliers_females
 
@@ -797,7 +817,7 @@ confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormon
                       
 summary(confirmatory2_testosterone_CBCL_female$gam)
 ```
-
+### Males.
 ```{r}
 dataformodel <- data_no_test_outliers_males
 
@@ -815,8 +835,8 @@ confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_
 summary(confirmatory2_testosterone_CBCL_male$gam)
 ```
 
-## Model B: CBCL internalizing factor ~ Testosterone + Pubertal stage 
-#### Female.
+# Exploratory Hypothesis 4: We will investigate whether testosterone relates to internalizing symptoms after controlling for PDS.
+
 ```{r Exploratory2B, echo = FALSE}
 
 # dataformodel <- data_no_CBCL_test_outliers_females
@@ -852,7 +872,6 @@ summary(confirmatory2_testosterone_CBCL_male$gam)
 # summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ```
 
-#### Male.
 ```{r}
 # dataformodel <- data_no_CBCL_test_outliers_males
 #   
@@ -885,8 +904,8 @@ summary(confirmatory2_testosterone_CBCL_male$gam)
 # summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 
-
-#### All CBCL: Females and males modeled separately.
+## Model A: CBCL internalizing factor ~ Testosterone + Pubertal stage 
+### Females.
 ```{r Exploratory2B, echo = FALSE}
 
 dataformodel <- data_no_test_outliers_females
@@ -921,7 +940,7 @@ confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_
                       
 summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ```
-
+### Males.
 ```{r}
 dataformodel <- data_no_test_outliers_males 
   
@@ -953,8 +972,8 @@ confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_internal_r 
                       
 summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
-
-##### Anxious-Depressed
+## Model B: CBCL Anxious-Depressed ~ Testosterone + Pubertal stage 
+### Females.
 ```{r Exploratory2B, echo = FALSE}
 #FEMALES
 dataformodel <- data_no_test_outliers_females
@@ -989,7 +1008,7 @@ confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_anxdep_r 
                       
 summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ```
-
+### Males.
 ```{r}
 #MALES
 dataformodel <- data_no_test_outliers_males 
@@ -1023,7 +1042,8 @@ confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_anxdep_r ~ 
 summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 
-##### Withdrawn-Depressed
+## Model C: CBCL Withdrawn-Depressed ~ Testosterone + Pubertal stage 
+### Females.
 ```{r Exploratory2B, echo = FALSE}
 #FEMALES
 dataformodel <- data_no_test_outliers_females
@@ -1058,7 +1078,7 @@ confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_withdep_r
                       
 summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ```
-
+### Males.
 ```{r}
 #MALES
 dataformodel <- data_no_test_outliers_males 
@@ -1092,7 +1112,8 @@ confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_withdep_r ~
 summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 
-##### Depressed DSM-5
+## Model D: CBCL Depressed DSM-5 ~ Testosterone + Pubertal stage 
+### Females.
 ```{r Exploratory2B, echo = FALSE}
 #FEMALES
 dataformodel <- data_no_test_outliers_females
@@ -1127,7 +1148,7 @@ confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_dsm5_depress_
                       
 summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ```
-
+### Males.
 ```{r}
 #MALES
 dataformodel <- data_no_test_outliers_males 
@@ -1161,7 +1182,7 @@ confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r 
 summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 
-## Exploring CBCL categories without excluding outliers: normal range (<65), borderline (65-70) and clinical (>70) 
+# Exploring CBCL categories without excluding outliers: normal range (<65), borderline (65-70) and clinical (>70) 
 ## Separate males and females
 ```{r Confirmatory2, echo = FALSE}
 # Females
@@ -1193,7 +1214,7 @@ PDS_correct_males <- PDS_correct_males %>%
 table(PDS_correct_males$cbcl_scr_syn_internal_cat)  
       #Normal 1916, Borderline 190, Clinical 58
 ```
-#Association between PDS and CBCL category (normal, borderline, clinical)
+## Association between PDS and CBCL category (normal, borderline, clinical)
 ```{r}
 #Females
 
@@ -1214,7 +1235,7 @@ summary(cbcl_cat_pds_females$gam)
 plot_model(cbcl_cat_pds_females, type = "pred", terms = c("cbcl_scr_syn_internal_cat")) 
 ```
 
-#Association between PDS and CBCL category (normal, borderline, clinical)
+## Association between PDS and CBCL category (normal, borderline, clinical)
 ```{r}
 #Males
 dataformodel <- PDS_correct_males
