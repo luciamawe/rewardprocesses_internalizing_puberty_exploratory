@@ -55,11 +55,11 @@ script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_explora
 source(script_path)
 ```
 
-# RQ2
-# Confirmatory Hypothesis 2: We hypothesize that advanced pubertal stage will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL) internalizing factor (Ullsperger & Nikolas, 2017).
+# RQ1-------------------------------
+# Confirmatory Hypothesis 1: We hypothesize that advanced pubertal stage will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL) internalizing factor (Ullsperger & Nikolas, 2017).
 
 
-## Model A: CBCL internalizing factor ~ Pubertal stage
+## Model A: CBCL internalizing factor ~ PDS
 ### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
@@ -97,7 +97,7 @@ summary(confirmatory2_males$gam)
 
 ```
 
-## Model B: CBCL Anxious-Depressed ~ Pubertal stage
+## Model B: CBCL Anxious-Depressed ~ PDS
 ### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
@@ -137,7 +137,7 @@ confirmatory2_males <- gamm4(cbcl_scr_syn_anxdep_r ~ PDS_score +
 summary(confirmatory2_males$gam)
 
 ```
-## Model C: CBCL Withdrawn-Depressed ~ Pubertal stage
+## Model C: CBCL Withdrawn-Depressed ~ PDS
 ### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
@@ -176,7 +176,7 @@ confirmatory2_males <- gamm4(cbcl_scr_syn_withdep_r ~ PDS_score +
 summary(confirmatory2_males$gam)
 
 ```
-## Model D: CBCL Depressed DSM-5 ~ Pubertal stage
+## Model D: CBCL Depressed DSM-5 ~ PDS
 ### Females.
 ```{r Confirmatory2, echo = FALSE}
 # Including CBCL outliers.
@@ -217,7 +217,7 @@ summary(confirmatory2_males$gam)
 
 ```
 
-# Exploratory Hypothesis 2: We hypothesize that advanced pubertal stage (categorical) will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL)?
+# Exploratory Hypothesis 1: We hypothesize that advanced pubertal stage (categorical) will be associated with higher internalizing symptoms as measured by the Child Behavior Checklist (CBCL)?
 
 
 ## Model A: CBCL internalizing factor ~ Pubertal category
@@ -351,7 +351,7 @@ summary(confirmatory2_category_males$gam)
 
 
 
-# Exploratory Hypothesis 3: We will investigate whether testosterone relates to internalizing symptoms.
+# Exploratory Hypothesis 2: We will investigate whether testosterone relates to internalizing symptoms.
 
 ## Model A: CBCL internalizing factor ~ Testosterone
 ### Females.
@@ -496,7 +496,7 @@ confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_
 summary(confirmatory2_testosterone_CBCL_male$gam)
 ```
 
-# Exploratory Hypothesis 4: We will investigate whether testosterone relates to internalizing symptoms after controlling for PDS.
+# Exploratory Hypothesis 3: We will investigate whether testosterone relates to internalizing symptoms after controlling for PDS.
 
 ## Model A: CBCL internalizing factor ~ Testosterone + Pubertal stage 
 ### Females.
@@ -783,7 +783,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 
 
 
-# RQ1
+# RQ2-------------------------------
 
 
 # Exploratory Hypothesis 1A: We hypothesize that more advanced pubertal stages will be associated with greater self-reported reward responsiveness (BAS - RR) (Harden et al. 2018).
@@ -857,7 +857,7 @@ summary(exploratory1C_lg_small_RT_males$gam)
 
 
 
-# Confirmatory Hypothesis 1 SEPARATE STRIATAL REGIONS (anticipation stage) 
+# Confirmatory Hypothesis 2 SEPARATE STRIATAL REGIONS (anticipation stage) 
 ## Model A: Caudate Anticipation ~ Pubertal stage
 ### Females.
 ```{r Confirmatory1Female_Caudate, echo = FALSE}
@@ -933,7 +933,7 @@ summary(confirmatory1_accumbens_males$gam)
 ```
 
 
-# Exploratory Hypothesis 1A: SEPARATE STRIATAL REGIONS (feedback stage)
+# Exploratory Hypothesis 1C: SEPARATE STRIATAL REGIONS (feedback stage)
 ## Model A: Caudate Feedback  ~ Pubertal stage
 ### Females.
 ```{r Exploratory1A_Caudate_Females, echo = FALSE}
@@ -1008,7 +1008,7 @@ summary(exploratory1A_accumbens_males$gam)
 ```
 
 
-# Exploratory Hypothesis 1C: We hypothesize that testosterone will be positively associated with our indicators of reward (neural activity, behavioral reaction time, and self-reported reward responsiveness).
+# Exploratory Hypothesis 1D: We hypothesize that testosterone will be positively associated with our indicators of reward (neural activity, behavioral reaction time, and self-reported reward responsiveness).
 ## Model C: OFC activation (anticipation stage) ~ Testosterone
 ### Females.
 ```{r Exploratory1D_C, echo = FALSE}
@@ -1167,8 +1167,8 @@ summary(modelF_males$gam)
 
 
 
-# RQ3
-# Confirmatory Hypothesis 3: We hypothesize that striatal and orbitofrontal cortex activity during the reward anticipation and feedback stages of the MID task will be negatively associated with internalizing symptoms (Forbes et al., 2010; Ubl et al., 2015; Luking et al., 2016).
+# RQ3-------------------------------
+# Confirmatory Hypothesis 3: We hypothesize that striatal regions and orbitofrontal cortex activity during the reward anticipation and feedback stages of the MID task will be negatively associated with internalizing symptoms (Forbes et al., 2010; Ubl et al., 2015; Luking et al., 2016).
 
 
 ## Model A: CBCL internalizing factor ~ Nucleus Accumbens activity (anticipation stage - All reward v. neutral)
@@ -1202,7 +1202,7 @@ summary(confirmatory3A_nacc_males$gam)
 
 ```
 
-## Model A: CBCL internalizing factor ~ Caudate activity (anticipation stage - All reward v. neutral)
+## Model B: CBCL internalizing factor ~ Caudate activity (anticipation stage - All reward v. neutral)
 ### Females.
 ```{r Confirmatory3AFemaleCaudate, echo = FALSE}
 dataformodel <- data_no_caudate_ant_outliers_females
@@ -1234,7 +1234,7 @@ summary(confirmatory3A_caud_males$gam)
 
 ```
 
-## Model A: CBCL internalizing factor ~ Putamen activity (anticipation stage - All reward v. neutral)
+## Model C: CBCL internalizing factor ~ Putamen activity (anticipation stage - All reward v. neutral)
 ### Females.
 ```{r Confirmatory3AFemalePutamen, echo = FALSE}
 dataformodel <- data_no_putamen_ant_outliers_females
@@ -1265,7 +1265,7 @@ summary(confirmatory3A_putamen_males$gam)
 ```
 
 
-## Model B: CBCL internalizing factor ~ Accumbens activity (feedback stage)
+## Model D: CBCL internalizing factor ~ Accumbens activity (feedback stage)
 ### Females.
 ```{r Confirmatory3BFemaleAccumbens, echo = FALSE}
 dataformodel <- data_no_accumbens_feed_outliers_females
@@ -1293,7 +1293,7 @@ confirmatory3B_accumbens_males <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_posv
 summary(confirmatory3B_accumbens_males$gam)
 ```
 
-## Model B: CBCL internalizing factor ~ Caudate activity (feedback stage)
+## Model E: CBCL internalizing factor ~ Caudate activity (feedback stage)
 ### Females.
 ```{r Confirmatory3BFemaleCaudate, echo = FALSE}
 dataformodel <- data_no_caudate_feed_outliers_females
@@ -1322,7 +1322,7 @@ confirmatory3B_caudate_males <- gamm4(cbcl_scr_syn_internal_r ~ caudate_posvsneg
 summary(confirmatory3B_caudate_males$gam)
 ```
 
-## Model B: CBCL internalizing factor ~ Putamen activity (feedback stage)
+## Model F: CBCL internalizing factor ~ Putamen activity (feedback stage)
 ### Females.
 ```{r Confirmatory3BFemalePutamen, echo = FALSE}
 dataformodel <- data_no_putamen_feed_outliers_females
@@ -1350,7 +1350,7 @@ confirmatory3B_putamen_males <- gamm4(cbcl_scr_syn_internal_r ~ putamen_posvsneg
 summary(confirmatory3B_putamen_males$gam)
 ```
 
-## Model C: CBCL internalizing factor ~ Orbitofrontal cortex activity (anticipation stage)
+## Model G: CBCL internalizing factor ~ Orbitofrontal cortex activity (anticipation stage)
 ### Females.
 ```{r Confirmatory3CFemale, echo = FALSE}
 # Lateral OFC.
@@ -1397,7 +1397,7 @@ confirmatory3C_mOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_rvsn_ant_z +
 summary(confirmatory3C_mOFC_males$gam)
 ```
 
-## Model D: CBCL internalizing factor ~ Orbitofrontal cortex activity (feedback stage)
+## Model H: CBCL internalizing factor ~ Orbitofrontal cortex activity (feedback stage)
 ### Females.
 ```{r Confirmatory3DFemale, echo = FALSE}
 # Lateral OFC.
@@ -1534,10 +1534,10 @@ exploratory3B_males_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_
 summary(exploratory3B_males_largesmallreward$gam)
 ```
 
-# RQ4
+# RQ4-------------------------------
 # Confirmatory Hypothesis 4: We predict that striatal responses to reward will moderate the effect of pubertal stage such that the relationship between advanced pubertal status and internalizing symptoms will be stronger among participants with attenuated activation in striatal reward circuitry during reward anticipation.
 
-##Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage)
+##Model A: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage)
 ### Females
 ```{r Confirmatory4Accumbens_Females, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
@@ -1584,7 +1584,7 @@ summary(confirmatory4_accumbens_ant_males$gam)
 # plot_model(confirmatory4_accumbens_ant_males,type = "int", show.data = TRUE) #Interaction plot
 ```
 
-##Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
+##Model B: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
 ### Females
 ```{r Confirmatory4Caudate_Females, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
@@ -1632,7 +1632,7 @@ summary(confirmatory4_caudate_ant_males$gam)
 ```
 
 
-##Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage)
+##Model C: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage)
 ### Females
 ```{r Confirmatory4Putamen_Females, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
@@ -1684,7 +1684,7 @@ summary(confirmatory4_putamen_ant_males$gam)
 # Exploratory Hypothesis 4A: We will investigate whether striatal responses to reward during reward feedback moderates the effect of pubertal stage on internalizing symptoms. 
 
 
-##  Model: CBCL internalizing factor ~ PDS*accumbens activity 
+##  Model A: CBCL internalizing factor ~ PDS*accumbens activity 
 ###Females
 ```{r Exploratory4AAccumbens_Females, echo = FALSE}
 # Accumbens feedback, exlcuding outliers.
@@ -1724,7 +1724,7 @@ exploratory4a_accumbens_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4a_accumbens_feedback_males$gam )
 ```
 
-##  Model: CBCL internalizing factor ~ PDS*caudate activity 
+##  Model B: CBCL internalizing factor ~ PDS*caudate activity 
 ###Females
 ```{r Exploratory4ACaudate_Females, echo = FALSE}
 # Caudate feedback, exlcuding outliers.
@@ -1765,7 +1765,7 @@ exploratory4a_caudate_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4a_caudate_feedback_males$gam )
 ```
 
-##  Model: CBCL internalizing factor ~ PDS*putamen activity 
+##  Model C: CBCL internalizing factor ~ PDS*putamen activity 
 ###Females
 ```{r Exploratory4APutamen_Females, echo = FALSE}
 # Putamen feedback, exlcuding outliers.
@@ -2089,7 +2089,7 @@ summary(exploratory4c_lg_small_RT_males$gam)
 
 # Exploratory Hypothesis 4E: We will investigate whether testosterone, and its relationship with reward, relates to internalizing symptoms, while controlling for PDS.
 
-##Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage) + testosterone
+##Model A: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage) + testosterone
 ### Females
 ```{r Exploratory4e_Accumbens_Anticipation_Testosterones_Females, echo = FALSE}
 
@@ -2131,7 +2131,7 @@ summary(confirmatory4Ea_accumbens_test_males $gam)
 #plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
 ```
 
-##Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage) + testosterone
+##Model B: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage) + testosterone
 ### Females
 ```{r Exploratory4e_Caudate_Anticipation_Testosterones_Females, echo = FALSE}
 # Composite striatum score, exlcuding outliers.
@@ -2180,7 +2180,7 @@ summary(confirmatory4Ea_caudate_test_males $gam)
 #plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
 ```
 
-##Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage) + testosterone
+##Model C: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage) + testosterone
 ### Females
 ```{r Exploratory4e_Putamen_Anticipation_Testosterones_Females, echo = FALSE}
 
