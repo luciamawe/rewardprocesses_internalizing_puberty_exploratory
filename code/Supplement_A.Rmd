@@ -4,7 +4,7 @@ author: "Elizabeth McNeilly"
 date: "10/29/2021"
 output: html_document
 ---
-#NOTE:  The purpose of this script is to provide the results for Sample 1.
+#NOTE:  This script provides the results for Sample 1.
 
 # SETUP
 ```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
@@ -653,7 +653,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 
 # 2---Reward~Puberty---
 
-## 2.1 Model: BIS-BAS-RR ~ Pubertal stage
+## 2.1 Model: BIS-BAS-RR ~ PDS
 ### Females
 ```{r Exploratory1BFemales, echo = FALSE}
 dataformodel <- data_no_bisbas_outliers_females
@@ -678,7 +678,7 @@ summary(exploratory1B_males$gam)
 ```
 
 
-## 2.2 Model : Reaction Time ~ Pubertal Stage
+## 2.2 Model : Reaction Time ~ PDS
 
 ### Females
 ```{r Exploratory1CFemales, echo = FALSE}
@@ -722,7 +722,7 @@ summary(exploratory1C_lg_small_RT_males$gam)
 
 
 
-## 2.3 Model: Caudate Anticipation ~ Pubertal stage
+## 2.3 Model: Caudate Anticipation ~ PDS
 ### Females
 ```{r Confirmatory1Female_Caudate, echo = FALSE}
 dataformodel <- data_no_caudate_ant_outliers_females 
@@ -747,7 +747,7 @@ summary(confirmatory1_caudate_males$gam)
 
 ```
 
-## 2.4 Model B: Putamen Anticipation ~ Pubertal stage
+## 2.4 Model B: Putamen Anticipation ~ PDS
 ### Females
 ```{r Confirmatory1Female_Putamen, echo = FALSE}
 dataformodel <- data_no_putamen_ant_outliers_females 
@@ -771,7 +771,7 @@ confirmatory1_putamen_males <- gamm4(putamen_rvsn_ant_z ~ PDS_score + interview_
 summary(confirmatory1_putamen_males$gam)
 ```
 
-## 2.5 Model: Accumbens Anticipation ~ Pubertal stage
+## 2.5 Model: Accumbens Anticipation ~ PDS
 ### Females
 ```{r Confirmatory1Female_Accumbens, echo = FALSE}
 dataformodel <- data_no_accumbens_ant_outliers_females 
@@ -797,7 +797,7 @@ summary(confirmatory1_accumbens_males$gam)
 ```
 
 
-## 2.6 Model: Caudate Feedback  ~ Pubertal stage
+## 2.6 Model: Caudate Feedback  ~ PDS
 ### Females
 ```{r Exploratory1A_Caudate_Females, echo = FALSE}
 dataformodel <- data_no_caudate_feed_outliers_females
@@ -821,7 +821,7 @@ exploratory1A_caudate_males <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score + i
 summary(exploratory1A_caudate_males$gam)
 
 ```
-## 2.7 Model: Putamen Feedback ~ Pubertal stage
+## 2.7 Model: Putamen Feedback ~ PDS
 ### Females
 ```{r Exploratory1A_Putamen_Females, echo = FALSE}
 dataformodel <- data_no_putamen_feed_outliers_females
@@ -845,7 +845,7 @@ exploratory1A_putamen_males <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score + i
 summary(exploratory1A_putamen_males$gam)
 
 ```
-## 2.8 Model: Accumbens Feedback ~ Pubertal stage
+## 2.8 Model: Accumbens Feedback ~ PDS
 ### Females
 ```{r Exploratory1A_Accumbens_Females, echo = FALSE}
 dataformodel <- data_no_accumbens_feed_outliers_females
