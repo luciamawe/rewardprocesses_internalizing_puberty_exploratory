@@ -2,7 +2,9 @@
 title: "Supplement A"
 author: "Elizabeth McNeilly"
 date: "10/29/2021"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 #NOTE:  This script provides the results for Sample 1.
 
@@ -59,7 +61,7 @@ source(script_path)
 
 ## 1.1 Model: CBCL internalizing factor ~ PDS
 ### Females
-```{r Confirmatory2, echo = FALSE}
+```{r, echo = FALSE}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
 
@@ -91,7 +93,7 @@ summary(confirmatory2_males$gam)
 
 ## 1.2 Model: CBCL Anxious-Depressed ~ PDS
 ### Females
-```{r Confirmatory2, echo = FALSE}
+```{r, echo = FALSE}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
 
