@@ -1,12 +1,21 @@
 ---
-title: "Supplement A"
-author: "Elizabeth McNeilly"
+title: 'Supplement A'
+subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9-and 10-year-olds in the ABCD Study'
+author: 'Elizabeth McNeilly*, Natalie Saragosa-Harris*, Kathryn Mills, Ronald Dahl, Lucía Magis-Weinberg (*Equal author contribution)'
 date: "10/29/2021"
 output:
-  pdf_document: default
-  html_document: default
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    toc_float:
+      collapsed: true
+  html_document:
+    toc: yes
+    toc_depth: '3'
+    toc_float:
+      collapsed: true
 ---
-#NOTE:  This script provides the results for Sample 1.
+# Results for Sample 1
 
 # SETUP
 ```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
@@ -61,7 +70,7 @@ source(script_path)
 
 ## 1.1 Model: CBCL internalizing factor ~ PDS
 ### Females
-```{r, echo = FALSE}
+```{r}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
 
@@ -93,7 +102,7 @@ summary(confirmatory2_males$gam)
 
 ## 1.2 Model: CBCL Anxious-Depressed ~ PDS
 ### Females
-```{r, echo = FALSE}
+```{r}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
 
@@ -127,7 +136,7 @@ summary(confirmatory2_males$gam)
 ```
 ## 1.3 Model: CBCL Withdrawn-Depressed ~ PDS
 ### Females
-```{r Confirmatory2, echo = FALSE}
+```{r}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
 
@@ -160,7 +169,7 @@ summary(confirmatory2_males$gam)
 ```
 ## 1.4 Model: CBCL Depressed DSM-5 ~ PDS
 ### Females
-```{r Confirmatory2, echo = FALSE}
+```{r}
 # Including CBCL outliers.
 dataformodel <- PDS_correct_females
 
@@ -197,7 +206,7 @@ summary(confirmatory2_males$gam)
 
 ## 1.5 Model: CBCL internalizing factor ~ Pubertal category
 ### Females
-```{r Confirmatory2_category, echo = FALSE}
+```{r}
 # Females.
 dataformodel <- PDS_correct_females
 confirmatory2_category_females <- gamm4(cbcl_scr_syn_internal_r ~ pds_p_ss_category +
@@ -223,7 +232,7 @@ summary(confirmatory2_category_males$gam)
 
 ## 1.6 Model: CBCL Anxious-Depressed ~ Pubertal category
 ### Females 
-```{r Confirmatory2_category, echo = FALSE}
+```{r}
 # Females.
 dataformodel <- PDS_correct_females
 confirmatory2_category_females <- gamm4(cbcl_scr_syn_anxdep_r ~ pds_p_ss_category +
@@ -249,7 +258,7 @@ summary(confirmatory2_category_males$gam)
 
 ## 1.7 Model: CBCL Withdrawn-Depressed ~ Pubertal category
 ### Females
-```{r Confirmatory2_category, echo = FALSE}
+```{r}
 # Females.
 dataformodel <- PDS_correct_females
 confirmatory2_category_females <- gamm4(cbcl_scr_syn_withdep_r ~ pds_p_ss_category +
@@ -275,7 +284,7 @@ summary(confirmatory2_category_males$gam)
 
 ## 1.8 Model: CBCL Depressed DSM-5 ~ Pubertal category
 ### Females
-```{r Confirmatory2_category, echo = FALSE}
+```{r}
 # Females.
 dataformodel <- PDS_correct_females
 confirmatory2_category_females <- gamm4(cbcl_scr_dsm5_depress_r ~ pds_p_ss_category +
@@ -415,7 +424,7 @@ summary(confirmatory2_testosterone_CBCL_male$gam)
 
 ## 1.13 Model: CBCL internalizing factor ~ Testosterone + PDS 
 ### Females
-```{r Exploratory2B, echo = FALSE}
+```{r}
 
 dataformodel <- data_no_test_outliers_females
 
@@ -473,7 +482,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 ## 1.15 Model: CBCL Anxious-Depressed ~ Testosterone + PDS 
 ### Females
-```{r Exploratory2B, echo = FALSE}
+```{r}
 #FEMALES
 dataformodel <- data_no_test_outliers_females
 
@@ -531,7 +540,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 ## 1.17 Model: CBCL Withdrawn-Depressed ~ Testosterone + PDS
 ### Females
-```{r Exploratory2B, echo = FALSE}
+```{r}
 #FEMALES
 dataformodel <- data_no_test_outliers_females
 
@@ -589,7 +598,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
 ## 1.19 Model: CBCL Depressed DSM-5 ~ Testosterone + PDS 
 ### Females
-```{r Exploratory2B, echo = FALSE}
+```{r}
 #FEMALES
 dataformodel <- data_no_test_outliers_females
 
@@ -1631,7 +1640,7 @@ summary(exploratory4a_caudate_feedback_males$gam )
 
 ## 4.8 Model: CBCL internalizing factor ~ PDS*putamen activity (feedback)
 ### Females
-```{r Exploratory4APutamen_Females, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_putamen_feed_outliers_females
 
@@ -1645,7 +1654,7 @@ summary(exploratory4a_putamen_feedback_females$gam )
 ```
 
 ### Males
-```{r Exploratory4APutamen_Females, echo = FALSE}
+```{r, echo = FALSE}
 #Putamen feedback", males
 
 dataformodel <- data_no_putamen_feed_outliers_males
@@ -1731,7 +1740,7 @@ summary(exploratory4b_mOFC_feed_allCBCL_males$gam )
 
 ## 4.11 Model: CBCL internalizing factor ~ PDS*BIS-BAS
 ### Females
-```{r Exploratory4C, echo = FALSE}
+```{r, echo = FALSE}
 #FEMALES
 dataformodel <- data_no_bisbas_outliers_females
 
@@ -1745,7 +1754,7 @@ summary(exploratory4c_bisbas_allCBCL_females$gam )
 ```
 
 ### Males
-```{r Exploratory4C, echo = FALSE}
+```{r, echo = FALSE}
 dataformodel <- data_no_bisbas_outliers_males
 
 exploratory4c_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
@@ -1761,7 +1770,7 @@ summary(exploratory4c_bisbas_allCBCL_males$gam)
 
 ## 4.12 Model: CBCL internalizing factor ~ PDS*MID reaction time (large reward vs. neutral)
 ### Females
-```{r Exploratory4D, echo = FALSE}
+```{r, echo = FALSE}
 #FEMALES
 dataformodel <- data_no_RT_MID_outliers_females
 
@@ -1794,7 +1803,7 @@ summary(exploratory4c_lg_neutral_RT_males$gam)
 
 ## 4.13 Model: CBCL internalizing factor ~ PDS*MID reaction time (large vs. small reward)
 ### Females
-```{r Exploratory4D, echo = FALSE}
+```{r, echo = FALSE}
 #LARGE REWARD VS. SMALL REWARD POSITIVE
 exploratory4c_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score*
@@ -1822,7 +1831,7 @@ summary(exploratory4c_lg_small_RT_males$gam)
 
 ## 4.14 Model: CBCL internalizing factor ~ testosterone*accumbens activity (anticipation stage) + PDS
 ### Females
-```{r Exploratory4e_Accumbens_Anticipation_Testosterones_Females, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_accumbens_ant_no_test_outliers_females  #Specify data subset here
 
@@ -1839,7 +1848,7 @@ summary(confirmatory4Ea_accumbens_test_females $gam)
 #plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
 ```
 ### Males
-```{r r Exploratory4e_Accumbens_Anticipation_Testosterones_Males, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_accumbens_ant_no_test_outliers_males  #Specify data subset here
 
@@ -1858,7 +1867,7 @@ summary(confirmatory4Ea_accumbens_test_males $gam)
 
 ## 4.15 Model: CBCL internalizing factor ~ testosterone*caudate activity (anticipation stage) + PDS
 ### Females
-```{r Exploratory4e_Caudate_Anticipation_Testosterones_Females, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_caudate_ant_no_test_outliers_females  #Specify data subset here
 
@@ -1879,7 +1888,7 @@ summary(confirmatory4Ea_caudate_test_females $gam)
 ```
 
 ### Males
-```{r r Exploratory4e_Caudate_Anticipation_Testosterones_Males, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_caudate_ant_no_test_outliers_males  #Specify data subset here
 
@@ -1898,7 +1907,7 @@ summary(confirmatory4Ea_caudate_test_males $gam)
 
 ## 4.16 Model: CBCL internalizing factor ~ testosterone*putamen activity (anticipation stage) + PDS
 ### Females
-```{r Exploratory4e_Putamen_Anticipation_Testosterones_Females, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_putamen_ant_no_test_outliers_females  #Specify data subset here
 
@@ -1916,7 +1925,7 @@ summary(confirmatory4Ea_putamen_test_females $gam)
 ```
 
 ### Males
-```{r Exploratory4e_Putamen_Anticipation_Testosterones_Males, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_putamen_ant_no_test_outliers_males  #Specify data subset here
 
@@ -1936,7 +1945,7 @@ summary(confirmatory4Ea_putamen_test_males $gam)
 
 ## 4.17 Model: CBCL internalizing factor ~ testosterone*accumbens activity (feedback stage) + PDS
 ### Females
-```{r Exploratory4eb_Accumbens_Feedback_Testosterones_Females, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_accumbens_feed_no_test_outliers_females  #Specify data subset here
 
@@ -1953,7 +1962,7 @@ summary(exploratory4Eb_accumbens_test_feed_females$gam)
 
 ```
 ### Males
-```{r Exploratory4eb_Accumbens_Feedback_Testosterones_Males, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_accumbens_feed_no_test_outliers_males  #Specify data subset here
 
@@ -1971,7 +1980,7 @@ summary(exploratory4Eb_accumbens_test_feed_males$gam)
 
 ## 4.18 Model: CBCL internalizing factor ~ testosterone*caudate activity (Feedback stage) + PDS
 ### Females
-```{r Exploratory4eb_Caudate_Feedback_Testosterones_Females, echo = FALSE}
+```{r, echo = FALSE}
 dataformodel <- data_no_caudate_feed_no_test_outliers_females #Specify data subset here
 
 confirmatory4Eb_caudate_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
@@ -1987,7 +1996,7 @@ summary(confirmatory4Eb_caudate_test_feed_females$gam)
 ```
 
 ### Males
-```{r r Exploratory4eb_Caudate_Feedback_Testosterones_Males, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_caudate_feed_no_test_outliers_males #Specify data subset here
 
@@ -2005,7 +2014,7 @@ summary(confirmatory4Eb_caudate_test_feed_males$gam)
 
 ## 4.19 Model: CBCL internalizing factor ~ testosterone*putamen activity (Feedback stage) + PDS
 ### Females
-```{r Exploratory4eb_Putamen_Feedback_Testosterones_Females, echo = FALSE}
+```{r, echo = FALSE}
 dataformodel <- data_no_putamen_feed_no_test_outliers_females #Specify data subset here
 
 confirmatory4Eb_putamen_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
@@ -2022,7 +2031,7 @@ summary(confirmatory4Eb_putamen_test_feed_females$gam)
 ```
 
 ### Males
-```{r Exploratory4eb_Putamen_Feedback_Testosterones_Males, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_putamen_feed_outliers_no_test_males #Specify data subset here
 
@@ -2108,7 +2117,7 @@ summary(exploratory4c_mOFC_ant_allCBCL_test_males$gam )
 
 ## 4.22 Model: CBCL internalizing factor ~ Testosterone*lateral OFC activity (feedback stage) + PDS
 ### Females
-```{r Exploratory4DOFC_feed_females, echo = FALSE}
+```{r, echo = FALSE}
 #Lateral OFC feedback, FEMALES
 
 dataformodel <- data_no_lOFC_feed_test_outliers_females 
@@ -2125,7 +2134,7 @@ summary(exploratory4d_OFC_feed_allCBCL_test_females$gam )
 ```
 
 ### Males
-```{r Exploratory4DOFC_feed_males, echo = FALSE}
+```{r, echo = FALSE}
 #Lateral OFC feedback, MALES
 
 dataformodel <- data_no_lOFC_feed_test_outliers_males 
@@ -2180,7 +2189,7 @@ summary(exploratory4d_mOFC_feed_allCBCL_test_males$gam )
 
 ## 4.24 Model: CBCL internalizing factor ~ Testosterone*BIS-BAS RR + PDS
 ### Females
-```{r Exploratory4e, echo = FALSE}
+```{r, echo = FALSE}
 #FEMALES
 dataformodel <- data_no_bisbas_test_outliers_females 
 
@@ -2195,7 +2204,7 @@ summary(exploratory4e_bisbas_allCBCL_females$gam )
 ```
 
 ### Males
-```{r Exploratory4e, echo = FALSE}
+```{r, echo = FALSE}
 
 dataformodel <- data_no_bisbas_test_outliers_males 
 
@@ -2212,7 +2221,7 @@ summary(exploratory4e_bisbas_allCBCL_males$gam )
 
 ## 4.25 Model: CBCL internalizing factor ~ Testosterone*MID Reaction Time + PDS (large reward vs. neutral) 
 ### Females 
-```{r ExploratoryFa, echo = FALSE}
+```{r, echo = FALSE}
 #FEMALES
 dataformodel <- data_no_RT_test_outliers_females
 
@@ -2228,7 +2237,7 @@ exploratoryFa_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratoryFa_lg_neutral_RT_females$gam)
 ```
 ### Males 
-```{r ExploratoryFa, echo = FALSE}
+```{r, echo = FALSE}
 dataformodel <- data_no_RT_test_outliers_males
 
 #LARGE REWARD VS. NEUTRAL POSITIVE
@@ -2247,7 +2256,7 @@ summary(exploratoryFa_lg_neutral_RT_males$gam)
 
 ## 4.26 Model: CBCL internalizing factor ~ Testosterone*MID Reaction Time + PDS (large vs. small reward)
 ### Females 
-```{r ExploratoryFb, echo = FALSE}
+```{r, echo = FALSE}
 #LARGE REWARD VS. SMALL REWARD POSITIVE
 
 dataformodel <- data_no_RT_test_outliers_females
@@ -2264,7 +2273,7 @@ summary(exploratoryFb_lg_small_RT_females$gam)
 ```
 
 ### Males
-```{r ExploratoryFb, echo = FALSE}
+```{r, echo = FALSE}
 #LARGE REWARD VS. SMALL REWARD POSITIVE
 
 dataformodel <- data_no_RT_test_outliers_males
