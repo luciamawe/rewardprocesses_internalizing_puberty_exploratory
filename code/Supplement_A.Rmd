@@ -1388,9 +1388,9 @@ exploratory3B_males_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_
 summary(exploratory3B_males_largesmallreward$gam)
 ```
 
-# 4---Int~Puberty*Reward---
+# 4---Int~Puberty x Reward---
 
-## 4.1 Model: CBCL internalizing factor ~ PDS*accumbens activity (anticipation stage)
+## 4.1 Model: CBCL internalizing factor ~ PDS x accumbens activity (anticipation stage)
 ### Females
 ```{r Confirmatory4Accumbens_Females, echo = FALSE}
 
@@ -1425,7 +1425,7 @@ summary(confirmatory4_accumbens_ant_males$gam)
 # plot_model(confirmatory4_accumbens_ant_males,type = "int", show.data = TRUE) #Interaction plot
 ```
 
-## 4.2 Model: CBCL internalizing factor ~ PDS*caudate activity (anticipation stage)
+## 4.2 Model: CBCL internalizing factor ~ PDS x caudate activity (anticipation stage)
 ### Females
 ```{r Confirmatory4Caudate_Females, echo = FALSE}
 
@@ -1461,7 +1461,7 @@ summary(confirmatory4_caudate_ant_males$gam)
 ```
 
 
-## 4.3 Model: CBCL internalizing factor ~ PDS*putamen activity (anticipation stage)
+## 4.3 Model: CBCL internalizing factor ~ PDS x putamen activity (anticipation stage)
 ### Females
 ```{r Confirmatory4Putamen_Females, echo = FALSE}
 
@@ -1495,7 +1495,7 @@ confirmatory4_putamen_ant_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(confirmatory4_putamen_ant_males$gam)
 #plot_model(confirmatory4_caudate_ant_females,type = "int", show.data = TRUE) #Interaction plot
 ```
-## 4.4 Model: CBCL internalizing factor ~ PDS*lateral OFC activity (anticipation stage)
+## 4.4 Model: CBCL internalizing factor ~ PDS x lateral OFC activity (anticipation stage)
 ### Females
 ```{r Exploratory4BOFC_ant_females, echo = FALSE}
 #Lateral OFC anticipation, FEMALES
@@ -1529,7 +1529,7 @@ summary(exploratory4b_OFC_ant_allCBCL_males$gam )
 
 ```
 
-## 4.5 Model: CBCL internalizing factor ~ PDS*medial OFC activity (anticipation stage)
+## 4.5 Model: CBCL internalizing factor ~ PDS x medial OFC activity (anticipation stage)
 ### Females
 ```{r}
 #Medial OFC anticipation, FEMALES
@@ -1564,7 +1564,7 @@ summary(exploratory4b_mOFC_ant_allCBCL_males$gam )
 
 
 
-## 4.6 Model: CBCL internalizing factor ~ PDS*accumbens activity (feedback)
+## 4.6 Model: CBCL internalizing factor ~ PDS x accumbens activity (feedback)
 ### Females
 ```{r Exploratory4AAccumbens_Females, echo = FALSE}
 #Accumbens feedback, females
@@ -1593,7 +1593,7 @@ exploratory4a_accumbens_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4a_accumbens_feedback_males$gam )
 ```
 
-## 4.7 Model: CBCL internalizing factor ~ PDS*caudate activity (feedback)
+## 4.7 Model: CBCL internalizing factor ~ PDS x caudate activity (feedback)
 ### Females
 ```{r Exploratory4ACaudate_Females, echo = FALSE}
 
@@ -1622,7 +1622,7 @@ exploratory4a_caudate_feedback_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4a_caudate_feedback_males$gam )
 ```
 
-## 4.8 Model: CBCL internalizing factor ~ PDS*putamen activity (feedback)
+## 4.8 Model: CBCL internalizing factor ~ PDS x putamen activity (feedback)
 ### Females
 ```{r, echo = FALSE}
 
@@ -1655,7 +1655,7 @@ summary(exploratory4a_putamen_feedback_males$gam )
 
 
 
-## 4.9 Model: CBCL internalizing factor ~ PDS*lateral OFC activity (feedback stage)
+## 4.9 Model: CBCL internalizing factor ~ PDS x lateral OFC activity (feedback stage)
 ### Females
 ```{r Exploratory4BOFC_feed_females, echo = FALSE}
 #Lateral OFC feedback, FEMALES
@@ -1688,7 +1688,7 @@ exploratory4b_OFC_feed_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4b_OFC_feed_allCBCL_males$gam )
 ```
 
-## 4.10 Model: CBCL internalizing factor ~ PDS*medial OFC activity (feedback stage)
+## 4.10 Model: CBCL internalizing factor ~ PDS x medial OFC activity (feedback stage)
 ### Females
 ```{r}
 #Medial OFC Feedback, FEMALES
@@ -1722,7 +1722,7 @@ summary(exploratory4b_mOFC_feed_allCBCL_males$gam )
 ```
 
 
-## 4.11 Model: CBCL internalizing factor ~ PDS*BIS-BAS
+## 4.11 Model: CBCL internalizing factor ~ PDS x BIS-BAS
 ### Females
 ```{r, echo = FALSE}
 #FEMALES
@@ -1752,7 +1752,7 @@ summary(exploratory4c_bisbas_allCBCL_males$gam)
 ```
 
 
-## 4.12 Model: CBCL internalizing factor ~ PDS*MID reaction time (large reward vs. neutral)
+## 4.12 Model: CBCL internalizing factor ~ PDS x MID reaction time (large reward vs. neutral)
 ### Females
 ```{r, echo = FALSE}
 #FEMALES
@@ -1785,7 +1785,7 @@ summary(exploratory4c_lg_neutral_RT_males$gam)
 ```
 
 
-## 4.13 Model: CBCL internalizing factor ~ PDS*MID reaction time (large vs. small reward)
+## 4.13 Model: CBCL internalizing factor ~ PDS x MID reaction time (large vs. small reward)
 ### Females
 ```{r, echo = FALSE}
 #LARGE REWARD VS. SMALL REWARD POSITIVE
@@ -1813,7 +1813,7 @@ summary(exploratory4c_lg_small_RT_males$gam)
 ```
 
 
-## 4.14 Model: CBCL internalizing factor ~ testosterone*accumbens activity (anticipation stage) + PDS
+## 4.14 Model: CBCL internalizing factor ~ testosterone x accumbens activity (anticipation stage) + PDS
 ### Females
 ```{r, echo = FALSE}
 
@@ -1849,7 +1849,7 @@ summary(confirmatory4Ea_accumbens_test_males $gam)
 #plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
 ```
 
-## 4.15 Model: CBCL internalizing factor ~ testosterone*caudate activity (anticipation stage) + PDS
+## 4.15 Model: CBCL internalizing factor ~ testosterone x caudate activity (anticipation stage) + PDS
 ### Females
 ```{r, echo = FALSE}
 
@@ -1889,7 +1889,7 @@ summary(confirmatory4Ea_caudate_test_males $gam)
 #plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
 ```
 
-## 4.16 Model: CBCL internalizing factor ~ testosterone*putamen activity (anticipation stage) + PDS
+## 4.16 Model: CBCL internalizing factor ~ testosterone x putamen activity (anticipation stage) + PDS
 ### Females
 ```{r, echo = FALSE}
 
@@ -1927,7 +1927,7 @@ summary(confirmatory4Ea_putamen_test_males $gam)
 ```
 
 
-## 4.17 Model: CBCL internalizing factor ~ testosterone*accumbens activity (feedback stage) + PDS
+## 4.17 Model: CBCL internalizing factor ~ testosterone x accumbens activity (feedback stage) + PDS
 ### Females
 ```{r, echo = FALSE}
 
@@ -1962,7 +1962,7 @@ exploratory4Eb_accumbens_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4Eb_accumbens_test_feed_males$gam)
 ```
 
-## 4.18 Model: CBCL internalizing factor ~ testosterone*caudate activity (Feedback stage) + PDS
+## 4.18 Model: CBCL internalizing factor ~ testosterone x caudate activity (Feedback stage) + PDS
 ### Females
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_feed_no_test_outliers_females #Specify data subset here
@@ -1996,7 +1996,7 @@ confirmatory4Eb_caudate_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(confirmatory4Eb_caudate_test_feed_males$gam)
 ```
 
-## 4.19 Model: CBCL internalizing factor ~ testosterone*putamen activity (Feedback stage) + PDS
+## 4.19 Model: CBCL internalizing factor ~ testosterone x putamen activity (Feedback stage) + PDS
 ### Females
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_feed_no_test_outliers_females #Specify data subset here
@@ -2031,7 +2031,7 @@ confirmatory4Eb_putamen_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(confirmatory4Eb_putamen_test_feed_males$gam)
 ```
 
-## 4.20 Model: CBCL internalizing factor ~ Testosterone*lateral OFC activity (anticipation stage) + PDS
+## 4.20 Model: CBCL internalizing factor ~ Testosterone x lateral OFC activity (anticipation stage) + PDS
 ### Females
 ```{r}
 #Lateral OFC - FEMALES
@@ -2066,7 +2066,7 @@ summary(exploratory4c_OFC_ant_allCBCL_test_males$gam )
 ```
 
 
-## 4.21 Model: CBCL internalizing factor ~ Testosterone*medial OFC activity (anticipation stage) + PDS
+## 4.21 Model: CBCL internalizing factor ~ Testosterone x medial OFC activity (anticipation stage) + PDS
 ### Females
 ```{r}
 #Medial OFC - FEMALES
@@ -2099,7 +2099,7 @@ exploratory4c_mOFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4c_mOFC_ant_allCBCL_test_males$gam )
 ```
 
-## 4.22 Model: CBCL internalizing factor ~ Testosterone*lateral OFC activity (feedback stage) + PDS
+## 4.22 Model: CBCL internalizing factor ~ Testosterone x lateral OFC activity (feedback stage) + PDS
 ### Females
 ```{r, echo = FALSE}
 #Lateral OFC feedback, FEMALES
@@ -2134,7 +2134,7 @@ exploratory4d_OFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratory4d_OFC_feed_allCBCL_test_males$gam )
 ```
 
-## 4.23 Model: CBCL internalizing factor ~ Testosterone*medial OFC activity (feedback stage) + PDS
+## 4.23 Model: CBCL internalizing factor ~ Testosterone x medial OFC activity (feedback stage) + PDS
 ### Females
 ```{r}
 #Medial OFC feedback, FEMALES
@@ -2171,7 +2171,7 @@ summary(exploratory4d_mOFC_feed_allCBCL_test_males$gam )
 ```
 
 
-## 4.24 Model: CBCL internalizing factor ~ Testosterone*BIS-BAS RR + PDS
+## 4.24 Model: CBCL internalizing factor ~ Testosterone x BIS-BAS RR + PDS
 ### Females
 ```{r, echo = FALSE}
 #FEMALES
@@ -2203,7 +2203,7 @@ summary(exploratory4e_bisbas_allCBCL_males$gam )
 ```
 
 
-## 4.25 Model: CBCL internalizing factor ~ Testosterone*MID Reaction Time + PDS (large reward vs. neutral) 
+## 4.25 Model: CBCL internalizing factor ~ Testosterone x MID Reaction Time + PDS (large reward vs. neutral) 
 ### Females 
 ```{r, echo = FALSE}
 #FEMALES
@@ -2238,7 +2238,7 @@ summary(exploratoryFa_lg_neutral_RT_males$gam)
 
 
 
-## 4.26 Model: CBCL internalizing factor ~ Testosterone*MID Reaction Time + PDS (large vs. small reward)
+## 4.26 Model: CBCL internalizing factor ~ Testosterone x MID Reaction Time + PDS (large vs. small reward)
 ### Females 
 ```{r, echo = FALSE}
 #LARGE REWARD VS. SMALL REWARD POSITIVE
