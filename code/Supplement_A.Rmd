@@ -868,7 +868,7 @@ exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score
 summary(exploratory1A_accumbens_males$gam)
 
 ```
-## 2.9 Model: OFC activation (anticipation stage) ~ PDS
+## 2.9 Model: OFC Anticipation ~ PDS
 ### Females
 ```{r, echo = FALSE}
 
@@ -909,7 +909,7 @@ modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ PDS_score + interview_age,
 summary(modelC_males_mOFC$gam)
 ```
 
-## 2.10 Model: OFC activation (feedback stage) ~ PDS
+## 2.10 Model: OFC Feedback ~ PDS
 ### Females
 ```{r, echo = FALSE}
 # Females (lateral OFC; lOFC).
@@ -1092,7 +1092,7 @@ summary(exploratory1A_accumbens_males$gam)
 
 
 
-## 2.17 Model: OFC activation (anticipation stage) ~ Testosterone
+## 2.17 Model: OFC Anticipation ~ Testosterone
 ### Females
 ```{r, echo = FALSE}
 
@@ -1135,7 +1135,7 @@ modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean_z + interview_
 summary(modelC_males_mOFC$gam)
 ```
 
-## 2.18 Model: OFC activation (feedback stage) ~ Testosterone
+## 2.18 Model: OFC Feedback ~ Testosterone
 ### Females
 ```{r, echo = FALSE}
 
@@ -1250,7 +1250,7 @@ summary(modelF_males$gam)
 
 # 3---Int~Reward---
 
-## 3.1 Model: CBCL internalizing factor ~ Nucleus Accumbens activity (anticipation stage - All reward v. neutral)
+## 3.1 Model: CBCL internalizing factor ~ Nucleus Accumbens activity (anticipation stage)
 ### Females
 ```{r, echo = FALSE}
 
@@ -1281,7 +1281,7 @@ summary(confirmatory3A_nacc_males$gam)
 
 ```
 
-## 3.2 Model: CBCL internalizing factor ~ Caudate activity (anticipation stage - All reward v. neutral)
+## 3.2 Model: CBCL internalizing factor ~ Caudate activity (anticipation stage)
 ### Females
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_ant_outliers_females
@@ -1313,7 +1313,7 @@ summary(confirmatory3A_caud_males$gam)
 
 ```
 
-## 3.3 Model: CBCL internalizing factor ~ Putamen activity (anticipation stage - All reward v. neutral)
+## 3.3 Model: CBCL internalizing factor ~ Putamen activity (anticipation stage)
 ### Females
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_ant_outliers_females
@@ -1556,7 +1556,7 @@ summary(exploratory3A_males$gam)
 ```
 
 
-## 3.10 Model: CBCL internalizing factor ~ MID Reaction Time (reward vs. neutral trials)
+## 3.10 Model: CBCL internalizing factor ~ MID Reaction Time
 ### Females
 ```{r, echo = FALSE}
 
