@@ -1,5 +1,5 @@
 ---
-title: 'Supplement A'
+title: 'Supplement B'
 subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9- and 10-year-olds in the ABCD Study'
 output:
   pdf_document:
@@ -11,7 +11,7 @@ output:
     toc_float:
       collapsed: true
 ---
-# Results for Sample 1
+# Results for Sample 2
 
 
 ```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
@@ -31,12 +31,12 @@ library(ggstatsplot)
 
 data_dir = ((dirname(here()))) 
 
-phase_folder = "exploratory"  # select the appropriate folder.
-#phase_folder = "confirmatory"  # select the appropriate folder.
+#phase_folder = "exploratory"  # select the appropriate folder.
+phase_folder = "confirmatory"  # select the appropriate folder.
 
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
-file_name <- "nda30_exploratory.csv" # specify file name here. 
+file_name <- "nda30_confirmatory.csv" # specify file name here. 
 
 fulldata <- read.csv(file.path(data_folder,file_name))
 nrow(fulldata) # 27321 (exploratory). When call the define_dataframes script, will keep only the baseline data.
@@ -608,6 +608,9 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ### Males
 ```{r, echo=FALSE}
 # PDS category.
+
+dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+
 confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age +

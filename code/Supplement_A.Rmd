@@ -608,6 +608,9 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 ### Males
 ```{r, echo=FALSE}
 # PDS category.
+
+dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+
 confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean_z + pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age +
