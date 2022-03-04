@@ -1,5 +1,5 @@
 ---
-title: 'Supplement B'
+title: 'Supplement D'
 subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9- and 10-year-olds in the ABCD Study'
 output:
   pdf_document:
@@ -11,7 +11,7 @@ output:
     toc_float:
       collapsed: true
 ---
-# Results for Sample 2
+# Sensitivity Analysis Results for Sample 2
 
 
 ```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}

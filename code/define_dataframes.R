@@ -112,7 +112,9 @@ data <- fulldata[,c("src_subject_id",
                     "hormone_scr_hse_rep1",
                     "hormone_scr_hse_rep2",
                     "hormone_scr_hse_rep1_nd",
-                    "hormone_scr_hse_rep2_nd")]
+                    "hormone_scr_hse_rep2_nd",
+                    "anthroweightcalc",
+                    "anthroheightcalc")]
 
 
 # Note: pds_ss_category = pds_p_ss_category. Rename here.
@@ -250,6 +252,12 @@ summary(PDS_correct$imgincl_mid_include)
 # 1450 4191   42
 # nrow(MID_task_correct)
 # 1450 + 42 = 1492.
+
+
+# Calculate BMI variable
+PDS_correct$bmi <- 703*(PDS_correct$anthroweightcalc/(PDS_correct$anthroheightcalc^2))
+
+
 
 MID_imaging_correct <- subset(PDS_correct, imgincl_mid_include ==1) 
 nrow(MID_imaging_correct) # 4191 (exploratory). So 1492 drop out after imaging parameters are taken into account.

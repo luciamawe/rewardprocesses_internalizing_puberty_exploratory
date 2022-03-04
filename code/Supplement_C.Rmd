@@ -1,5 +1,5 @@
 ---
-title: 'Supplement A'
+title: 'Supplement C'
 subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9- and 10-year-olds in the ABCD Study'
 output:
   pdf_document:
@@ -11,7 +11,7 @@ output:
     toc_float:
       collapsed: true
 ---
-# Results for Sample 1
+# Sensitivity Analysis Results for Sample 1
 
 
 ```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
@@ -44,6 +44,7 @@ nrow(fulldata) # 27321 (exploratory). When call the define_dataframes script, wi
 # Call function to define all of the dataframes.
 script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
 source(script_path)
+
 ```
 
 # 1---Int~Puberty---
