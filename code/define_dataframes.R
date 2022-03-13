@@ -114,7 +114,9 @@ data <- fulldata[,c("src_subject_id",
                     "hormone_scr_hse_rep1_nd",
                     "hormone_scr_hse_rep2_nd",
                     "anthroweightcalc",
-                    "anthroheightcalc")]
+                    "anthroheightcalc",
+                    "hormone_sal_start_y", #Hormone saliva sample time collection started
+                    "hormone_sal_end_y")] #Hormone saliva sample time collection finished
 
 
 # Note: pds_ss_category = pds_p_ss_category. Rename here.
