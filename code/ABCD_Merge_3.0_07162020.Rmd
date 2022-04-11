@@ -79,6 +79,8 @@ for (i in 1:length(csv_filelist)){
 #  mid02 <- read.csv(glue('{data_directory}/abcd_mid02.csv'))
 # 
 #  mri01 <- read.csv(glue('{data_directory}/abcd_mri01.csv'))
+#
+#  mriqcrp302 <- read.csv(glue('{data_directory}/mriqcrp302.csv'))
 # 
 #  ppdms01 <- read.csv(glue('{data_directory}/abcd_ppdms01.csv'))
 # 
