@@ -271,6 +271,8 @@ summary(PDS_correct$imgincl_mid_include)
 
 # Calculate BMI variable
 PDS_correct$bmi <- 703*(PDS_correct$anthroweightcalc/(PDS_correct$anthroheightcalc^2))
+#Filtering BMI values based on the possible range from the CDC Growth Chart
+PDS_correct$bmi <- ifelse(PDS_correct$bmi >= 12, ifelse(PDS_correct$bmi <= 35, PDS_correct$bmi, NA), NA)
 
 
 
