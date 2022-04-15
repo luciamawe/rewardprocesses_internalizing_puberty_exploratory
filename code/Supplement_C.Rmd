@@ -270,7 +270,7 @@ summary(confirmatory2_category_males$gam)
 ```{r, echo=FALSE}
 dataformodel <- data_no_test_outliers_females
 
-confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_y + 
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
                                                   
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
@@ -284,7 +284,7 @@ summary(confirmatory2_testosterone_CBCL_female$gam)
 ```{r, echo=FALSE}
 dataformodel <- data_no_test_outliers_males
 
-confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_y +
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -298,7 +298,7 @@ summary(confirmatory2_testosterone_CBCL_male$gam)
 ```{r, echo=FALSE}
 dataformodel <- data_no_test_outliers_females
 
-confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y + 
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -311,7 +311,7 @@ summary(confirmatory2_testosterone_CBCL_female$gam)
 ```{r, echo=FALSE}
 dataformodel <- data_no_test_outliers_males
 
-confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y + 
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -326,7 +326,7 @@ summary(confirmatory2_testosterone_CBCL_male$gam)
 ```{r, echo=FALSE}
 dataformodel <- data_no_test_outliers_females
 
-confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y + 
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -340,7 +340,7 @@ summary(confirmatory2_testosterone_CBCL_female$gam)
 ```{r, echo=FALSE}
 dataformodel <- data_no_test_outliers_males
 
-confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y + 
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -354,7 +354,7 @@ summary(confirmatory2_testosterone_CBCL_male$gam)
 ```{r, echo=FALSE}
 dataformodel <- data_no_test_outliers_females
 
-confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_y + 
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -367,7 +367,7 @@ summary(confirmatory2_testosterone_CBCL_female$gam)
 ```{r, echo=FALSE}
 dataformodel <- data_no_test_outliers_males
 
-confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_y + 
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -384,7 +384,7 @@ summary(confirmatory2_testosterone_CBCL_male$gam)
 
 dataformodel <- data_no_test_outliers_females
 
-confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  PDS_score +
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -398,7 +398,7 @@ summary(confirmatory2B_testosterone_CBCL_female$gam)
 dataformodel <- data_no_test_outliers_males 
   
 
-confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  PDS_score +
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -415,7 +415,7 @@ summary(confirmatory2B_testosterone_CBCL_male$gam)
 
 dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
 
-confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  pds_p_ss_category +
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -430,7 +430,7 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 
 dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
 
-confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  pds_p_ss_category +
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -445,7 +445,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 
 dataformodel <- data_no_test_outliers_females
 
-confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  PDS_score +
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -459,7 +459,7 @@ summary(confirmatory2B_testosterone_CBCL_female$gam)
 
 dataformodel <- data_no_test_outliers_males 
   
-confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  PDS_score +
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -476,7 +476,7 @@ summary(confirmatory2B_testosterone_CBCL_male$gam)
 
 dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
 
-confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  pds_p_ss_category +
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -491,7 +491,7 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 
 dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
 
-confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  pds_p_ss_category +
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -506,7 +506,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 
 dataformodel <- data_no_test_outliers_females
 
-confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  PDS_score +
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -520,7 +520,7 @@ summary(confirmatory2B_testosterone_CBCL_female$gam)
 
 dataformodel <- data_no_test_outliers_males 
   
-confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  PDS_score +
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -536,7 +536,7 @@ summary(confirmatory2B_testosterone_CBCL_male$gam)
 
 dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
 
-confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  pds_p_ss_category +
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -551,7 +551,7 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 
 dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
 
-confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  pds_p_ss_category +
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -566,7 +566,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 
 dataformodel <- data_no_test_outliers_females
 
-confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  PDS_score +
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -581,7 +581,7 @@ summary(confirmatory2B_testosterone_CBCL_female$gam)
 dataformodel <- data_no_test_outliers_males 
   
 
-confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  PDS_score +
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -598,7 +598,7 @@ summary(confirmatory2B_testosterone_CBCL_male$gam)
 
 dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
 
-confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  pds_p_ss_category +
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -613,7 +613,7 @@ summary(confirmatory2B_testosterone_CBCL_female_category$gam)
 
 dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
 
-confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_y +  pds_p_ss_category +
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
                       race.ethnicity.5level +
                       interview_age + bmi + household.income + high.educ +
                       demo_race_hispanic,
@@ -938,7 +938,7 @@ summary(modelD_males_mOFC$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_ant_no_test_outliers_females 
 
-confirmatory1_caudate_females <- gamm4(caudate_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+confirmatory1_caudate_females <- gamm4(caudate_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -949,7 +949,7 @@ summary(confirmatory1_caudate_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_ant_no_test_outliers_males
 
-confirmatory1_caudate_males<- gamm4(caudate_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+confirmatory1_caudate_males<- gamm4(caudate_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -962,7 +962,7 @@ summary(confirmatory1_caudate_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_ant_no_test_outliers_females 
 
-confirmatory1_putamen_females <- gamm4(putamen_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+confirmatory1_putamen_females <- gamm4(putamen_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -973,7 +973,7 @@ summary(confirmatory1_putamen_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_ant_no_test_outliers_males 
 
-confirmatory1_putamen_males <- gamm4(putamen_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+confirmatory1_putamen_males <- gamm4(putamen_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -985,7 +985,7 @@ summary(confirmatory1_putamen_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_accumbens_ant_no_test_outliers_females 
 
-confirmatory1_accumbens_females <- gamm4(accumbens_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+confirmatory1_accumbens_females <- gamm4(accumbens_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -995,7 +995,7 @@ summary(confirmatory1_accumbens_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_accumbens_ant_no_test_outliers_males 
 
-confirmatory1_accumbens_males <- gamm4(accumbens_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+confirmatory1_accumbens_males <- gamm4(accumbens_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1008,7 +1008,7 @@ summary(confirmatory1_accumbens_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_feed_no_test_outliers_females
 
-exploratory1A_caudate_females <- gamm4(caudate_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+exploratory1A_caudate_females <- gamm4(caudate_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1018,7 +1018,7 @@ summary(exploratory1A_caudate_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_feed_no_test_outliers_males
 
-exploratory1A_caudate_males <- gamm4(caudate_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+exploratory1A_caudate_males <- gamm4(caudate_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1030,7 +1030,7 @@ summary(exploratory1A_caudate_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_feed_no_test_outliers_females
 
-exploratory1A_putamen_females <- gamm4(putamen_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+exploratory1A_putamen_females <- gamm4(putamen_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1040,7 +1040,7 @@ summary(exploratory1A_putamen_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_feed_outliers_no_test_males
 
-exploratory1A_putamen_males <- gamm4(putamen_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+exploratory1A_putamen_males <- gamm4(putamen_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1051,7 +1051,7 @@ summary(exploratory1A_putamen_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_accumbens_feed_no_test_outliers_females
 
-exploratory1A_accumbens_females <- gamm4(accumbens_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+exploratory1A_accumbens_females <- gamm4(accumbens_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1061,7 +1061,7 @@ summary(exploratory1A_accumbens_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_accumbens_feed_no_test_outliers_males
 
-exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1077,7 +1077,7 @@ summary(exploratory1A_accumbens_males$gam)
 
 # Females (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_ant_test_outliers_females
-modelC_females_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+modelC_females_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1086,7 +1086,7 @@ summary(modelC_females_lOFC$gam)
 
 # Females (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_ant_test_outliers_females
-modelC_females_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+modelC_females_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1098,7 +1098,7 @@ summary(modelC_females_mOFC$gam)
 ```{r, echo=FALSE}
 # Males (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_ant_test_outliers_males
-modelC_males_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+modelC_males_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1107,7 +1107,7 @@ summary(modelC_males_lOFC$gam)
 
 # Males (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_ant_test_outliers_males
-modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1120,7 +1120,7 @@ summary(modelC_males_mOFC$gam)
 
 # Females (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_feed_test_outliers_females
-modelD_females_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+modelD_females_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1129,7 +1129,7 @@ summary(modelD_females_lOFC$gam)
 
 # Females (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_feed_test_outliers_females
-modelD_females_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+modelD_females_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1141,7 +1141,7 @@ summary(modelD_females_mOFC$gam)
 
 # Males (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_feed_test_outliers_males
-modelD_males_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+modelD_males_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1150,7 +1150,7 @@ summary(modelD_males_lOFC$gam)
 
 # Males (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_feed_test_outliers_males
-modelD_males_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + MRI_minus_hormone_date_time + bmi,
+modelD_males_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1163,7 +1163,7 @@ summary(modelD_males_mOFC$gam)
 
 # Females: large reward vs. neutral.
 dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
-modelE_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + bmi,
+modelE_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1171,7 +1171,7 @@ summary(modelE_lg_neutral_RT_females$gam)
 
 # Females: large reward vs. small reward.
 dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
-modelE_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + bmi,
+modelE_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1183,14 +1183,14 @@ summary(modelE_lg_small_RT_females$gam)
 # Males: large reward vs. neutral.
 dataformodel <- data_no_RT_test_outliers_males # No MID RT difference score or testosterone outliers.
 
-modelE_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + bmi,
+modelE_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
 summary(modelE_lg_neutral_RT_males$gam)
 
 # Males: large reward vs. small reward.
-modelE_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + bmi,
+modelE_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1202,7 +1202,7 @@ summary(modelE_lg_small_RT_males$gam)
 ```{r, echo = FALSE}
 
 dataformodel <- data_no_bisbas_test_outliers_females
-modelF_females <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + bmi,
+modelF_females <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1211,7 +1211,7 @@ summary(modelF_females$gam)
 ### Males
 ```{r, echo=FALSE}
 dataformodel <- data_no_bisbas_test_outliers_males
-modelF_males <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean + hormone_sal_end_y +  interview_age + bmi,
+modelF_males <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -2027,7 +2027,7 @@ dataformodel <- data_no_accumbens_ant_no_test_outliers_females
 
 confirmatory4Ea_accumbens_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             accumbens_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2044,7 +2044,7 @@ dataformodel <- data_no_accumbens_ant_no_test_outliers_males
 
 confirmatory4Ea_accumbens_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             accumbens_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2063,7 +2063,7 @@ dataformodel <- data_no_caudate_ant_no_test_outliers_females
 
 confirmatory4Ea_caudate_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             caudate_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2084,7 +2084,7 @@ dataformodel <- data_no_caudate_ant_no_test_outliers_males
 
 confirmatory4Ea_caudate_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             caudate_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2102,7 +2102,7 @@ dataformodel <- data_no_putamen_ant_no_test_outliers_females
 
 confirmatory4Ea_putamen_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             putamen_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2119,7 +2119,7 @@ dataformodel <- data_no_putamen_ant_no_test_outliers_males
 
 confirmatory4Ea_putamen_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             putamen_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2138,7 +2138,7 @@ dataformodel <- data_no_accumbens_feed_no_test_outliers_females
 
 exploratory4Eb_accumbens_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             accumbens_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2155,7 +2155,7 @@ dataformodel <- data_no_accumbens_feed_no_test_outliers_males
 
 exploratory4Eb_accumbens_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             accumbens_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2172,7 +2172,7 @@ dataformodel <- data_no_caudate_feed_no_test_outliers_females
 
 confirmatory4Eb_caudate_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             caudate_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2189,7 +2189,7 @@ dataformodel <- data_no_caudate_feed_no_test_outliers_males
 
 confirmatory4Eb_caudate_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             caudate_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2206,7 +2206,7 @@ dataformodel <- data_no_putamen_feed_no_test_outliers_females
 
 confirmatory4Eb_putamen_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             putamen_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2224,7 +2224,7 @@ dataformodel <- data_no_putamen_feed_outliers_no_test_males
 
 confirmatory4Eb_putamen_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             putamen_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2243,7 +2243,7 @@ dataformodel <- data_no_lOFC_ant_test_outliers_females
 
 exploratory4c_OFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             lOFC_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2259,7 +2259,7 @@ dataformodel <- data_no_lOFC_ant_test_outliers_males
 
 exploratory4c_OFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                            PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             lOFC_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2277,7 +2277,7 @@ dataformodel <- data_no_mOFC_ant_test_outliers_females
 
 exploratory4c_mOFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             mOFC_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2293,7 +2293,7 @@ dataformodel <- data_no_mOFC_ant_test_outliers_males
 
 exploratory4c_mOFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                            PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*  
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
                             mOFC_rvsn_ant_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2311,7 +2311,7 @@ dataformodel <- data_no_lOFC_feed_test_outliers_females
 
 exploratory4d_OFC_feed_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean* 
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean* 
                             lOFC_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2328,7 +2328,7 @@ dataformodel <- data_no_lOFC_feed_test_outliers_males
 
 exploratory4d_OFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean* 
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean* 
                             lOFC_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2346,7 +2346,7 @@ dataformodel <- data_no_mOFC_feed_test_outliers_females
 
 exploratory4d_mOFC_feed_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean* 
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean* 
                             mOFC_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2363,7 +2363,7 @@ dataformodel <- data_no_mOFC_feed_test_outliers_males
 
 exploratory4d_mOFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean* 
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean* 
                             mOFC_posvsneg_feedback_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2382,7 +2382,7 @@ dataformodel <- data_no_bisbas_test_outliers_females
 
 exploratory4e_bisbas_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
                             bisbas_ss_basm_rr+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2397,7 +2397,7 @@ dataformodel <- data_no_bisbas_test_outliers_males
 
 exploratory4e_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
                             bisbas_ss_basm_rr+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2415,7 +2415,7 @@ dataformodel <- data_no_RT_test_outliers_females
 #Large reward vs. neutral.
 exploratoryFa_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
                             rt_diff_large_neutral_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2430,7 +2430,7 @@ dataformodel <- data_no_RT_test_outliers_males
 #Large reward vs. neutral.
 exploratoryFa_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
                             rt_diff_large_neutral_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2449,7 +2449,7 @@ dataformodel <- data_no_RT_test_outliers_females
 
 exploratoryFb_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
                             rt_diff_large_small_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
@@ -2466,7 +2466,7 @@ dataformodel <- data_no_RT_test_outliers_males
 
 exploratoryFb_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
                             PDS_score+
-                            hormone_sal_end_y +  hormone_scr_ert_mean*
+                            hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
                             rt_diff_large_small_z+
                             race.ethnicity.5level +
                             demo_race_hispanic +
