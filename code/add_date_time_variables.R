@@ -40,7 +40,7 @@ phase_folder = "confirmatory"
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 file_name <- glue("nda30_{phase_folder}.csv")
 fulldata <- read.csv(file.path(data_folder,file_name))
-dim(fulldata) # 27321 by 2826 (exploratory); 27331  2826 (confirmatory).When call the define_dataframes script, will keep only the baseline data.
+dim(fulldata) # 27321 by 2826 (exploratory); 27331  2826 (confirmatory). When call the define_dataframes script, will keep only the baseline data.
 
 # Merge MRI data with fulldata.
 duplicate_columns <- c("collection_id", "collection_title", "subjectkey", "interview_age","interview_date","sex","dataset_id")
@@ -95,6 +95,15 @@ fulldata$hormone_date_minus_last_period_date <- fulldata$interview_date_hormones
 fulldata$hormone_date_minus_last_period_date <- as.numeric(fulldata$hormone_date_minus_last_period_date)
 fulldata$hormone_date_minus_last_period_date <- fulldata$hormone_date_minus_last_period_date/86400
 range(fulldata$hormone_date_minus_last_period_date,na.rm=TRUE) # exploratory: 0 to 1342; confirmatory 0 to 1107.
+
+
+# Create a variable that indicates time of hormone collection in minutes since midnight.
+fulldata$hormone_sal_end_y <- as.POSIXct(fulldata$hormone_sal_end_y,format = "%H:%M") # Uses current date but that should be fine because midnight will as well.
+midnight <- as.POSIXct("00:00",format = "%H:%M")
+fulldata$hormone_sal_end_min_since_midnight <- fulldata$hormone_sal_end_y - midnight # Defaults to hours.
+fulldata$hormone_sal_end_min_since_midnight <- as.numeric(fulldata$hormone_sal_end_min_since_midnight)
+fulldata$hormone_sal_end_min_since_midnight <- fulldata$hormone_sal_end_min_since_midnight*60 # convert to minutes.
+# range(fulldata$hormone_sal_end_min_since_midnight,na.rm=TRUE) # exploratory: 122 (2.03 hours) to 1299 (21.65 hours); confirmatory: 90 to 1292 (1.50 hours to 21.53 hours).
 
 # Participant who reported date of last period being 1342 days prior (exploratory).
 #fulldata$interview_date_hormones[which(fulldata$hormone_date_minus_last_period_date==1342)] #  "2019-04-20 GMT"

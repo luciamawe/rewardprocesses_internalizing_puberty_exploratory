@@ -124,7 +124,8 @@ data <- fulldata[,c("src_subject_id",
                     "interview_date_hormones", # the 'interview_date' column specifically from hormone file (sph01.txt), renamed for clarity.
                     "hormone_date_time", # interview_date_hormones + hormone_sal_end_y
                     "MRI_minus_hormone_date_time", # iqc_mid_series_date_time - hormone_date_time [date/time variables]
-                    "hormone_date_minus_last_period_date")] #interview_date_hormones - menstrualcylcle1_p [dates only, no times added]
+                    "hormone_date_minus_last_period_date", #interview_date_hormones - menstrualcylcle1_p [dates only, no times added]
+                    "hormone_sal_end_min_since_midnight")] # hormone_sal_start_y, converted to time in minutes since midnight.
 
 
 # Note: pds_ss_category = pds_p_ss_category. Rename here.
@@ -139,11 +140,6 @@ data[c("src_subject_id","rel_family_id","eventname",
                                                                                                 "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
                                                                                                 "high.educ","household.income","married.or.livingtogether",
                                                                                               "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor)
-
-# Make sure timing variables are in correct format.
-data$hormone_sal_end_y <- strptime(data$hormone_sal_end_y , format="%H:%M") # This adds current date so need to use the next line to remove it (since we are only interested in controlling for time of day).
-data$hormone_sal_end_y <- format(data$hormone_sal_end_y, "%H:%M:%S")
-# str(data$hormone_sal_end_y)
 
 # Releveling so that "Pre" is the reference group for PDS category.
 data$pds_p_ss_category <- relevel(data$pds_p_ss_category, ref="Pre")
