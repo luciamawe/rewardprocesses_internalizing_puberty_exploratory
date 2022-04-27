@@ -636,7 +636,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_bisbas_outliers_females
 
-exploratory1B_females <- gamm4(bisbas_ss_basm_rr_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1B_females <- gamm4(bisbas_ss_basm_rr_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -647,7 +647,7 @@ summary(exploratory1B_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_bisbas_outliers_males
 
-exploratory1B_males <- gamm4(bisbas_ss_basm_rr_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1B_males <- gamm4(bisbas_ss_basm_rr_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -663,7 +663,7 @@ summary(exploratory1B_males$gam)
 dataformodel <- data_no_RT_MID_outliers_females
 
 # Large reward vs. neutral positive.
-exploratory1C_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1C_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -671,7 +671,7 @@ summary(exploratory1C_lg_neutral_RT_females$gam)
 
 
 # Large reward vs. small positive.
-exploratory1C_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1C_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -683,7 +683,7 @@ summary(exploratory1C_lg_small_RT_females$gam)
 dataformodel <- data_no_RT_MID_outliers_males
 
 # Large reward vs. neutral positive.
-exploratory1C_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1C_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -691,7 +691,7 @@ summary(exploratory1C_lg_neutral_RT_males$gam)
 
 
 # Large reward vs. small positive.
-exploratory1C_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1C_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -705,7 +705,7 @@ summary(exploratory1C_lg_small_RT_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_ant_outliers_females 
 
-confirmatory1_caudate_females <- gamm4(caudate_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+confirmatory1_caudate_females <- gamm4(caudate_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -717,7 +717,7 @@ summary(confirmatory1_caudate_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_striatal_ant_outliers_males
 
-confirmatory1_caudate_males<- gamm4(caudate_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+confirmatory1_caudate_males<- gamm4(caudate_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -730,7 +730,7 @@ summary(confirmatory1_caudate_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_ant_outliers_females 
 
-confirmatory1_putamen_females <- gamm4(putamen_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+confirmatory1_putamen_females <- gamm4(putamen_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -742,7 +742,7 @@ summary(confirmatory1_putamen_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_ant_outliers_males 
 
-confirmatory1_putamen_males <- gamm4(putamen_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+confirmatory1_putamen_males <- gamm4(putamen_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -754,7 +754,7 @@ summary(confirmatory1_putamen_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_accumbens_ant_outliers_females 
 
-confirmatory1_accumbens_females <- gamm4(accumbens_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+confirmatory1_accumbens_females <- gamm4(accumbens_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -766,7 +766,7 @@ summary(confirmatory1_accumbens_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_accumbens_ant_outliers_males 
 
-confirmatory1_accumbens_males <- gamm4(accumbens_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+confirmatory1_accumbens_males <- gamm4(accumbens_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -780,7 +780,7 @@ summary(confirmatory1_accumbens_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_feed_outliers_females
 
-exploratory1A_caudate_females <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1A_caudate_females <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -792,7 +792,7 @@ summary(exploratory1A_caudate_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_caudate_feed_outliers_males
 
-exploratory1A_caudate_males <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1A_caudate_males <- gamm4(caudate_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -804,7 +804,7 @@ summary(exploratory1A_caudate_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_feed_outliers_females
 
-exploratory1A_putamen_females <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1A_putamen_females <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -816,7 +816,7 @@ summary(exploratory1A_putamen_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_feed_outliers_males
 
-exploratory1A_putamen_males <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1A_putamen_males <- gamm4(putamen_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -828,7 +828,7 @@ summary(exploratory1A_putamen_males$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_accumbens_feed_outliers_females
 
-exploratory1A_accumbens_females <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1A_accumbens_females <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -840,7 +840,7 @@ summary(exploratory1A_accumbens_females$gam)
 ```{r, echo = FALSE}
 dataformodel <- data_no_accumbens_feed_outliers_males
 
-exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -853,7 +853,7 @@ summary(exploratory1A_accumbens_males$gam)
 
 # Females (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_ant_outliers_females
-modelC_females_lOFC <- gamm4(lOFC_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+modelC_females_lOFC <- gamm4(lOFC_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -862,7 +862,7 @@ summary(modelC_females_lOFC$gam)
 
 # Females (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_ant_outliers_females
-modelC_females_mOFC <- gamm4(mOFC_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+modelC_females_mOFC <- gamm4(mOFC_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -872,7 +872,7 @@ summary(modelC_females_mOFC$gam)
 ```{r, echo=FALSE}
 # Males (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_ant_outliers_males
-modelC_males_lOFC <- gamm4(lOFC_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+modelC_males_lOFC <- gamm4(lOFC_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -881,7 +881,7 @@ summary(modelC_males_lOFC$gam)
 
 # Males (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_ant_outliers_males
-modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -893,7 +893,7 @@ summary(modelC_males_mOFC$gam)
 ```{r, echo = FALSE}
 # Females (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_feed_outliers_females
-modelD_females_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+modelD_females_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -902,7 +902,7 @@ summary(modelD_females_lOFC$gam)
 
 # Females (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_feed_outliers_females
-modelD_females_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+modelD_females_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -913,7 +913,7 @@ summary(modelD_females_mOFC$gam)
 ```{r, echo=FALSE}
 # Males (lateral OFC; lOFC).
 dataformodel <- data_no_lOFC_feed_outliers_males
-modelD_males_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+modelD_males_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -922,7 +922,7 @@ summary(modelD_males_lOFC$gam)
 
 # Males (medial OFC; mOFC).
 dataformodel <- data_no_mOFC_feed_outliers_males
-modelD_males_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ PDS_score + interview_age + bmi + race.ethnicity.5level + demo_race_hispanic,
+modelD_males_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ PDS_score + interview_age + bmi,
                                random = ~ (1 | site_id_l/rel_family_id),
                                data = dataformodel)
 
@@ -1235,9 +1235,8 @@ summary(modelF_males$gam)
 dataformodel <- data_no_accumbens_ant_outliers_females
 
 confirmatory3A_nacc_females <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_rvsn_ant_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3A_nacc_females$gam)
@@ -1249,9 +1248,8 @@ summary(confirmatory3A_nacc_females$gam)
 dataformodel <- data_no_accumbens_ant_outliers_males
 
 confirmatory3A_nacc_males <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_rvsn_ant_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1265,9 +1263,8 @@ summary(confirmatory3A_nacc_males$gam)
 dataformodel <- data_no_caudate_ant_outliers_females
 
 confirmatory3A_caud_females <- gamm4(cbcl_scr_syn_internal_r ~ caudate_rvsn_ant_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1280,9 +1277,8 @@ summary(confirmatory3A_caud_females$gam)
 dataformodel <- data_no_caudate_ant_outliers_males
 
 confirmatory3A_caud_males <- gamm4(cbcl_scr_syn_internal_r ~ caudate_rvsn_ant_z +
-                               interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                               interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1297,9 +1293,8 @@ summary(confirmatory3A_caud_males$gam)
 dataformodel <- data_no_putamen_ant_outliers_females
 
 confirmatory3A_putamen_females <- gamm4(cbcl_scr_syn_internal_r ~ putamen_rvsn_ant_z +
-                               interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                               interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1312,9 +1307,8 @@ summary(confirmatory3A_putamen_females$gam)
 dataformodel <- data_no_putamen_ant_outliers_males
 
 confirmatory3A_putamen_males <- gamm4(cbcl_scr_syn_internal_r ~ putamen_rvsn_ant_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3A_putamen_males$gam)
@@ -1328,9 +1322,8 @@ summary(confirmatory3A_putamen_males$gam)
 dataformodel <- data_no_accumbens_feed_outliers_females
 
 confirmatory3B_accumbens_females <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3B_accumbens_females$gam)
@@ -1341,9 +1334,8 @@ summary(confirmatory3B_accumbens_females$gam)
 dataformodel <- data_no_accumbens_feed_outliers_males
 
 confirmatory3B_accumbens_males <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1356,9 +1348,8 @@ summary(confirmatory3B_accumbens_males$gam)
 dataformodel <- data_no_caudate_feed_outliers_females
 
 confirmatory3B_caudate_females <- gamm4(cbcl_scr_syn_internal_r ~ caudate_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1370,9 +1361,8 @@ summary(confirmatory3B_caudate_females$gam)
 dataformodel <- data_no_caudate_feed_outliers_males
 
 confirmatory3B_caudate_males <- gamm4(cbcl_scr_syn_internal_r ~ caudate_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1385,9 +1375,8 @@ summary(confirmatory3B_caudate_males$gam)
 dataformodel <- data_no_putamen_feed_outliers_females
 
 confirmatory3B_putamen_females <- gamm4(cbcl_scr_syn_internal_r ~ putamen_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3B_putamen_females$gam)
@@ -1398,9 +1387,8 @@ summary(confirmatory3B_putamen_females$gam)
 dataformodel <- data_no_putamen_feed_outliers_males
 
 confirmatory3B_putamen_males <- gamm4(cbcl_scr_syn_internal_r ~ putamen_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1413,9 +1401,8 @@ summary(confirmatory3B_putamen_males$gam)
 # Lateral OFC.
 dataformodel <- data_no_lOFC_ant_outliers_females
 confirmatory3C_lOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_rvsn_ant_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3C_lOFC_females$gam)
@@ -1423,9 +1410,8 @@ summary(confirmatory3C_lOFC_females$gam)
 # Medial OFC.
 dataformodel <- data_no_mOFC_ant_outliers_females
 confirmatory3C_mOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_rvsn_ant_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3C_mOFC_females$gam)
@@ -1435,9 +1421,8 @@ summary(confirmatory3C_mOFC_females$gam)
 # Lateral OFC.
 dataformodel <- data_no_lOFC_ant_outliers_males
 confirmatory3C_lOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_rvsn_ant_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1446,9 +1431,8 @@ summary(confirmatory3C_lOFC_males$gam)
 # Medial OFC.
 dataformodel <- data_no_mOFC_ant_outliers_males
 confirmatory3C_mOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_rvsn_ant_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3C_mOFC_males$gam)
@@ -1461,9 +1445,8 @@ summary(confirmatory3C_mOFC_males$gam)
 dataformodel <- data_no_lOFC_feed_outliers_females
 
 confirmatory3D_lOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1472,9 +1455,8 @@ summary(confirmatory3D_lOFC_females$gam)
 # Medial OFC.
 dataformodel <- data_no_mOFC_feed_outliers_females
 confirmatory3D_mOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3D_mOFC_females$gam)
@@ -1486,9 +1468,8 @@ summary(confirmatory3D_mOFC_females$gam)
 dataformodel <- data_no_lOFC_feed_outliers_males
 
 confirmatory3D_lOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3D_lOFC_males$gam)
@@ -1497,9 +1478,8 @@ summary(confirmatory3D_lOFC_males$gam)
 # Medial OFC.
 dataformodel <- data_no_mOFC_feed_outliers_males
 confirmatory3D_mOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_posvsneg_feedback_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3D_mOFC_males$gam)
@@ -1511,9 +1491,8 @@ summary(confirmatory3D_mOFC_males$gam)
 dataformodel <- data_no_bisbas_outliers_females
 
 exploratory3A_females <- gamm4(cbcl_scr_syn_internal_r ~ bisbas_ss_basm_rr +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(exploratory3A_females$gam)
@@ -1524,9 +1503,8 @@ summary(exploratory3A_females$gam)
 dataformodel <- data_no_bisbas_outliers_males
 
 exploratory3A_males <- gamm4(cbcl_scr_syn_internal_r ~ bisbas_ss_basm_rr +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(exploratory3A_males$gam)
@@ -1542,9 +1520,8 @@ summary(exploratory3A_males$gam)
 dataformodel <- data_no_RT_MID_outliers_females
 
 exploratory3B_females_largereward_neutral <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_neutral_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1554,9 +1531,8 @@ summary(exploratory3B_females_largereward_neutral$gam)
 dataformodel <- data_no_RT_MID_outliers_females
 
 exploratory3B_females_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_small_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(exploratory3B_females_largesmallreward$gam)
@@ -1569,9 +1545,8 @@ summary(exploratory3B_females_largesmallreward$gam)
 dataformodel <- data_no_RT_MID_outliers_males
 
 exploratory3B_males_largereward_neutral <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_neutral_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1581,9 +1556,8 @@ summary(exploratory3B_males_largereward_neutral$gam)
 dataformodel <- data_no_RT_MID_outliers_males
 
 exploratory3B_males_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_small_z +
-                              interview_age +
-                              race.ethnicity.5level +
-                              demo_race_hispanic, 
+                              interview_age
+                              , 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
