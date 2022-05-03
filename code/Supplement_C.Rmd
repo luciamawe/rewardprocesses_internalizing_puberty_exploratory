@@ -2448,4 +2448,59 @@ exploratoryFb_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~
 
 summary(exploratoryFb_lg_small_RT_males$gam)
 ```
+# 5--- Correlation Matrix ---
+## Females
+```{r}
+#library(Hmisc)
+cor_female<- MID_task_correct %>% 
+  dplyr::select("src_subject_id",
+                "rt_diff_large_neutral_z",
+                "rt_diff_large_small_z")
 
+cor_female_1 <- PDS_correct_females %>% 
+  dplyr::select("src_subject_id",
+                "cbcl_scr_syn_internal_r",
+                    "PDS_score",
+                    "bmi",
+                    "accumbens_rvsn_ant_z",
+                    "caudate_rvsn_ant_z",
+                    "putamen_rvsn_ant_z",
+                    "mOFC_rvsn_ant_z",
+                    "lOFC_rvsn_ant_z",
+                    "striatum_rvsn_ant_z", 
+                    "accumbens_posvsneg_feedback_z", 
+                    "caudate_posvsneg_feedback_z",
+                    "putamen_posvsneg_feedback_z",
+                    "mOFC_posvsneg_feedback_z",
+                    "lOFC_posvsneg_feedback_z",
+                    "striatum_posvsneg_feedback_z",
+                    "bisbas_ss_basm_rr",
+                    "hormone_scr_ert_mean",
+                    "hormone_sal_end_min_since_midnight",
+                    "MRI_minus_hormone_date_time",
+                    "hormone_date_minus_last_period_date",
+                    )
+
+cor_female_2 <- left_join(cor_female_1, cor_female, by="src_subject_id")
+
+
+# ++++++++++++++++++++++++++++
+# flattenCorrMatrix
+# ++++++++++++++++++++++++++++
+# cormat : matrix of the correlation coefficients
+# pmat : matrix of the correlation p-values
+flattenCorrMatrix <- function(cormat, pmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    column = rownames(cormat)[col(cormat)[ut]],
+    row = rownames(cormat)[row(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+    )
+}
+
+corMat_f <- flattenCorrMatrix(cor_female_2$r, cor_female_2$P)
+corMat_f
+
+format(corMat_f, scientific = F, digits = 3)
+```
