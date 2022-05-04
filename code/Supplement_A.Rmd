@@ -51,7 +51,7 @@ script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_explora
 source(script_path)
 ```
 
-# 1---Int~Puberty---
+# 1---Internalizing~Puberty---
 
 ## 1.1 Model: CBCL internalizing factor ~ PDS
 ### Females
@@ -1229,7 +1229,7 @@ summary(modelF_males$gam)
 
 
 
-# 3---Int~Reward---
+# 3---Internalizing~Reward---
 
 ## 3.1 Model: CBCL internalizing factor ~ Nucleus Accumbens activity (anticipation stage)
 ### Females
@@ -1591,7 +1591,7 @@ exploratory3B_males_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_
 summary(exploratory3B_males_largesmallreward$gam)
 ```
 
-# 4---Int~Puberty x Reward---
+# 4---Internalizing~Puberty x Reward---
 
 ## 4.1 Model: CBCL internalizing factor ~ PDS x Accumbens activity (anticipation stage)
 ### Females
