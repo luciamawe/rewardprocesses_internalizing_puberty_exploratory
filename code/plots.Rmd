@@ -138,14 +138,14 @@ PDS_correct$sample_label <- as.factor(PDS_correct$sample_label)
 PDS_correct$sample_sex <- factor(PDS_correct$sample_sex,levels = c("sample1_F", "sample2_F", "sample1_M", "sample2_M"))
 
 # PDS_correct_sample1.
-mean_bisbas_sample1 <- mean(PDS_correct_sample1$bisbas_ss_basm_rr, na.rm=TRUE)
-sd_bisbas_sample1 <- sd(PDS_correct_sample1$bisbas_ss_basm_rr, na.rm=TRUE)
-PDS_correct_sample1$bisbas_ss_basm_rr_z <- (PDS_correct_sample1$bisbas_ss_basm_rr-mean_bisbas_sample1)/sd_bisbas_sample1
+#mean_bisbas_sample1 <- mean(PDS_correct_sample1$bisbas_ss_basm_rr, na.rm=TRUE)
+#sd_bisbas_sample1 <- sd(PDS_correct_sample1$bisbas_ss_basm_rr, na.rm=TRUE)
+#PDS_correct_sample1$bisbas_ss_basm_rr_z <- (PDS_correct_sample1$bisbas_ss_basm_rr-mean_bisbas_sample1)/sd_bisbas_sample1
 
 # PDS_correct_sample2.
-mean_bisbas_sample2 <- mean(PDS_correct_sample2$bisbas_ss_basm_rr, na.rm=TRUE)
-sd_bisbas_sample2 <- sd(PDS_correct_sample2$bisbas_ss_basm_rr, na.rm=TRUE)
-PDS_correct_sample2$bisbas_ss_basm_rr_z <- (PDS_correct_sample2$bisbas_ss_basm_rr-mean_bisbas_sample2)/sd_bisbas_sample2
+#mean_bisbas_sample2 <- mean(PDS_correct_sample2$bisbas_ss_basm_rr, na.rm=TRUE)
+#sd_bisbas_sample2 <- sd(PDS_correct_sample2$bisbas_ss_basm_rr, na.rm=TRUE)
+#PDS_correct_sample2$bisbas_ss_basm_rr_z <- (PDS_correct_sample2$bisbas_ss_basm_rr-mean_bisbas_sample2)/sd_bisbas_sample2
 
 ```
 
@@ -267,7 +267,7 @@ figure1 <- ggplot(model_predictions, aes(x = pds_score, y = predicted_cbcl_inter
     geom_line(size=4,alpha=0.86) +
     geom_ribbon(aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
     #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
-    scale_x_continuous(breaks = seq(1, 4.0, by = 0.5), limits = c(1,4)) +
+    scale_x_continuous(breaks = seq(1, 4.0, by = 1), limits = c(1,4)) +
     scale_y_continuous(breaks = seq(0, 10, by = 2), limits = c(0,10)) +
     xlab("PDS Score (Continuous)") + 
     ylab("Model Predicted Internalizing Score") +
@@ -330,7 +330,14 @@ model_predictions_exploratory1B <- rbind(model_predictions_exploratory1B,model_p
 # Rename columns so that they are more clear.
 model_predictions_exploratory1B <- dplyr::rename(model_predictions_exploratory1B, c(pds_score = x,
                                                  bisbas_ss_basm_rr_z = predicted))
-
+# model_predictions_exploratory1B_females_sample1 <- dplyr::rename(model_predictions_exploratory1B_females_sample1, c(pds_score = x,
+#                                                  bisbas_ss_basm_rr_z = predicted))
+# model_predictions_exploratory1B_females_sample2 <- dplyr::rename(model_predictions_exploratory1B_females_sample2, c(pds_score = x,
+#                                                  bisbas_ss_basm_rr_z = predicted))
+# model_predictions_exploratory1BB_males_sample1 <- dplyr::rename(model_predictions_exploratory1B_males_sample1, c(pds_score = x,
+#                                                  bisbas_ss_basm_rr_z = predicted))
+# model_predictions_exploratory1B_males_sample2 <- dplyr::rename(model_predictions_exploratory1B_males_sample2, c(pds_score = x,
+#                                                  bisbas_ss_basm_rr_z = predicted))
 
 model_predictions_exploratory1B <- model_predictions_exploratory1B %>% mutate(gender_group = case_when(sample == "females sample 1" | 
                                                                           sample == "females sample 2" ~ "female",
@@ -346,15 +353,31 @@ model_predictions_exploratory1B$sample <- as.factor(model_predictions_explorator
 model_predictions_exploratory1B$gender_group <- as.factor(model_predictions_exploratory1B$gender_group)
 model_predictions_exploratory1B$sample_group <- as.factor(model_predictions_exploratory1B$sample_group)
 
+# The confidence intervals will not plot past the observed values of PDS (but the line keeps going), and since males have lower PDS, it looks weird.
+# So need to do geom_segment this way instead (based on maximum values).
+
+#maximum_pds_values <- summarise(model_predictions_exploratory1B, by)
+maximum_pds_values <- model_predictions_exploratory1B %>% 
+                            group_by(sample) %>%
+                              summarise(maximum_pds = max(pds_score),
+                                        minimum_pds = max(pds_score))
+
+# light purple: C7CDFF (females sample 1).
+# dark purple: 9D95CD (females sample 2).
+# light green: B2C6B1 (males sample 1).
+# dark green: 729473 (males sample 2).
+sample1females <- subset(model_predictions_exploratory1B, sample == "females sample 1")
+sample2females <- subset(model_predictions_exploratory1B, sample == "females sample 2")
+sample1males <- subset(model_predictions_exploratory1B, sample == "males sample 1")
+sample2males <- subset(model_predictions_exploratory1B, sample == "males sample 2")
+
 
 figure2 <- ggplot(model_predictions_exploratory1B, aes(x = pds_score, y = bisbas_ss_basm_rr_z, color = sample, fill = sample)) + 
     scale_color_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) + 
-    scale_fill_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) + 
+    scale_fill_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) +
     geom_line(size=4,alpha=0.86) +
     geom_ribbon(aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
-    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
-    scale_x_continuous(breaks = seq(1, 4.0, by = 0.5), limits = c(1,4)) +
-    scale_y_continuous(breaks = seq(-0.4, 0.4, by = 0.2), limits = c(-0.4,0.4)) +
+    xlim(1,4) + ylim(-0.5,0.5) +
     xlab("PDS Score (Continuous)") + 
     ylab("Model Predicted BIS/BAS-RR Z-Score") +
     facet_grid(gender_group ~ sample_group) +  #facet_grid(row_variable ~ column_variable)
