@@ -1,15 +1,17 @@
 ---
 title: 'Supplement A'
-subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9- and 10-year-olds in the ABCD Study'
+subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9- and 10-year-olds in the ABCD Study.'
 output:
   pdf_document:
     toc: yes
     toc_depth: '3'
+    df_print: paged
   html_document:
     toc: yes
     toc_depth: '3'
     toc_float:
       collapsed: true
+    df_print: paged
 ---
 # Results for Sample 1
 
@@ -27,6 +29,8 @@ library(gamm4.test)
 library(mgcv)
 library(jtools)
 library(interactions)
+library(naniar) # For replacing certain values with "NA" instead.
+library(Hmisc) # for correlation matrix.
 #library(ggstatsplot)
 
 data_dir = ((dirname(here()))) 
@@ -2472,3 +2476,169 @@ exploratoryFb_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratoryFb_lg_small_RT_males$gam)
 ```
 
+# 5--- Correlation Matrix ---
+## Females
+```{r,echo = FALSE,cols.print=5}
+# Remove outliers from the variables that we removed outliers for in the analyses.
+# From the manuscript: Outliers were defined as values ≥3 standard deviations away from the mean (based on z-scores calculated after exclusion criteria were taken into account). Outliers were removed for BAS-RR, neuroimaging data, MID reaction time data (Pizzagalli et al., 2009), and testosterone scores (Herting et al., 2021). No outliers were excluded based on z-scores for CBCL because (1) variable-specific inclusion criteria were already taken into account when calculating scores for these variables and (2) even the more extreme values were deemed as within plausible range for these variables.
+
+# Only keep variables that are going into the matrix.
+# Note: We are including BMI here as well, even though that is technically from the sensitivity analysis (Supplements C and D).
+
+# Note: Use z scored version instead for most of these.
+# Use dataframe that has z scored reaction time difference scores and merge that with PDS_correct.
+
+cor_female <- MID_task_correct_females %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
+cor_female <- merge(PDS_correct_females,cor_female, by = "src_subject_id",all.x=TRUE)
+
+cor_female <- cor_female  %>% 
+  dplyr::select(#"src_subject_id",
+                "interview_age",
+                "bmi",
+                "PDS_score",
+                "hormone_scr_ert_mean_z",
+                "bisbas_ss_basm_rr_z",
+                "rt_diff_large_neutral_z",
+                "rt_diff_large_small_z",
+                "cbcl_scr_syn_internal_r",
+                "accumbens_rvsn_ant_z", # Accumbens reward vs. neutral anticipation.
+                "caudate_rvsn_ant_z", # Caudate reward vs. neutral anticipation.
+                "putamen_rvsn_ant_z", # Putamen reward vs. neutral anticipation.
+                "mOFC_rvsn_ant_z", # Medial OFC reward vs. neutral anticipation.
+                "lOFC_rvsn_ant_z", # Lateral OFC reward vs. neutral anticipation.
+                "accumbens_posvsneg_feedback_z", # Accumbens reward positive versus negative feedback.
+                "caudate_posvsneg_feedback_z", # Caudate reward positive versus negative feedback.
+                "putamen_posvsneg_feedback_z", # Putamen reward positive versus negative feedback.
+                "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
+                "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
+
+#dim(cor_female) # 2701 rows,  18 columns.
+# All of the z score ones need to be cleaned so that if it is < -3 or >3, it is replaced with NA instead.
+
+#variables_without_outliers <- c("src_subject_id",
+#                "interview_age",
+#                "sex",
+#                "bmi",
+#                "PDS_score",
+#                "cbcl_scr_syn_internal_r")
+                
+variables_with_outliers <- c("hormone_scr_ert_mean_z",
+                "bisbas_ss_basm_rr_z",
+                "rt_diff_large_neutral_z",
+                "rt_diff_large_small_z",
+                "accumbens_rvsn_ant_z", # Accumbens reward vs. neutral anticipation.
+                "caudate_rvsn_ant_z", # Caudate reward vs. neutral anticipation.
+                "putamen_rvsn_ant_z", # Putamen reward vs. neutral anticipation.
+                "mOFC_rvsn_ant_z", # Medial OFC reward vs. neutral anticipation.
+                "lOFC_rvsn_ant_z", # Lateral OFC reward vs. neutral anticipation.
+                "accumbens_posvsneg_feedback_z", # Accumbens reward positive versus negative feedback.
+                "caudate_posvsneg_feedback_z", # Caudate reward positive versus negative feedback.
+                "putamen_posvsneg_feedback_z", # Putamen reward positive versus negative feedback.
+                "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
+                "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
+
+#dim(cor_female_variables_without_outliers)
+#dim(cor_female_variables_with_outliers)
+
+#sum(is.na(cor_female$caudate_posvsneg_feedback_z)) # 445.
+#sum(cor_female$caudate_posvsneg_feedback_z > 3, na.rm = TRUE) # 9.
+#sum(cor_female$caudate_posvsneg_feedback_z < -3, na.rm = TRUE) # 10.
+# So after this step it should be 445+9 = 464.
+
+# This is a two step process: First,  across all columns, replace all z scores greater than 3 or less than -3 with -99.
+# Then, replace all -99 with "NA".
+cor_female[ ,variables_with_outliers][ cor_female[ ,variables_with_outliers] > 3] <- -99
+cor_female[ ,variables_with_outliers][ cor_female[ ,variables_with_outliers] < -3] <- -99
+cor_female <- cor_female %>% replace_with_na_all(condition = ~.x == -99)
+#sum(is.na(cor_female$caudate_posvsneg_feedback_z)) # 464.
+
+# Now make correlation matrix!
+# Function from: http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software#compute-correlation-matrix-in-r
+# ++++++++++++++++++++++++++++
+# flattenCorrMatrix
+# ++++++++++++++++++++++++++++
+# cormat : matrix of the correlation coefficients
+# pmat : matrix of the correlation p-values
+flattenCorrMatrix <- function(cormat, pmat,nmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    variable1 = rownames(cormat)[col(cormat)[ut]],
+    variable2 = rownames(cormat)[row(cormat)[ut]],
+    number_complete_observations = nmat[ut],
+    correlation  =(cormat)[ut],
+    p_value = pmat[ut]
+    )
+}
+
+cormat_females <- rcorr(as.matrix(cor_female))
+cormat_females_flat <- flattenCorrMatrix(cormat_females$r, cormat_females$P,cormat_females$n)
+#cormat_females_flat
+print(format(cormat_females_flat, scientific = F, digits = 3))
+```
+## Males
+```{r,echo = FALSE}
+
+cor_male <- MID_task_correct_males %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
+cor_male <- merge(PDS_correct_males,cor_male, by = "src_subject_id",all.x=TRUE)
+
+cor_male <- cor_male  %>% 
+  dplyr::select(#"src_subject_id",
+                "interview_age",
+                "bmi",
+                "PDS_score",
+                "hormone_scr_ert_mean_z",
+                "bisbas_ss_basm_rr_z",
+                "rt_diff_large_neutral_z",
+                "rt_diff_large_small_z",
+                "cbcl_scr_syn_internal_r",
+                "accumbens_rvsn_ant_z", # Accumbens reward vs. neutral anticipation.
+                "caudate_rvsn_ant_z", # Caudate reward vs. neutral anticipation.
+                "putamen_rvsn_ant_z", # Putamen reward vs. neutral anticipation.
+                "mOFC_rvsn_ant_z", # Medial OFC reward vs. neutral anticipation.
+                "lOFC_rvsn_ant_z", # Lateral OFC reward vs. neutral anticipation.
+                "accumbens_posvsneg_feedback_z", # Accumbens reward positive versus negative feedback.
+                "caudate_posvsneg_feedback_z", # Caudate reward positive versus negative feedback.
+                "putamen_posvsneg_feedback_z", # Putamen reward positive versus negative feedback.
+                "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
+                "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
+
+#dim(cor_male) # 2986 rows,  18 columns.
+# All of the z score ones need to be cleaned so that if it is < -3 or >3, it is replaced with NA instead.
+                
+variables_with_outliers <- c("hormone_scr_ert_mean_z",
+                "bisbas_ss_basm_rr_z",
+                "rt_diff_large_neutral_z",
+                "rt_diff_large_small_z",
+                "accumbens_rvsn_ant_z", # Accumbens reward vs. neutral anticipation.
+                "caudate_rvsn_ant_z", # Caudate reward vs. neutral anticipation.
+                "putamen_rvsn_ant_z", # Putamen reward vs. neutral anticipation.
+                "mOFC_rvsn_ant_z", # Medial OFC reward vs. neutral anticipation.
+                "lOFC_rvsn_ant_z", # Lateral OFC reward vs. neutral anticipation.
+                "accumbens_posvsneg_feedback_z", # Accumbens reward positive versus negative feedback.
+                "caudate_posvsneg_feedback_z", # Caudate reward positive versus negative feedback.
+                "putamen_posvsneg_feedback_z", # Putamen reward positive versus negative feedback.
+                "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
+                "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
+
+#dim(cor_male_variables_without_outliers)
+#dim(cor_male_variables_with_outliers)
+
+#sum(is.na(cor_male$caudate_posvsneg_feedback_z)) # 553.
+#sum(cor_male$caudate_posvsneg_feedback_z > 3, na.rm = TRUE) # 22.
+#sum(cor_male$caudate_posvsneg_feedback_z < -3, na.rm = TRUE) # 18.
+# So after this step it should be 553+22+18 = 593.
+
+# This is a two step process: First,  across all columns, replace all z scores greater than 3 or less than -3 with -99.
+# Then, replace all -99 with "NA".
+cor_male[ ,variables_with_outliers][ cor_male[ ,variables_with_outliers] > 3] <- -99
+cor_male[ ,variables_with_outliers][ cor_male[ ,variables_with_outliers] < -3] <- -99
+cor_male <- cor_male %>% replace_with_na_all(condition = ~.x == -99)
+#sum(is.na(cor_male$caudate_posvsneg_feedback_z)) # 593.
+
+# Now make correlation matrix!
+cormat_males <- rcorr(as.matrix(cor_male))
+cormat_males_flat <- flattenCorrMatrix(cormat_males$r, cormat_males$P,cormat_males$n)
+#cormat_males_flat
+print(format(cormat_males_flat, scientific = F, digits = 3))
+
+```

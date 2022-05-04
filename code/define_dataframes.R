@@ -270,7 +270,10 @@ PDS_correct$bmi <- 703*(PDS_correct$anthroweightcalc/(PDS_correct$anthroheightca
 #Filtering BMI values based on the possible range from the CDC Growth Chart
 PDS_correct$bmi <- ifelse(PDS_correct$bmi >= 12, ifelse(PDS_correct$bmi <= 35, PDS_correct$bmi, NA), NA)
 
-
+# Get z scores for bis bas rr scores.
+mean_bisbas <- mean(PDS_correct$bisbas_ss_basm_rr, na.rm=TRUE)
+sd_bisbas <- sd(PDS_correct$bisbas_ss_basm_rr, na.rm=TRUE)
+PDS_correct$bisbas_ss_basm_rr_z <- (PDS_correct$bisbas_ss_basm_rr-mean_bisbas)/sd_bisbas
 
 MID_imaging_correct <- subset(PDS_correct, imgincl_mid_include ==1) 
 nrow(MID_imaging_correct) # 4191 (exploratory). So 1492 drop out after imaging parameters are taken into account.
@@ -435,11 +438,6 @@ nrow(data_no_mOFC_feed_outliers_males_prepubertal) # 1480 (exploratory).
 data_no_test_outliers <- subset(PDS_correct, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 data_no_test_outliers_females <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
 data_no_test_outliers_males <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3)
-
-# Get z scores for bis bas rr scores.
-mean_bisbas <- mean(PDS_correct$bisbas_ss_basm_rr, na.rm=TRUE)
-sd_bisbas <- sd(PDS_correct$bisbas_ss_basm_rr, na.rm=TRUE)
-PDS_correct$bisbas_ss_basm_rr_z <- (PDS_correct$bisbas_ss_basm_rr-mean_bisbas)/sd_bisbas
 
 data_no_bisbas_outliers <- subset(PDS_correct, bisbas_ss_basm_rr_z > -3 & bisbas_ss_basm_rr_z < 3)
 nrow(data_no_bisbas_outliers) # 5654 (exploratory).
