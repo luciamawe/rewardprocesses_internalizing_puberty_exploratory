@@ -266,7 +266,8 @@ figure1 <- ggplot(model_predictions, aes(x = pds_score, y = predicted_cbcl_inter
     scale_fill_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) + 
     geom_line(size=4,alpha=0.86) +
     geom_ribbon(aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
-    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    scale_x_continuous(breaks = seq(1, 4.0, by = 0.5), limits = c(1,4)) +
     scale_y_continuous(breaks = seq(0, 10, by = 2), limits = c(0,10)) +
     xlab("PDS Score (Continuous)") + 
     ylab("Model Predicted Internalizing Score") +
@@ -351,7 +352,8 @@ figure2 <- ggplot(model_predictions_exploratory1B, aes(x = pds_score, y = bisbas
     scale_fill_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) + 
     geom_line(size=4,alpha=0.86) +
     geom_ribbon(aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
-    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    scale_x_continuous(breaks = seq(1, 4.0, by = 0.5), limits = c(1,4)) +
     scale_y_continuous(breaks = seq(-0.4, 0.4, by = 0.2), limits = c(-0.4,0.4)) +
     xlab("PDS Score (Continuous)") + 
     ylab("Model Predicted BIS/BAS-RR Z-Score") +
@@ -949,7 +951,8 @@ model_predictions <- ggpredict(confirmatory1_accumbens_females, terms = c("PDS_s
 ggplot(model_predictions, aes(x, predicted)) + 
     geom_line(color="#395B50",size=4,alpha=0.86) +
     geom_ribbon(color="#395B50",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
-    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    scale_x_continuous(breaks = seq(1, 4.0, by = 0.5), limits = c(1,4)) +
     #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
     xlab("PDS Score (Continuous)") + 
     ylab("Accumbens Anticipation Stage (Z-Score)") +
@@ -958,10 +961,11 @@ ggplot(model_predictions, aes(x, predicted)) +
 # Males.
 summary(confirmatory1_accumbens_males$gam)
 model_predictions <- ggpredict(confirmatory1_accumbens_males, terms = c("PDS_score"))
-ggplot(model_predictions, aes(x, predicted)) + 
+ggplot(model_predictions, aes(x, predicted)) +
     geom_line(color="#92B6B1",size=4,alpha=0.86) +
     geom_ribbon(color="#92B6B1",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
-    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    scale_x_continuous(breaks = seq(1, 4.0, by = 0.5), limits = c(1,4)) +
     #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
     xlab("PDS Score (Continuous)") + 
     ylab("Accumbens Anticipation Stage (Z-Score)") +
@@ -977,7 +981,8 @@ model_predictions <- ggpredict(exploratory1A_accumbens_females, terms = c("PDS_s
 ggplot(model_predictions, aes(x, predicted)) + 
     geom_line(color="#395B50",size=4,alpha=0.86) +
     geom_ribbon(color="#395B50",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
-    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    scale_x_continuous(breaks = seq(1, 4.0, by = 0.5), limits = c(1,4)) +
     #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
     xlab("PDS Score (Continuous)") + 
     ylab("Accumbens Feedback Stage (Z-Score)") +
@@ -989,7 +994,8 @@ model_predictions <- ggpredict(exploratory1A_accumbens_males, terms = c("PDS_sco
 ggplot(model_predictions, aes(x, predicted)) + 
     geom_line(color="#92B6B1",size=4,alpha=0.86) +
     geom_ribbon(color="#92B6B1",aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
-    scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
+    scale_x_continuous(breaks = seq(1, 4.0, by = 0.5), limits = c(1,4)) +
     #scale_y_continuous(breaks = seq(0, 15, by = 5), limits = c(0,15)) +
     xlab("PDS Score (Continuous)") + 
     ylab("Accumbens Feedback Stage (Z-Score)") +
