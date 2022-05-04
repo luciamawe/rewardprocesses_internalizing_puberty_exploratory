@@ -2,10 +2,10 @@
 title: 'Supplement A'
 subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9- and 10-year-olds in the ABCD Study.'
 output:
-  #pdf_document:
-  #  toc: yes
-  #  toc_depth: '3'
-  #  df_print: paged
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    df_print: paged
   html_document:
     toc: yes
     toc_depth: '3'
