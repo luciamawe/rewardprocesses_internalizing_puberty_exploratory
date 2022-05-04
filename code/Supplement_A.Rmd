@@ -2,10 +2,10 @@
 title: 'Supplement A'
 subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9- and 10-year-olds in the ABCD Study.'
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
-    df_print: paged
+  #pdf_document:
+  #  toc: yes
+  #  toc_depth: '3'
+  #  df_print: paged
   html_document:
     toc: yes
     toc_depth: '3'
@@ -2562,21 +2562,24 @@ cor_female <- cor_female %>% replace_with_na_all(condition = ~.x == -99)
 flattenCorrMatrix <- function(cormat, pmat,nmat) {
   ut <- upper.tri(cormat)
   data.frame(
-    variable1 = rownames(cormat)[col(cormat)[ut]],
-    variable2 = rownames(cormat)[row(cormat)[ut]],
-    number_complete_observations = nmat[ut],
-    correlation  =(cormat)[ut],
-    p_value = pmat[ut]
+    x1 = rownames(cormat)[col(cormat)[ut]],
+    x2= rownames(cormat)[row(cormat)[ut]],
+    N = nmat[ut],
+    corr  =(cormat)[ut],
+    p = pmat[ut]
     )
 }
 
 cormat_females <- rcorr(as.matrix(cor_female))
 cormat_females_flat <- flattenCorrMatrix(cormat_females$r, cormat_females$P,cormat_females$n)
 #cormat_females_flat
-print(format(cormat_females_flat, scientific = F, digits = 3))
+#print(format(cormat_females_flat, scientific = F))
+knitr::kable(format(cormat_females_flat, scientific = F))
+
+
 ```
 ## Males
-```{r,echo = FALSE}
+```{r,echo = FALSE,cols.print=5}
 
 cor_male <- MID_task_correct_males %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
 cor_male <- merge(PDS_correct_males,cor_male, by = "src_subject_id",all.x=TRUE)
@@ -2639,6 +2642,7 @@ cor_male <- cor_male %>% replace_with_na_all(condition = ~.x == -99)
 cormat_males <- rcorr(as.matrix(cor_male))
 cormat_males_flat <- flattenCorrMatrix(cormat_males$r, cormat_males$P,cormat_males$n)
 #cormat_males_flat
-print(format(cormat_males_flat, scientific = F, digits = 3))
+#print(format(cormat_males_flat, scientific = F, digits = 3))
+knitr::kable(format(cormat_males_flat, scientific = F))
 
 ```

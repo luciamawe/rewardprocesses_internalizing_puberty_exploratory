@@ -2451,7 +2451,6 @@ exploratoryFb_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~
 summary(exploratoryFb_lg_small_RT_males$gam)
 ```
 
-
 # 5--- Correlation Matrix ---
 ## Females
 ```{r,echo = FALSE,cols.print=5}
@@ -2513,6 +2512,14 @@ variables_with_outliers <- c("hormone_scr_ert_mean_z",
                 "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
                 "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
 
+#dim(cor_female_variables_without_outliers)
+#dim(cor_female_variables_with_outliers)
+
+#sum(is.na(cor_female$caudate_posvsneg_feedback_z)) # 445.
+#sum(cor_female$caudate_posvsneg_feedback_z > 3, na.rm = TRUE) # 9.
+#sum(cor_female$caudate_posvsneg_feedback_z < -3, na.rm = TRUE) # 10.
+# So after this step it should be 445+9 = 464.
+
 # This is a two step process: First,  across all columns, replace all z scores greater than 3 or less than -3 with -99.
 # Then, replace all -99 with "NA".
 cor_female[ ,variables_with_outliers][ cor_female[ ,variables_with_outliers] > 3] <- -99
@@ -2530,21 +2537,24 @@ cor_female <- cor_female %>% replace_with_na_all(condition = ~.x == -99)
 flattenCorrMatrix <- function(cormat, pmat,nmat) {
   ut <- upper.tri(cormat)
   data.frame(
-    variable1 = rownames(cormat)[col(cormat)[ut]],
-    variable2 = rownames(cormat)[row(cormat)[ut]],
-    number_complete_observations = nmat[ut],
-    correlation  =(cormat)[ut],
-    p_value = pmat[ut]
+    x1 = rownames(cormat)[col(cormat)[ut]],
+    x2= rownames(cormat)[row(cormat)[ut]],
+    N = nmat[ut],
+    corr  =(cormat)[ut],
+    p = pmat[ut]
     )
 }
 
 cormat_females <- rcorr(as.matrix(cor_female))
 cormat_females_flat <- flattenCorrMatrix(cormat_females$r, cormat_females$P,cormat_females$n)
 #cormat_females_flat
-print(format(cormat_females_flat, scientific = F, digits = 3))
+#print(format(cormat_females_flat, scientific = F))
+knitr::kable(format(cormat_females_flat, scientific = F))
+
+
 ```
 ## Males
-```{r,echo = FALSE}
+```{r,echo = FALSE,cols.print=5}
 
 cor_male <- MID_task_correct_males %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
 cor_male <- merge(PDS_correct_males,cor_male, by = "src_subject_id",all.x=TRUE)
@@ -2570,6 +2580,7 @@ cor_male <- cor_male  %>%
                 "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
                 "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
 
+#dim(cor_male) # 2986 rows,  18 columns.
 # All of the z score ones need to be cleaned so that if it is < -3 or >3, it is replaced with NA instead.
                 
 variables_with_outliers <- c("hormone_scr_ert_mean_z",
@@ -2587,16 +2598,26 @@ variables_with_outliers <- c("hormone_scr_ert_mean_z",
                 "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
                 "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
 
+#dim(cor_male_variables_without_outliers)
+#dim(cor_male_variables_with_outliers)
+
+#sum(is.na(cor_male$caudate_posvsneg_feedback_z)) # 553.
+#sum(cor_male$caudate_posvsneg_feedback_z > 3, na.rm = TRUE) # 22.
+#sum(cor_male$caudate_posvsneg_feedback_z < -3, na.rm = TRUE) # 18.
+# So after this step it should be 553+22+18 = 593.
+
 # This is a two step process: First,  across all columns, replace all z scores greater than 3 or less than -3 with -99.
 # Then, replace all -99 with "NA".
 cor_male[ ,variables_with_outliers][ cor_male[ ,variables_with_outliers] > 3] <- -99
 cor_male[ ,variables_with_outliers][ cor_male[ ,variables_with_outliers] < -3] <- -99
 cor_male <- cor_male %>% replace_with_na_all(condition = ~.x == -99)
+#sum(is.na(cor_male$caudate_posvsneg_feedback_z)) # 593.
 
 # Now make correlation matrix!
 cormat_males <- rcorr(as.matrix(cor_male))
 cormat_males_flat <- flattenCorrMatrix(cormat_males$r, cormat_males$P,cormat_males$n)
 #cormat_males_flat
-print(format(cormat_males_flat, scientific = F, digits = 3))
+#print(format(cormat_males_flat, scientific = F, digits = 3))
+knitr::kable(format(cormat_males_flat, scientific = F))
 
 ```
