@@ -1,0 +1,1173 @@
+---
+title: 'Supplement D: Testosterone Models Only (With Testosterone Outliers)'
+subtitle: 'Reward sensitivity and internalizing symptoms during the transition to puberty: An examination of 9- and 10-year-olds in the ABCD Study.'
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    toc: yes
+    toc_depth: '3'
+    toc_float:
+      collapsed: true
+---
+# Sensitivity Analysis Results for Sample 2
+
+
+```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(gamm4)
+library(dplyr)
+library(insight)
+library(here)
+library(lmerTest)
+library(gamm4.test)
+library(mgcv)
+library(jtools)
+library(interactions)
+#library(ggstatsplot)
+
+data_dir = ((dirname(here()))) 
+
+phase_folder = "confirmatory"  # select the appropriate folder.
+
+data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
+
+file_name <- "nda30_confirmatory.csv" # specify file name here. 
+
+fulldata <- read.csv(file.path(data_folder,file_name))
+nrow(fulldata) # 27331 (confirmatory). When call the define_dataframes script, will keep only the baseline data.
+
+# Call function to define all of the dataframes.
+script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes_keeptestosteroneoutliers.R")
+source(script_path)
+
+```
+
+# 1---Internalizing~Puberty---
+
+## 1.9 Model: CBCL internalizing factor ~ Testosterone
+### Female participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_females
+
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
+                                                  
+                                                  race.ethnicity.5level +
+                                                  interview_age + bmi + household.income + high.educ +
+                                                  demo_race_hispanic,
+                                                data = dataformodel,
+                                                random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2_testosterone_CBCL_female$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_males
+
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +
+                                                race.ethnicity.5level +
+                                                interview_age + bmi + household.income + high.educ +
+                                                demo_race_hispanic,
+                                              data = dataformodel,
+                                              random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2_testosterone_CBCL_male$gam)
+```
+## 1.10 Model: CBCL Anxious-Depressed ~ Testosterone
+### Female participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_females
+
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
+                                                  race.ethnicity.5level +
+                                                  interview_age + bmi + household.income + high.educ +
+                                                  demo_race_hispanic,
+                                                data = dataformodel,
+                                                random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2_testosterone_CBCL_female$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_males
+
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
+                                                race.ethnicity.5level +
+                                                interview_age + bmi + household.income + high.educ +
+                                                demo_race_hispanic,
+                                              data = dataformodel,
+                                              random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2_testosterone_CBCL_male$gam)
+```
+
+## 1.11 Model: CBCL Withdrawn-Depressed ~ Testosterone
+### Female participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_females
+
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
+                                                  race.ethnicity.5level +
+                                                  interview_age + bmi + household.income + high.educ +
+                                                  demo_race_hispanic,
+                                                data = dataformodel,
+                                                random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2_testosterone_CBCL_female$gam)
+```
+
+### Male participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_males
+
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
+                                                race.ethnicity.5level +
+                                                interview_age + bmi + household.income + high.educ +
+                                                demo_race_hispanic,
+                                              data = dataformodel,
+                                              random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2_testosterone_CBCL_male$gam)
+```
+## 1.12 Model: CBCL Depressed DSM-5 ~ Testosterone
+### Female participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_females
+
+confirmatory2_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
+                                                  race.ethnicity.5level +
+                                                  interview_age + bmi + household.income + high.educ +
+                                                  demo_race_hispanic,
+                                                data = dataformodel,
+                                                random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2_testosterone_CBCL_female$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_males
+
+confirmatory2_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight + 
+                                                race.ethnicity.5level +
+                                                interview_age + bmi + household.income + high.educ +
+                                                demo_race_hispanic,
+                                              data = dataformodel,
+                                              random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2_testosterone_CBCL_male$gam)
+```
+
+
+## 1.13 Model: CBCL internalizing factor ~ Testosterone + PDS 
+### Female participants
+```{r, echo=FALSE}
+
+dataformodel <- data_no_test_outliers_females
+
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
+                                                   race.ethnicity.5level +
+                                                   interview_age + bmi + household.income + high.educ +
+                                                   demo_race_hispanic,
+                                                 data = dataformodel,  
+                                                 random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_female$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+dataformodel <- data_no_test_outliers_males 
+
+
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
+                                                 race.ethnicity.5level +
+                                                 interview_age + bmi + household.income + high.educ +
+                                                 demo_race_hispanic,
+                                               data = dataformodel,
+                                               random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_male$gam)
+```
+
+## 1.14 Model: CBCL internalizing factor ~ Testosterone + Pubertal category 
+### Female participants
+```{r, echo=FALSE}
+# PDS category.
+
+#dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+dataformodel <- subset(PDS_correct_females, pds_p_ss_category !="5")
+
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
+                                                            race.ethnicity.5level +
+                                                            interview_age + bmi + household.income + high.educ +
+                                                            demo_race_hispanic,
+                                                          data = dataformodel,  
+                                                          random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_female_category$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+# PDS category.
+
+#dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+dataformodel <- subset(PDS_correct_males, pds_p_ss_category !="5")
+
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_internal_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
+                                                          race.ethnicity.5level +
+                                                          interview_age + bmi + household.income + high.educ +
+                                                          demo_race_hispanic,
+                                                        data = dataformodel,
+                                                        random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_male_category$gam)
+```
+## 1.15 Model: CBCL Anxious-Depressed ~ Testosterone + PDS 
+### Female participants
+```{r, echo=FALSE}
+
+dataformodel <- data_no_test_outliers_females
+
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
+                                                   race.ethnicity.5level +
+                                                   interview_age + bmi + household.income + high.educ +
+                                                   demo_race_hispanic,
+                                                 data = dataformodel,  
+                                                 random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_female$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+
+dataformodel <- data_no_test_outliers_males 
+
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
+                                                 race.ethnicity.5level +
+                                                 interview_age + bmi + household.income + high.educ +
+                                                 demo_race_hispanic,
+                                               data = dataformodel,
+                                               random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_male$gam)
+```
+
+## 1.16 Model: CBCL Anxious-Depressed ~ Testosterone + Pubertal category
+### Female participants
+```{r, echo=FALSE}
+# PDS category.
+
+#dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+dataformodel <- subset(PDS_correct_females, pds_p_ss_category !="5")
+
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
+                                                            race.ethnicity.5level +
+                                                            interview_age + bmi + household.income + high.educ +
+                                                            demo_race_hispanic,
+                                                          data = dataformodel,  
+                                                          random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_female_category$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+# PDS category.
+
+#dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+dataformodel <- subset(PDS_correct_males, pds_p_ss_category !="5")
+
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_anxdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
+                                                          race.ethnicity.5level +
+                                                          interview_age + bmi + household.income + high.educ +
+                                                          demo_race_hispanic,
+                                                        data = dataformodel,
+                                                        random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_male_category$gam)
+```
+## 1.17 Model: CBCL Withdrawn-Depressed ~ Testosterone + PDS
+### Female participants
+```{r, echo=FALSE}
+
+dataformodel <- data_no_test_outliers_females
+
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
+                                                   race.ethnicity.5level +
+                                                   interview_age + bmi + household.income + high.educ +
+                                                   demo_race_hispanic,
+                                                 data = dataformodel,  
+                                                 random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_female$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+
+dataformodel <- data_no_test_outliers_males 
+
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
+                                                 race.ethnicity.5level +
+                                                 interview_age + bmi + household.income + high.educ +
+                                                 demo_race_hispanic,
+                                               data = dataformodel,
+                                               random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_male$gam)
+```
+## 1.18 Model: CBCL Withdrawn-Depressed ~ Testosterone + Pubertal category
+### Female participants
+```{r, echo=FALSE}
+# PDS category.
+
+#dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+dataformodel <- subset(PDS_correct_females, pds_p_ss_category !="5")
+
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
+                                                            race.ethnicity.5level +
+                                                            interview_age + bmi + household.income + high.educ +
+                                                            demo_race_hispanic,
+                                                          data = dataformodel,  
+                                                          random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_female_category$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+# PDS category.
+
+#dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+dataformodel <- subset(PDS_correct_males, pds_p_ss_category !="5")
+
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_syn_withdep_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
+                                                          race.ethnicity.5level +
+                                                          interview_age + bmi + household.income + high.educ +
+                                                          demo_race_hispanic,
+                                                        data = dataformodel,
+                                                        random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_male_category$gam)
+```
+## 1.19 Model: CBCL Depressed DSM-5 ~ Testosterone + PDS 
+### Female participants
+```{r, echo=FALSE}
+
+dataformodel <- data_no_test_outliers_females
+
+confirmatory2B_testosterone_CBCL_female <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
+                                                   race.ethnicity.5level +
+                                                   interview_age + bmi + household.income + high.educ +
+                                                   demo_race_hispanic,
+                                                 data = dataformodel,  
+                                                 random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_female$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+
+dataformodel <- data_no_test_outliers_males 
+
+
+confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  PDS_score +
+                                                 race.ethnicity.5level +
+                                                 interview_age + bmi + household.income + high.educ +
+                                                 demo_race_hispanic,
+                                               data = dataformodel,
+                                               random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_male$gam)
+```
+
+## 1.20 Model: CBCL Depressed DSM-5 ~ Testosterone + Pubertal category 
+### Female participants
+```{r, echo=FALSE}
+# PDS category.
+
+#dataformodel <- subset(PDS_correct_females, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+dataformodel <- subset(PDS_correct_females, pds_p_ss_category !="5")
+
+confirmatory2B_testosterone_CBCL_female_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
+                                                            race.ethnicity.5level +
+                                                            interview_age + bmi + household.income + high.educ +
+                                                            demo_race_hispanic,
+                                                          data = dataformodel,  
+                                                          random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_female_category$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+# PDS category.
+
+#dataformodel <- subset(PDS_correct_males, hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3 & pds_p_ss_category !="5")
+dataformodel <- subset(PDS_correct_males, pds_p_ss_category !="5")
+
+confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  pds_p_ss_category +
+                                                          race.ethnicity.5level +
+                                                          interview_age + bmi + household.income + high.educ +
+                                                          demo_race_hispanic,
+                                                        data = dataformodel,
+                                                        random = ~ (1 | site_id_l/rel_family_id))
+
+summary(confirmatory2B_testosterone_CBCL_male_category$gam)
+```
+
+
+
+
+
+
+
+# 2---Reward~Puberty---
+
+## 2.11 Model: Caudate Anticipation ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+dataformodel <- data_no_caudate_ant_no_test_outliers_females 
+
+confirmatory1_caudate_females <- gamm4(caudate_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                       random = ~ (1 | site_id_l/rel_family_id),
+                                       data = dataformodel)
+
+summary(confirmatory1_caudate_females$gam)
+
+```
+### Male participants
+```{r, echo = FALSE}
+dataformodel <- data_no_caudate_ant_no_test_outliers_males
+
+confirmatory1_caudate_males<- gamm4(caudate_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                    random = ~ (1 | site_id_l/rel_family_id),
+                                    data = dataformodel)
+
+summary(confirmatory1_caudate_males$gam)
+
+```
+
+## 2.12 Model B: Putamen Anticipation ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+dataformodel <- data_no_putamen_ant_no_test_outliers_females 
+
+confirmatory1_putamen_females <- gamm4(putamen_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                       random = ~ (1 | site_id_l/rel_family_id),
+                                       data = dataformodel)
+
+summary(confirmatory1_putamen_females$gam)
+
+```
+### Male participants
+```{r, echo = FALSE}
+dataformodel <- data_no_putamen_ant_no_test_outliers_males 
+
+confirmatory1_putamen_males <- gamm4(putamen_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                     random = ~ (1 | site_id_l/rel_family_id),
+                                     data = dataformodel)
+
+summary(confirmatory1_putamen_males$gam)
+```
+
+## 2.13 Model: Accumbens Anticipation ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+dataformodel <- data_no_accumbens_ant_no_test_outliers_females 
+
+confirmatory1_accumbens_females <- gamm4(accumbens_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                         random = ~ (1 | site_id_l/rel_family_id),
+                                         data = dataformodel)
+
+summary(confirmatory1_accumbens_females$gam)
+```
+### Male participants
+```{r, echo = FALSE}
+dataformodel <- data_no_accumbens_ant_no_test_outliers_males 
+
+confirmatory1_accumbens_males <- gamm4(accumbens_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                       random = ~ (1 | site_id_l/rel_family_id),
+                                       data = dataformodel)
+
+summary(confirmatory1_accumbens_males$gam)
+```
+
+
+## 2.14 Model: Caudate Feedback  ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+dataformodel <- data_no_caudate_feed_no_test_outliers_females
+
+exploratory1A_caudate_females <- gamm4(caudate_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                       random = ~ (1 | site_id_l/rel_family_id),
+                                       data = dataformodel)
+
+summary(exploratory1A_caudate_females$gam)
+```
+### Male participants
+```{r, echo = FALSE}
+dataformodel <- data_no_caudate_feed_no_test_outliers_males
+
+exploratory1A_caudate_males <- gamm4(caudate_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                     random = ~ (1 | site_id_l/rel_family_id),
+                                     data = dataformodel)
+
+summary(exploratory1A_caudate_males$gam)
+
+```
+## 2.15 Model: Putamen Feedback ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+dataformodel <- data_no_putamen_feed_no_test_outliers_females
+
+exploratory1A_putamen_females <- gamm4(putamen_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                       random = ~ (1 | site_id_l/rel_family_id),
+                                       data = dataformodel)
+
+summary(exploratory1A_putamen_females$gam)
+```
+### Male participants
+```{r, echo = FALSE}
+dataformodel <- data_no_putamen_feed_outliers_no_test_males
+
+exploratory1A_putamen_males <- gamm4(putamen_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                     random = ~ (1 | site_id_l/rel_family_id),
+                                     data = dataformodel)
+
+summary(exploratory1A_putamen_males$gam)
+```
+## 2.16 Model: Accumbens Feedback ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+dataformodel <- data_no_accumbens_feed_no_test_outliers_females
+
+exploratory1A_accumbens_females <- gamm4(accumbens_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                         random = ~ (1 | site_id_l/rel_family_id),
+                                         data = dataformodel)
+
+summary(exploratory1A_accumbens_females$gam)
+```
+### Male participants
+```{r, echo = FALSE}
+dataformodel <- data_no_accumbens_feed_no_test_outliers_males
+
+exploratory1A_accumbens_males <- gamm4(accumbens_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                                       random = ~ (1 | site_id_l/rel_family_id),
+                                       data = dataformodel)
+
+summary(exploratory1A_accumbens_males$gam)
+
+```
+
+
+
+## 2.17 Model: OFC Anticipation ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+
+# Female participants (lateral OFC; lOFC).
+dataformodel <- data_no_lOFC_ant_test_outliers_females
+modelC_females_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                             random = ~ (1 | site_id_l/rel_family_id),
+                             data = dataformodel)
+
+summary(modelC_females_lOFC$gam)
+
+
+# Female participants (medial OFC; mOFC).
+dataformodel <- data_no_mOFC_ant_test_outliers_females
+modelC_females_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                             random = ~ (1 | site_id_l/rel_family_id),
+                             data = dataformodel)
+
+summary(modelC_females_mOFC$gam)
+
+```
+
+### Male participants
+```{r, echo=FALSE}
+# Male participants (lateral OFC; lOFC).
+dataformodel <- data_no_lOFC_ant_test_outliers_males
+modelC_males_lOFC <- gamm4(lOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                           random = ~ (1 | site_id_l/rel_family_id),
+                           data = dataformodel)
+
+summary(modelC_males_lOFC$gam)
+
+
+# Male participants (medial OFC; mOFC).
+dataformodel <- data_no_mOFC_ant_test_outliers_males
+modelC_males_mOFC <- gamm4(mOFC_rvsn_ant_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                           random = ~ (1 | site_id_l/rel_family_id),
+                           data = dataformodel)
+
+summary(modelC_males_mOFC$gam)
+```
+
+## 2.18 Model: OFC Feedback ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+
+# Female participants (lateral OFC; lOFC).
+dataformodel <- data_no_lOFC_feed_test_outliers_females
+modelD_females_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                             random = ~ (1 | site_id_l/rel_family_id),
+                             data = dataformodel)
+
+summary(modelD_females_lOFC$gam)
+
+
+# Female participants (medial OFC; mOFC).
+dataformodel <- data_no_mOFC_feed_test_outliers_females
+modelD_females_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                             random = ~ (1 | site_id_l/rel_family_id),
+                             data = dataformodel)
+
+summary(modelD_females_mOFC$gam)
+```
+
+### Male participants
+```{r, echo=FALSE}
+
+# Male participants (lateral OFC; lOFC).
+dataformodel <- data_no_lOFC_feed_test_outliers_males
+modelD_males_lOFC <- gamm4(lOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                           random = ~ (1 | site_id_l/rel_family_id),
+                           data = dataformodel)
+
+summary(modelD_males_lOFC$gam)
+
+
+# Male participants (medial OFC; mOFC).
+dataformodel <- data_no_mOFC_feed_test_outliers_males
+modelD_males_mOFC <- gamm4(mOFC_posvsneg_feedback_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + MRI_minus_hormone_date_time + bmi,
+                           random = ~ (1 | site_id_l/rel_family_id),
+                           data = dataformodel)
+
+summary(modelD_males_mOFC$gam)
+```
+
+## 2.19 Model: MID Reaction Time ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+
+# Female participants: large reward vs. neutral.
+dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
+modelE_lg_neutral_RT_females <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
+                                      random = ~ (1 | site_id_l/rel_family_id),
+                                      data = dataformodel)
+
+summary(modelE_lg_neutral_RT_females$gam)
+
+# Female participants: large reward vs. small reward.
+dataformodel <- data_no_RT_test_outliers_females # No MID RT difference score or testosterone outliers.
+modelE_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
+                                    random = ~ (1 | site_id_l/rel_family_id),
+                                    data = dataformodel)
+
+summary(modelE_lg_small_RT_females$gam)
+```
+
+### Male participants
+```{r, echo=FALSE}
+# Male participants: large reward vs. neutral.
+dataformodel <- data_no_RT_test_outliers_males # No MID RT difference score or testosterone outliers.
+
+modelE_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
+                                    random = ~ (1 | site_id_l/rel_family_id),
+                                    data = dataformodel)
+
+summary(modelE_lg_neutral_RT_males$gam)
+
+# Male participants: large reward vs. small reward.
+modelE_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
+                                  random = ~ (1 | site_id_l/rel_family_id),
+                                  data = dataformodel)
+
+summary(modelE_lg_small_RT_males$gam)
+```
+
+## 2.20 Model: BIS-BAS-RR ~ Testosterone
+### Female participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_bisbas_test_outliers_females
+modelF_females <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
+                        random = ~ (1 | site_id_l/rel_family_id),
+                        data = dataformodel)
+
+summary(modelF_females$gam)
+```
+### Male participants
+```{r, echo=FALSE}
+dataformodel <- data_no_bisbas_test_outliers_males
+modelF_males <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean + hormone_sal_end_min_since_midnight +  interview_age + bmi,
+                      random = ~ (1 | site_id_l/rel_family_id),
+                      data = dataformodel)
+
+summary(modelF_males$gam)
+```
+
+
+
+
+
+
+
+
+# 4---Internalizing~Puberty x Reward---
+
+
+## 4.14 Model: CBCL internalizing factor ~ Testosterone x Accumbens activity (anticipation stage) + PDS
+### Female participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_no_test_outliers_females
+
+confirmatory4Ea_accumbens_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                  PDS_score+
+                                                  hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                  accumbens_rvsn_ant_z+
+                                                  race.ethnicity.5level +
+                                                  demo_race_hispanic +
+                                                  interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                                data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_accumbens_test_females $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+### Male participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_accumbens_ant_no_test_outliers_males
+
+confirmatory4Ea_accumbens_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                PDS_score+
+                                                hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                accumbens_rvsn_ant_z+
+                                                race.ethnicity.5level +
+                                                demo_race_hispanic +
+                                                interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                              data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_accumbens_test_males $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+## 4.15 Model: CBCL internalizing factor ~ Testosterone x Caudate activity (anticipation stage) + PDS
+### Female participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_no_test_outliers_females
+
+confirmatory4Ea_caudate_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                PDS_score+
+                                                hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                caudate_rvsn_ant_z+
+                                                race.ethnicity.5level +
+                                                demo_race_hispanic +
+                                                #high.educ +
+                                                #household.income +
+                                                #married.or.livingtogether +
+                                                interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                              data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_caudate_test_females $gam)
+#plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE) #Interaction plot
+```
+
+### Male participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_caudate_ant_no_test_outliers_males
+
+confirmatory4Ea_caudate_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                              PDS_score+
+                                              hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                              caudate_rvsn_ant_z+
+                                              race.ethnicity.5level +
+                                              demo_race_hispanic +
+                                              interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_caudate_test_males $gam)
+```
+
+## 4.16 Model: CBCL internalizing factor ~ Testosterone x Putamen activity (anticipation stage) + PDS
+### Female participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_no_test_outliers_females
+
+confirmatory4Ea_putamen_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                PDS_score+
+                                                hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                putamen_rvsn_ant_z+
+                                                race.ethnicity.5level +
+                                                demo_race_hispanic +
+                                                interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                              data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_putamen_test_females $gam)
+```
+
+### Male participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_putamen_ant_no_test_outliers_males
+
+confirmatory4Ea_putamen_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                              PDS_score+
+                                              hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                              putamen_rvsn_ant_z+
+                                              race.ethnicity.5level +
+                                              demo_race_hispanic +
+                                              interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Ea_putamen_test_males $gam)
+```
+
+
+## 4.17 Model: CBCL internalizing factor ~ Testosterone x Accumbens activity (feedback stage) + PDS
+### Female participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_accumbens_feed_no_test_outliers_females
+
+exploratory4Eb_accumbens_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                      PDS_score+
+                                                      hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                      accumbens_posvsneg_feedback_z+
+                                                      race.ethnicity.5level +
+                                                      demo_race_hispanic +
+                                                      interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                                    data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4Eb_accumbens_test_feed_females$gam)
+
+```
+### Male participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_accumbens_feed_no_test_outliers_males
+
+exploratory4Eb_accumbens_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                    PDS_score+
+                                                    hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                    accumbens_posvsneg_feedback_z+
+                                                    race.ethnicity.5level +
+                                                    demo_race_hispanic +
+                                                    interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                                  data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4Eb_accumbens_test_feed_males$gam)
+```
+
+## 4.18 Model: CBCL internalizing factor ~ Testosterone x Caudate activity (Feedback stage) + PDS
+### Female participants
+```{r, echo = FALSE}
+dataformodel <- data_no_caudate_feed_no_test_outliers_females
+
+confirmatory4Eb_caudate_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                     PDS_score+
+                                                     hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                     caudate_posvsneg_feedback_z+
+                                                     race.ethnicity.5level +
+                                                     demo_race_hispanic +
+                                                     interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                                   data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Eb_caudate_test_feed_females$gam)
+```
+
+### Male participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_caudate_feed_no_test_outliers_males
+
+confirmatory4Eb_caudate_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                   PDS_score+
+                                                   hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                   caudate_posvsneg_feedback_z+
+                                                   race.ethnicity.5level +
+                                                   demo_race_hispanic +
+                                                   interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                                 data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Eb_caudate_test_feed_males$gam)
+```
+
+## 4.19 Model: CBCL internalizing factor ~ Testosterone x Putamen activity (Feedback stage) + PDS
+### Female participants
+```{r, echo = FALSE}
+dataformodel <- data_no_putamen_feed_no_test_outliers_females
+
+confirmatory4Eb_putamen_test_feed_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                     PDS_score+
+                                                     hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                     putamen_posvsneg_feedback_z+
+                                                     race.ethnicity.5level +
+                                                     demo_race_hispanic +
+                                                     interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                                   data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Eb_putamen_test_feed_females$gam)
+
+```
+
+### Male participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_putamen_feed_outliers_no_test_males
+
+confirmatory4Eb_putamen_test_feed_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                   PDS_score+
+                                                   hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                   putamen_posvsneg_feedback_z+
+                                                   race.ethnicity.5level +
+                                                   demo_race_hispanic +
+                                                   interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ,
+                                                 data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(confirmatory4Eb_putamen_test_feed_males$gam)
+```
+
+## 4.20 Model: CBCL internalizing factor ~ Testosterone x Lateral OFC activity (anticipation stage) + PDS
+### Female participants
+```{r, echo=FALSE}
+#Lateral OFC
+
+dataformodel <- data_no_lOFC_ant_test_outliers_females 
+
+exploratory4c_OFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                      PDS_score+
+                                                      hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                      lOFC_rvsn_ant_z+
+                                                      race.ethnicity.5level +
+                                                      demo_race_hispanic +
+                                                      interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_OFC_ant_allCBCL_test_females$gam )
+```
+
+### Male participants
+```{r, echo=FALSE}
+#Lateral OFC
+dataformodel <- data_no_lOFC_ant_test_outliers_males 
+
+exploratory4c_OFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                    PDS_score+
+                                                    hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                    lOFC_rvsn_ant_z+
+                                                    race.ethnicity.5level +
+                                                    demo_race_hispanic +
+                                                    interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_OFC_ant_allCBCL_test_males$gam )
+```
+
+
+## 4.21 Model: CBCL internalizing factor ~ Testosterone x Medial OFC activity (anticipation stage) + PDS
+### Female participants
+```{r, echo=FALSE}
+#Medial OFC
+dataformodel <- data_no_mOFC_ant_test_outliers_females 
+
+exploratory4c_mOFC_ant_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                       PDS_score+
+                                                       hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                       mOFC_rvsn_ant_z+
+                                                       race.ethnicity.5level +
+                                                       demo_race_hispanic +
+                                                       interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_mOFC_ant_allCBCL_test_females$gam )
+```
+
+### Male participants
+```{r, echo=FALSE}
+#Medial OFC
+dataformodel <- data_no_mOFC_ant_test_outliers_males 
+
+exploratory4c_mOFC_ant_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                     PDS_score+
+                                                     hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*  
+                                                     mOFC_rvsn_ant_z+
+                                                     race.ethnicity.5level +
+                                                     demo_race_hispanic +
+                                                     interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4c_mOFC_ant_allCBCL_test_males$gam )
+```
+
+## 4.22 Model: CBCL internalizing factor ~ Testosterone x Lateral OFC activity (feedback stage) + PDS
+### Female participants
+```{r, echo = FALSE}
+#Lateral OFC feedback
+
+dataformodel <- data_no_lOFC_feed_test_outliers_females 
+
+exploratory4d_OFC_feed_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                       PDS_score+
+                                                       hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean* 
+                                                       lOFC_posvsneg_feedback_z+
+                                                       race.ethnicity.5level +
+                                                       demo_race_hispanic +
+                                                       interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_OFC_feed_allCBCL_test_females$gam )
+```
+
+### Male participants
+```{r, echo = FALSE}
+#Lateral OFC feedback
+
+dataformodel <- data_no_lOFC_feed_test_outliers_males 
+
+exploratory4d_OFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                     PDS_score+
+                                                     hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean* 
+                                                     lOFC_posvsneg_feedback_z+
+                                                     race.ethnicity.5level +
+                                                     demo_race_hispanic +
+                                                     interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_OFC_feed_allCBCL_test_males$gam )
+```
+
+## 4.23 Model: CBCL internalizing factor ~ Testosterone x Medial OFC activity (feedback stage) + PDS
+### Female participants
+```{r, echo=FALSE}
+#Medial OFC feedback
+
+dataformodel <- data_no_mOFC_feed_test_outliers_females 
+
+exploratory4d_mOFC_feed_allCBCL_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                        PDS_score+
+                                                        hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean* 
+                                                        mOFC_posvsneg_feedback_z+
+                                                        race.ethnicity.5level +
+                                                        demo_race_hispanic +
+                                                        interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_mOFC_feed_allCBCL_test_females$gam )
+```
+
+### Male participants
+```{r, echo=FALSE}
+#Medial OFC feedback
+
+dataformodel <- data_no_mOFC_feed_test_outliers_males 
+
+exploratory4d_mOFC_feed_allCBCL_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                      PDS_score+
+                                                      hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean* 
+                                                      mOFC_posvsneg_feedback_z+
+                                                      race.ethnicity.5level +
+                                                      demo_race_hispanic +
+                                                      interview_age + MRI_minus_hormone_date_time + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratory4d_mOFC_feed_allCBCL_test_males$gam )
+
+```
+
+
+## 4.24 Model: CBCL internalizing factor ~ Testosterone x BIS-BAS RR + PDS
+### Female participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_bisbas_test_outliers_females 
+
+exploratory4e_bisbas_allCBCL_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                                PDS_score+
+                                                hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
+                                                bisbas_ss_basm_rr+
+                                                race.ethnicity.5level +
+                                                demo_race_hispanic +
+                                                interview_age + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4e_bisbas_allCBCL_females$gam )
+```
+
+### Male participants
+```{r, echo = FALSE}
+
+dataformodel <- data_no_bisbas_test_outliers_males 
+
+exploratory4e_bisbas_allCBCL_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                              PDS_score+
+                                              hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
+                                              bisbas_ss_basm_rr+
+                                              race.ethnicity.5level +
+                                              demo_race_hispanic +
+                                              interview_age + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+summary(exploratory4e_bisbas_allCBCL_males$gam )
+```
+
+
+## 4.25 Model: CBCL internalizing factor ~ Testosterone x MID Reaction Time + PDS (large reward vs. neutral) 
+### Female participants 
+```{r, echo = FALSE}
+
+dataformodel <- data_no_RT_test_outliers_females
+
+#Large reward vs. neutral.
+exploratoryFa_lg_neutral_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                               PDS_score+
+                                               hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
+                                               rt_diff_large_neutral_z+
+                                               race.ethnicity.5level +
+                                               demo_race_hispanic +
+                                               interview_age + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFa_lg_neutral_RT_females$gam)
+```
+### Male participants 
+```{r, echo = FALSE}
+dataformodel <- data_no_RT_test_outliers_males
+
+#Large reward vs. neutral.
+exploratoryFa_lg_neutral_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                             PDS_score+
+                                             hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
+                                             rt_diff_large_neutral_z+
+                                             race.ethnicity.5level +
+                                             demo_race_hispanic +
+                                             interview_age + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFa_lg_neutral_RT_males$gam)
+```
+
+
+## 4.26 Model: CBCL internalizing factor ~ Testosterone x MID Reaction Time + PDS (large vs. small reward)
+### Female participants 
+```{r, echo = FALSE}
+#Large reward vs. small reward positive.
+dataformodel <- data_no_RT_test_outliers_females
+
+exploratoryFb_lg_small_RT_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                             PDS_score+
+                                             hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
+                                             rt_diff_large_small_z+
+                                             race.ethnicity.5level +
+                                             demo_race_hispanic +
+                                             interview_age + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFb_lg_small_RT_females$gam)
+```
+
+### Male participants
+```{r, echo = FALSE}
+#Large reward vs. small reward positive.
+
+dataformodel <- data_no_RT_test_outliers_males
+
+exploratoryFb_lg_small_RT_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+                                           PDS_score+
+                                           hormone_sal_end_min_since_midnight +  hormone_scr_ert_mean*
+                                           rt_diff_large_small_z+
+                                           race.ethnicity.5level +
+                                           demo_race_hispanic +
+                                           interview_age + bmi + household.income + high.educ, data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+
+summary(exploratoryFb_lg_small_RT_males$gam)
+```
