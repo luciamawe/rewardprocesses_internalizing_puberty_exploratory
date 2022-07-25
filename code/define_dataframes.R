@@ -554,7 +554,7 @@ data_no_putamen_ant_no_test_outliers_males <- subset(MID_imaging_correct_males, 
 nrow(data_no_putamen_ant_no_test_outliers_males) #1912
 
 #No reward and no testosterone outliers
-#### Separate reward regions for feedback pos vs neg. #### 
+#### Separate reward regions for feedback positive vs. negative. #### 
 # No accumbens outliers.
 data_no_accumbens_feed_no_test_outliers <- subset(MID_imaging_correct, accumbens_posvsneg_feedback_z > -3 & accumbens_posvsneg_feedback_z < 3 & hormone_scr_ert_mean_z > -3 & hormone_scr_ert_mean_z < 3) 
 nrow(data_no_accumbens_feed_no_test_outliers) #3827
