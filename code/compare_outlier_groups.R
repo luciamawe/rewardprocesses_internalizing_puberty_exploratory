@@ -70,6 +70,7 @@ nrow(PDS_correct_sample2) # 5612.
 MID_task_correct_sample2 <- MID_task_correct_sample2[!duplicated(MID_task_correct_sample2$src_subject_id),]
 nrow(MID_task_correct_sample2) # 4634.
 PDS_correct_sample2 <- PDS_correct_sample2[!duplicated(PDS_correct_sample2$src_subject_id),]
+#NDAR_INVXN6HMGK8
 nrow(PDS_correct_sample2) # 5598.
 
 MID_task_correct_sample2 <- MID_task_correct_sample2 %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
@@ -169,6 +170,14 @@ both_samples$is_outlier_any <- as.factor(both_samples$is_outlier_any)
 sample1_new <- subset(both_samples, sample == "sample1")
 sample2_new <- subset(both_samples, sample == "sample2")
 
+sample1_females <- subset(sample1_new, sex == "F")
+sample1_males <- subset(sample1_new, sex == "M")
+nrow(sample1_females) + nrow(sample1_males) # 5624.
+sample2_females <- subset(sample2_new, sex == "F")
+sample2_males <- subset(sample2_new, sex == "M")
+nrow(sample2_females) + nrow(sample2_males) # 5598.
+
+
 demographic_differences_sample1 <- compareGroups(is_outlier_any ~ sex +
                                            interview_age +
                                            bmi +
@@ -247,3 +256,61 @@ descriptive_statistics_boxplot <- ggplot(sample2_new, aes(x = is_outlier_any,
 descriptive_statistics_boxplot
 
 
+# Separate by gender.
+# Sample 1 females.
+demographic_differences_sample1_females <- compareGroups(is_outlier_any ~
+                                                   interview_age +
+                                                   bmi +
+                                                   race.ethnicity.5level +
+                                                   household.income+
+                                                   high.educ +
+                                                   demo_race_hispanic, 
+                                                 data = sample1_females)
+#getResults(demographic_differences_sample1_females)
+pvals <- getResults(demographic_differences_sample1_females, "p.overall")
+p.adjust(pvals, method = "BH")
+#p.adjust(pvals, method = "bonferroni")
+export_table_sample1_females <- createTable(demographic_differences_sample1_females)
+export_table_sample1_females
+
+# Sample 1 males.
+demographic_differences_sample1_males <- compareGroups(is_outlier_any ~
+                                                           interview_age +
+                                                           bmi +
+                                                           race.ethnicity.5level +
+                                                           household.income+
+                                                           high.educ +
+                                                           demo_race_hispanic, 
+                                                         data = sample1_males)
+pvals <- getResults(demographic_differences_sample1_males, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table_sample1_males <- createTable(demographic_differences_sample1_males)
+export_table_sample1_males
+
+# Sample 2 females.
+demographic_differences_sample2_females <- compareGroups(is_outlier_any ~
+                                                           interview_age +
+                                                           bmi +
+                                                           race.ethnicity.5level +
+                                                           household.income+
+                                                           high.educ +
+                                                           demo_race_hispanic, 
+                                                         data = sample2_females)
+pvals <- getResults(demographic_differences_sample2_females, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table_sample2_females <- createTable(demographic_differences_sample2_females)
+export_table_sample2_females
+
+# Sample 2 males.
+demographic_differences_sample2_males <- compareGroups(is_outlier_any ~
+                                                         interview_age +
+                                                         bmi +
+                                                         race.ethnicity.5level +
+                                                         household.income+
+                                                         high.educ +
+                                                         demo_race_hispanic, 
+                                                       data = sample2_males)
+pvals <- getResults(demographic_differences_sample2_males, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table_sample2_males <- createTable(demographic_differences_sample2_males)
+export_table_sample2_males
