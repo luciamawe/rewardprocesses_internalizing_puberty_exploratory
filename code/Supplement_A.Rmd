@@ -49,6 +49,14 @@ nrow(fulldata) # 27321 (exploratory); 27331 (confirmatory). When call the define
 # Call function to define all of the dataframes.
 script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
 source(script_path)
+
+# Define function to get standardized coefficients.
+standardized_coefficient_function <- file.path(data_dir,
+                                          "rewardprocesses_internalizing_puberty_exploratory",
+                                          "code",
+                                          "get_standardized_coefficients.R")
+source(standardized_coefficient_function)
+
 ```
 
 # 1---Internalizing~Puberty---
@@ -66,6 +74,7 @@ confirmatory2_females <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id))
 
 summary(confirmatory2_females$gam)
+standardized_coefficient(confirmatory2_females$mer)
 ```
 ### Male participants
 ```{r, echo=FALSE}
@@ -79,7 +88,7 @@ confirmatory2_males <- gamm4(cbcl_scr_syn_internal_r ~ PDS_score +
                       random = ~ (1 | site_id_l/rel_family_id))
           
 summary(confirmatory2_males$gam)
-
+standardized_coefficient(confirmatory2_males$mer)
 ```
 
 ## 1.2 Model: CBCL Anxious-Depressed ~ PDS
