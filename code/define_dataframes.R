@@ -131,15 +131,13 @@ data <- fulldata[,c("src_subject_id",
 # Note: pds_ss_category = pds_p_ss_category. Rename here.
 data <- rename(data, pds_p_ss_category = pds_ss_category)
 
-data[c("src_subject_id","rel_family_id","eventname",
-       "sex","demo_race_hispanic","site_id_l",
-       "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
-       "high.educ","household.income","married.or.livingtogether",
-       "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")] <- lapply(data[c("src_subject_id","rel_family_id","eventname",
-                                                                                                "sex","demo_race_hispanic","site_id_l",
-                                                                                                "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
-                                                                                                "high.educ","household.income","married.or.livingtogether",
-                                                                                              "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")], as.factor)
+factor_columns <- c("src_subject_id","rel_family_id","eventname",
+                    "sex","demo_race_hispanic","site_id_l",
+                    "mri_info_deviceserialnumber","race.ethnicity.5level","race.eth.7level",
+                    "high.educ","household.income","married.or.livingtogether",
+                    "pds_p_ss_category","tfmri_mid_beh_performflag","imgincl_mid_include")
+
+data[c(factor_columns)] <- lapply(data[c(factor_columns)],as.factor)
 
 # Releveling so that "Pre" is the reference group for PDS category.
 data$pds_p_ss_category <- relevel(data$pds_p_ss_category, ref="Pre")
@@ -149,12 +147,16 @@ data$pds_p_ss_category <- relevel(data$pds_p_ss_category, ref="Pre")
 #data$race.ethnicity.5level = droplevels(data$race.ethnicity.5level)
 
 # Exclude two participants who have multiple rows for baseline.
-data <- subset(data, src_subject_id != "NDAR_INV2ZA2LC3N" & src_subject_id != "NDAR_INVJ9GNXGK5")
-nrow(data) # 27298.
+#data <- subset(data, src_subject_id != "NDAR_INV2ZA2LC3N" & src_subject_id != "NDAR_INVJ9GNXGK5")
+# Also need to exclude NDAR_INV3E0WVH3G; but will remove duplicate rows instead of removing them manually (and will keep one row for each of them rather than remove all their rows).
 
 # Use only data from baseline.
 data <- subset(data,eventname == "baseline_year_1_arm_1")
-nrow(data) # 5945 (exploratory).
+nrow(data) # 5961 (exploratory).
+
+# Get rid of duplicated rows.
+data <- data[!duplicated(data$src_subject_id),]
+nrow(data) # 5940 (exploratory).
 
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
