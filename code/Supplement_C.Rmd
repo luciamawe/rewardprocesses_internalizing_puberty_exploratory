@@ -11,8 +11,6 @@ output:
     toc_float:
       collapsed: true
 ---
-# Sensitivity Analysis Results for Sample 1
-
 
 ```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -20,14 +18,12 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(gamm4)
 library(dplyr)
-library(insight)
 library(here)
 library(lmerTest)
 library(gamm4.test)
-library(mgcv)
-library(jtools)
-library(interactions)
-#library(ggstatsplot)
+library(naniar) # For replacing certain values with "NA" instead.
+library(Hmisc) # for correlation matrix.
+library(compareGroups)
 
 data_dir = ((dirname(here()))) 
 
@@ -46,7 +42,8 @@ script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_explora
 source(script_path)
 
 ```
-
+\newpage
+# Sensitivity Analysis Results for Sample 1
 # 1---Internalizing~Puberty---
 
 ## 1.1 Model: CBCL internalizing factor ~ PDS
@@ -622,13 +619,7 @@ confirmatory2B_testosterone_CBCL_male_category <- gamm4(cbcl_scr_dsm5_depress_r 
                       
 summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 ```
-
-
-
-
-
-
-
+\newpage
 # 2---Reward~Puberty---
 
 ## 2.1 Model: BIS-BAS-RR ~ PDS
@@ -1217,15 +1208,7 @@ modelF_males <- gamm4(bisbas_ss_basm_rr_z ~ hormone_scr_ert_mean + hormone_sal_e
 
 summary(modelF_males$gam)
 ```
-
-
-
-
-
-
-
-
-
+\newpage
 # 3---Internalizing~Reward---
 
 ## 3.1 Model: CBCL internalizing factor ~ Nucleus Accumbens activity (anticipation stage)
@@ -1563,7 +1546,7 @@ exploratory3B_males_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_
 
 summary(exploratory3B_males_largesmallreward$gam)
 ```
-
+\newpage
 # 4---Internalizing~Puberty x Reward---
 
 ## 4.1 Model: CBCL internalizing factor ~ PDS x Accumbens activity (anticipation stage)

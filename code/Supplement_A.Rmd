@@ -13,8 +13,6 @@ output:
       collapsed: true
     df_print: paged
 ---
-# Results for Sample 1
-
 
 ```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -22,26 +20,20 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(gamm4)
 library(dplyr)
-library(insight)
 library(here)
 library(lmerTest)
 library(gamm4.test)
-library(mgcv)
-library(jtools)
-library(interactions)
 library(naniar) # For replacing certain values with "NA" instead.
 library(Hmisc) # for correlation matrix.
-#library(ggstatsplot)
+library(compareGroups)
 
 data_dir = ((dirname(here()))) 
 
 phase_folder = "exploratory"  # select the appropriate folder.
-#phase_folder = "confirmatory"
 
 data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 
 file_name <- "nda30_exploratory.csv" # specify file name here. 
-#file_name <- "nda30_confirmatory.csv"
 
 fulldata <- read.csv(file.path(data_folder,file_name))
 nrow(fulldata) # 27321 (exploratory); 27331 (confirmatory). When call the define_dataframes script, will keep only the baseline data.
@@ -58,7 +50,8 @@ standardized_coefficient_function <- file.path(data_dir,
 source(standardized_coefficient_function) # function is standardized_coefficient.
 
 ```
-
+\newpage
+# Results for Sample 1
 # 1---Internalizing~Puberty---
 
 ## 1.1 Model: CBCL internalizing factor ~ PDS
@@ -621,7 +614,6 @@ print(standardized_coefficient(confirmatory2B_testosterone_CBCL_female$mer))
 ```{r, echo=FALSE}
 
 dataformodel <- data_no_test_outliers_males 
-  
 
 confirmatory2B_testosterone_CBCL_male <- gamm4(cbcl_scr_dsm5_depress_r ~ hormone_scr_ert_mean + PDS_score +
                       race.ethnicity.5level +
@@ -668,12 +660,7 @@ summary(confirmatory2B_testosterone_CBCL_male_category$gam)
 print(standardized_coefficient(confirmatory2B_testosterone_CBCL_male_category$mer))
 ```
 
-
-
-
-
-
-
+\newpage
 # 2---Reward~Puberty---
 
 ## 2.1 Model: BIS-BAS-RR ~ PDS
@@ -745,8 +732,6 @@ exploratory1C_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ PDS_score + int
 summary(exploratory1C_lg_small_RT_males$gam)
 print(standardized_coefficient(exploratory1C_lg_small_RT_males$mer))
 ```
-
-
 
 ## 2.3 Model: Caudate Anticipation ~ PDS
 ### Female participants
@@ -993,10 +978,6 @@ summary(modelD_males_mOFC$gam)
 print(standardized_coefficient(modelD_males_mOFC$mer))
 ```
 
-
-
-
-
 ## 2.11 Model: Caudate Anticipation ~ Testosterone
 ### Female participants
 ```{r, echo = FALSE}
@@ -1074,7 +1055,6 @@ summary(confirmatory1_accumbens_males$gam)
 print(standardized_coefficient(confirmatory1_accumbens_males$mer))
 ```
 
-
 ## 2.14 Model: Caudate Feedback  ~ Testosterone
 ### Female participants
 ```{r, echo = FALSE}
@@ -1146,8 +1126,6 @@ summary(exploratory1A_accumbens_males$gam)
 print(standardized_coefficient(exploratory1A_accumbens_males$mer))
 
 ```
-
-
 
 ## 2.17 Model: OFC Anticipation ~ Testosterone
 ### Female participants
@@ -1262,7 +1240,6 @@ modelE_lg_small_RT_females <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean
 
 summary(modelE_lg_small_RT_females$gam)
 print(standardized_coefficient(modelE_lg_small_RT_females$mer))
-
 ```
 
 ### Male participants
@@ -1276,7 +1253,6 @@ modelE_lg_neutral_RT_males <- gamm4(rt_diff_large_neutral_z ~ hormone_scr_ert_me
 
 summary(modelE_lg_neutral_RT_males$gam)
 print(standardized_coefficient(modelE_lg_neutral_RT_males$mer))
-
 
 # Male participants: large reward vs. small reward.
 modelE_lg_small_RT_males <- gamm4(rt_diff_large_small_z ~ hormone_scr_ert_mean + interview_age,
@@ -1312,14 +1288,7 @@ summary(modelF_males$gam)
 print(standardized_coefficient(modelF_males$mer))
 ```
 
-
-
-
-
-
-
-
-
+\newpage
 # 3---Internalizing~Reward---
 
 ## 3.1 Model: CBCL internalizing factor ~ Nucleus Accumbens activity (anticipation stage)
@@ -1329,8 +1298,7 @@ print(standardized_coefficient(modelF_males$mer))
 dataformodel <- data_no_accumbens_ant_outliers_females
 
 confirmatory3A_nacc_females <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_rvsn_ant_z +
-                              interview_age
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3A_nacc_females$gam)
@@ -1342,8 +1310,7 @@ print(standardized_coefficient(confirmatory3A_nacc_females$mer))
 dataformodel <- data_no_accumbens_ant_outliers_males
 
 confirmatory3A_nacc_males <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_rvsn_ant_z +
-                              interview_age
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1358,9 +1325,7 @@ print(standardized_coefficient(confirmatory3A_nacc_males$mer))
 dataformodel <- data_no_caudate_ant_outliers_females
 
 confirmatory3A_caud_females <- gamm4(cbcl_scr_syn_internal_r ~ caudate_rvsn_ant_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1372,9 +1337,7 @@ print(standardized_coefficient(confirmatory3A_caud_females$mer))
 dataformodel <- data_no_caudate_ant_outliers_males
 
 confirmatory3A_caud_males <- gamm4(cbcl_scr_syn_internal_r ~ caudate_rvsn_ant_z +
-                               interview_age
-                              
-                              , 
+                               interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1388,9 +1351,7 @@ print(standardized_coefficient(confirmatory3A_caud_males$mer))
 dataformodel <- data_no_putamen_ant_outliers_females
 
 confirmatory3A_putamen_females <- gamm4(cbcl_scr_syn_internal_r ~ putamen_rvsn_ant_z +
-                               interview_age
-                              
-                              , 
+                               interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1404,9 +1365,7 @@ print(standardized_coefficient(confirmatory3A_putamen_females$mer))
 dataformodel <- data_no_putamen_ant_outliers_males
 
 confirmatory3A_putamen_males <- gamm4(cbcl_scr_syn_internal_r ~ putamen_rvsn_ant_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3A_putamen_males$gam)
@@ -1421,9 +1380,7 @@ print(standardized_coefficient(confirmatory3A_putamen_males$mer))
 dataformodel <- data_no_accumbens_feed_outliers_females
 
 confirmatory3B_accumbens_females <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3B_accumbens_females$gam)
@@ -1435,9 +1392,7 @@ print(standardized_coefficient(confirmatory3B_accumbens_females$mer))
 dataformodel <- data_no_accumbens_feed_outliers_males
 
 confirmatory3B_accumbens_males <- gamm4(cbcl_scr_syn_internal_r ~ accumbens_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1452,9 +1407,7 @@ print(standardized_coefficient(confirmatory3B_accumbens_males$mer))
 dataformodel <- data_no_caudate_feed_outliers_females
 
 confirmatory3B_caudate_females <- gamm4(cbcl_scr_syn_internal_r ~ caudate_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1467,9 +1420,7 @@ print(standardized_coefficient(confirmatory3B_caudate_females$mer))
 dataformodel <- data_no_caudate_feed_outliers_males
 
 confirmatory3B_caudate_males <- gamm4(cbcl_scr_syn_internal_r ~ caudate_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1484,9 +1435,7 @@ print(standardized_coefficient(confirmatory3B_caudate_males$mer))
 dataformodel <- data_no_putamen_feed_outliers_females
 
 confirmatory3B_putamen_females <- gamm4(cbcl_scr_syn_internal_r ~ putamen_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3B_putamen_females$gam)
@@ -1498,9 +1447,7 @@ print(standardized_coefficient(confirmatory3B_putamen_females$mer))
 dataformodel <- data_no_putamen_feed_outliers_males
 
 confirmatory3B_putamen_males <- gamm4(cbcl_scr_syn_internal_r ~ putamen_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1515,9 +1462,7 @@ print(standardized_coefficient(confirmatory3B_putamen_males$mer))
 # Lateral OFC.
 dataformodel <- data_no_lOFC_ant_outliers_females
 confirmatory3C_lOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_rvsn_ant_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3C_lOFC_females$gam)
@@ -1526,9 +1471,7 @@ print(standardized_coefficient(confirmatory3C_lOFC_females$mer))
 # Medial OFC.
 dataformodel <- data_no_mOFC_ant_outliers_females
 confirmatory3C_mOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_rvsn_ant_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3C_mOFC_females$gam)
@@ -1540,9 +1483,7 @@ print(standardized_coefficient(confirmatory3C_mOFC_females$mer))
 # Lateral OFC.
 dataformodel <- data_no_lOFC_ant_outliers_males
 confirmatory3C_lOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_rvsn_ant_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1552,9 +1493,7 @@ print(standardized_coefficient(confirmatory3C_lOFC_males$mer))
 # Medial OFC.
 dataformodel <- data_no_mOFC_ant_outliers_males
 confirmatory3C_mOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_rvsn_ant_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3C_mOFC_males$gam)
@@ -1569,9 +1508,7 @@ print(standardized_coefficient(confirmatory3C_mOFC_males$mer))
 dataformodel <- data_no_lOFC_feed_outliers_females
 
 confirmatory3D_lOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1582,9 +1519,7 @@ print(standardized_coefficient(confirmatory3D_lOFC_females$mer))
 # Medial OFC.
 dataformodel <- data_no_mOFC_feed_outliers_females
 confirmatory3D_mOFC_females <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3D_mOFC_females$gam)
@@ -1597,9 +1532,7 @@ print(standardized_coefficient(confirmatory3D_mOFC_females$mer))
 dataformodel <- data_no_lOFC_feed_outliers_males
 
 confirmatory3D_lOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ lOFC_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3D_lOFC_males$gam)
@@ -1609,9 +1542,7 @@ print(standardized_coefficient(confirmatory3D_lOFC_males$mer))
 # Medial OFC.
 dataformodel <- data_no_mOFC_feed_outliers_males
 confirmatory3D_mOFC_males <- gamm4(cbcl_scr_syn_internal_r ~ mOFC_posvsneg_feedback_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(confirmatory3D_mOFC_males$gam)
@@ -1625,9 +1556,7 @@ print(standardized_coefficient(confirmatory3D_mOFC_males$mer))
 dataformodel <- data_no_bisbas_outliers_females
 
 exploratory3A_females <- gamm4(cbcl_scr_syn_internal_r ~ bisbas_ss_basm_rr +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(exploratory3A_females$gam)
@@ -1639,9 +1568,7 @@ print(standardized_coefficient(exploratory3A_females$mer))
 dataformodel <- data_no_bisbas_outliers_males
 
 exploratory3A_males <- gamm4(cbcl_scr_syn_internal_r ~ bisbas_ss_basm_rr +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(exploratory3A_males$gam)
@@ -1658,9 +1585,7 @@ print(standardized_coefficient(exploratory3A_males$mer))
 dataformodel <- data_no_RT_MID_outliers_females
 
 exploratory3B_females_largereward_neutral <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_neutral_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1672,9 +1597,7 @@ print(standardized_coefficient(exploratory3B_females_largereward_neutral$mer))
 dataformodel <- data_no_RT_MID_outliers_females
 
 exploratory3B_females_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_small_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 summary(exploratory3B_females_largesmallreward$gam)
@@ -1687,9 +1610,7 @@ print(standardized_coefficient(exploratory3B_females_largesmallreward$mer))
 dataformodel <- data_no_RT_MID_outliers_males
 
 exploratory3B_males_largereward_neutral <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_neutral_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
@@ -1700,17 +1621,15 @@ print(standardized_coefficient(exploratory3B_males_largereward_neutral$mer))
 dataformodel <- data_no_RT_MID_outliers_males
 
 exploratory3B_males_largesmallreward <- gamm4(cbcl_scr_syn_internal_r ~ rt_diff_large_small_z +
-                              interview_age
-                              
-                              , 
+                              interview_age, 
                               random = ~ (1 | site_id_l/rel_family_id),
                               data = dataformodel)
 
 summary(exploratory3B_males_largesmallreward$gam)
 print(standardized_coefficient(exploratory3B_males_largesmallreward$mer))
-
 ```
 
+\newpage
 # 4---Internalizing~Puberty x Reward---
 
 ## 4.1 Model: CBCL internalizing factor ~ PDS x Accumbens activity (anticipation stage)
@@ -1901,8 +1820,6 @@ print(standardized_coefficient(exploratory4b_mOFC_ant_allCBCL_males$mer))
 
 ```
 
-
-
 ## 4.6 Model: CBCL internalizing factor ~ PDS x Accumbens activity (feedback)
 ### Female participants
 ```{r, echo = FALSE}
@@ -2002,9 +1919,6 @@ summary(exploratory4a_putamen_feedback_males$gam)
 print(standardized_coefficient(exploratory4a_putamen_feedback_males$mer))
 
 ```
-
-
-
 
 ## 4.9 Model: CBCL internalizing factor ~ PDS x Lateral OFC activity (feedback stage)
 ### Female participants
@@ -2113,7 +2027,6 @@ print(standardized_coefficient(exploratory4c_bisbas_allCBCL_males$mer))
 
 ```
 
-
 ## 4.12 Model: CBCL internalizing factor ~ PDS x MID reaction time (large reward vs. neutral)
 ### Female participants
 ```{r, echo = FALSE}
@@ -2150,7 +2063,6 @@ print(standardized_coefficient(exploratory4c_lg_neutral_RT_males$mer))
 
 ```
 
-
 ## 4.13 Model: CBCL internalizing factor ~ PDS x MID reaction time (large vs. small reward)
 ### Female participants
 ```{r, echo = FALSE}
@@ -2185,7 +2097,6 @@ summary(exploratory4c_lg_small_RT_males$gam)
 print(standardized_coefficient(exploratory4c_lg_small_RT_males$mer))
 
 ```
-
 
 ## 4.14 Model: CBCL internalizing factor ~ Testosterone x Accumbens activity (anticipation stage) + PDS
 ### Female participants
@@ -2289,8 +2200,6 @@ summary(confirmatory4Ea_putamen_test_females$gam)
 print(standardized_coefficient(confirmatory4Ea_putamen_test_females$mer))
 ```
 
-```
-
 ### Male participants
 ```{r, echo = FALSE}
 
@@ -2309,7 +2218,6 @@ summary(confirmatory4Ea_putamen_test_males$gam)
 print(standardized_coefficient(confirmatory4Ea_putamen_test_males$mer))
 
 ```
-
 
 ## 4.17 Model: CBCL internalizing factor ~ Testosterone x Accumbens activity (feedback stage) + PDS
 ### Female participants
@@ -2463,7 +2371,6 @@ print(standardized_coefficient(exploratory4c_OFC_ant_allCBCL_test_males$mer))
 
 ```
 
-
 ## 4.21 Model: CBCL internalizing factor ~ Testosterone x Medial OFC activity (anticipation stage) + PDS
 ### Female participants
 ```{r, echo=FALSE}
@@ -2615,7 +2522,6 @@ print(standardized_coefficient(exploratory4e_bisbas_allCBCL_males$mer))
 
 ```
 
-
 ## 4.25 Model: CBCL internalizing factor ~ Testosterone x MID Reaction Time + PDS (large reward vs. neutral) 
 ### Female participants 
 ```{r, echo = FALSE}
@@ -2652,8 +2558,6 @@ summary(exploratoryFa_lg_neutral_RT_males$gam)
 print(standardized_coefficient(exploratoryFa_lg_neutral_RT_males$mer))
 
 ```
-
-
 
 ## 4.26 Model: CBCL internalizing factor ~ Testosterone x MID Reaction Time + PDS (large vs. small reward)
 ### Female participants 
@@ -2692,7 +2596,7 @@ summary(exploratoryFb_lg_small_RT_males$gam)
 print(standardized_coefficient(exploratoryFb_lg_small_RT_males$mer))
 
 ```
-
+\newpage
 # 5--- Correlation Matrix ---
 ## Female participants
 ```{r,echo = FALSE,cols.print=5}
@@ -2708,37 +2612,6 @@ print(standardized_coefficient(exploratoryFb_lg_small_RT_males$mer))
 cor_female <- MID_task_correct_females %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
 cor_female <- merge(PDS_correct_females,cor_female, by = "src_subject_id",all.x=TRUE)
 
-cor_female <- cor_female  %>% 
-  dplyr::select(#"src_subject_id",
-                "interview_age",
-                "bmi",
-                "PDS_score",
-                "hormone_scr_ert_mean_z",
-                "bisbas_ss_basm_rr_z",
-                "rt_diff_large_neutral_z",
-                "rt_diff_large_small_z",
-                "cbcl_scr_syn_internal_r",
-                "accumbens_rvsn_ant_z", # Accumbens reward vs. neutral anticipation.
-                "caudate_rvsn_ant_z", # Caudate reward vs. neutral anticipation.
-                "putamen_rvsn_ant_z", # Putamen reward vs. neutral anticipation.
-                "mOFC_rvsn_ant_z", # Medial OFC reward vs. neutral anticipation.
-                "lOFC_rvsn_ant_z", # Lateral OFC reward vs. neutral anticipation.
-                "accumbens_posvsneg_feedback_z", # Accumbens reward positive versus negative feedback.
-                "caudate_posvsneg_feedback_z", # Caudate reward positive versus negative feedback.
-                "putamen_posvsneg_feedback_z", # Putamen reward positive versus negative feedback.
-                "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
-                "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
-
-#dim(cor_female) # 2701 rows,  18 columns.
-# All of the z score ones need to be cleaned so that if it is < -3 or >3, it is replaced with NA instead.
-
-#variables_without_outliers <- c("src_subject_id",
-#                "interview_age",
-#                "sex",
-#                "bmi",
-#                "PDS_score",
-#                "cbcl_scr_syn_internal_r")
-                
 variables_with_outliers <- c("hormone_scr_ert_mean_z",
                 "bisbas_ss_basm_rr_z",
                 "rt_diff_large_neutral_z",
@@ -2754,13 +2627,15 @@ variables_with_outliers <- c("hormone_scr_ert_mean_z",
                 "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
                 "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
 
-#dim(cor_female_variables_without_outliers)
-#dim(cor_female_variables_with_outliers)
+cor_female <- cor_female  %>% 
+  dplyr::select("interview_age",
+                "bmi",
+                "PDS_score",
+                "cbcl_scr_syn_internal_r",
+                all_of(variables_with_outliers))
 
-#sum(is.na(cor_female$caudate_posvsneg_feedback_z)) # 445.
-#sum(cor_female$caudate_posvsneg_feedback_z > 3, na.rm = TRUE) # 9.
-#sum(cor_female$caudate_posvsneg_feedback_z < -3, na.rm = TRUE) # 10.
-# So after this step it should be 445+9 = 464.
+#dim(cor_female) # 2701 rows,  18 columns.
+# All of the z score ones need to be cleaned so that if it is < -3 or >3, it is replaced with NA instead.
 
 # This is a two step process: First,  across all columns, replace all z scores greater than 3 or less than -3 with -99.
 # Then, replace all -99 with "NA".
@@ -2789,10 +2664,7 @@ flattenCorrMatrix <- function(cormat, pmat,nmat) {
 
 cormat_females <- rcorr(as.matrix(cor_female))
 cormat_females_flat <- flattenCorrMatrix(cormat_females$r, cormat_females$P,cormat_females$n)
-#cormat_females_flat
-#print(format(cormat_females_flat, scientific = F))
 knitr::kable(format(cormat_females_flat, scientific = F))
-
 
 ```
 ## Male participants
@@ -2801,65 +2673,122 @@ knitr::kable(format(cormat_females_flat, scientific = F))
 cor_male <- MID_task_correct_males %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
 cor_male <- merge(PDS_correct_males,cor_male, by = "src_subject_id",all.x=TRUE)
 
-cor_male <- cor_male  %>% 
-  dplyr::select(#"src_subject_id",
-                "interview_age",
+cor_male <- cor_male   %>% 
+  dplyr::select("interview_age",
                 "bmi",
                 "PDS_score",
-                "hormone_scr_ert_mean_z",
-                "bisbas_ss_basm_rr_z",
-                "rt_diff_large_neutral_z",
-                "rt_diff_large_small_z",
                 "cbcl_scr_syn_internal_r",
-                "accumbens_rvsn_ant_z", # Accumbens reward vs. neutral anticipation.
-                "caudate_rvsn_ant_z", # Caudate reward vs. neutral anticipation.
-                "putamen_rvsn_ant_z", # Putamen reward vs. neutral anticipation.
-                "mOFC_rvsn_ant_z", # Medial OFC reward vs. neutral anticipation.
-                "lOFC_rvsn_ant_z", # Lateral OFC reward vs. neutral anticipation.
-                "accumbens_posvsneg_feedback_z", # Accumbens reward positive versus negative feedback.
-                "caudate_posvsneg_feedback_z", # Caudate reward positive versus negative feedback.
-                "putamen_posvsneg_feedback_z", # Putamen reward positive versus negative feedback.
-                "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
-                "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
+                all_of(variables_with_outliers))
 
 #dim(cor_male) # 2986 rows,  18 columns.
 # All of the z score ones need to be cleaned so that if it is < -3 or >3, it is replaced with NA instead.
-                
-variables_with_outliers <- c("hormone_scr_ert_mean_z",
-                "bisbas_ss_basm_rr_z",
-                "rt_diff_large_neutral_z",
-                "rt_diff_large_small_z",
-                "accumbens_rvsn_ant_z", # Accumbens reward vs. neutral anticipation.
-                "caudate_rvsn_ant_z", # Caudate reward vs. neutral anticipation.
-                "putamen_rvsn_ant_z", # Putamen reward vs. neutral anticipation.
-                "mOFC_rvsn_ant_z", # Medial OFC reward vs. neutral anticipation.
-                "lOFC_rvsn_ant_z", # Lateral OFC reward vs. neutral anticipation.
-                "accumbens_posvsneg_feedback_z", # Accumbens reward positive versus negative feedback.
-                "caudate_posvsneg_feedback_z", # Caudate reward positive versus negative feedback.
-                "putamen_posvsneg_feedback_z", # Putamen reward positive versus negative feedback.
-                "mOFC_posvsneg_feedback_z",  # Medial OFC reward positive versus negative feedback.
-                "lOFC_posvsneg_feedback_z") # Lateral OFC reward positive versus negative feedback.
-
-#dim(cor_male_variables_without_outliers)
-#dim(cor_male_variables_with_outliers)
-
-#sum(is.na(cor_male$caudate_posvsneg_feedback_z)) # 553.
-#sum(cor_male$caudate_posvsneg_feedback_z > 3, na.rm = TRUE) # 22.
-#sum(cor_male$caudate_posvsneg_feedback_z < -3, na.rm = TRUE) # 18.
-# So after this step it should be 553+22+18 = 593.
-
 # This is a two step process: First,  across all columns, replace all z scores greater than 3 or less than -3 with -99.
 # Then, replace all -99 with "NA".
 cor_male[ ,variables_with_outliers][ cor_male[ ,variables_with_outliers] > 3] <- -99
 cor_male[ ,variables_with_outliers][ cor_male[ ,variables_with_outliers] < -3] <- -99
 cor_male <- cor_male %>% replace_with_na_all(condition = ~.x == -99)
-#sum(is.na(cor_male$caudate_posvsneg_feedback_z)) # 593.
 
 # Now make correlation matrix!
 cormat_males <- rcorr(as.matrix(cor_male))
 cormat_males_flat <- flattenCorrMatrix(cormat_males$r, cormat_males$P,cormat_males$n)
-#cormat_males_flat
-#print(format(cormat_males_flat, scientific = F, digits = 3))
 knitr::kable(format(cormat_males_flat, scientific = F))
 
+```
+
+\newpage
+# 6--- Compare Outliers to Non-Outliers on Demographic Variables ---
+## Female participants
+```{r,echo = FALSE,cols.print=5, warning=FALSE}
+
+# Demographic variables to compare.
+demographic_variables <- c("sex",
+                           "bmi",
+                           "interview_age",
+                           "race.ethnicity.5level",
+                           "household.income",
+                           "high.educ",
+                           "demo_race_hispanic")
+
+MID_task_correct_females <- MID_task_correct_females %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
+
+
+females <- merge(PDS_correct_females, MID_task_correct_females, by = "src_subject_id",all.x=TRUE, all.y = TRUE)
+females <- females %>% select("src_subject_id",all_of(demographic_variables),all_of(variables_with_outliers))
+
+
+females  <- females %>%
+  mutate(is_outlier_any = case_when(
+                  (hormone_scr_ert_mean_z < -3 |  hormone_scr_ert_mean_z > 3 |
+                   bisbas_ss_basm_rr_z < -3 |  bisbas_ss_basm_rr_z > 3 |
+                   rt_diff_large_neutral_z < -3 |  rt_diff_large_neutral_z > 3 |
+                   rt_diff_large_small_z < -3 |  rt_diff_large_small_z > 3 |
+                   accumbens_rvsn_ant_z< -3 |  accumbens_rvsn_ant_z > 3 |
+                   caudate_rvsn_ant_z < -3 |  caudate_rvsn_ant_z > 3 |
+                   putamen_rvsn_ant_z < -3 |  putamen_rvsn_ant_z > 3 |
+                   mOFC_rvsn_ant_z < -3 |  mOFC_rvsn_ant_z > 3 |
+                   lOFC_rvsn_ant_z < -3 |  lOFC_rvsn_ant_z > 3 |
+                   accumbens_posvsneg_feedback_z < -3 |  accumbens_posvsneg_feedback_z > 3 |
+                   caudate_posvsneg_feedback_z < -3 |  caudate_posvsneg_feedback_z > 3 |
+                   putamen_posvsneg_feedback_z < -3 |  putamen_posvsneg_feedback_z > 3 |
+                   mOFC_posvsneg_feedback_z < -3 |  mOFC_posvsneg_feedback_z > 3 |
+                   lOFC_posvsneg_feedback_z < -3 | lOFC_posvsneg_feedback_z> 3) ~ "outlier",
+    TRUE ~ "not outlier"))
+
+females$is_outlier_any <- as.factor(females$is_outlier_any)
+
+demographic_differences_females <- compareGroups(is_outlier_any ~
+                                           interview_age +
+                                           bmi +
+                                           race.ethnicity.5level +
+                                           household.income+
+                                           high.educ +
+                                           demo_race_hispanic, 
+                     data = females)
+
+pvals <- getResults(demographic_differences_females, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table_females <- createTable(demographic_differences_females)
+print(export_table_females)
+```
+## Male participants
+```{r,echo = FALSE,cols.print=5, warning=FALSE}
+
+MID_task_correct_males <- MID_task_correct_males %>% dplyr::select("src_subject_id","rt_diff_large_neutral_z","rt_diff_large_small_z") 
+
+males <- merge(PDS_correct_males, MID_task_correct_males, by = "src_subject_id",all.x=TRUE, all.y = TRUE)
+males <- males %>% select("src_subject_id",all_of(demographic_variables),all_of(variables_with_outliers))
+
+males  <- males %>%
+  mutate(is_outlier_any = case_when(
+                  (hormone_scr_ert_mean_z < -3 |  hormone_scr_ert_mean_z > 3 |
+                   bisbas_ss_basm_rr_z < -3 |  bisbas_ss_basm_rr_z > 3 |
+                   rt_diff_large_neutral_z < -3 |  rt_diff_large_neutral_z > 3 |
+                   rt_diff_large_small_z < -3 |  rt_diff_large_small_z > 3 |
+                   accumbens_rvsn_ant_z< -3 |  accumbens_rvsn_ant_z > 3 |
+                   caudate_rvsn_ant_z < -3 |  caudate_rvsn_ant_z > 3 |
+                   putamen_rvsn_ant_z < -3 |  putamen_rvsn_ant_z > 3 |
+                   mOFC_rvsn_ant_z < -3 |  mOFC_rvsn_ant_z > 3 |
+                   lOFC_rvsn_ant_z < -3 |  lOFC_rvsn_ant_z > 3 |
+                   accumbens_posvsneg_feedback_z < -3 |  accumbens_posvsneg_feedback_z > 3 |
+                   caudate_posvsneg_feedback_z < -3 |  caudate_posvsneg_feedback_z > 3 |
+                   putamen_posvsneg_feedback_z < -3 |  putamen_posvsneg_feedback_z > 3 |
+                   mOFC_posvsneg_feedback_z < -3 |  mOFC_posvsneg_feedback_z > 3 |
+                   lOFC_posvsneg_feedback_z < -3 | lOFC_posvsneg_feedback_z> 3) ~ "outlier",
+    TRUE ~ "not outlier"))
+
+males$is_outlier_any <- as.factor(males$is_outlier_any)
+
+demographic_differences_males <- compareGroups(is_outlier_any ~
+                                           interview_age +
+                                           bmi +
+                                           race.ethnicity.5level +
+                                           household.income+
+                                           high.educ +
+                                           demo_race_hispanic, 
+                     data = males)
+
+pvals <- getResults(demographic_differences_males, "p.overall")
+p.adjust(pvals, method = "BH")
+export_table_males <- createTable(demographic_differences_males)
+print(export_table_males)
 ```

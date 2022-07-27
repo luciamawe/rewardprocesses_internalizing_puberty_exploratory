@@ -11,8 +11,6 @@ output:
     toc_float:
       collapsed: true
 ---
-# Sensitivity Analysis Results for Sample 2
-
 
 ```{r loadPackages, echo = FALSE, message=FALSE, warning=FALSE, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -20,14 +18,12 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(gamm4)
 library(dplyr)
-library(insight)
 library(here)
 library(lmerTest)
 library(gamm4.test)
-library(mgcv)
-library(jtools)
-library(interactions)
-#library(ggstatsplot)
+library(naniar) # For replacing certain values with "NA" instead.
+library(Hmisc) # for correlation matrix.
+library(compareGroups)
 
 data_dir = ((dirname(here()))) 
 
@@ -46,7 +42,8 @@ script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_explora
 source(script_path)
 
 ```
-
+\newpage
+# Sensitivity Analysis Results for Sample 2
 # 1---Internalizing~Puberty---
 
 ## 1.1 Model: CBCL internalizing factor ~ PDS
