@@ -127,8 +127,8 @@ PDS_correct <- rbind(PDS_correct_sample1,PDS_correct_sample2)
 # Create labels to use for graphs.
 PDS_correct <- PDS_correct %>% mutate(sample_label = case_when(sample == "sample1" ~ "sample 1",
                                                             sample == "sample2" ~ "sample 2"),
-                                      sex_label = case_when(sex == "F" ~ "female",
-                                                               sex == "M" ~ "male"))
+                                      sex_label = case_when(sex == "F" ~ "female participant",
+                                                               sex == "M" ~ "male participant"))
   
 PDS_correct$sex_label <- as.factor(PDS_correct$sex_label)
 PDS_correct$sample_label <- as.factor(PDS_correct$sample_label)
@@ -248,9 +248,9 @@ model_predictions <- rename(model_predictions, c(pds_score = x,
 
 
 model_predictions <- model_predictions %>% mutate(gender_group = case_when(sample == "females sample 1" | 
-                                                                          sample == "females sample 2" ~ "female",
+                                                                          sample == "females sample 2" ~ "female participants",
                                                                           sample == "males sample 1" | 
-                                                                          sample == "males sample 2" ~ "male"),
+                                                                          sample == "males sample 2" ~ "male participants"),
                                                   sample_group = case_when(sample == "females sample 1" | 
                                                                           sample == "males sample 1" ~ "sample 1",
                                                                           sample == "females sample 2" | 
@@ -340,9 +340,9 @@ model_predictions_exploratory1B <- dplyr::rename(model_predictions_exploratory1B
 #                                                  bisbas_ss_basm_rr_z = predicted))
 
 model_predictions_exploratory1B <- model_predictions_exploratory1B %>% mutate(gender_group = case_when(sample == "females sample 1" | 
-                                                                          sample == "females sample 2" ~ "female",
+                                                                          sample == "females sample 2" ~ "female participants",
                                                                           sample == "males sample 1" | 
-                                                                          sample == "males sample 2" ~ "male"),
+                                                                          sample == "males sample 2" ~ "male participants"),
                                                   sample_group = case_when(sample == "females sample 1" | 
                                                                           sample == "males sample 1" ~ "sample 1",
                                                                           sample == "females sample 2" | 
@@ -417,7 +417,7 @@ figure3a <- plot_model(exploratory4c_bisbas_allCBCL_females_bisbasz,
                 scale_y_continuous(limits = c(0, 10), breaks = seq(0,10, by = 2)) +
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score (continuous)") +
-                labs(title = "PDS x BAS-RR Interaction (Sample 2 females)") +
+                labs(title = "PDS x BAS-RR Interaction (Sample 2 female participants)") +
                 nsh_theme
 
 figure3a
@@ -483,7 +483,7 @@ figure4 <- plot_model(exploratory4c_lg_neutral_RT_males,
                 scale_y_continuous(limits = c(0, 16), breaks = seq(0,16, by = 2)) + # Had to extend limits for this one for the confidence interval.
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score") +
-                labs(title = "PDS x MID reaction time interaction (sample 2 males)", colour = "Reaction time difference (large vs. neutral) z-score") +
+                labs(title = "PDS x MID reaction time interaction (Sample 2 males)", colour = "Reaction time difference (large vs. neutral) z-score") +
                 nsh_theme
 
 figure4
@@ -518,7 +518,7 @@ figure5a <- plot_model(confirmatory4_caudate_ant_females,
                 scale_y_continuous(limits = c(0, 12), breaks = seq(0,10, by = 2)) + # Extended limit for confidence intervals.
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score") +
-                labs(title = "PDS x caudate anticipation interaction", subtitle = "Sample 2 females", colour = "Caudate anticipation z-score") +
+                labs(title = "PDS x caudate anticipation interaction", subtitle = "Sample 2 female participants", colour = "Caudate anticipation z-score") +
                 nsh_theme
 
 figure5a
@@ -553,7 +553,7 @@ figure5b <- plot_model(confirmatory4_putamen_ant_males,
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score") +
                 labs(title = "PDS x putamen anticipation interaction",
-                     subtitle = "Sample 1 males",
+                     subtitle = "Sample 1 male participants",
                      colour = "Putamen reward vs. neutral anticipation z-score") +
                 nsh_theme
 
@@ -590,7 +590,7 @@ figure6a <- plot_model(confirmatory4Ea_accumbens_test_females,
                 ylab("Model predicted internalizing score") +
                 xlab("Testosterone (pg/mL)") +
                 labs(title = "Testosterone x Accumbens anticipation interaction",
-                subtitle = "Sample 2 Females", colour = "Accumbens anticipation z-score") +
+                subtitle = "Sample 2 female participants", colour = "Accumbens anticipation z-score") +
                 nsh_theme
 
 figure6a
@@ -628,7 +628,7 @@ figure6b <- plot_model(confirmatory4Ea_putamen_test_males,
                 ylab("Model predicted internalizing score") +
                 xlab("Testosterone (pg/mL)") +
                 labs(title = "Testosterone x Putamen anticipation interaction",
-                subtitle = "Sample 1 males", colour = "Putamen anticipation z-score") +
+                subtitle = "Sample 1 male participants", colour = "Putamen anticipation z-score") +
                 nsh_theme
 
 figure6b
@@ -886,7 +886,7 @@ ggplot(aes(y = cbcl_int_predicted, x = pds_p_ss_category, fill = sample_sex), da
   ylim(0,15) +
   scale_fill_manual(values = c("#C7CDFF", "#9D95CD","#33E1FF", "#378EF2"), 
                     name="sample_sex", 
-                    labels = c("Sample 1 Female","Sample 2 Female","Sample 1 Male","Sample 2 Male")) + # If want outlines and outlier points to have same color as boxes. (If not, then remove color = sample_sex in first line).
+                    labels = c("Sample 1 female participants","Sample 2 female participants","Sample 1 male participants","Sample 2 male participants")) + # If want outlines and outlier points to have same color as boxes. (If not, then remove color = sample_sex in first line).
   facet_grid(~sex) + # one on top of the other: (sex ~ .). next to each other, side by side: (~sex).
   labs(title = "Model Predicted CBCL Scores by PDS Stages") +
   xlab("PDS Stage") + 
@@ -898,7 +898,7 @@ ggplot(aes(y = cbcl_scr_syn_internal_r, x = pds_p_ss_category, fill = sample_sex
   geom_boxplot() +
   scale_fill_manual(values = c("#C7CDFF", "#9D95CD","#9CB7B5", "#6B8A80"), 
                     name="sample_sex", 
-                    labels = c("Sample 1 Female","Sample 2 Female","Sample 1 Male","Sample 2 Male")) + # If want outlines and outlier points to have same color as boxes. (If not, then remove color = sample_sex in first line).
+                    labels = c("Sample 1 female participants","Sample 2 female participants","Sample 1 male participants","Sample 2 male participants")) + # If want outlines and outlier points to have same color as boxes. (If not, then remove color = sample_sex in first line).
   facet_grid(~sex) + # one on top of the other: (sex ~ .). next to each other, side by side: (~sex).
   labs(title = "Actual CBCL Scores by PDS Stages") +
   xlab("PDS Stage") + 
@@ -912,7 +912,7 @@ ggplot(aes(y = cbcl_scr_syn_internal_r_z, x = pds_p_ss_category, fill = sample_s
   geom_boxplot() +
   scale_fill_manual(values = c("#C7CDFF", "#9D95CD","#9CB7B5", "#6B8A80"), 
                     name="sample_sex", 
-                    labels = c("Sample 1 Female","Sample 2 Female","Sample 1 Male","Sample 2 Male")) +
+                    labels = c("Sample 1 female participants","Sample 2 female participants","Sample 1 male participants","Sample 2 male participants")) +
   #scale_color_manual(values = c("#C7CDFF", "#9D95CD","#33E1FF", "#378EF2"), name="sample_sex") + # If want outlines and outlier points to have same color as boxes. (If not, then remove color = sample_sex in first line).
   facet_grid(~sex) + # one on top of the other: (sex ~ .). next to each other, side by side: (~sex).
   labs(title = "Actual CBCL Z Scores by PDS Stages") +
@@ -968,7 +968,7 @@ ggplot(aes(y = cbcl_scr_syn_internal_r_z, x = pds_p_ss_category, fill = sex), da
 
 ```{r PDS_Accumbens_Anticipation, echo = FALSE}
 #Model predicted values.
-# Females.
+# females.
 summary(confirmatory1_accumbens_females$gam)
 model_predictions <- ggpredict(confirmatory1_accumbens_females, terms = c("PDS_score"))
 ggplot(model_predictions, aes(x, predicted)) + 
@@ -981,7 +981,7 @@ ggplot(model_predictions, aes(x, predicted)) +
     ylab("Accumbens Anticipation Stage (Z-Score)") +
     nsh_theme
 
-# Males.
+# males.
 summary(confirmatory1_accumbens_males$gam)
 model_predictions <- ggpredict(confirmatory1_accumbens_males, terms = c("PDS_score"))
 ggplot(model_predictions, aes(x, predicted)) +

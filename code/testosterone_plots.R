@@ -4,6 +4,7 @@ library(ggplot2)
 library(here)
 library(glue)
 library(dplyr)
+library(patchwork)
 
 data_dir = ((dirname(here()))) 
 
@@ -23,7 +24,7 @@ source(script_path)
 
 # Use PDS_correct as the dataframe.
 sample1 <- PDS_correct
-nrow(sample1) #5631.
+nrow(sample1) # 5626.
 
 # Do the same process, but with the confirmatory sample.
 phase_folder = "confirmatory"  # select the appropriate folder.
@@ -38,24 +39,19 @@ source(script_path)
 
 # Use PDS_correct as the dataframe.
 sample2 <- PDS_correct
-nrow(sample2) #5612
-
+nrow(sample2) #5600.
 
 nsh_theme <- theme(text = element_text(family = "Avenir"),        
-                   title= element_text(size=26, vjust=2, face="bold"),
-                   #plot.title = element_blank(),
-                   plot.subtitle = element_text(color="gray40", size=18, face="bold.italic"),
-                   axis.title.x= element_text(size=24, vjust=-0.3),
-                   axis.title.y= element_text(size=24, vjust=1.5),
-                   axis.text.x= element_text(size=28, colour="black"),
-                   axis.text.y= element_text(size=28, colour="black"),
-                   strip.text = element_text(size=24, face="bold"),
+                   #title= element_text(size=20, vjust=2, face="bold"),
+                   plot.title = element_blank(),
+                   plot.subtitle = element_text(color="gray40", size=20, face="bold.italic"),
+                   axis.title.x= element_text(size=20, vjust=-0.3),
+                   axis.title.y= element_text(size=20, vjust=1.5),
+                   axis.text.x= element_text(size=20, colour="black"),
+                   axis.text.y= element_text(size=20, colour="black"),
+                   strip.text = element_text(size=20, face="bold"),
                    panel.background = element_blank(),
                    axis.line = element_line(colour = "black"))
-
-
-sample1 <- sample1 %>% mutate(is_testosterone_outlier = case_when(hormone_scr_ert_mean_z > 3 ~ 1,
-                                                 hormone_scr_ert_mean_z < -3 ~ 1, 0))
 
 
 sample1_testosterone <- sample1 %>%
@@ -81,41 +77,84 @@ sample2_testosterone <- sample2 %>%
 sample2_testosterone$sample <- "sample 2"
 
 
+sample1_outliers_females <- subset(sample1_testosterone,is_testosterone_outlier == "yes" & sex == "F")
+sample1_outliers_females_cutoff <- sample1_outliers_females[which(sample1_outliers_females$hormone_scr_ert_mean_z == min(sample1_outliers_females$hormone_scr_ert_mean_z)),]
+sample1_outliers_females_cutoff <- sample1_outliers_females_cutoff$hormone_scr_ert_mean # Now save the value (in pg/ml) to plot (94.91).                     
+# mean(sample1_outliers_females$hormone_scr_ert_mean)
 
-sample1_outliers <- subset(sample1_testosterone,is_testosterone_outlier == "yes")
-sample1_outliers_cutoff <- sample1_outliers[which(sample1_outliers$hormone_scr_ert_mean_z == min(sample1_outliers$hormone_scr_ert_mean_z)),]
-# Now save the value (in pg/ml) to plot.
-sample1_outliers_cutoff <- sample1_outliers_cutoff$hormone_scr_ert_mean # 94.91.                     
+sample1_outliers_males <- subset(sample1_testosterone,is_testosterone_outlier == "yes" & sex == "M")
+sample1_outliers_males_cutoff <- sample1_outliers_males[which(sample1_outliers_males$hormone_scr_ert_mean_z == min(sample1_outliers_males$hormone_scr_ert_mean_z)),]
+sample1_outliers_males_cutoff <- sample1_outliers_males_cutoff$hormone_scr_ert_mean # Now save the value (in pg/ml) to plot (97.61).              
 
-sample2_outliers <- subset(sample2_testosterone,is_testosterone_outlier == "yes")
-sample2_outliers_cutoff <- sample2_outliers[which(sample2_outliers$hormone_scr_ert_mean_z == min(sample2_outliers$hormone_scr_ert_mean_z)),]
-# Now save the value (in pg/ml) to plot.
-sample2_outliers_cutoff <- sample2_outliers_cutoff$hormone_scr_ert_mean #88.5795.                     
+sample2_outliers_females <- subset(sample2_testosterone,is_testosterone_outlier == "yes" & sex == "F")
+sample2_outliers_females_cutoff <- sample2_outliers_females[which(sample2_outliers_females$hormone_scr_ert_mean_z == min(sample2_outliers_females$hormone_scr_ert_mean_z)),]
+sample2_outliers_females_cutoff <- sample2_outliers_females_cutoff$hormone_scr_ert_mean # Now save the value (in pg/ml) to plot (88.96).                     
 
+sample2_outliers_males <- subset(sample2_testosterone,is_testosterone_outlier == "yes" & sex == "M")
+sample2_outliers_males_cutoff <- sample2_outliers_males[which(sample2_outliers_males$hormone_scr_ert_mean_z == min(sample2_outliers_males$hormone_scr_ert_mean_z)),]
+sample2_outliers_males_cutoff <- sample2_outliers_males_cutoff$hormone_scr_ert_mean # Now save the value (in pg/ml) to plot (88.5795).
 
-#testosterone_to_plot <- rbind(sample1_testosterone,sample2_testosterone)
 
 # Testosterone distributions in both samples.
 
 # Sample 1.
-ggplot(sample1_testosterone, aes(x=hormone_scr_ert_mean)) + 
-  geom_density(alpha=0.86) +
-  geom_vline(aes(xintercept=sample1_outliers_cutoff), color = "black", # Add line to show where lowest value of outlier is.
+females_sample1_plot <- ggplot(subset(sample1_testosterone, sex == "F"), aes(x=hormone_scr_ert_mean)) + 
+  geom_density(alpha=0.86, color = "aquamarine4", size = 2) +
+  geom_vline(aes(xintercept = sample1_outliers_females_cutoff), color = "black", # Add line to show where lowest value of outlier is.
            linetype="dashed", size=1) +
-  labs(title = "Distribution of Testosterone Scores",
-       subtitle = "Sample 1") +
+  labs(subtitle = "Female participants") +
   xlab("Testosterone value (pg/ml)") + 
   ylab("Density") +
+  #scale_x_continuous(limits = c(0, 600), breaks = seq(0,600,100)) +
+  scale_x_continuous(breaks = c(seq(0,600,100))) +
+  coord_cartesian(xlim = c(0,600)) + 
   nsh_theme
 
+males_sample1_plot <- ggplot(subset(sample1_testosterone, sex == "M"), aes(x=hormone_scr_ert_mean)) + 
+  geom_density(alpha=0.86, color = "aquamarine4", size = 2) +
+  geom_vline(aes(xintercept = sample1_outliers_males_cutoff), color = "black", # Add line to show where lowest value of outlier is.
+             linetype="dashed", size=1) +
+  labs(subtitle = "Male participants") +
+  xlab("Testosterone value (pg/ml)") + 
+  ylab("Density") +
+  #scale_x_continuous(limits = c(0, 600), breaks = seq(0,600,100)) +
+  scale_x_continuous(breaks = c(seq(0,600,100))) +
+  coord_cartesian(xlim = c(0,600)) + 
+  nsh_theme
+
+sample1_plot <- females_sample1_plot/males_sample1_plot + plot_annotation(title = "Distribution of Testosterone Scores: Sample 1",
+                                                                          tag_levels = 'A',
+                                                                          theme = theme(plot.title = element_text(size = 22),
+                                                                                        text = element_text(family = "Avenir")))
+sample1_plot
 
 # Sample 2.
-ggplot(sample2_testosterone, aes(x=hormone_scr_ert_mean)) + 
-  geom_density(alpha=0.86) +
-  geom_vline(aes(xintercept=sample2_outliers_cutoff), color = "black", # Add line to show where lowest value of outlier is.
+females_sample2_plot <- ggplot(subset(sample2_testosterone, sex == "F"), aes(x=hormone_scr_ert_mean)) + 
+  geom_density(alpha=0.86, color = "aquamarine4", size = 2) +
+  geom_vline(aes(xintercept = sample2_outliers_females_cutoff), color = "black", # Add line to show where lowest value of outlier is.
              linetype="dashed", size=1) +
-  labs(title = "Distribution of Testosterone Scores",
-       subtitle = "Sample 2") +
+  labs(subtitle = "Female participants") +
   xlab("Testosterone value (pg/ml)") + 
   ylab("Density") +
+  #scale_x_continuous(limits = c(0, 600), breaks = seq(0,600,100)) +
+  scale_x_continuous(breaks = c(seq(0,600,100))) +
+  coord_cartesian(xlim = c(0,600)) + 
   nsh_theme
+
+males_sample2_plot <- ggplot(subset(sample2_testosterone, sex == "M"), aes(x=hormone_scr_ert_mean)) + 
+  geom_density(alpha=0.86, color = "aquamarine4", size = 2) +
+  geom_vline(aes(xintercept = sample2_outliers_males_cutoff), color = "black", # Add line to show where lowest value of outlier is.
+             linetype="dashed", size=1) +
+  labs(subtitle = "Male participants") +
+  xlab("Testosterone value (pg/ml)") + 
+  ylab("Density") +
+  #scale_x_continuous(limits = c(0, 600), breaks = seq(0,600,100)) +
+  scale_x_continuous(breaks = c(seq(0,600,100))) +
+  coord_cartesian(xlim = c(0,600)) + 
+  nsh_theme
+
+sample2_plot <- females_sample2_plot/males_sample2_plot + plot_annotation(title = "Distribution of Testosterone Scores: Sample 2",
+                                                                          tag_levels = 'A',
+                                                                          theme = theme(plot.title = element_text(size = 22),
+                                                                                        text = element_text(family = "Avenir")))
+sample2_plot
