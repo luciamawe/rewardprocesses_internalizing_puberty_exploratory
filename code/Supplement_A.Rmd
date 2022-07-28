@@ -48,7 +48,6 @@ standardized_coefficient_function <- file.path(data_dir,
                                           "code",
                                           "get_standardized_coefficients.R")
 source(standardized_coefficient_function) # function is standardized_coefficient.
-
 ```
 \newpage
 # Results for Sample 1
