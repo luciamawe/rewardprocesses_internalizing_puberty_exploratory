@@ -167,7 +167,7 @@ nrow(data) # 5939 (exploratory and confirmatory).
 data$PDS_score_z<- scale(data$PDS_score)
 data$cbcl_scr_syn_internal_r_z <- scale(data$cbcl_scr_syn_internal_r)
 
-# Lines 148 to 223 filter invalid testosterone values (Adapted from Herting script).
+# Filter invalid testosterone values (Adapted from Herting script).
 
 # Exploratory.
 # 5 Female with misclassified Male tubes. 6 Male with misclassified Female tubes. 49 either had issues at saliva collection or had NA gender values.
