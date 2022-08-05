@@ -751,7 +751,7 @@ summary(confirmatory1_caudate_males$gam)
 print(standardized_coefficient(confirmatory1_caudate_males$mer))
 ```
 
-## 2.4 Model B: Putamen Anticipation ~ PDS
+## 2.4 Model: Putamen Anticipation ~ PDS
 ### Female participants
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_ant_outliers_females 
@@ -982,7 +982,7 @@ summary(confirmatory1_caudate_males$gam)
 print(standardized_coefficient(confirmatory1_caudate_males$mer))
 ```
 
-## 2.12 Model B: Putamen Anticipation ~ Testosterone
+## 2.12 Model: Putamen Anticipation ~ Testosterone
 ### Female participants
 ```{r, echo = FALSE}
 dataformodel <- data_no_putamen_ant_no_test_outliers_females 

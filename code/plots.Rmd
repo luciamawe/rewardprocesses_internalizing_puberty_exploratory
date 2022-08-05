@@ -18,6 +18,7 @@ library(ggeffects)
 library(lme4)
 library(stats)
 library(Hmisc)
+library(patchwork)
 ```
 
 ```{r LoadData, echo = FALSE}
@@ -161,7 +162,8 @@ PDS_correct$sample_sex <- factor(PDS_correct$sample_sex,levels = c("sample1_F", 
 nsh_theme <- theme(text = element_text(family = "Avenir"),        
                    title= element_text(size=26, vjust=2, face="bold"),
                    #plot.title = element_blank(),
-                   plot.subtitle = element_text(color="gray40", size=18, face="bold.italic"),
+                   plot.subtitle = element_text(color="gray40", size=24, face="bold.italic"),
+                   plot.margin = margin(10,10,10,10),
                    axis.title.x= element_text(size=24, vjust=-0.3),
                    axis.title.y= element_text(size=24, vjust=1.5),
                    axis.text.x= element_text(size=28, colour="black"),
@@ -348,7 +350,7 @@ model_predictions_exploratory1B <- model_predictions_exploratory1B %>% mutate(ge
                                                                           sample == "females sample 2" | 
                                                                           sample == "males sample 2" ~ "sample 2"))
   
-  
+
 model_predictions_exploratory1B$sample <- as.factor(model_predictions_exploratory1B$sample)
 model_predictions_exploratory1B$gender_group <- as.factor(model_predictions_exploratory1B$gender_group)
 model_predictions_exploratory1B$sample_group <- as.factor(model_predictions_exploratory1B$sample_group)
@@ -417,7 +419,9 @@ figure3a <- plot_model(exploratory4c_bisbas_allCBCL_females_bisbasz,
                 scale_y_continuous(limits = c(0, 10), breaks = seq(0,10, by = 2)) +
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score (continuous)") +
-                labs(title = "PDS x BAS-RR Interaction (Sample 2 female participants)") +
+               # labs(title = "PDS x BAS-RR Interaction (Sample 2 female participants)") +
+                labs(title = "",
+                     subtitle = "Sample 2 female participants") +
                 nsh_theme
 
 figure3a
@@ -447,10 +451,20 @@ figure3b <- plot_model(exploratory4c_bisbas_allCBCL_males_bisbasz,
                 scale_y_continuous(breaks = seq(0,10, by = 2)) +
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score (continuous)") +
-                labs(title = "PDS x BAS-RR Interaction (Sample 1 males)") +
+                #labs(title = "PDS x BAS-RR Interaction (Sample 1 males)") +
+                labs(title = "",
+                     subtitle = "Sample 1 male participants") +
                 nsh_theme
 
 figure3b
+
+```
+
+```{r figure3, echo = FALSE}
+
+figure3 <- figure3a/figure3b + plot_annotation(title = "PDS x BAS-RR Interaction", tag_levels = 'A') & nsh_theme
+
+figure3
 
 ```
 
@@ -483,7 +497,9 @@ figure4 <- plot_model(exploratory4c_lg_neutral_RT_males,
                 scale_y_continuous(limits = c(0, 16), breaks = seq(0,16, by = 2)) + # Had to extend limits for this one for the confidence interval.
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score") +
-                labs(title = "PDS x MID reaction time interaction (Sample 2 males)", colour = "Reaction time difference (large vs. neutral) z-score") +
+                labs(title = "PDS x MID reaction time interaction", 
+                     subtitle = "Sample 2 male participants",
+                     colour = "Reaction time difference (large vs. neutral) z-score") +
                 nsh_theme
 
 figure4
@@ -518,7 +534,7 @@ figure5a <- plot_model(confirmatory4_caudate_ant_females,
                 scale_y_continuous(limits = c(0, 12), breaks = seq(0,10, by = 2)) + # Extended limit for confidence intervals.
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score") +
-                labs(title = "PDS x caudate anticipation interaction", subtitle = "Sample 2 female participants", colour = "Caudate anticipation z-score") +
+                labs(title = "PDS x caudate anticipation", subtitle = "Sample 2 female participants", colour = "Caudate anticipation z-score") +
                 nsh_theme
 
 figure5a
@@ -552,7 +568,7 @@ figure5b <- plot_model(confirmatory4_putamen_ant_males,
                 scale_y_continuous(limits = c(-3, 12), breaks = seq(0,10, by = 2)) + # Had to change limits for confidence intervals.
                 ylab("Model predicted internalizing score") +
                 xlab("PDS Score") +
-                labs(title = "PDS x putamen anticipation interaction",
+                labs(title = "PDS x putamen anticipation",
                      subtitle = "Sample 1 male participants",
                      colour = "Putamen reward vs. neutral anticipation z-score") +
                 nsh_theme
@@ -560,7 +576,91 @@ figure5b <- plot_model(confirmatory4_putamen_ant_males,
 figure5b
 ```
 
+```{r figure5, echo = FALSE}
+
+figure5 <- figure5a + figure5b + plot_annotation(tag_levels = 'A') & nsh_theme
+figure5
+
+```
+
+
 ```{r figure6a, echo = FALSE}
+# #Sample 2, confirmatory4Ea_accumbens_test_females.
+# # dark purple: 9D95CD (females sample 2).
+# dataformodel <- data_no_accumbens_ant_no_test_outliers_females_sample2
+# 
+# confirmatory4Ea_accumbens_test_females <- gamm4(cbcl_scr_syn_internal_r ~ 
+#                             PDS_score+
+#                             hormone_scr_ert_mean*  
+#                             accumbens_rvsn_ant_z+
+#                             race.ethnicity.5level +
+#                             demo_race_hispanic +
+#                             interview_age,
+#                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+# 
+# summary(confirmatory4Ea_accumbens_test_females$gam)
+# #plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE)
+# 
+# 
+# figure6a <- plot_model(confirmatory4Ea_accumbens_test_females,
+#                 type = "pred", # To specify values bisbas, have to use "pred" instead.
+#                 terms = c("hormone_scr_ert_mean","accumbens_rvsn_ant_z[-2,0,2]"),
+#                 colors = "#9D95CD",
+#                 line.size = 4,
+#                 show.legend = FALSE) +
+#                 aes(linetype=group) + # Design the lines based on z score.
+#                 scale_linetype_manual(values=c("twodash", "solid","dotted"))+
+#                 scale_y_continuous(limits = c(-3, 12), breaks = seq(0,10, by = 2)) + # Had to change limits for confidence intervals.
+#                 ylab("Model predicted internalizing score") +
+#                 xlab("Testosterone (pg/mL)") +
+#                 labs(title = "Testosterone x Accumbens anticipation interaction",
+#                 subtitle = "Sample 2 female participants", colour = "Accumbens anticipation z-score") +
+#                 nsh_theme
+# 
+# figure6a
+```
+
+```{r figure6b, echo = FALSE}
+# Sample 1, confirmatory4Ea_putamen_test_males.
+# light green: B2C6B1 (males sample 1).
+# 
+# dataformodel <- data_no_putamen_ant_no_test_outliers_males_sample1 # Specify data subset here.
+# 
+# confirmatory4Ea_putamen_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
+#                             PDS_score+
+#                             hormone_scr_ert_mean*  
+#                             putamen_rvsn_ant_z+
+#                             race.ethnicity.5level +
+#                             demo_race_hispanic +
+#                             interview_age,
+#                             data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
+# 
+# summary(confirmatory4Ea_putamen_test_males$gam)
+
+# 
+# figure6b <- plot_model(confirmatory4Ea_putamen_test_males,
+#                 type = "pred",
+#                 terms = c("hormone_scr_ert_mean","putamen_rvsn_ant_z[-2,0,2]"),
+#                 colors = "#B2C6B1",
+#                 line.size = 4,
+#                 show.legend = FALSE) +
+#                 #ylim(0,10)+ # Confidence intervals look weird because it gets to the x axis (predicting CBCL below zero).
+#                 scale_x_continuous(limits = c(0,80),breaks=seq(0,80,20)) +
+#                 scale_y_continuous(limits = c(-2,10),breaks=seq(0,10,2)) +
+#                 aes(linetype=group) + # Design the lines based on z score.
+#                 scale_linetype_manual(values=c("twodash", "solid","dotted")) +
+#                 ylab("Model predicted internalizing score") +
+#                 xlab("Testosterone (pg/mL)") +
+#                 labs(title = "Testosterone x Putamen anticipation interaction",
+#                 subtitle = "Sample 1 male participants", colour = "Putamen anticipation z-score") +
+#                 nsh_theme
+# 
+# figure6b
+
+```
+
+
+```{r figure6, echo = FALSE}
 #Sample 2, confirmatory4Ea_accumbens_test_females.
 # dark purple: 9D95CD (females sample 2).
 dataformodel <- data_no_accumbens_ant_no_test_outliers_females_sample2
@@ -578,7 +678,7 @@ summary(confirmatory4Ea_accumbens_test_females$gam)
 #plot_model(confirmatory4_accumbens_ant_females,type = "int", show.data = TRUE)
 
 
-figure6a <- plot_model(confirmatory4Ea_accumbens_test_females,
+figure6 <- plot_model(confirmatory4Ea_accumbens_test_females,
                 type = "pred", # To specify values bisbas, have to use "pred" instead.
                 terms = c("hormone_scr_ert_mean","accumbens_rvsn_ant_z[-2,0,2]"),
                 colors = "#9D95CD",
@@ -589,50 +689,12 @@ figure6a <- plot_model(confirmatory4Ea_accumbens_test_females,
                 scale_y_continuous(limits = c(-3, 12), breaks = seq(0,10, by = 2)) + # Had to change limits for confidence intervals.
                 ylab("Model predicted internalizing score") +
                 xlab("Testosterone (pg/mL)") +
-                labs(title = "Testosterone x Accumbens anticipation interaction",
-                subtitle = "Sample 2 female participants", colour = "Accumbens anticipation z-score") +
-                nsh_theme
+                labs(title = "Testosterone x accumbens anticipation",
+                     subtitle = "Sample 2 female participants", 
+                     colour = "Accumbens anticipation z-score") +
+                nsh_theme + 
 
-figure6a
-```
-
-```{r figure6b, echo = FALSE}
-# Sample 1, confirmatory4Ea_putamen_test_males.
-# light green: B2C6B1 (males sample 1).
-
-dataformodel <- data_no_putamen_ant_no_test_outliers_males_sample1 # Specify data subset here.
-
-confirmatory4Ea_putamen_test_males <- gamm4(cbcl_scr_syn_internal_r ~ 
-                            PDS_score+
-                            hormone_scr_ert_mean*  
-                            putamen_rvsn_ant_z+
-                            race.ethnicity.5level +
-                            demo_race_hispanic +
-                            interview_age,
-                            data=dataformodel, random = ~ (1 | site_id_l/rel_family_id),family=gaussian())
-
-summary(confirmatory4Ea_putamen_test_males$gam)
-
-
-figure6b <- plot_model(confirmatory4Ea_putamen_test_males,
-                type = "pred",
-                terms = c("hormone_scr_ert_mean","putamen_rvsn_ant_z[-2,0,2]"),
-                colors = "#B2C6B1",
-                line.size = 4,
-                show.legend = FALSE) +
-                #ylim(0,10)+ # Confidence intervals look weird because it gets to the x axis (predicting CBCL below zero).
-                scale_x_continuous(limits = c(0,80),breaks=seq(0,80,20)) +
-                scale_y_continuous(limits = c(-2,10),breaks=seq(0,10,2)) +
-                aes(linetype=group) + # Design the lines based on z score.
-                scale_linetype_manual(values=c("twodash", "solid","dotted")) +
-                ylab("Model predicted internalizing score") +
-                xlab("Testosterone (pg/mL)") +
-                labs(title = "Testosterone x Putamen anticipation interaction",
-                subtitle = "Sample 1 male participants", colour = "Putamen anticipation z-score") +
-                nsh_theme
-
-figure6b
-
+figure6
 ```
 
 ```{r PDS_Distributions, echo = FALSE}
