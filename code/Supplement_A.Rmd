@@ -48,7 +48,77 @@ standardized_coefficient_function <- file.path(data_dir,
                                           "code",
                                           "get_standardized_coefficients.R")
 source(standardized_coefficient_function) # function is standardized_coefficient.
+
+# Demographics
+
+min(PDS_correct$interview_age)
+max(PDS_correct$interview_age)
+mean(PDS_correct$interview_age)
+nrow(PDS_correct) # 5625 (exploratory).
+female_subset <- subset(PDS_correct, sex=="F")
+male_subset <- subset(PDS_correct, sex=="M")
+
+nrow(female_subset)
+nrow(male_subset)
+
+library(psych)
+describe(female_subset$interview_age)
+describe(male_subset$interview_age)
+
+#Female Race & Ethnicity
+female_racethnicity_table <- table(female_subset$race.ethnicity.5level)
+
+library(stats)
+addmargins(female_racethnicity_table)
+sum(is.na(female_subset$race.ethnicity.5level))
+
+#Hispanic or Latina/o/x = 1
+female_ethnicity_table <- table(female_subset$demo_race_hispanic)
+addmargins(female_ethnicity_table)
+
+#Male Race & Ethnicity
+male_racethnicity_table <- table(male_subset$race.ethnicity.5level)
+library(stats)
+addmargins(male_racethnicity_table)
+sum(is.na(male_subset$race.ethnicity.5level))
+
+#Hispanic or Latina/o/x = 1
+male_ethnicity_table <- table(male_subset$demo_race_hispanic)
+addmargins(male_ethnicity_table)
+
+#PDS Score
+describe(female_subset$PDS_score)
+describe(male_subset$PDS_score)
+
+#PDS Stage Category
+female_pds_category_table <- table(female_subset$pds_p_ss_category)
+addmargins(female_pds_category_table)
+prop.table(female_pds_category_table)
+
+male_pds_category_table <- table(male_subset$pds_p_ss_category)
+addmargins(male_pds_category_table)
+prop.table(male_pds_category_table)
+
+
+#CBCL Internalizing Raw Score
+describe(female_subset$cbcl_scr_syn_internal_r)
+describe(male_subset$cbcl_scr_syn_internal_r)
+
+
+#BIS/BAS
+describe(data_no_bisbas_outliers_females$bisbas_ss_basm_rr)
+describe(data_no_bisbas_outliers_males$bisbas_ss_basm_rr)
+
+
+#Testosterone
+describe(data_no_test_outliers_females$hormone_scr_ert_mean)
+describe(data_no_test_outliers_males$hormone_scr_ert_mean)
+
+#BMI
+describe(female_subset$bmi)
+describe(male_subset$bmi)
 ```
+
 \newpage
 # Results for Sample 1
 # 1---Internalizing~Puberty---
