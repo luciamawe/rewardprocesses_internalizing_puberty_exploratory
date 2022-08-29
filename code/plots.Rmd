@@ -271,8 +271,8 @@ figure1 <- ggplot(model_predictions, aes(x = pds_score, y = predicted_cbcl_inter
     #scale_x_continuous(breaks = seq(1, 3.0, by = 0.5), limits = c(1,3)) +
     scale_x_continuous(breaks = seq(1, 4.0, by = 1), limits = c(1,4)) +
     scale_y_continuous(breaks = seq(0, 10, by = 2), limits = c(0,10)) +
-    xlab("PDS Score (Continuous)") + 
-    ylab("Model Predicted Internalizing Score") +
+    xlab("PDS score") + 
+    ylab("Model predicted internalizing score") +
     facet_grid(gender_group ~ sample_group) +  #facet_grid(row_variable ~ column_variable)
     nsh_theme + 
    theme(panel.background = element_rect(fill = NA, color = "black"), # Add outline around each panel.
@@ -380,8 +380,8 @@ figure2 <- ggplot(model_predictions_exploratory1B, aes(x = pds_score, y = bisbas
     geom_line(size=4,alpha=0.86) +
     geom_ribbon(aes(ymin=conf.low, ymax=conf.high), alpha=0.15) +
     xlim(1,4) + ylim(-0.5,0.5) +
-    xlab("PDS Score (Continuous)") + 
-    ylab("Model Predicted BIS/BAS-RR Z-Score") +
+    xlab("PDS score") + 
+    ylab("Model predicted BIS/BAS-RR z-score") +
     facet_grid(gender_group ~ sample_group) +  #facet_grid(row_variable ~ column_variable)
     nsh_theme + 
     theme(panel.background = element_rect(fill = NA, color = "black"), # Add outline around each panel.
@@ -418,7 +418,7 @@ figure3a <- plot_model(exploratory4c_bisbas_allCBCL_females_bisbasz,
                 scale_linetype_manual(values=c("twodash", "solid","dotted"))+
                 scale_y_continuous(limits = c(0, 10), breaks = seq(0,10, by = 2)) +
                 ylab("Model predicted internalizing score") +
-                xlab("PDS Score (continuous)") +
+                xlab("PDS score") +
                # labs(title = "PDS x BAS-RR Interaction (Sample 2 female participants)") +
                 labs(title = "",
                      subtitle = "Sample 2 female participants") +
@@ -450,7 +450,7 @@ figure3b <- plot_model(exploratory4c_bisbas_allCBCL_males_bisbasz,
                 scale_linetype_manual(values=c("twodash", "solid","dotted"))+
                 scale_y_continuous(breaks = seq(0,10, by = 2)) +
                 ylab("Model predicted internalizing score") +
-                xlab("PDS Score (continuous)") +
+                xlab("PDS score") +
                 #labs(title = "PDS x BAS-RR Interaction (Sample 1 males)") +
                 labs(title = "",
                      subtitle = "Sample 1 male participants") +
@@ -462,7 +462,7 @@ figure3b
 
 ```{r figure3, echo = FALSE}
 
-figure3 <- figure3a/figure3b + plot_annotation(title = "PDS x BAS-RR Interaction", tag_levels = 'A') & nsh_theme
+figure3 <- figure3a + figure3b + plot_annotation(title = "PDS x BAS-RR", tag_levels = 'A') & nsh_theme
 
 figure3
 
@@ -496,8 +496,8 @@ figure4 <- plot_model(exploratory4c_lg_neutral_RT_males,
                 scale_linetype_manual(values=c("twodash", "solid","dotted"))+
                 scale_y_continuous(limits = c(0, 16), breaks = seq(0,16, by = 2)) + # Had to extend limits for this one for the confidence interval.
                 ylab("Model predicted internalizing score") +
-                xlab("PDS Score") +
-                labs(title = "PDS x MID reaction time interaction", 
+                xlab("PDS score") +
+                labs(title = "PDS x MID reaction time", 
                      subtitle = "Sample 2 male participants",
                      colour = "Reaction time difference (large vs. neutral) z-score") +
                 nsh_theme
@@ -716,7 +716,7 @@ pds_continuous_plot <-ggplot(PDS_correct, aes(x = PDS_score, color = sample_sex,
     geom_density(alpha=0.86) + 
     scale_color_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) + 
     scale_fill_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) + 
-    xlab("PDS Score (Continuous)") + 
+    xlab("PDS score (continuous)") + 
     ylab("Density") +
     facet_grid(sex_label ~ sample_label) +  #facet_grid(row_variable ~ column_variable)
     nsh_theme + 
@@ -735,7 +735,7 @@ pds_categorical_plot <- ggplot(PDS_correct, aes(x=pds_p_ss_category, color = sam
   scale_color_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) + 
     scale_fill_manual(values=c("#C7CDFF", "#9D95CD","#B2C6B1","#729473")) + 
   labs(title = "Distribution of PDS Categories") +
-  xlab("PDS Stage (Categorical)") + 
+  xlab("PDS stage (categorical)") + 
   ylab("Count") +
   facet_grid(sex_label ~ sample_label) + 
   nsh_theme + 

@@ -36,7 +36,7 @@ data_folder <- file.path(data_dir,"ABCD","derivatives",phase_folder)
 file_name <- "nda30_confirmatory.csv" # specify file name here. 
 
 fulldata <- read.csv(file.path(data_folder,file_name))
-nrow(fulldata) # When call the define_dataframes script, will keep only the baseline data.
+nrow(fulldata) # 27331 (confirmatory). When call the define_dataframes script, will keep only the baseline data.
 
 # Call function to define all of the dataframes.
 script_path <- file.path(data_dir,"rewardprocesses_internalizing_puberty_exploratory","code","define_dataframes.R")
